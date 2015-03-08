@@ -177,38 +177,38 @@
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server. Additional security measures such as authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementors are encouraged to use well known end host and network based countermeasures, see <xref target="IPJ.9-4-TCPSYN"/>.</t>
    </section>
    <section title="State Considerations">
-     <t>Each DNS server is only capable and handling some finite number of DNS record subscriptions. This number will vary from DNS server to DNS server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After an LLQ client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support LLQ for the domain and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
+     <t>Each DNS server is only capable and handling some finite number of DNS record subscriptions. This number will vary from DNS server to DNS server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Updates for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
    </section>
    <section title="Protocol Operation">
       <section anchor="discovery" title="Discovery">
-        <t>The first step to issuing a long-lived query is to discover an appropriate DNS server that supports an LLQ for the desired domain. The client must also determine which TCP port is listening for LLQ connections.</t>
+        <t>The first step to DNS Push Update subscription is to discover an appropriate DNS server that supports DNS Push Updates for the desired zone. The client must also determine which TCP port on the server is listening for connections.</t>
         <t>
           <list style="numbers">
-            <t>The client begins the discovery by sending a DNS query to the local resolver with record type <xref target="RFC1035">SOA</xref> for the name of the LLQ record it wishes to subscribe.</t>
+            <t>The client begins the discovery by sending a DNS query to the local resolver with record type <xref target="RFC1035">SOA</xref> for the name of the record it wishes to subscribe.</t>
             <t>If the SOA record exists, it MUST be returned in the Answer section of the reply. If not, the server SHOULD include the SOA record for the zone of the requested name in the Authority section.</t>
             <t>If no SOA record is returned, the client then strips off the leading label from the requested name and resends the SOA query until the SOA has been discovered.</t>
 			<t>If an SOA record is never returned, discovery ends here and the zone must be correctly configured to proceed.</t>
-            <t>Once the SOA is known, the client sends a query with type <xref target="RFC2782">SRV</xref> for the record name <spanx style="verb">_dns-llq._tcp.&lt;zone&gt;</spanx> to the SOA master name <spanx style="verb">(mname)</spanx>.</t>
-            <t>A DNS server implementing LLQ for the zone MUST answer with an SRV record in the Answer section. The SRV <spanx style="verb">target</spanx> contains the name of the DNS server providing long-lived queries for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The DNS server MAY include its address records in the Additional section, however, the address records SHOULD be authenticated before use as referenced in <xref target="tls_name_auth"/> and described in <xref target="I-D.ietf-dane-srv"/>.</t>
-            <t>If the DNS server in the SOA does not support LLQ, it MUST return an <spanx style="verb">NXDOMAIN RCODE</spanx>.</t>
+            <t>Once the SOA is known, the client sends a query with type <xref target="RFC2782">SRV</xref> for the record name <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx> to the SOA master name <spanx style="verb">(mname)</spanx>.</t>
+            <t>A DNS server implementing DNS Push Updates for the zone MUST answer with an SRV record in the Answer section. The SRV <spanx style="verb">target</spanx> contains the name of the DNS server providing DNS Push Updates for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The DNS server MAY include its address records in the Additional section, however, the address records SHOULD be authenticated before use as referenced in <xref target="tls_name_auth"/> and described in <xref target="I-D.ietf-dane-srv"/>.</t>
+            <t>If the DNS server in the SOA does not support DNS Push Updates, it MUST return an <spanx style="verb">NXDOMAIN RCODE</spanx>.</t>
             <t>The SRV <spanx style="verb">target</spanx> and the SOA <spanx style="verb">mname</spanx> SHOULD be the same. If they are not, the name in the SRV <spanx style="verb">target</spanx> SHOULD be preferred.</t>
             <t>More than one SRV record may be returned. In this case, the <spanx style="verb">priority</spanx> and <spanx style="verb">weight</spanx> values in the returned SRV records can be used to determine the order in which to contact the servers for subscription requests. As described in <xref target="RFC2782">RFC&nbsp;2782</xref>, the server with the lowest <spanx style="verb">priority</spanx> is first contacted. If more than one server has the same <spanx style="verb">priority</spanx>, the <spanx style="verb">weight</spanx> is used as a probability indicator. Higher weights have higher probabilities of being selected. If a server is not reachable or is not willing to accept a subscription request, then a subsequent server is to be contacted.</t>
-          </list>If a server closes an LLQ connection, the client may wish to repeat the discovery process in order to determine the preferred DNS server for LLQ subscriptions at that time.
+          </list>If a server closes a DNS Push Update subscription connection, the client may wish to repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time.
         </t>
+     </section>
+     <section title="UPDATE Additions">
      </section>
    </section>
    <section anchor="Acknowledgements" title="Acknowledgements">
      <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been made better due to comments from Ran Atkinson.</t>
-     <t>Similar concepts to what is described in this document have been explored, developed and implemented with help from Chris Sharp and Roger Pantos.</t>
    </section>
 
    <section anchor="IANA" title="IANA Considerations">
-     <t>The EDNS0 OPTION CODE 1 has previously been assigned for this DNS
-   extension. No additional IANA services are required by this document.</t>
+     <t>This document defines the service name: <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx>. It is only applicable for the TCP protocol. IANA should publish this name in the IANA Service Name Registry.</t>
    </section>
 
    <section anchor="Security" title="Security Considerations">
-     <t>Strict TLS support is mandatory in DNS LLQ. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
+     <t>Strict TLS support is mandatory in DNS Push Updates. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
      <section title="Security Services">
        <t>It is the goal of using TLS to provide the following security services:
          <list style="hanging">
@@ -220,13 +220,13 @@
        <t>Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <xref target="I-D.ietf-uta-tls-bcp">TLS Recommendations</xref> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</t>
      </section>
      <section anchor="tls_name_auth" title="TLS Name Authentication">
-       <t>As described in <xref target="discovery"/>, the client discovers the DNS LLQ server using an SRV lookup for the record name <spanx style="verb">_dns-llq._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate. This procedure is specified in <xref target="I-D.ietf-dane-srv"/>. This procedure uses the TLS Sever Name Indication (SNI) extension in Section 3 of <xref target="RFC6066">RFC&nbsp;6066</xref> to inform the server of the name the client has authenticated through the use of TLSA records.</t>
+       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Update server using an SRV lookup for the record name <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate. This procedure is specified in <xref target="I-D.ietf-dane-srv"/>. This procedure uses the TLS Sever Name Indication (SNI) extension in Section 3 of <xref target="RFC6066">RFC&nbsp;6066</xref> to inform the server of the name the client has authenticated through the use of TLSA records.</t>
      </section>
      <section title="TLS Compression">
        <t>In order to reduce the chances of compression related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <xref target="I-D.ietf-tls-tls13">TLS 1.3</xref>, TLS-level compression has been removed completely.</t>
      </section>
      <section title="TLS Session Resumption">
-       <t>TLS Session Resumption MUST be disabled on DNS LLQ servers. It is not useful to have LLQ state cached for long periods of time. It is also not desirable for LLQ state to be maintained while the client is not connected.</t>
+       <t>TLS Session Resumption MUST be disabled on DNS Push Update servers. It is not useful to have subscription state cached for long periods of time. It is also not desirable for subscription state to be maintained while the client is not connected.</t>
      </section>
    </section>
  </middle>
