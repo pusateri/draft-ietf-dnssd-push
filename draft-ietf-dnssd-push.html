@@ -385,6 +385,7 @@
 <link href="#rfc.section.6.2" rel="Chapter" title="6.2 UPDATE Additions"/>
 <link href="#rfc.section.6.2.1" rel="Chapter" title="6.2.1 DNS Update Header Format"/>
 <link href="#rfc.section.6.2.2" rel="Chapter" title="6.2.2 Push Update SUBSCRIBE and UNSUBSCRIBE"/>
+<link href="#rfc.section.6.2.3" rel="Chapter" title="6.2.3 Push Update RCODES"/>
 <link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements"/>
 <link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations"/>
 <link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
@@ -475,6 +476,7 @@
 <li>6.2.   <a href="#rfc.section.6.2">UPDATE Additions</a></li>
 <ul><li>6.2.1.   <a href="#rfc.section.6.2.1">DNS Update Header Format</a></li>
 <li>6.2.2.   <a href="#rfc.section.6.2.2">Push Update SUBSCRIBE and UNSUBSCRIBE</a></li>
+<li>6.2.3.   <a href="#rfc.section.6.2.3">Push Update RCODES</a></li>
 </ul></ul><li>7.   <a href="#rfc.section.7">Acknowledgements</a></li>
 <li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
 <li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
@@ -532,6 +534,77 @@
 <h1 id="rfc.section.6.2.1"><a href="#rfc.section.6.2.1">6.2.1.</a> DNS Update Header Format</h1>
 <h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Push Update SUBSCRIBE and UNSUBSCRIBE</h1>
 <p id="rfc.section.6.2.2.p.1">The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</p>
+<h1 id="rfc.section.6.2.3"><a href="#rfc.section.6.2.3">6.2.3.</a> Push Update RCODES</h1>
+<p id="rfc.section.6.2.3.p.1">If the server is willing to accept the SUBSCRIBE request from the client, it returns an UPDATE response with the RCODE set to NOERROR. Otherwise, an appropriate error code MUST be returned. The following table describes when each response error code is appropriate for a SUBSCRIBE or UNSUBSCRIBE request.</p>
+<div id="rfc.table.1"/>
+<div id="table_update_rcodes"/>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+  <caption>Response codes</caption>
+  <thead>
+    <tr>
+      <th class="left">Mneumonic</th>
+      <th class="center">Value</th>
+      <th class="left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="left">NOERROR</td>
+      <td class="center">0</td>
+      <td class="left">SUBSCRIBE or UNSUBSCRIBE successful</td>
+    </tr>
+    <tr>
+      <td class="left">FORMERR</td>
+      <td class="center">1</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">SERVFAIL</td>
+      <td class="center">2</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">NXDOMAIN</td>
+      <td class="center">3</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">NOTIMP</td>
+      <td class="center">4</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">REFUSED</td>
+      <td class="center">5</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">YXDOMAIN</td>
+      <td class="center">6</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">YXRRSET</td>
+      <td class="center">7</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">NXRRSET</td>
+      <td class="center">8</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">NOTAUTH</td>
+      <td class="center">9</td>
+      <td class="left"/>
+    </tr>
+    <tr>
+      <td class="left">NOTZONE</td>
+      <td class="center">10</td>
+      <td class="left"/>
+    </tr>
+  </tbody>
+</table>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a></h1>
 <p id="rfc.section.7.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</p>
 <h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a></h1>

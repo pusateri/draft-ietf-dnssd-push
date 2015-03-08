@@ -75,16 +75,17 @@ Table of Contents
      6.2.  UPDATE Additions  . . . . . . . . . . . . . . . . . . . .   6
        6.2.1.  DNS Update Header Format  . . . . . . . . . . . . . .   6
        6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE . . . . . . . .   7
+       6.2.3.  Push Update RCODES  . . . . . . . . . . . . . . . . .   7
    7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
    8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
-     9.1.  Security Services . . . . . . . . . . . . . . . . . . . .   7
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
+     9.1.  Security Services . . . . . . . . . . . . . . . . . . . .   8
      9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .   8
      9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .   8
-     9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .   8
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .   8
-     10.2.  Informative References . . . . . . . . . . . . . . . . .   9
+     9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .   9
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .   9
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  10
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  10
 
 1.  Introduction
@@ -105,7 +106,6 @@ Table of Contents
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
-
 
 
 
@@ -348,6 +348,32 @@ Internet-Draft              DNS Push Updates                  March 2015
    is indicated by setting the SS bit while an UNSUBSCRIBE is indicated
    by clearing the SS bit.
 
+6.2.3.  Push Update RCODES
+
+   If the server is willing to accept the SUBSCRIBE request from the
+   client, it returns an UPDATE response with the RCODE set to NOERROR.
+   Otherwise, an appropriate error code MUST be returned.  The following
+   table describes when each response error code is appropriate for a
+   SUBSCRIBE or UNSUBSCRIBE request.
+
+        +-----------+-------+-------------------------------------+
+        | Mneumonic | Value | Description                         |
+        +-----------+-------+-------------------------------------+
+        | NOERROR   |   0   | SUBSCRIBE or UNSUBSCRIBE successful |
+        | FORMERR   |   1   |                                     |
+        | SERVFAIL  |   2   |                                     |
+        | NXDOMAIN  |   3   |                                     |
+        | NOTIMP    |   4   |                                     |
+        | REFUSED   |   5   |                                     |
+        | YXDOMAIN  |   6   |                                     |
+        | YXRRSET   |   7   |                                     |
+        | NXRRSET   |   8   |                                     |
+        | NOTAUTH   |   9   |                                     |
+        | NOTZONE   |   10  |                                     |
+        +-----------+-------+-------------------------------------+
+
+                          Table 1: Response codes
+
 7.  Acknowledgements
 
    The authors would like to thank Kiren Sekar and Marc Krochmal for
@@ -359,6 +385,14 @@ Internet-Draft              DNS Push Updates                  March 2015
    This document defines the service name: "_dns-push._tcp".  It is only
    applicable for the TCP protocol.  This name is to be published in the
    IANA Service Name Registry.
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015               [Page 7]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
 9.  Security Considerations
 
@@ -385,15 +419,6 @@ Internet-Draft              DNS Push Updates                  March 2015
    suites are beyond the scope of this document.  Please refer to TLS
    Recommendations [I-D.ietf-uta-tls-bcp] for the best current
    practices.  Keep in mind that best practices only exist for a
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 7]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    snapshot in time and recommendations will continue to change.
    Updated versions or errata may exist for these recommendations.
 
@@ -415,6 +440,15 @@ Internet-Draft              DNS Push Updates                  March 2015
    level compression SHOULD be disabled when using TLS versions 1.2 and
    earlier.  In the draft version of TLS 1.3 [I-D.ietf-tls-tls13], TLS-
    level compression has been removed completely.
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015               [Page 8]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
 9.4.  TLS Session Resumption
 
@@ -443,13 +477,6 @@ Internet-Draft              DNS Push Updates                  March 2015
               (TLS) Protocol Version 1.3", draft-ietf-tls-tls13-04 (work
               in progress), January 2015.
 
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 8]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    [I-D.ietf-uta-tls-bcp]
               Sheffer, Y., Holz, R., and P. Saint-Andre,
               "Recommendations for Secure Use of TLS and DTLS", draft-
@@ -469,6 +496,15 @@ Internet-Draft              DNS Push Updates                  March 2015
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015               [Page 9]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
    [RFC2136]  Vixie, P., Thomson, S., Rekhter, Y., and J. Bound,
               "Dynamic Updates in the Domain Name System (DNS UPDATE)",
@@ -497,15 +533,6 @@ Internet-Draft              DNS Push Updates                  March 2015
               Internet Protocol Journal, Cisco Systems, Volume 9, Number
               4, December 2006.
 
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 9]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
               Syndication Format", RFC 4287, December 2005.
 
@@ -522,6 +549,17 @@ Authors' Addresses
 
    Phone: +1 843 473 7394
    Email: pusateri@bangj.com
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015              [Page 10]
+
+Internet-Draft              DNS Push Updates                  March 2015
 
 
    Stuart Cheshire
@@ -557,4 +595,22 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires September 8, 2015              [Page 10]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015              [Page 11]

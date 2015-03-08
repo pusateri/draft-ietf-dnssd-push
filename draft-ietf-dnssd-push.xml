@@ -206,6 +206,25 @@
        <section title="Push Update SUBSCRIBE and UNSUBSCRIBE">
          <t>The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <xref target="RFC2136">RFC&nbsp;2136</xref>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</t>
        </section>
+       <section title="Push Update RCODES">
+         <t>If the server is willing to accept the SUBSCRIBE request from the client, it returns an UPDATE response with the RCODE set to NOERROR. Otherwise, an appropriate error code MUST be returned. The following table describes when each response error code is appropriate for a SUBSCRIBE or UNSUBSCRIBE request.</t>
+         <texttable anchor="table_update_rcodes" title="Response codes">
+         <ttcol align="left">Mneumonic</ttcol>
+         <ttcol align="center">Value</ttcol>
+         <ttcol align="left">Description</ttcol>
+         <c>NOERROR</c><c>0</c><c>SUBSCRIBE or UNSUBSCRIBE successful</c>
+         <c>FORMERR</c><c>1</c><c></c>
+         <c>SERVFAIL</c><c>2</c><c></c>
+         <c>NXDOMAIN</c><c>3</c><c></c>
+         <c>NOTIMP</c><c>4</c><c></c>
+         <c>REFUSED</c><c>5</c><c></c>
+         <c>YXDOMAIN</c><c>6</c><c></c>
+         <c>YXRRSET</c><c>7</c><c></c>
+         <c>NXRRSET</c><c>8</c><c></c>
+         <c>NOTAUTH</c><c>9</c><c></c>
+         <c>NOTZONE</c><c>10</c><c></c>
+         </texttable>
+       </section>
      </section>
    </section>
    <section anchor="Acknowledgements" title="Acknowledgements">
