@@ -200,10 +200,17 @@
         </t>
      </section>
      <section title="UPDATE Additions">
+       <t>A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</t>
+       <section title="DNS Update Header Format">
+       </section>
+       <section title="Push Update SUBSCRIBE">
+       </section>
+       <section title="Push Update UNSUBSCRIBE">
+       </section>
      </section>
    </section>
    <section anchor="Acknowledgements" title="Acknowledgements">
-     <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been made better due to comments from Ran Atkinson.</t>
+     <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</t>
    </section>
 
    <section anchor="IANA" title="IANA Considerations">

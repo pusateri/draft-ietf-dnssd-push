@@ -1,0 +1,735 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>DNS Push Updates</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="#rfc.toc" rel="Contents"/>
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
+<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Requirements Language"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 Motivation"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 Overview"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Transport"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 State Considerations"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 Protocol Operation"/>
+<link href="#rfc.section.6.1" rel="Chapter" title="6.1 Discovery"/>
+<link href="#rfc.section.6.2" rel="Chapter" title="6.2 UPDATE Additions"/>
+<link href="#rfc.section.6.2.1" rel="Chapter" title="6.2.1 DNS Update Header Format"/>
+<link href="#rfc.section.6.2.2" rel="Chapter" title="6.2.2 Push Update SUBSCRIBE"/>
+<link href="#rfc.section.6.2.3" rel="Chapter" title="6.2.3 Push Update UNSUBSCRIBE"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements"/>
+<link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
+<link href="#rfc.section.9.1" rel="Chapter" title="9.1 Security Services"/>
+<link href="#rfc.section.9.2" rel="Chapter" title="9.2 TLS Name Authentication"/>
+<link href="#rfc.section.9.3" rel="Chapter" title="9.3 TLS Compression"/>
+<link href="#rfc.section.9.4" rel="Chapter" title="9.4 TLS Session Resumption"/>
+<link href="#rfc.references" rel="Chapter" title="10 References"/>
+<link href="#rfc.references.1" rel="Chapter" title="10.1 Normative References"/>
+<link href="#rfc.references.2" rel="Chapter" title="10.2 Informative References"/>
+<link href="#rfc.authors" rel="Chapter"/>
+
+
+  <meta name="generator" content="xml2rfc version 2.4.9 - http://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-00" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-3-7" />
+  <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Updates." />
+  <meta name="description" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Updates." />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+  <td class="left">Internet Engineering Task Force</td>
+  <td class="right">T. Pusateri</td>
+</tr>
+<tr>
+  <td class="left">Internet-Draft</td>
+  <td class="right">Seeking affiliation</td>
+</tr>
+<tr>
+  <td class="left">Intended status: Standards Track</td>
+  <td class="right">S. Cheshire</td>
+</tr>
+<tr>
+  <td class="left">Expires: September 8, 2015</td>
+  <td class="right">Apple Inc.</td>
+</tr>
+<tr>
+  <td class="left"></td>
+  <td class="right">March 7, 2015</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">DNS Push Updates<br />
+  <span class="filename">draft-ietf-dnssd-push-00</span></p>
+  
+  <h1 id="rfc.abstract">
+  <a href="#rfc.abstract">Abstract</a>
+</h1>
+<p>The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Updates.</p>
+<h1 id="rfc.status">
+  <a href="#rfc.status">Status of This Memo</a>
+</h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on September 8, 2015.</p>
+<h1 id="rfc.copyrightnotice">
+  <a href="#rfc.copyrightnotice">Copyright Notice</a>
+</h1>
+<p>Copyright (c) 2015 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
+<ul><li>1.1.   <a href="#rfc.section.1.1">Requirements Language</a></li>
+</ul><li>2.   <a href="#rfc.section.2">Motivation</a></li>
+<li>3.   <a href="#rfc.section.3">Overview</a></li>
+<li>4.   <a href="#rfc.section.4">Transport</a></li>
+<li>5.   <a href="#rfc.section.5">State Considerations</a></li>
+<li>6.   <a href="#rfc.section.6">Protocol Operation</a></li>
+<ul><li>6.1.   <a href="#rfc.section.6.1">Discovery</a></li>
+<li>6.2.   <a href="#rfc.section.6.2">UPDATE Additions</a></li>
+<ul><li>6.2.1.   <a href="#rfc.section.6.2.1">DNS Update Header Format</a></li>
+<li>6.2.2.   <a href="#rfc.section.6.2.2">Push Update SUBSCRIBE</a></li>
+<li>6.2.3.   <a href="#rfc.section.6.2.3">Push Update UNSUBSCRIBE</a></li>
+</ul></ul><li>7.   <a href="#rfc.section.7">Acknowledgements</a></li>
+<li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
+<li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
+<ul><li>9.1.   <a href="#rfc.section.9.1">Security Services</a></li>
+<li>9.2.   <a href="#rfc.section.9.2">TLS Name Authentication</a></li>
+<li>9.3.   <a href="#rfc.section.9.3">TLS Compression</a></li>
+<li>9.4.   <a href="#rfc.section.9.4">TLS Session Resumption</a></li>
+</ul><li>10.   <a href="#rfc.references">References</a></li>
+<ul><li>10.1.   <a href="#rfc.references.1">Normative References</a></li>
+<li>10.2.   <a href="#rfc.references.2">Informative References</a></li>
+</ul><li><a href="#rfc.authors">Authors' Addresses</a></li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> Introduction</h1>
+<p id="rfc.section.1.p.1">DNS records may be updated dynamically through either the dynamic DNS update mechanism specified in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite> or in the link-local case through asynchronous multicast DNS responses as described in <a href="#RFC6762">RFC&#160;6762</a> <cite title="NONE">[RFC6762]</cite>. This document specifies a protocol for interested unicast DNS clients to subscribe to DNS servers to receive new, changed, and withdrawn DNS record notifications. It is immediately relevant in the case of DNS service discovery but is not limited to that use case and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed.</p>
+<h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> Requirements Language</h1>
+<p id="rfc.section.1.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119">RFC&#160;2119</a> <cite title="NONE">[RFC2119]</cite>.</p>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> Motivation</h1>
+<p id="rfc.section.2.p.1">As the domain name system continues to adapt to new uses and changes in deployment, polling frequency has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model to state changes following the Observer design pattern. <a href="#XEP-0060">XMPP Publish-Subscribe</a> <cite title="NONE">[XEP-0060]</cite> and <a href="#RFC4287">Atom</a> <cite title="NONE">[RFC4287]</cite> are examples. While most DNS servers are highly tuned and capable of a high rate of query/response traffic, it is far more efficient in both bandwidth and CPU to replace the polling model with a publish/subscribe model for tracking changes to DNS records.</p>
+<p id="rfc.section.2.p.2">Immediate uses include updates to PTR, SRV, and TXT records when using unicast DNS for service discovery. This allows new services to be quickly discovered and changed parameters to be sent directly to interested parties.</p>
+<p id="rfc.section.2.p.3">Multicast DNS always listens on a well known link-local IP multicast group and new services and updates are sent for all group members to receive. Therefore, this protocol is not needed in a strict multicast DNS environment. However, when service discovery is used across a wide area network over unicast DNS or in a <a href="#I-D.ietf-dnssd-hybrid">hybrid unicast/multicast proxy</a> <cite title="NONE">[I-D.ietf-dnssd-hybrid]</cite>, it provides a mechanism for clients to learn about DNS record changes in a timely manner without polling.</p>
+<p id="rfc.section.2.p.4">DNS Long-Lived Queries (LLQ) was a prior attempt at providing notifications of changes to DNS records. This document builds on the experience gained with LLQ but re-uses the UPDATE mechanism defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite> to leverage a widely deployed DNS technology.</p>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> Overview</h1>
+<p id="rfc.section.3.p.1">DNS UPDATE was defined to provide a mechanism for clients to add or delete resource records (RRs) or resource record sets (RRSets) in the client's zone on the zone's server. However, by sending UPDATE messages from the server back to interested clients, it is possible to use the UPDATE protocol for a server to push out updates for the resource records and resource record sets as they are discovered. The client first must subscribe to an RR or RRset with a server that supports DNS Push Updates. When the client loses interest in updates to these records, it unsubscribes with the server. The DNS Push Update server for a zone MAY be a slave server, master server, or primary master server as defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>.</p>
+<p id="rfc.section.3.p.2">DNS Push Update clients are NOT required to implement DNS Update Prerequisite processing. Prerequisites are used to perform tentative atomic test-and-set type operations on the server, and that concept has no application when it comes to an authoritative server telling a client of changes to DNS records.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> Transport</h1>
+<p id="rfc.section.4.p.1">Implementations of DNS UPDATE MAY use either User Datagram Protocol <a href="#RFC0768">(UDP)</a> <cite title="NONE">[RFC0768]</cite> or Transmission Control Protocol <a href="#RFC0793">(TCP)</a> <cite title="NONE">[RFC0793]</cite> as the transport protocol according to Section 2.1 of <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>. However, the DNS Push Update protocol may be simplified if running over TCP because explicit teardown of subscription state is not needed. Therefore, this specification makes the use of TCP REQUIRED. The requirement in Section 6.1.3.2 of <a href="#RFC1123">RFC&#160;1123</a> <cite title="NONE">[RFC1123]</cite> that states a query MUST be sent over UDP first has been relaxed in Section 4 of <a href="#RFC5966">RFC&#160;5966</a> <cite title="NONE">[RFC5966]</cite>. Therefore, it is now permissible to define a TCP-only protocol for DNS.</p>
+<p id="rfc.section.4.p.2">Either end of the TCP connection can terminate all of its subscriptions by simply closing the connection. No DNS protocol message passing is needed. The lifetime of the subscriptions are tied to the lifetime of the transport protocol connection. Individual subscriptions may be dropped by request. If a client closes the connection, it is signaling that it is no longer interested in receiving updates to any of the records it has subscribed. It is informing the server that the server may release all state information it has been keeping with regards to this client. This may occur because the client computer has been disconnected from the network, has gone to sleep, or the application requiring the records has terminated. If a server closes the connection, it is informing the client that it can no longer provide updates for the subscribed records. This may occur because the server application software or operating system is restarting, the application terminated unexpectedly, the server is undergoing maintenance procedures, or the server is overloaded and can no longer provide the information to all the clients that wish to receive it. The client can try to re-subscribe at a later time or to another DNS server supporting DNS Push Updates for the zone.</p>
+<p id="rfc.section.4.p.3">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification.</p>
+<p id="rfc.section.4.p.4">Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server. Additional security measures such as authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementors are encouraged to use well known end host and network based countermeasures, see <a href="#IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</a>.</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> State Considerations</h1>
+<p id="rfc.section.5.p.1">Each DNS server is only capable and handling some finite number of DNS record subscriptions. This number will vary from DNS server to DNS server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Updates for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</p>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> Protocol Operation</h1>
+<h1 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> <a href="#discovery" id="discovery">Discovery</a></h1>
+<p id="rfc.section.6.1.p.1">The first step to DNS Push Update subscription is to discover an appropriate DNS server that supports DNS Push Updates for the desired zone. The client must also determine which TCP port on the server is listening for connections.</p>
+<p/>
+
+<ol>
+  <li>The client begins the discovery by sending a DNS query to the local resolver with record type <a href="#RFC1035">SOA</a> <cite title="NONE">[RFC1035]</cite> for the name of the record it wishes to subscribe.</li>
+  <li>If the SOA record exists, it MUST be returned in the Answer section of the reply. If not, the server SHOULD include the SOA record for the zone of the requested name in the Authority section.</li>
+  <li>If no SOA record is returned, the client then strips off the leading label from the requested name and resends the SOA query until the SOA has been discovered.</li>
+  <li>If an SOA record is never returned, discovery ends here and the zone must be correctly configured to proceed.</li>
+  <li>Once the SOA is known, the client sends a query with type <a href="#RFC2782">SRV</a> <cite title="NONE">[RFC2782]</cite> for the record name <samp>_dns-push._tcp.&lt;zone&gt;</samp> to the SOA master name <samp>(mname)</samp>.</li>
+  <li>A DNS server implementing DNS Push Updates for the zone MUST answer with an SRV record in the Answer section. The SRV <samp>target</samp> contains the name of the DNS server providing DNS Push Updates for the zone. The port number on which to contact the server is in the SRV record <samp>port</samp> field. The DNS server MAY include its address records in the Additional section, however, the address records SHOULD be authenticated before use as referenced in <a href="#tls_name_auth">Section 9.2</a> and described in <a href="#I-D.ietf-dane-srv">[I-D.ietf-dane-srv]</a>.</li>
+  <li>If the DNS server in the SOA does not support DNS Push Updates, it MUST return an <samp>NXDOMAIN RCODE</samp>.</li>
+  <li>The SRV <samp>target</samp> and the SOA <samp>mname</samp> SHOULD be the same. If they are not, the name in the SRV <samp>target</samp> SHOULD be preferred.</li>
+  <li>More than one SRV record may be returned. In this case, the <samp>priority</samp> and <samp>weight</samp> values in the returned SRV records can be used to determine the order in which to contact the servers for subscription requests. As described in <a href="#RFC2782">RFC&#160;2782</a> <cite title="NONE">[RFC2782]</cite>, the server with the lowest <samp>priority</samp> is first contacted. If more than one server has the same <samp>priority</samp>, the <samp>weight</samp> is used as a probability indicator. Higher weights have higher probabilities of being selected. If a server is not reachable or is not willing to accept a subscription request, then a subsequent server is to be contacted.</li>
+</ol>
+
+<p>If a server closes a DNS Push Update subscription connection, the client may wish to repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time.  </p>
+<h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> UPDATE Additions</h1>
+<p id="rfc.section.6.2.p.1">A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</p>
+<h1 id="rfc.section.6.2.1"><a href="#rfc.section.6.2.1">6.2.1.</a> DNS Update Header Format</h1>
+<h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Push Update SUBSCRIBE</h1>
+<h1 id="rfc.section.6.2.3"><a href="#rfc.section.6.2.3">6.2.3.</a> Push Update UNSUBSCRIBE</h1>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a></h1>
+<p id="rfc.section.7.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</p>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a></h1>
+<p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns-push._tcp.&lt;zone&gt;</samp>. It is only applicable for the TCP protocol. IANA should publish this name in the IANA Service Name Registry.</p>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
+<p id="rfc.section.9.p.1">Strict TLS support is mandatory in DNS Push Updates. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
+<h1 id="rfc.section.9.1"><a href="#rfc.section.9.1">9.1.</a> Security Services</h1>
+<p id="rfc.section.9.1.p.1">It is the goal of using TLS to provide the following security services: </p>
+
+<dl>
+  <dt>Confidentiality</dt>
+  <dd style="margin-left: 8">All application-layer communication is encrypted with the goal that no party should be able to decrypt it except the intended receiver.</dd>
+  <dt>Data integrity protection</dt>
+  <dd style="margin-left: 8">Any changes made to the communication in transit are detectable by the receiver.</dd>
+  <dt>Authentication</dt>
+  <dd style="margin-left: 8">An end-point of the TLS communication is authenticated as the intended entity to communicate with.</dd>
+</dl>
+
+<p> </p>
+<p id="rfc.section.9.1.p.2">Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <a href="#I-D.ietf-uta-tls-bcp">TLS Recommendations</a> <cite title="NONE">[I-D.ietf-uta-tls-bcp]</cite> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</p>
+<h1 id="rfc.section.9.2"><a href="#rfc.section.9.2">9.2.</a> <a href="#tls_name_auth" id="tls_name_auth">TLS Name Authentication</a></h1>
+<p id="rfc.section.9.2.p.1">As described in <a href="#discovery">Section 6.1</a>, the client discovers the DNS Push Update server using an SRV lookup for the record name <samp>_dns-push._tcp.&lt;zone&gt;</samp>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate. This procedure is specified in <a href="#I-D.ietf-dane-srv">[I-D.ietf-dane-srv]</a>. This procedure uses the TLS Sever Name Indication (SNI) extension in Section 3 of <a href="#RFC6066">RFC&#160;6066</a> <cite title="NONE">[RFC6066]</cite> to inform the server of the name the client has authenticated through the use of TLSA records.</p>
+<h1 id="rfc.section.9.3"><a href="#rfc.section.9.3">9.3.</a> TLS Compression</h1>
+<p id="rfc.section.9.3.p.1">In order to reduce the chances of compression related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <a href="#I-D.ietf-tls-tls13">TLS 1.3</a> <cite title="NONE">[I-D.ietf-tls-tls13]</cite>, TLS-level compression has been removed completely.</p>
+<h1 id="rfc.section.9.4"><a href="#rfc.section.9.4">9.4.</a> TLS Session Resumption</h1>
+<p id="rfc.section.9.4.p.1">TLS Session Resumption MUST be disabled on DNS Push Update servers. It is not useful to have subscription state cached for long periods of time. It is also not desirable for subscription state to be maintained while the client is not connected.</p>
+<h1 id="rfc.references"><a href="#rfc.references">10.</a> References</h1>
+<h1 id="rfc.references.1"><a href="#rfc.references.1">10.1.</a> Normative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-dane-srv">[I-D.ietf-dane-srv]</b>
+      </td>
+      <td class="top"><a>Finch, T.</a>, <a>Miller, M.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dane-srv-11">Using DNS-Based Authentication of Named Entities (DANE) TLSA Records with SRV Records</a>", Internet-Draft draft-ietf-dane-srv-11, February 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-dnssd-hybrid">[I-D.ietf-dnssd-hybrid]</b>
+      </td>
+      <td class="top"><a>Cheshire, S.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dnssd-hybrid-00">Hybrid Unicast/Multicast DNS-Based Service Discovery</a>", Internet-Draft draft-ietf-dnssd-hybrid-00, November 2014.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b>
+      </td>
+      <td class="top"><a>Dierks, T.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-04">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-04, January 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-uta-tls-bcp">[I-D.ietf-uta-tls-bcp]</b>
+      </td>
+      <td class="top"><a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/draft-ietf-uta-tls-bcp-11">Recommendations for Secure Use of TLS and DTLS</a>", Internet-Draft draft-ietf-uta-tls-bcp-11, February 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC0768">[RFC0768]</b>
+      </td>
+      <td class="top"><a title="University of Southern California (USC)/Information Sciences Institute">Postel, J.</a>, "<a href="http://tools.ietf.org/html/rfc768">User Datagram Protocol</a>", STD 6, RFC 768, August 1980.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC0793">[RFC0793]</b>
+      </td>
+      <td class="top"><a title="University of Southern California (USC)/Information Sciences Institute">Postel, J.</a>, "<a href="http://tools.ietf.org/html/rfc793">Transmission Control Protocol</a>", STD 7, RFC 793, September 1981.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC1035">[RFC1035]</b>
+      </td>
+      <td class="top"><a title="USC/ISI">Mockapetris, P.</a>, "<a href="http://tools.ietf.org/html/rfc1035">Domain names - implementation and specification</a>", STD 13, RFC 1035, November 1987.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC1123">[RFC1123]</b>
+      </td>
+      <td class="top"><a href="mailto:Braden@ISI.EDU" title="University of Southern California (USC), Information Sciences Institute">Braden, R.</a>, "<a href="http://tools.ietf.org/html/rfc1123">Requirements for Internet Hosts - Application and Support</a>", STD 3, RFC 1123, October 1989.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2119">[RFC2119]</b>
+      </td>
+      <td class="top"><a href="mailto:sob@harvard.edu" title="Harvard University">Bradner, S.</a>, "<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, March 1997.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2136">[RFC2136]</b>
+      </td>
+      <td class="top"><a href="mailto:paul@vix.com" title="Internet Software Consortium">Vixie, P.</a>, <a href="mailto:set@thumper.bellcore.com" title="Bellcore">Thomson, S.</a>, <a href="mailto:yakov@cisco.com" title="Cisco Systems">Rekhter, Y.</a> and <a href="mailto:bound@zk3.dec.com" title="Digital Equipment Corp.">J. Bound</a>, "<a href="http://tools.ietf.org/html/rfc2136">Dynamic Updates in the Domain Name System (DNS UPDATE)</a>", RFC 2136, April 1997.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC2782">[RFC2782]</b>
+      </td>
+      <td class="top"><a href="mailto:arnt@troll.no" title="Troll Tech">Gulbrandsen, A.</a>, <a title="Internet Software Consortium">Vixie, P.</a> and <a href="mailto:levone@microsoft.com" title="Microsoft Corporation">L. Esibov</a>, "<a href="http://tools.ietf.org/html/rfc2782">A DNS RR for specifying the location of services (DNS SRV)</a>", RFC 2782, February 2000.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5246">[RFC5246]</b>
+      </td>
+      <td class="top"><a>Dierks, T.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/rfc5246">The Transport Layer Security (TLS) Protocol Version 1.2</a>", RFC 5246, August 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5966">[RFC5966]</b>
+      </td>
+      <td class="top"><a>Bellis, R.</a>, "<a href="http://tools.ietf.org/html/rfc5966">DNS Transport over TCP - Implementation Requirements</a>", RFC 5966, August 2010.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6066">[RFC6066]</b>
+      </td>
+      <td class="top"><a>Eastlake, D.</a>, "<a href="http://tools.ietf.org/html/rfc6066">Transport Layer Security (TLS) Extensions: Extension Definitions</a>", RFC 6066, January 2011.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC6762">[RFC6762]</b>
+      </td>
+      <td class="top"><a>Cheshire, S.</a> and <a>M. Krochmal</a>, "<a href="http://tools.ietf.org/html/rfc6762">Multicast DNS</a>", RFC 6762, February 2013.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.references.2"><a href="#rfc.references.2">10.2.</a> Informative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</b>
+      </td>
+      <td class="top"><a href="mailto:weddy@grc.nasa.gov" title="Verizon Federal Network Systems">Eddy, W.</a>, "<a>Defenses Against TCP SYN Flooding Attacks</a>", The Internet Protocol Journal, Cisco Systems, Volume 9, Number 4, December 2006.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4287">[RFC4287]</b>
+      </td>
+      <td class="top"><a href="mailto:mnot@pobox.com">Nottingham, M.</a> and <a href="mailto:rfsayre@boswijck.com">R. Sayre</a>, "<a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication Format</a>", RFC 4287, December 2005.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="XEP-0060">[XEP-0060]</b>
+      </td>
+      <td class="top"><a>Millard, P.</a>, <a href="mailto:stpeter@jabber.org">Saint-Andre, P.</a> and <a href="mailto:ralphm@ik.nu">R. Meijer</a>, "<a>Publish-Subscribe</a>", XSF XEP 0060, July 2010.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.authors">
+  <a href="#rfc.authors">Authors' Addresses</a>
+</h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Tom Pusateri</span> 
+	  <span class="n hidden">
+		<span class="family-name">Pusateri</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Seeking affiliation</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality">Hilton Head Island</span>,  
+		<span class="region">SC</span> 
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline">USA</span>
+	</span>
+	<span class="vcardline">Phone: +1 843 473 7394</span>
+
+<span class="vcardline">EMail: <a href="mailto:pusateri@bangj.com">pusateri@bangj.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Stuart Cheshire</span> 
+	  <span class="n hidden">
+		<span class="family-name">Cheshire</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Apple Inc.</span>
+	<span class="adr">
+	  <span class="vcardline">1 Infinite Loop</span>
+
+	  <span class="vcardline">
+		<span class="locality">Cupertino</span>,  
+		<span class="region">CA</span> 
+		<span class="code">95014</span>
+	  </span>
+	  <span class="country-name vcardline">USA</span>
+	</span>
+	<span class="vcardline">Phone: +1 408 974 3207</span>
+
+<span class="vcardline">EMail: <a href="mailto:cheshire@apple.com">cheshire@apple.com</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>
