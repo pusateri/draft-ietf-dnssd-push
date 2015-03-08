@@ -384,8 +384,12 @@
 <link href="#rfc.section.6.1" rel="Chapter" title="6.1 Discovery"/>
 <link href="#rfc.section.6.2" rel="Chapter" title="6.2 UPDATE Additions"/>
 <link href="#rfc.section.6.2.1" rel="Chapter" title="6.2.1 DNS Update Header Format"/>
-<link href="#rfc.section.6.2.2" rel="Chapter" title="6.2.2 Push Update SUBSCRIBE and UNSUBSCRIBE"/>
-<link href="#rfc.section.6.2.3" rel="Chapter" title="6.2.3 Push Update RCODES"/>
+<link href="#rfc.section.6.2.2" rel="Chapter" title="6.2.2 Zone Section"/>
+<link href="#rfc.section.6.2.3" rel="Chapter" title="6.2.3 Prerequisite Section"/>
+<link href="#rfc.section.6.2.4" rel="Chapter" title="6.2.4 Update Section"/>
+<link href="#rfc.section.6.2.5" rel="Chapter" title="6.2.5 Additional Data Section"/>
+<link href="#rfc.section.6.2.6" rel="Chapter" title="6.2.6 Push Update SUBSCRIBE and UNSUBSCRIBE"/>
+<link href="#rfc.section.6.2.7" rel="Chapter" title="6.2.7 Push Update RCODES"/>
 <link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements"/>
 <link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations"/>
 <link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
@@ -404,7 +408,7 @@
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2015-3-7" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-3-8" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Updates." />
   <meta name="description" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Updates." />
 
@@ -428,12 +432,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 8, 2015</td>
+  <td class="left">Expires: September 9, 2015</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">March 7, 2015</td>
+  <td class="right">March 8, 2015</td>
 </tr>
 
     	
@@ -453,7 +457,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 8, 2015.</p>
+<p>This Internet-Draft will expire on September 9, 2015.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -475,8 +479,12 @@
 <ul><li>6.1.   <a href="#rfc.section.6.1">Discovery</a></li>
 <li>6.2.   <a href="#rfc.section.6.2">UPDATE Additions</a></li>
 <ul><li>6.2.1.   <a href="#rfc.section.6.2.1">DNS Update Header Format</a></li>
-<li>6.2.2.   <a href="#rfc.section.6.2.2">Push Update SUBSCRIBE and UNSUBSCRIBE</a></li>
-<li>6.2.3.   <a href="#rfc.section.6.2.3">Push Update RCODES</a></li>
+<li>6.2.2.   <a href="#rfc.section.6.2.2">Zone Section</a></li>
+<li>6.2.3.   <a href="#rfc.section.6.2.3">Prerequisite Section</a></li>
+<li>6.2.4.   <a href="#rfc.section.6.2.4">Update Section</a></li>
+<li>6.2.5.   <a href="#rfc.section.6.2.5">Additional Data Section</a></li>
+<li>6.2.6.   <a href="#rfc.section.6.2.6">Push Update SUBSCRIBE and UNSUBSCRIBE</a></li>
+<li>6.2.7.   <a href="#rfc.section.6.2.7">Push Update RCODES</a></li>
 </ul></ul><li>7.   <a href="#rfc.section.7">Acknowledgements</a></li>
 <li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
 <li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
@@ -532,9 +540,9 @@
 <h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> UPDATE Additions</h1>
 <p id="rfc.section.6.2.p.1">A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</p>
 <h1 id="rfc.section.6.2.1"><a href="#rfc.section.6.2.1">6.2.1.</a> DNS Update Header Format</h1>
+<p id="rfc.section.6.2.1.p.1">The following figure shows the augmented DNS header UPDATE format including two new bit definitions.</p>
 <div id="rfc.figure.1"/>
 <div id="update_packet_header"/>
-<p>The following figure shows the augmented DNS header UPDATE format including two new bit definitions.</p>
 <pre>
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -553,10 +561,21 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
                </pre>
 <p class="figure">Figure 1</p>
-<h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Push Update SUBSCRIBE and UNSUBSCRIBE</h1>
-<p id="rfc.section.6.2.2.p.1">The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</p>
-<h1 id="rfc.section.6.2.3"><a href="#rfc.section.6.2.3">6.2.3.</a> Push Update RCODES</h1>
-<p id="rfc.section.6.2.3.p.1">If the server is willing to accept the SUBSCRIBE request from the client, it returns an UPDATE response with the RCODE set to NOERROR. Otherwise, an appropriate error code MUST be returned. The following table describes when each response error code is appropriate for a SUBSCRIBE or UNSUBSCRIBE request.</p>
+<h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Zone Section</h1>
+<p id="rfc.section.6.2.2.p.1">As specified in Section 2.3 of <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>, the Zone Section contains exactly one resource record of type SOA with the name of the zone for which all records contained in the Update Section MUST be included. This is the same zone that is discovered in <a href="#discovery">Section 6.1</a>.</p>
+<h1 id="rfc.section.6.2.3"><a href="#rfc.section.6.2.3">6.2.3.</a> Prerequisite Section</h1>
+<p id="rfc.section.6.2.3.p.1">The Prerequesite Section MUST be empty. The client is receiving push notifications from an authoritative server and prerequisites are not applicable. The ZOCOUNT MUST be zero.</p>
+<h1 id="rfc.section.6.2.4"><a href="#rfc.section.6.2.4">6.2.4.</a> Update Section</h1>
+<p id="rfc.section.6.2.4.p.1">The server will send all matching records for a SUBSCRIBE to the requesting client in the Update Section until an UNSUBSCRIBE is received or the connection is closed. If the resource record CLASS is ANY, the server is informing the client that the record has been deleted. If the type is ANY, all records matching the resource record name are deleted. If the TYPE is not ANY, only records of that TYPE are deleted. If the CLASS matches the CLASS of the SOA record in the Zone Section, the server is informing the client that the record has been added. A TYPE of ANY is not allowed for an add notification.</p>
+<p id="rfc.section.6.2.4.p.2">Client handling of the Update Section is described below in <a href="#subscribe">Section 6.2.6</a>.</p>
+<h1 id="rfc.section.6.2.5"><a href="#rfc.section.6.2.5">6.2.5.</a> Additional Data Section</h1>
+<p id="rfc.section.6.2.5.p.1">The Additional Data Section MUST be empty. The ADCOUNT MUST be zero.</p>
+<h1 id="rfc.section.6.2.6"><a href="#rfc.section.6.2.6">6.2.6.</a> <a href="#subscribe" id="subscribe">Push Update SUBSCRIBE and UNSUBSCRIBE</a></h1>
+<p id="rfc.section.6.2.6.p.1">The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</p>
+<p id="rfc.section.6.2.6.p.2">The Update Section contains the resource records for which the client requests a SUBSCRIBE or UNSUBSCRIBE. The number of records in the Update Section is not limited. However, all of the records MUST fall within the Zone in the Zone Section. The server MUST accept or reject SUBSCRIBE or UNSUBSCRIBE requests for all records in the Update Section with a single response error code. Therefore, it is RECOMMENDED that UPCOUNT is set to one for client requests.</p>
+<p id="rfc.section.6.2.6.p.3">The client MAY SUBSCRIBE to records that are unknown to the server at the time of the request. The server MUST accept these requests and send Push Updates when matches are found in the future.</p>
+<h1 id="rfc.section.6.2.7"><a href="#rfc.section.6.2.7">6.2.7.</a> Push Update RCODES</h1>
+<p id="rfc.section.6.2.7.p.1">If the server is willing to accept the SUBSCRIBE request from the client, it returns an UPDATE response with the RCODE set to NOERROR. Otherwise, an appropriate error code MUST be returned. The following table describes when each response error code is appropriate for a SUBSCRIBE or UNSUBSCRIBE request.</p>
 <div id="rfc.table.1"/>
 <div id="table_update_rcodes"/>
 <table cellpadding="3" cellspacing="0" class="tt full center">
@@ -577,12 +596,12 @@
     <tr>
       <td class="left">FORMERR</td>
       <td class="center">1</td>
-      <td class="left"/>
+      <td class="left">Server failed to process request due to a format error</td>
     </tr>
     <tr>
       <td class="left">SERVFAIL</td>
       <td class="center">2</td>
-      <td class="left"/>
+      <td class="left">Server failed to process request due to an internal error</td>
     </tr>
     <tr>
       <td class="left">NXDOMAIN</td>
@@ -592,37 +611,37 @@
     <tr>
       <td class="left">NOTIMP</td>
       <td class="center">4</td>
-      <td class="left"/>
+      <td class="left">Server does not implement DNS Push Updates</td>
     </tr>
     <tr>
       <td class="left">REFUSED</td>
       <td class="center">5</td>
-      <td class="left"/>
+      <td class="left">Server refuses to process request for policy or security reasons</td>
     </tr>
     <tr>
       <td class="left">YXDOMAIN</td>
       <td class="center">6</td>
-      <td class="left"/>
+      <td class="left">NOT USED</td>
     </tr>
     <tr>
       <td class="left">YXRRSET</td>
       <td class="center">7</td>
-      <td class="left"/>
+      <td class="left">NOT USED</td>
     </tr>
     <tr>
       <td class="left">NXRRSET</td>
       <td class="center">8</td>
-      <td class="left"/>
+      <td class="left">NOT USED</td>
     </tr>
     <tr>
       <td class="left">NOTAUTH</td>
       <td class="center">9</td>
-      <td class="left"/>
+      <td class="left">Server not authoritative for the zone in the Zone Section</td>
     </tr>
     <tr>
       <td class="left">NOTZONE</td>
       <td class="center">10</td>
-      <td class="left"/>
+      <td class="left">Zone in the Update Section not within zone in Zone Section</td>
     </tr>
   </tbody>
 </table>

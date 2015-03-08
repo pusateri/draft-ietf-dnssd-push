@@ -202,8 +202,8 @@
      <section title="UPDATE Additions">
        <t>A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</t>
        <section title="DNS Update Header Format">
+         <t>The following figure shows the augmented DNS header UPDATE format including two new bit definitions.</t>
          <figure align="center" anchor="update_packet_header">
-           <preamble>The following figure shows the augmented DNS header UPDATE format including two new bit definitions.</preamble>
 
            <artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
@@ -225,8 +225,23 @@
          </figure>
          
        </section>
-       <section title="Push Update SUBSCRIBE and UNSUBSCRIBE">
+       <section title="Zone Section">
+         <t>As specified in Section 2.3 of <xref target="RFC2136">RFC&nbsp;2136</xref>, the Zone Section contains exactly one resource record of type SOA with the name of the zone for which all records contained in the Update Section MUST be included. This is the same zone that is discovered in <xref target="discovery"/>.</t>
+       </section>
+       <section title="Prerequisite Section">
+         <t>The Prerequesite Section MUST be empty. The client is receiving push notifications from an authoritative server and prerequisites are not applicable. The ZOCOUNT MUST be zero.</t>
+       </section>
+       <section title="Update Section">
+         <t>The server will send all matching records for a SUBSCRIBE to the requesting client in the Update Section until an UNSUBSCRIBE is received or the connection is closed. If the resource record CLASS is ANY, the server is informing the client that the record has been deleted. If the type is ANY, all records matching the resource record name are deleted. If the TYPE is not ANY, only records of that TYPE are deleted. If the CLASS matches the CLASS of the SOA record in the Zone Section, the server is informing the client that the record has been added. A TYPE of ANY is not allowed for an add notification.</t>
+         <t>Client handling of the Update Section is described below in <xref target="subscribe"/>.</t>
+       </section>
+       <section title="Additional Data Section">
+         <t>The Additional Data Section MUST be empty. The ADCOUNT MUST be zero.</t>
+       </section>
+       <section anchor="subscribe" title="Push Update SUBSCRIBE and UNSUBSCRIBE">
          <t>The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <xref target="RFC2136">RFC&nbsp;2136</xref>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</t>
+         <t>The Update Section contains the resource records for which the client requests a SUBSCRIBE or UNSUBSCRIBE. The number of records in the Update Section is not limited. However, all of the records MUST fall within the Zone in the Zone Section. The server MUST accept or reject SUBSCRIBE or UNSUBSCRIBE requests for all records in the Update Section with a single response error code. Therefore, it is RECOMMENDED that UPCOUNT is set to one for client requests.</t>
+         <t>The client MAY SUBSCRIBE to records that are unknown to the server at the time of the request. The server MUST accept these requests and send Push Updates when matches are found in the future.</t>
        </section>
        <section title="Push Update RCODES">
          <t>If the server is willing to accept the SUBSCRIBE request from the client, it returns an UPDATE response with the RCODE set to NOERROR. Otherwise, an appropriate error code MUST be returned. The following table describes when each response error code is appropriate for a SUBSCRIBE or UNSUBSCRIBE request.</t>
@@ -235,16 +250,16 @@
          <ttcol align="center">Value</ttcol>
          <ttcol align="left">Description</ttcol>
          <c>NOERROR</c><c>0</c><c>SUBSCRIBE or UNSUBSCRIBE successful</c>
-         <c>FORMERR</c><c>1</c><c></c>
-         <c>SERVFAIL</c><c>2</c><c></c>
+         <c>FORMERR</c><c>1</c><c>Server failed to process request due to a format error</c>
+         <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to an internal error</c>
          <c>NXDOMAIN</c><c>3</c><c></c>
-         <c>NOTIMP</c><c>4</c><c></c>
-         <c>REFUSED</c><c>5</c><c></c>
-         <c>YXDOMAIN</c><c>6</c><c></c>
-         <c>YXRRSET</c><c>7</c><c></c>
-         <c>NXRRSET</c><c>8</c><c></c>
-         <c>NOTAUTH</c><c>9</c><c></c>
-         <c>NOTZONE</c><c>10</c><c></c>
+         <c>NOTIMP</c><c>4</c><c>Server does not implement DNS Push Updates</c>
+         <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons</c>
+         <c>YXDOMAIN</c><c>6</c><c>NOT USED</c>
+         <c>YXRRSET</c><c>7</c><c>NOT USED</c>
+         <c>NXRRSET</c><c>8</c><c>NOT USED</c>
+         <c>NOTAUTH</c><c>9</c><c>Server not authoritative for the zone in the Zone Section</c>
+         <c>NOTZONE</c><c>10</c><c>Zone in the Update Section not within zone in Zone Section</c>
          </texttable>
        </section>
      </section>

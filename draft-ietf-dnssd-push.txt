@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                       Seeking affiliation
 Intended status: Standards Track                             S. Cheshire
-Expires: September 8, 2015                                    Apple Inc.
-                                                           March 7, 2015
+Expires: September 9, 2015                                    Apple Inc.
+                                                           March 8, 2015
 
 
                             DNS Push Updates
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 8, 2015.
+   This Internet-Draft will expire on September 9, 2015.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire     Expires September 8, 2015               [Page 1]
+Pusateri & Cheshire     Expires September 9, 2015               [Page 1]
 
 Internet-Draft              DNS Push Updates                  March 2015
 
@@ -65,7 +65,7 @@ Internet-Draft              DNS Push Updates                  March 2015
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   2
+     1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
    2.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   3
    4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   4
@@ -73,20 +73,24 @@ Table of Contents
    6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   5
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   5
      6.2.  UPDATE Additions  . . . . . . . . . . . . . . . . . . . .   6
-       6.2.1.  DNS Update Header Format  . . . . . . . . . . . . . .   6
-       6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE . . . . . . . .   7
-       6.2.3.  Push Update RCODES  . . . . . . . . . . . . . . . . .   7
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-     9.1.  Security Services . . . . . . . . . . . . . . . . . . . .   8
-     9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .   9
-     9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .   9
-     9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .   9
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .   9
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
+       6.2.1.  DNS Update Header Format  . . . . . . . . . . . . . .   7
+       6.2.2.  Zone Section  . . . . . . . . . . . . . . . . . . . .   7
+       6.2.3.  Prerequisite Section  . . . . . . . . . . . . . . . .   7
+       6.2.4.  Update Section  . . . . . . . . . . . . . . . . . . .   7
+       6.2.5.  Additional Data Section . . . . . . . . . . . . . . .   8
+       6.2.6.  Push Update SUBSCRIBE and UNSUBSCRIBE . . . . . . . .   8
+       6.2.7.  Push Update RCODES  . . . . . . . . . . . . . . . . .   8
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   9
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
+     9.1.  Security Services . . . . . . . . . . . . . . . . . . . .   9
+     9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  10
+     9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  10
+     9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  10
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  11
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
 
 1.  Introduction
 
@@ -101,18 +105,20 @@ Table of Contents
    record change notifications.  Familiarity with the DNS protocol and
    DNS packet formats is assumed.
 
+
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 2]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
 1.1.  Requirements Language
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 2]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
 
 2.  Motivation
 
@@ -156,20 +162,20 @@ Internet-Draft              DNS Push Updates                  March 2015
    resource records and resource record sets as they are discovered.
    The client first must subscribe to an RR or RRset with a server that
    supports DNS Push Updates.  When the client loses interest in updates
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 3]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
    to these records, it unsubscribes with the server.  The DNS Push
    Update server for a zone MAY be a slave server, master server, or
    primary master server as defined in RFC 2136 [RFC2136].
 
    DNS Push Update clients are NOT required to implement DNS Update
    Prerequisite processing.  Prerequisites are used to perform tentative
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 3]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    atomic test-and-set type operations on the server, and that concept
    has no application when it comes to an authoritative server telling a
    client of changes to DNS records.
@@ -211,6 +217,15 @@ Internet-Draft              DNS Push Updates                  March 2015
    Transport Layer Security (TLS) [RFC5246] is well understood and
    deployed across many protocols running over TCP.  It is designed to
    prevent eavesdropping, tampering, or message forgery.  TLS is
+
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 4]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
    REQUIRED for every connection between a client subscriber and server
    in this protocol specification.
 
@@ -218,14 +233,6 @@ Internet-Draft              DNS Push Updates                  March 2015
    concerns of state overload at the server through anonymous
    subscriptions.  All subscribers are guaranteed to be reachable by the
    server.  Additional security measures such as authentication during
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 4]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    TLS negotiation MAY also be employed to increase the trust
    relationship between client and server.  Because TCP SYN flooding
    attacks are possible with any protocol over TCP, implementors are
@@ -266,21 +273,21 @@ Internet-Draft              DNS Push Updates                  March 2015
        record for the zone of the requested name in the Authority
        section.
 
+
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 5]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
    3.  If no SOA record is returned, the client then strips off the
        leading label from the requested name and resends the SOA query
        until the SOA has been discovered.
 
    4.  If an SOA record is never returned, discovery ends here and the
        zone must be correctly configured to proceed.
-
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 5]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
 
    5.  Once the SOA is known, the client sends a query with type SRV
        [RFC2782] for the record name "_dns-push._tcp.<zone>" to the SOA
@@ -322,24 +329,22 @@ Internet-Draft              DNS Push Updates                  March 2015
    sending a subscription request to the server.  The server has the
    option to accept or reject the subscription request.  If accepted,
    the subscription request will stay in effect until the client revokes
+
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 6]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
    the subscription or until the connection between the client and the
    server is closed.
 
 6.2.1.  DNS Update Header Format
 
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 6]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
-     The following figure shows the augmented DNS header UPDATE format
-                    including two new bit definitions.
+   The following figure shows the augmented DNS header UPDATE format
+   including two new bit definitions.
 
                                              1  1  1  1  1  1
                0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -359,7 +364,49 @@ Internet-Draft              DNS Push Updates                  March 2015
 
                                  Figure 1
 
-6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE
+6.2.2.  Zone Section
+
+   As specified in Section 2.3 of RFC 2136 [RFC2136], the Zone
+   Section contains exactly one resource record of type SOA with the
+   name of the zone for which all records contained in the Update
+   Section MUST be included.  This is the same zone that is discovered
+   in Section 6.1.
+
+6.2.3.  Prerequisite Section
+
+   The Prerequesite Section MUST be empty.  The client is receiving push
+   notifications from an authoritative server and prerequisites are not
+   applicable.  The ZOCOUNT MUST be zero.
+
+6.2.4.  Update Section
+
+   The server will send all matching records for a SUBSCRIBE to the
+   requesting client in the Update Section until an UNSUBSCRIBE is
+   received or the connection is closed.  If the resource record CLASS
+   is ANY, the server is informing the client that the record has been
+   deleted.  If the type is ANY, all records matching the resource
+   record name are deleted.  If the TYPE is not ANY, only records of
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 7]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
+   that TYPE are deleted.  If the CLASS matches the CLASS of the SOA
+   record in the Zone Section, the server is informing the client that
+   the record has been added.  A TYPE of ANY is not allowed for an add
+   notification.
+
+   Client handling of the Update Section is described below in
+   Section 6.2.6.
+
+6.2.5.  Additional Data Section
+
+   The Additional Data Section MUST be empty.  The ADCOUNT MUST be zero.
+
+6.2.6.  Push Update SUBSCRIBE and UNSUBSCRIBE
 
    The DNS Update header reserves seven Z bits for future use.  This
    specification defines the Z bit in position 5 for client setup (CS).
@@ -369,7 +416,19 @@ Internet-Draft              DNS Push Updates                  March 2015
    is indicated by setting the SS bit while an UNSUBSCRIBE is indicated
    by clearing the SS bit.
 
-6.2.3.  Push Update RCODES
+   The Update Section contains the resource records for which the client
+   requests a SUBSCRIBE or UNSUBSCRIBE.  The number of records in the
+   Update Section is not limited.  However, all of the records MUST fall
+   within the Zone in the Zone Section.  The server MUST accept or
+   reject SUBSCRIBE or UNSUBSCRIBE requests for all records in the
+   Update Section with a single response error code.  Therefore, it is
+   RECOMMENDED that UPCOUNT is set to one for client requests.
+
+   The client MAY SUBSCRIBE to records that are unknown to the server at
+   the time of the request.  The server MUST accept these requests and
+   send Push Updates when matches are found in the future.
+
+6.2.7.  Push Update RCODES
 
    If the server is willing to accept the SUBSCRIBE request from the
    client, it returns an UPDATE response with the RCODE set to NOERROR.
@@ -386,29 +445,31 @@ Internet-Draft              DNS Push Updates                  March 2015
 
 
 
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 7]
+Pusateri & Cheshire     Expires September 9, 2015               [Page 8]
 
 Internet-Draft              DNS Push Updates                  March 2015
 
 
-        +-----------+-------+-------------------------------------+
-        | Mneumonic | Value | Description                         |
-        +-----------+-------+-------------------------------------+
-        | NOERROR   |   0   | SUBSCRIBE or UNSUBSCRIBE successful |
-        | FORMERR   |   1   |                                     |
-        | SERVFAIL  |   2   |                                     |
-        | NXDOMAIN  |   3   |                                     |
-        | NOTIMP    |   4   |                                     |
-        | REFUSED   |   5   |                                     |
-        | YXDOMAIN  |   6   |                                     |
-        | YXRRSET   |   7   |                                     |
-        | NXRRSET   |   8   |                                     |
-        | NOTAUTH   |   9   |                                     |
-        | NOTZONE   |   10  |                                     |
-        +-----------+-------+-------------------------------------+
+   +-----------+-------+-----------------------------------------------+
+   | Mneumonic | Value | Description                                   |
+   +-----------+-------+-----------------------------------------------+
+   | NOERROR   |   0   | SUBSCRIBE or UNSUBSCRIBE successful           |
+   | FORMERR   |   1   | Server failed to process request due to a     |
+   |           |       | format error                                  |
+   | SERVFAIL  |   2   | Server failed to process request due to an    |
+   |           |       | internal error                                |
+   | NXDOMAIN  |   3   |                                               |
+   | NOTIMP    |   4   | Server does not implement DNS Push Updates    |
+   | REFUSED   |   5   | Server refuses to process request for policy  |
+   |           |       | or security reasons                           |
+   | YXDOMAIN  |   6   | NOT USED                                      |
+   | YXRRSET   |   7   | NOT USED                                      |
+   | NXRRSET   |   8   | NOT USED                                      |
+   | NOTAUTH   |   9   | Server not authoritative for the zone in the  |
+   |           |       | Zone Section                                  |
+   | NOTZONE   |   10  | Zone in the Update Section not within zone in |
+   |           |       | Zone Section                                  |
+   +-----------+-------+-----------------------------------------------+
 
                           Table 1: Response codes
 
@@ -435,20 +496,22 @@ Internet-Draft              DNS Push Updates                  March 2015
    It is the goal of using TLS to provide the following security
    services:
 
+
+
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015               [Page 9]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
    Confidentiality  All application-layer communication is encrypted
       with the goal that no party should be able to decrypt it except
       the intended receiver.
 
    Data integrity protection  Any changes made to the communication in
       transit are detectable by the receiver.
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 8]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
 
    Authentication  An end-point of the TLS communication is
       authenticated as the intended entity to communicate with.
@@ -488,6 +551,17 @@ Internet-Draft              DNS Push Updates                  March 2015
 
 10.  References
 
+
+
+
+
+
+
+Pusateri & Cheshire     Expires September 9, 2015              [Page 10]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
 10.1.  Normative References
 
    [I-D.ietf-dane-srv]
@@ -495,16 +569,6 @@ Internet-Draft              DNS Push Updates                  March 2015
               Based Authentication of Named Entities (DANE) TLSA Records
               with SRV Records", draft-ietf-dane-srv-11 (work in
               progress), February 2015.
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 9]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
 
    [I-D.ietf-dnssd-hybrid]
               Cheshire, S., "Hybrid Unicast/Multicast DNS-Based Service
@@ -547,20 +611,18 @@ Internet-Draft              DNS Push Updates                  March 2015
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246, August 2008.
 
+
+
+Pusateri & Cheshire     Expires September 9, 2015              [Page 11]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
+
    [RFC5966]  Bellis, R., "DNS Transport over TCP - Implementation
               Requirements", RFC 5966, August 2010.
 
    [RFC6066]  Eastlake, D., "Transport Layer Security (TLS) Extensions:
               Extension Definitions", RFC 6066, January 2011.
-
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015              [Page 10]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               February 2013.
@@ -607,10 +669,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015              [Page 11]
+Pusateri & Cheshire     Expires September 9, 2015              [Page 12]
