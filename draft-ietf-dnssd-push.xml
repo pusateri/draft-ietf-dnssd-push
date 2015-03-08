@@ -6,6 +6,7 @@
     There has to be one entity for each item to be referenced. 
     An alternate method (rfc include) is described in the references. -->
 
+<!ENTITY RFC0768 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.0768.xml">
 <!ENTITY RFC0793 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.0793.xml">
 <!ENTITY RFC1035 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1035.xml">
 <!ENTITY RFC1123 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1123.xml">
@@ -61,7 +62,7 @@
    <!-- The abbreviated title is used in the page header - it is only necessary if the 
         full title is longer than 39 characters -->
 
-   <title abbrev="DNS Push">DNS Push</title>
+   <title abbrev="DNS Push Updates">DNS Push Updates</title>
 
    <!-- add 'role="editor"' below for the editors if appropriate -->
 
@@ -146,15 +147,13 @@
         keywords will be used for the search engine. -->
 
    <abstract>
-     <t>The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Notifications.</t>
+     <t>The Domain Name System (DNS) was designed to efficiently return matching records for queries of data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document attempts to define a mechanism for a client to be notified of such changes to DNS records called DNS Push Updates.</t>
    </abstract>
  </front>
 
  <middle>
    <section title="Introduction">
-     <t>DNS records may be updated dynamically through either the dynamic DNS update mechanism specified in <xref
-     target="RFC2136">RFC&nbsp;2136</xref> or in the link-local case through asynchronous multicast DNS responses as described in <xref
-     target="RFC6762">RFC&nbsp;6762</xref>. This document specifies a protocol for interested unicast DNS clients to subscribe to DNS servers to receive new, changed, and withdrawn DNS record notifications. It is immediately relevant in the case of DNS service discovery but is not limited to that use case and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed.</t>
+     <t>DNS records may be updated dynamically through either the dynamic DNS update mechanism specified in <xref target="RFC2136">RFC&nbsp;2136</xref> or in the link-local case through asynchronous multicast DNS responses as described in <xref target="RFC6762">RFC&nbsp;6762</xref>. This document specifies a protocol for interested unicast DNS clients to subscribe to DNS servers to receive new, changed, and withdrawn DNS record notifications. It is immediately relevant in the case of DNS service discovery but is not limited to that use case and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed.</t>
 
      <section title="Requirements Language">
        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -169,12 +168,13 @@
      <t>Immediate uses include updates to PTR, SRV, and TXT records when using unicast DNS for service discovery. This allows new services to be quickly discovered and changed parameters to be sent directly to interested parties.</t>
      <t>Multicast DNS always listens on a well known link-local IP multicast group and new services and updates are sent for all group members to receive. Therefore, this protocol is not needed in a strict multicast DNS environment. However, when service discovery is used across a wide area network over unicast DNS or in a <xref target="I-D.ietf-dnssd-hybrid">hybrid unicast/multicast proxy</xref>, it provides a mechanism for clients to learn about DNS record changes in a timely manner without polling.</t>
    </section>
+   <section title="Overview">
+   </section>
    <section title="Transport">
-     <t>Initial implementations of long-lived queries used a connectionless transport. Reliability, robustness, and return reachability were built into the initial version of the protocol due to concerns over scalability of connection oriented transport protocols. Those concerns have been alleviated by large scale deployments of connection oriented services, i.e. existence proofs. Therefore, the LLQ protocol can be greatly simplified by assuming it is running over a connection oriented protocol. This specification makes the use of Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> REQUIRED. The requirement in Section 6.1.3.2 of <xref target="RFC1123">RFC&nbsp;1123</xref> that states a query MUST be sent over UDP first has been relaxed in Section 4 of <xref target="RFC5966">RFC&nbsp;5966</xref>. Therefore, it is now acceptable to define a TCP-only protocol for DNS.</t>        
-     <t>Either end of the connection can terminate all of its subscriptions by simply closing the connection. No DNS protocol message passing is needed. The lifetime of the subscriptions are tied to the lifetime of the transport protocol connection. Individual subscriptions may be dropped by request. If a client closes the connection, it is signaling that it is no longer interested in receiving updates to any of the records it has subscribed. It is informing the server that the server may release all state information it has been keeping with regards to this client. This may occur because the client computer has been disconnected from the network, has gone to sleep, or the application requiring the records has terminated. If a server closes the connection, it is informing the client that it can no longer provide updates for the subscribed records. This may occur because the server application software or operating system is restarting, the application terminated unexpectedly, the server is undergoing maintenance procedures, or the server is overloaded and can no longer provide the information to all the clients that wish to receive it. The client can try to re-subscribe at a later time or to another DNS server supporting long-lived queries for the zone.</t>
+     <t>Implementations of DNS UPDATE MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol according to Section 2.1 of <xref target="RFC2136">RFC&nbsp;2136</xref>. However, the DNS Push Update protocol may be simplified if running over TCP because explicit teardown of subscription state is not needed. Therefore, this specification makes the use of TCP REQUIRED. The requirement in Section 6.1.3.2 of <xref target="RFC1123">RFC&nbsp;1123</xref> that states a query MUST be sent over UDP first has been relaxed in Section 4 of <xref target="RFC5966">RFC&nbsp;5966</xref>. Therefore, it is now permissible to define a TCP-only protocol for DNS.</t>        
+     <t>Either end of the TCP connection can terminate all of its subscriptions by simply closing the connection. No DNS protocol message passing is needed. The lifetime of the subscriptions are tied to the lifetime of the transport protocol connection. Individual subscriptions may be dropped by request. If a client closes the connection, it is signaling that it is no longer interested in receiving updates to any of the records it has subscribed. It is informing the server that the server may release all state information it has been keeping with regards to this client. This may occur because the client computer has been disconnected from the network, has gone to sleep, or the application requiring the records has terminated. If a server closes the connection, it is informing the client that it can no longer provide updates for the subscribed records. This may occur because the server application software or operating system is restarting, the application terminated unexpectedly, the server is undergoing maintenance procedures, or the server is overloaded and can no longer provide the information to all the clients that wish to receive it. The client can try to re-subscribe at a later time or to another DNS server supporting DNS Push Updates for the zone.</t>
        <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification.</t>
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server. Additional security measures such as authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementors are encouraged to use well known end host and network based countermeasures, see <xref target="IPJ.9-4-TCPSYN"/>.</t>
-     <t>Event acknowledgements are not necessary while running over TCP. Reliability is ensured by the transport protocol, simplifying the LLQ protocol design.</t>
    </section>
    <section title="State Considerations">
      <t>Each DNS server is only capable and handling some finite number of DNS record subscriptions. This number will vary from DNS server to DNS server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After an LLQ client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support LLQ for the domain and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
@@ -256,6 +256,8 @@
      &I-D.ietf-tls-tls13;
 
      &I-D.ietf-uta-tls-bcp;
+
+     &RFC0768;
 
      &RFC0793;
      
