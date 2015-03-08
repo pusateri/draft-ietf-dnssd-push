@@ -384,8 +384,7 @@
 <link href="#rfc.section.6.1" rel="Chapter" title="6.1 Discovery"/>
 <link href="#rfc.section.6.2" rel="Chapter" title="6.2 UPDATE Additions"/>
 <link href="#rfc.section.6.2.1" rel="Chapter" title="6.2.1 DNS Update Header Format"/>
-<link href="#rfc.section.6.2.2" rel="Chapter" title="6.2.2 Push Update SUBSCRIBE"/>
-<link href="#rfc.section.6.2.3" rel="Chapter" title="6.2.3 Push Update UNSUBSCRIBE"/>
+<link href="#rfc.section.6.2.2" rel="Chapter" title="6.2.2 Push Update SUBSCRIBE and UNSUBSCRIBE"/>
 <link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements"/>
 <link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations"/>
 <link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
@@ -475,8 +474,7 @@
 <ul><li>6.1.   <a href="#rfc.section.6.1">Discovery</a></li>
 <li>6.2.   <a href="#rfc.section.6.2">UPDATE Additions</a></li>
 <ul><li>6.2.1.   <a href="#rfc.section.6.2.1">DNS Update Header Format</a></li>
-<li>6.2.2.   <a href="#rfc.section.6.2.2">Push Update SUBSCRIBE</a></li>
-<li>6.2.3.   <a href="#rfc.section.6.2.3">Push Update UNSUBSCRIBE</a></li>
+<li>6.2.2.   <a href="#rfc.section.6.2.2">Push Update SUBSCRIBE and UNSUBSCRIBE</a></li>
 </ul></ul><li>7.   <a href="#rfc.section.7">Acknowledgements</a></li>
 <li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
 <li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
@@ -532,12 +530,12 @@
 <h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> UPDATE Additions</h1>
 <p id="rfc.section.6.2.p.1">A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</p>
 <h1 id="rfc.section.6.2.1"><a href="#rfc.section.6.2.1">6.2.1.</a> DNS Update Header Format</h1>
-<h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Push Update SUBSCRIBE</h1>
-<h1 id="rfc.section.6.2.3"><a href="#rfc.section.6.2.3">6.2.3.</a> Push Update UNSUBSCRIBE</h1>
+<h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Push Update SUBSCRIBE and UNSUBSCRIBE</h1>
+<p id="rfc.section.6.2.2.p.1">The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a></h1>
 <p id="rfc.section.7.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</p>
 <h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a></h1>
-<p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns-push._tcp.&lt;zone&gt;</samp>. It is only applicable for the TCP protocol. IANA should publish this name in the IANA Service Name Registry.</p>
+<p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns-push._tcp</samp>. It is only applicable for the TCP protocol. This name is to be published in the IANA Service Name Registry.</p>
 <h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
 <p id="rfc.section.9.p.1">Strict TLS support is mandatory in DNS Push Updates. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
 <h1 id="rfc.section.9.1"><a href="#rfc.section.9.1">9.1.</a> Security Services</h1>

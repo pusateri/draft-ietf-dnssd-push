@@ -74,8 +74,7 @@ Table of Contents
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   5
      6.2.  UPDATE Additions  . . . . . . . . . . . . . . . . . . . .   6
        6.2.1.  DNS Update Header Format  . . . . . . . . . . . . . .   6
-       6.2.2.  Push Update SUBSCRIBE . . . . . . . . . . . . . . . .   7
-       6.2.3.  Push Update UNSUBSCRIBE . . . . . . . . . . . . . . .   7
+       6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE . . . . . . . .   7
    7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
    8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
    9.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
@@ -106,6 +105,7 @@ Table of Contents
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in RFC 2119 [RFC2119].
+
 
 
 
@@ -338,9 +338,15 @@ Pusateri & Cheshire     Expires September 8, 2015               [Page 6]
 Internet-Draft              DNS Push Updates                  March 2015
 
 
-6.2.2.  Push Update SUBSCRIBE
+6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE
 
-6.2.3.  Push Update UNSUBSCRIBE
+   The DNS Update header reserves seven Z bits for future use.  This
+   specification defines the Z bit in position 5 for client setup (CS).
+   When this bit is cleared, a normal client UPDATE message is expected
+   as defined in RFC 2136 [RFC2136].  When set, Z bit 5 declares the Z
+   bit in position 6 for subscription setup (SS) purposes.  A SUBSCRIBE
+   is indicated by setting the SS bit while an UNSUBSCRIBE is indicated
+   by clearing the SS bit.
 
 7.  Acknowledgements
 
@@ -350,9 +356,9 @@ Internet-Draft              DNS Push Updates                  March 2015
 
 8.  IANA Considerations
 
-   This document defines the service name: "_dns-push._tcp.<zone>".  It
-   is only applicable for the TCP protocol.  IANA should publish this
-   name in the IANA Service Name Registry.
+   This document defines the service name: "_dns-push._tcp".  It is only
+   applicable for the TCP protocol.  This name is to be published in the
+   IANA Service Name Registry.
 
 9.  Security Considerations
 
@@ -379,12 +385,6 @@ Internet-Draft              DNS Push Updates                  March 2015
    suites are beyond the scope of this document.  Please refer to TLS
    Recommendations [I-D.ietf-uta-tls-bcp] for the best current
    practices.  Keep in mind that best practices only exist for a
-   snapshot in time and recommendations will continue to change.
-   Updated versions or errata may exist for these recommendations.
-
-
-
-
 
 
 
@@ -393,6 +393,9 @@ Pusateri & Cheshire     Expires September 8, 2015               [Page 7]
 
 Internet-Draft              DNS Push Updates                  March 2015
 
+
+   snapshot in time and recommendations will continue to change.
+   Updated versions or errata may exist for these recommendations.
 
 9.2.  TLS Name Authentication
 
@@ -439,9 +442,6 @@ Internet-Draft              DNS Push Updates                  March 2015
               Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.3", draft-ietf-tls-tls13-04 (work
               in progress), January 2015.
-
-
-
 
 
 
