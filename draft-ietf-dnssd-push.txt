@@ -76,17 +76,17 @@ Table of Contents
        6.2.1.  DNS Update Header Format  . . . . . . . . . . . . . .   6
        6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE . . . . . . . .   7
        6.2.3.  Push Update RCODES  . . . . . . . . . . . . . . . . .   7
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   8
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    9.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
      9.1.  Security Services . . . . . . . . . . . . . . . . . . . .   8
-     9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .   8
-     9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .   8
+     9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .   9
+     9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .   9
      9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .   9
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
      10.1.  Normative References . . . . . . . . . . . . . . . . . .   9
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  10
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  10
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  11
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
 
@@ -338,6 +338,27 @@ Pusateri & Cheshire     Expires September 8, 2015               [Page 6]
 Internet-Draft              DNS Push Updates                  March 2015
 
 
+     The following figure shows the augmented DNS header UPDATE format
+                    including two new bit definitions.
+
+                                             1  1  1  1  1  1
+               0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             |                      ID                       |
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             |QR|   Opcode  |CS|SS|       Z      |   RCODE   |
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             |                    ZOCOUNT                    |
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             |                    PRCOUNT                    |
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             |                    UPCOUNT                    |
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             |                    ADCOUNT                    |
+             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+                                 Figure 1
+
 6.2.2.  Push Update SUBSCRIBE and UNSUBSCRIBE
 
    The DNS Update header reserves seven Z bits for future use.  This
@@ -355,6 +376,23 @@ Internet-Draft              DNS Push Updates                  March 2015
    Otherwise, an appropriate error code MUST be returned.  The following
    table describes when each response error code is appropriate for a
    SUBSCRIBE or UNSUBSCRIBE request.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015               [Page 7]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
         +-----------+-------+-------------------------------------+
         | Mneumonic | Value | Description                         |
@@ -386,14 +424,6 @@ Internet-Draft              DNS Push Updates                  March 2015
    applicable for the TCP protocol.  This name is to be published in the
    IANA Service Name Registry.
 
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 7]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
 9.  Security Considerations
 
    Strict TLS support is mandatory in DNS Push Updates.  There is no
@@ -411,6 +441,14 @@ Internet-Draft              DNS Push Updates                  March 2015
 
    Data integrity protection  Any changes made to the communication in
       transit are detectable by the receiver.
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015               [Page 8]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
    Authentication  An end-point of the TLS communication is
       authenticated as the intended entity to communicate with.
@@ -441,15 +479,6 @@ Internet-Draft              DNS Push Updates                  March 2015
    earlier.  In the draft version of TLS 1.3 [I-D.ietf-tls-tls13], TLS-
    level compression has been removed completely.
 
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 8]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
 9.4.  TLS Session Resumption
 
    TLS Session Resumption MUST be disabled on DNS Push Update servers.
@@ -466,6 +495,16 @@ Internet-Draft              DNS Push Updates                  March 2015
               Based Authentication of Named Entities (DANE) TLSA Records
               with SRV Records", draft-ietf-dane-srv-11 (work in
               progress), February 2015.
+
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015               [Page 9]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
    [I-D.ietf-dnssd-hybrid]
               Cheshire, S., "Hybrid Unicast/Multicast DNS-Based Service
@@ -497,15 +536,6 @@ Internet-Draft              DNS Push Updates                  March 2015
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
 
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015               [Page 9]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    [RFC2136]  Vixie, P., Thomson, S., Rekhter, Y., and J. Bound,
               "Dynamic Updates in the Domain Name System (DNS UPDATE)",
               RFC 2136, April 1997.
@@ -522,6 +552,15 @@ Internet-Draft              DNS Push Updates                  March 2015
 
    [RFC6066]  Eastlake, D., "Transport Layer Security (TLS) Extensions:
               Extension Definitions", RFC 6066, January 2011.
+
+
+
+
+
+Pusateri & Cheshire     Expires September 8, 2015              [Page 10]
+
+Internet-Draft              DNS Push Updates                  March 2015
+
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               February 2013.
@@ -551,17 +590,6 @@ Authors' Addresses
    Email: pusateri@bangj.com
 
 
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 8, 2015              [Page 10]
-
-Internet-Draft              DNS Push Updates                  March 2015
-
-
    Stuart Cheshire
    Apple Inc.
    1 Infinite Loop
@@ -570,34 +598,6 @@ Internet-Draft              DNS Push Updates                  March 2015
 
    Phone: +1 408 974 3207
    Email: cheshire@apple.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -532,6 +532,27 @@
 <h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> UPDATE Additions</h1>
 <p id="rfc.section.6.2.p.1">A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</p>
 <h1 id="rfc.section.6.2.1"><a href="#rfc.section.6.2.1">6.2.1.</a> DNS Update Header Format</h1>
+<div id="rfc.figure.1"/>
+<div id="update_packet_header"/>
+<p>The following figure shows the augmented DNS header UPDATE format including two new bit definitions.</p>
+<pre>
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                      ID                       |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|   Opcode  |CS|SS|       Z      |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ZOCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    PRCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    UPCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ADCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+               </pre>
+<p class="figure">Figure 1</p>
 <h1 id="rfc.section.6.2.2"><a href="#rfc.section.6.2.2">6.2.2.</a> Push Update SUBSCRIBE and UNSUBSCRIBE</h1>
 <p id="rfc.section.6.2.2.p.1">The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <a href="#RFC2136">RFC&#160;2136</a> <cite title="NONE">[RFC2136]</cite>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</p>
 <h1 id="rfc.section.6.2.3"><a href="#rfc.section.6.2.3">6.2.3.</a> Push Update RCODES</h1>

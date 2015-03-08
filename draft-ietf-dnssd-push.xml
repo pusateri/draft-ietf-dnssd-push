@@ -202,6 +202,28 @@
      <section title="UPDATE Additions">
        <t>A DNS Push Update client will inform the DNS Push Update server by sending a subscription request to the server. The server has the option to accept or reject the subscription request. If accepted, the subscription request will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</t>
        <section title="DNS Update Header Format">
+         <figure align="center" anchor="update_packet_header">
+           <preamble>The following figure shows the augmented DNS header UPDATE format including two new bit definitions.</preamble>
+
+           <artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                      ID                       |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|   Opcode  |CS|SS|       Z      |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ZOCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    PRCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    UPCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ADCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+               ]]></artwork>
+         </figure>
+         
        </section>
        <section title="Push Update SUBSCRIBE and UNSUBSCRIBE">
          <t>The DNS Update header reserves seven Z bits for future use. This specification defines the Z bit in position 5 for client setup (CS). When this bit is cleared, a normal client UPDATE message is expected as defined in <xref target="RFC2136">RFC&nbsp;2136</xref>. When set, Z bit 5 declares the Z bit in position 6 for subscription setup (SS) purposes. A SUBSCRIBE is indicated by setting the SS bit while an UNSUBSCRIBE is indicated by clearing the SS bit.</t>
