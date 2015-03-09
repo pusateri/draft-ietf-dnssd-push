@@ -403,7 +403,7 @@
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2015-3-8" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-3-9" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
   <meta name="description" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
 
@@ -427,12 +427,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 9, 2015</td>
+  <td class="left">Expires: September 10, 2015</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">March 8, 2015</td>
+  <td class="right">March 9, 2015</td>
 </tr>
 
     	
@@ -452,7 +452,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 9, 2015.</p>
+<p>This Internet-Draft will expire on September 10, 2015.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -528,10 +528,15 @@
 
 <p> If a server closes a DNS Push Notification subscription connection, the client SHOULD repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time.  </p>
 <h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> DNS Push Notification SUBSCRIBE</h1>
-<p id="rfc.section.6.2.p.1">A DNS Push Notification client indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE message over the established TCP connection to the server. A SUBSCRIBE message is formatted identically to a conventional <a href="#RFC1035">DNS QUERY message</a> <cite title="NONE">[RFC1035]</cite>, except that the opcode is SUBSCRIBE (6) instead of QUERY (0). If neither QTYPE nor QCLASS are ANY (255) then this is a specific subscription to changes for the given name, type and class. If one or both of QTYPE or QCLASS are ANY (255) then this is a wildcard subscription to changes for the given name for any type and/or class, as appropriate.</p>
-<p id="rfc.section.6.2.p.2">Like a DNS QUERY message, a SUBSCRIBE message MUST contain exactly one question. Since SUBSCRIBE messages are sent over TCP, multiple SUBSCRIBE messages can be concatenated in a single TCP stream and packed efficiently into TCP segments, so the ability to pack multiple SUBSCRIBE operations into a single DNS message within that TCP stream is not compelling.</p>
-<p id="rfc.section.6.2.p.3">The RCODE in the SUBSCRIBE response indicates whether or not the subscription was accepted.  The Answer Section MUST be empty. If the subscription was accepted and the there are positive answers for the requested name, type and class, then these positive answers MUST be communicated to the client in an immediately following Push Notification Update, not in the Answer Section of the SUBSCRIBE response.  This simplifying requirement is made so that there is only a single way that information is communicated to a DNS Push Notification client. Since a DNS Push Notification client has to parse information received via Push Notification Updates anyway, it is simpler if it does not also have to parse information received via the Answer Section of a SUBSCRIBE response.</p>
-<p id="rfc.section.6.2.p.4">Supported RCODEs are as follows:</p>
+<p id="rfc.section.6.2.p.1">A DNS Push Notification client indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TCP connection to the server. A SUBSCRIBE request is formatted identically to a conventional <a href="#RFC1035">DNS QUERY request</a> <cite title="NONE">[RFC1035]</cite>, except that the opcode is SUBSCRIBE (6) instead of QUERY (0). If neither QTYPE nor QCLASS are ANY (255) then this is a specific subscription to changes for the given name, type and class. If one or both of QTYPE or QCLASS are ANY (255) then this is a wildcard subscription to changes for the given name for any type and/or class, as appropriate.</p>
+<p id="rfc.section.6.2.p.2">In a SUBSCRIBE request the DNS Header QR bit MUST be zero.<br/> If the QR bit is not zero the message is not a SUBSCRIBE request.</p>
+<p id="rfc.section.6.2.p.3">The AA, TC, RD, RA, Z, AD, and CD bits, the ID field, and the RCODE field, MUST be zero on transmission, and MUST be silently ignored on reception.</p>
+<p id="rfc.section.6.2.p.4">Like a DNS QUERY request, a SUBSCRIBE request MUST contain exactly one question. Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE requests can be concatenated in a single TCP stream and packed efficiently into TCP segments, so the ability to pack multiple SUBSCRIBE operations into a single DNS message within that TCP stream would add extra complexity for little benefit.</p>
+<p id="rfc.section.6.2.p.5">ANCOUNT MUST be zero, and the Answer Section MUST be empty.<br/> Any records in the Answer Section MUST be silently ignored.</p>
+<p id="rfc.section.6.2.p.6">NSCOUNT MUST be zero, and the Authority Section MUST be empty.<br/> Any records in the Authority Section MUST be silently ignored.</p>
+<p id="rfc.section.6.2.p.7">ARCOUNT MUST be zero, and the Additional Section MUST be empty.<br/> Any records in the Additional Section MUST be silently ignored.</p>
+<p id="rfc.section.6.2.p.8">Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</p>
+<p id="rfc.section.6.2.p.9">In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</p>
 <div id="rfc.table.1"/>
 <div id="table_update_rcodes"/>
 <table cellpadding="3" cellspacing="0" class="tt full center">
@@ -571,18 +576,24 @@
     </tr>
   </tbody>
 </table>
-<p id="rfc.section.6.2.p.5">If accepted, the subscription will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</p>
-<p id="rfc.section.6.2.p.6">A client MUST not send a SUBSCRIBE message that duplicates the name, type and class of an existing active subscription. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and "Foo.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately close the TCP connection.</p>
-<p id="rfc.section.6.2.p.7">Wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a wildcard ("*") in the zone, and nothing else.</p>
-<p id="rfc.section.6.2.p.8">Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</p>
-<p id="rfc.section.6.2.p.9">Note that a client may SUBSCRIBE to records that are unknown to the server at the time of the request and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</p>
+<p id="rfc.section.6.2.p.10">In a SUBSCRIBE response the DNS Header QR bit MUST be one.<br/> If the QR bit is not one the message is not a SUBSCRIBE response.</p>
+<p id="rfc.section.6.2.p.11">The AA, TC, RD, RA, Z, AD, and CD bits, and the ID field, MUST be zero on transmission, and MUST be silently ignored on reception.</p>
+<p id="rfc.section.6.2.p.12">The Question Section MUST echo back the values provided by the client in the SUBSCRIBE request that generated this SUBSCRIBE response.</p>
+<p id="rfc.section.6.2.p.13">ANCOUNT MUST be zero, and the Answer Section MUST be empty.<br/> Any records in the Answer Section MUST be silently ignored.  If the subscription was accepted and there are positive answers for the requested name, type and class, then these positive answers MUST be communicated to the client in an immediately following Push Notification Update, not in the Answer Section of the SUBSCRIBE response.  This simplifying requirement is made so that there is only a single way that information is communicated to a DNS Push Notification client. Since a DNS Push Notification client has to parse information received via Push Notification Updates anyway, it is simpler if it does not also have to parse information received via the Answer Section of a SUBSCRIBE response.</p>
+<p id="rfc.section.6.2.p.14">NSCOUNT MUST be zero, and the Authority Section MUST be empty.<br/> Any records in the Authority Section MUST be silently ignored.</p>
+<p id="rfc.section.6.2.p.15">ARCOUNT MUST be zero, and the Additional Section MUST be empty.<br/> Any records in the Additional Section MUST be silently ignored.</p>
+<p id="rfc.section.6.2.p.16">If accepted, the subscription will stay in effect until the client revokes the subscription or until the connection between the client and the server is closed.</p>
+<p id="rfc.section.6.2.p.17">A client MUST not send a SUBSCRIBE message that duplicates the name, type and class of an existing active subscription. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and "Foo.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately close the TCP connection.</p>
+<p id="rfc.section.6.2.p.18">Wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a wildcard ("*") in the zone, and nothing else.</p>
+<p id="rfc.section.6.2.p.19">Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</p>
+<p id="rfc.section.6.2.p.20">A client may SUBSCRIBE to records that are unknown to the server at the time of the request and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</p>
 <h1 id="rfc.section.6.3"><a href="#rfc.section.6.3">6.3.</a> DNS Push Notification UNSUBSCRIBE</h1>
 <p id="rfc.section.6.3.p.1">To cancel an individual subscription without closing the entire connection, the client sends an UNSUBSCRIBE message over the established TCP connection to the server. The UNSUBSCRIBE message is formatted identically to the SUBSCRIBE message which created the subscription, with the exact same name, type and class, except that the opcode is UNSUBSCRIBE (7) instead of SUBSCRIBE (6).</p>
 <p id="rfc.section.6.3.p.2">A client MUST not send an UNSUBSCRIBE message that does not exactly match the name, type and class of an existing active subscription. If a server receives such an UNSUBSCRIBE message this is an error and the server MUST immediately close the TCP connection.</p>
 <p id="rfc.section.6.3.p.3">No response message is generated as a result of processing an UNSUBSCRIBE message.</p>
 <p id="rfc.section.6.3.p.4">Having being successfully revoked with a correctly-formatted UNSUBSCRIBE message, the previously referenced subscription is no longer active and the server MAY discard the state associated with it immediately, or later, at the server's discretion.</p>
 <h1 id="rfc.section.6.4"><a href="#rfc.section.6.4">6.4.</a> DNS Push Notification Update Messages</h1>
-<p id="rfc.section.6.4.p.1">Once a subscription has been successfully established, the server generates Push Notification Updates to send to the client as appropriate. An initial Push Notification Update will be sent immediately in the case that the answer set was non-empty at the moment the subscription was established. Subsequent changes to the answer set are then communicated in subsequent Push Notification Updates.</p>
+<p id="rfc.section.6.4.p.1">Once a subscription has been successfully established, the server generates Push Notification Updates to send to the client as appropriate. An initial Push Notification Update will be sent immediately in the case that the answer set was non-empty at the moment the subscription was established. Subsequent changes to the answer set are then communicated to the client in subsequent Push Notification Updates.</p>
 <p id="rfc.section.6.4.p.2">The format of Push Notification Updates borrows from the existing <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> protocol, with some simplifications.</p>
 <div id="rfc.figure.1"/>
 <div id="packet_header"/>
@@ -604,24 +615,28 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
                </pre>
 <p class="figure">Figure 1</p>
-<p id="rfc.section.6.4.p.3">The following figure shows the existing DNS header Update format: </p>
-<p id="rfc.section.6.4.p.4">For DNS Push Notifications, ZOCOUNT MUST be zero, and the Zone Section MUST be empty.</p>
-<p id="rfc.section.6.4.p.5">For DNS Push Notifications, PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.</p>
-<p id="rfc.section.6.4.p.6">For DNS Push Notifications, ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.</p>
-<p id="rfc.section.6.4.p.7">For DNS Push Notifications, the Update Section contains the relevant change information for the client, formatted identically to a <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite>. To recap: </p>
+<p id="rfc.section.6.4.p.3">The following figure shows the existing DNS Update header format: </p>
+<p id="rfc.section.6.4.p.4">For DNS Push Notifications the following rules apply:</p>
+<p id="rfc.section.6.4.p.5">The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).<br/> Messages received where this is not true are not Push Notification Update Messages and should be silently ignored for the purposes of Push Notification Update Message handling.</p>
+<p id="rfc.section.6.4.p.6">ID, the Z bits, and RCODE MUST be zero on transmission,<br/> and MUST be silently ignored on reception.</p>
+<p id="rfc.section.6.4.p.7">ZOCOUNT MUST be zero, and the Zone Section MUST be empty.<br/> Any records in the Zone Section MUST be silently ignored.</p>
+<p id="rfc.section.6.4.p.8">PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.<br/> Any records in the Prerequisite Section MUST be silently ignored.</p>
+<p id="rfc.section.6.4.p.9">ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.<br/> Any records in the Additional Data Section MUST be silently ignored.</p>
+<p id="rfc.section.6.4.p.10">The Update Section contains the relevant change information for the client, formatted identically to a <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite>. To recap: </p>
 
 <ul class="empty">
-  <li>Delete all RRsets from a name: TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</li>
-  <li>Delete an RRset from a name: TTL=0, CLASS=ANY, RDLENGTH=0; TYPE specifies the RRset being deleted.</li>
-  <li>Delete an individual RR from a name: TTL=0, CLASS=NONE; TYPE, RDLENGTH and RDATA specifies the individual RR being deleted.</li>
-  <li>Add an individual RR to a name: TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.</li>
+  <li>Delete all RRsets from a name:<br/> TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</li>
+  <li>Delete an RRset from a name:<br/> TTL=0, CLASS=ANY, RDLENGTH=0;<br/> TYPE specifies the RRset being deleted.</li>
+  <li>Delete an individual RR from a name:<br/> TTL=0, CLASS=NONE;<br/> TYPE, RDLENGTH and RDATA specifies the RR being deleted.</li>
+  <li>Add an individual RR to a name:<br/> TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.</li>
 </ul>
 
 <p> </p>
-<p id="rfc.section.6.4.p.8">Upon reception of a Push Notification Update Message, the client receiving the message MUST validate that the records being added or deleted correspond with at least one currently active subscription on that connection. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.  If the QTYPE was not ANY (255) then the TYPE of the record must match the QTYPE given in the SUBSCRIBE request.  If the QCLASS was not ANY (255) then the CLASS of the record must match the QCLASS given in the SUBSCRIBE request.  If a matching active subscription on that connection is not found, then that individual record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The TCP connection is not closed. This is to allow for the race condition where a client sends an UNSUBSCRIBE while Push Notification Updates for that subscription are still in flight from the server.</p>
-<p id="rfc.section.6.4.p.9">In the case where a single change affects more than one active subscription, only one update is sent. For example, an update adding a given record may match both a SUBSCRIBE request with the same QTYPE and a different SUBSCRIBE request with QTYPE=ANY. Two updates are not sent because the new record matches two active subscription.</p>
-<p id="rfc.section.6.4.p.10">Successful handling of a Push Notification Update Message results in no response back to the server.</p>
-<p id="rfc.section.6.4.p.11">The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record aging contines and records are removed from the local cache when their TTL reaches zero.</p>
+<p id="rfc.section.6.4.p.11">Upon reception of a Push Notification Update Message, the client receiving the message MUST validate that the records being added or deleted correspond with at least one currently active subscription on that connection. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.  If the QTYPE was not ANY (255) then the TYPE of the record must match the QTYPE given in the SUBSCRIBE request.  If the QCLASS was not ANY (255) then the CLASS of the record must match the QCLASS given in the SUBSCRIBE request.  If a matching active subscription on that connection is not found, then that individual record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The TCP connection is not closed. This is to allow for the race condition where a client sends an outbound UNSUBSCRIBE while inbound Push Notification Updates for that subscription from the server are still in flight.</p>
+<p id="rfc.section.6.4.p.12">In the case where a single change affects more than one active subscription, only one update is sent. For example, an update adding a given record may match both a SUBSCRIBE request with the same QTYPE and a different SUBSCRIBE request with QTYPE=ANY. It is not the case that two updates are sent because the new record matches two active subscriptions.</p>
+<p id="rfc.section.6.4.p.13">The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" update, not three separate "delete an individual RR from a name" updates. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" update, not two separate "delete an RRset from a name" updates.</p>
+<p id="rfc.section.6.4.p.14">Reception of a Push Notification Update Message results in no response back to the server.</p>
+<p id="rfc.section.6.4.p.15">The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a></h1>
 <p id="rfc.section.7.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</p>
 <h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a></h1>

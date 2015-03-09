@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                       Seeking affiliation
 Intended status: Standards Track                             S. Cheshire
-Expires: September 9, 2015                                    Apple Inc.
-                                                           March 8, 2015
+Expires: September 10, 2015                                   Apple Inc.
+                                                           March 9, 2015
 
 
                          DNS Push Notifications
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 9, 2015.
+   This Internet-Draft will expire on September 10, 2015.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 1]
+Pusateri & Cheshire    Expires September 10, 2015               [Page 1]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -73,20 +73,20 @@ Table of Contents
    5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   5
    6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   6
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   6
-     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .   7
-     6.3.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .   9
-     6.4.  DNS Push Notification Update Messages . . . . . . . . . .  10
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  12
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
-     9.1.  Security Services . . . . . . . . . . . . . . . . . . . .  12
-     9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  13
-     9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  13
-     9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  13
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  13
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  14
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
+     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .   8
+     6.3.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  10
+     6.4.  DNS Push Notification Update Messages . . . . . . . . . .  11
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  13
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
+     9.1.  Security Services . . . . . . . . . . . . . . . . . . . .  14
+     9.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  14
+     9.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  14
+     9.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  15
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  15
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  16
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 2]
+Pusateri & Cheshire    Expires September 10, 2015               [Page 2]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -165,7 +165,7 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 3]
+Pusateri & Cheshire    Expires September 10, 2015               [Page 3]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -221,7 +221,7 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 4]
+Pusateri & Cheshire    Expires September 10, 2015               [Page 4]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -277,7 +277,7 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 5]
+Pusateri & Cheshire    Expires September 10, 2015               [Page 5]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -333,7 +333,7 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 6]
+Pusateri & Cheshire    Expires September 10, 2015               [Page 6]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -357,48 +357,104 @@ Internet-Draft           DNS Push Notifications               March 2015
    the client SHOULD repeat the discovery process in order to determine
    the preferred DNS server for subscriptions at that time.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015               [Page 7]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
+
 6.2.  DNS Push Notification SUBSCRIBE
 
    A DNS Push Notification client indicates its desire to receive DNS
    Push Notifications for a given domain name by sending a SUBSCRIBE
-   message over the established TCP connection to the server.  A
-   SUBSCRIBE message is formatted identically to a conventional DNS
-   QUERY message [RFC1035], except that the opcode is SUBSCRIBE (6)
+   request over the established TCP connection to the server.  A
+   SUBSCRIBE request is formatted identically to a conventional DNS
+   QUERY request [RFC1035], except that the opcode is SUBSCRIBE (6)
    instead of QUERY (0).  If neither QTYPE nor QCLASS are ANY (255) then
    this is a specific subscription to changes for the given name, type
    and class.  If one or both of QTYPE or QCLASS are ANY (255) then this
    is a wildcard subscription to changes for the given name for any type
    and/or class, as appropriate.
 
-   Like a DNS QUERY message, a SUBSCRIBE message MUST contain exactly
-   one question.  Since SUBSCRIBE messages are sent over TCP, multiple
-   SUBSCRIBE messages can be concatenated in a single TCP stream and
+   In a SUBSCRIBE request the DNS Header QR bit MUST be zero.
+   If the QR bit is not zero the message is not a SUBSCRIBE request.
+
+   The AA, TC, RD, RA, Z, AD, and CD bits, the ID field, and the RCODE
+   field, MUST be zero on transmission, and MUST be silently ignored on
+   reception.
+
+   Like a DNS QUERY request, a SUBSCRIBE request MUST contain exactly
+   one question.  Since SUBSCRIBE requests are sent over TCP, multiple
+   SUBSCRIBE requests can be concatenated in a single TCP stream and
    packed efficiently into TCP segments, so the ability to pack multiple
    SUBSCRIBE operations into a single DNS message within that TCP stream
-   is not compelling.
+   would add extra complexity for little benefit.
 
-   The RCODE in the SUBSCRIBE response indicates whether or not the
-   subscription was accepted.  The Answer Section MUST be empty.  If the
-   subscription was accepted and the there are positive answers for the
-   requested name, type and class, then these positive answers MUST be
-   communicated to the client in an immediately following Push
-   Notification Update, not in the Answer Section of the SUBSCRIBE
-   response.  This simplifying requirement is made so that there is only
-   a single way that information is communicated to a DNS Push
-   Notification client.  Since a DNS Push Notification client has to
+   ANCOUNT MUST be zero, and the Answer Section MUST be empty.
+   Any records in the Answer Section MUST be silently ignored.
 
+   NSCOUNT MUST be zero, and the Authority Section MUST be empty.
+   Any records in the Authority Section MUST be silently ignored.
+
+   ARCOUNT MUST be zero, and the Additional Section MUST be empty.
+   Any records in the Additional Section MUST be silently ignored.
 
 
-Pusateri & Cheshire     Expires September 9, 2015               [Page 7]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015               [Page 8]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
 
-   parse information received via Push Notification Updates anyway, it
-   is simpler if it does not also have to parse information received via
-   the Answer Section of a SUBSCRIBE response.
+   Each SUBSCRIBE request generates exactly one SUBSCRIBE response from
+   the server.
 
-   Supported RCODEs are as follows:
+   In the SUBSCRIBE response the RCODE indicates whether or not the
+   subscription was accepted.  Supported RCODEs are as follows:
 
    +----------+-------+------------------------------------------------+
    | Mnemonic | Value | Description                                    |
@@ -415,6 +471,42 @@ Internet-Draft           DNS Push Notifications               March 2015
    +----------+-------+------------------------------------------------+
 
                           Table 1: Response codes
+
+   In a SUBSCRIBE response the DNS Header QR bit MUST be one.
+   If the QR bit is not one the message is not a SUBSCRIBE response.
+
+   The AA, TC, RD, RA, Z, AD, and CD bits, and the ID field, MUST be
+   zero on transmission, and MUST be silently ignored on reception.
+
+   The Question Section MUST echo back the values provided by the client
+   in the SUBSCRIBE request that generated this SUBSCRIBE response.
+
+   ANCOUNT MUST be zero, and the Answer Section MUST be empty.
+   Any records in the Answer Section MUST be silently ignored.  If the
+   subscription was accepted and there are positive answers for the
+   requested name, type and class, then these positive answers MUST be
+   communicated to the client in an immediately following Push
+   Notification Update, not in the Answer Section of the SUBSCRIBE
+   response.  This simplifying requirement is made so that there is only
+   a single way that information is communicated to a DNS Push
+   Notification client.  Since a DNS Push Notification client has to
+   parse information received via Push Notification Updates anyway, it
+   is simpler if it does not also have to parse information received via
+   the Answer Section of a SUBSCRIBE response.
+
+   NSCOUNT MUST be zero, and the Authority Section MUST be empty.
+   Any records in the Authority Section MUST be silently ignored.
+
+   ARCOUNT MUST be zero, and the Additional Section MUST be empty.
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015               [Page 9]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
+
+   Any records in the Additional Section MUST be silently ignored.
 
    If accepted, the subscription will stay in effect until the client
    revokes the subscription or until the connection between the client
@@ -434,21 +526,10 @@ Internet-Draft           DNS Push Notifications               March 2015
    Aliasing is not supported.  That is, a CNAME in a SUBSCRIBE message
    matches only a CNAME in the zone, and nothing else.
 
-   Note that a client may SUBSCRIBE to records that are unknown to the
-   server at the time of the request and this is not an error.  The
-   server MUST accept these requests and send Push Notifications if and
-   when matches are found in the future.
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015               [Page 8]
-
-Internet-Draft           DNS Push Notifications               March 2015
-
+   A client may SUBSCRIBE to records that are unknown to the server at
+   the time of the request and this is not an error.  The server MUST
+   accept these requests and send Push Notifications if and when matches
+   are found in the future.
 
 6.3.  DNS Push Notification UNSUBSCRIBE
 
@@ -476,32 +557,7 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015               [Page 9]
+Pusateri & Cheshire    Expires September 10, 2015              [Page 10]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
@@ -513,13 +569,13 @@ Internet-Draft           DNS Push Notifications               March 2015
    appropriate.  An initial Push Notification Update will be sent
    immediately in the case that the answer set was non-empty at the
    moment the subscription was established.  Subsequent changes to the
-   answer set are then communicated in subsequent Push Notification
-   Updates.
+   answer set are then communicated to the client in subsequent Push
+   Notification Updates.
 
    The format of Push Notification Updates borrows from the existing DNS
    Update [RFC2136] protocol, with some simplifications.
 
-   The following figure shows the existing DNS header Update format:
+   The following figure shows the existing DNS Update header format:
 
                                              1  1  1  1  1  1
                0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -539,44 +595,48 @@ Internet-Draft           DNS Push Notifications               March 2015
 
                                  Figure 1
 
-   For DNS Push Notifications, ZOCOUNT MUST be zero, and the Zone
-   Section MUST be empty.
+   For DNS Push Notifications the following rules apply:
 
-   For DNS Push Notifications, PRCOUNT MUST be zero, and the
-   Prerequisite Section MUST be empty.
+   The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).
+   Messages received where this is not true are not Push Notification
+   Update Messages and should be silently ignored for the purposes of
+   Push Notification Update Message handling.
 
-   For DNS Push Notifications, ADCOUNT MUST be zero, and the Additional
-   Data Section MUST be empty.
+   ID, the Z bits, and RCODE MUST be zero on transmission,
+   and MUST be silently ignored on reception.
+
+   ZOCOUNT MUST be zero, and the Zone Section MUST be empty.
+   Any records in the Zone Section MUST be silently ignored.
+
+   PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.
+   Any records in the Prerequisite Section MUST be silently ignored.
 
 
 
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015              [Page 10]
+Pusateri & Cheshire    Expires September 10, 2015              [Page 11]
 
 Internet-Draft           DNS Push Notifications               March 2015
 
 
-   For DNS Push Notifications, the Update Section contains the relevant
-   change information for the client, formatted identically to a DNS
-   Update [RFC2136].  To recap:
+   ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.
+   Any records in the Additional Data Section MUST be silently ignored.
 
-      Delete all RRsets from a name: TTL=0, CLASS=ANY, RDLENGTH=0,
-      TYPE=ANY.
+   The Update Section contains the relevant change information for the
+   client, formatted identically to a DNS Update [RFC2136].  To recap:
 
-      Delete an RRset from a name: TTL=0, CLASS=ANY, RDLENGTH=0; TYPE
-      specifies the RRset being deleted.
+      Delete all RRsets from a name:
+      TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.
 
-      Delete an individual RR from a name: TTL=0, CLASS=NONE; TYPE,
-      RDLENGTH and RDATA specifies the individual RR being deleted.
+      Delete an RRset from a name:
+      TTL=0, CLASS=ANY, RDLENGTH=0;
+      TYPE specifies the RRset being deleted.
 
-      Add an individual RR to a name: TTL, CLASS, TYPE, RDLENGTH and
-      RDATA specifies the RR being added.
+      Delete an individual RR from a name:
+      TTL=0, CLASS=NONE;
+      TYPE, RDLENGTH and RDATA specifies the RR being deleted.
+
+      Add an individual RR to a name:
+      TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.
 
    Upon reception of a Push Notification Update Message, the client
    receiving the message MUST validate that the records being added or
@@ -591,18 +651,37 @@ Internet-Draft           DNS Push Notifications               March 2015
    that individual record addition/deletion is silently ignored.
    Processing of other additions and deletions in this message is not
    affected.  The TCP connection is not closed.  This is to allow for
-   the race condition where a client sends an UNSUBSCRIBE while Push
-   Notification Updates for that subscription are still in flight from
-   the server.
+   the race condition where a client sends an outbound UNSUBSCRIBE while
+   inbound Push Notification Updates for that subscription from the
+   server are still in flight.
 
    In the case where a single change affects more than one active
    subscription, only one update is sent.  For example, an update adding
    a given record may match both a SUBSCRIBE request with the same QTYPE
-   and a different SUBSCRIBE request with QTYPE=ANY.  Two updates are
-   not sent because the new record matches two active subscription.
+   and a different SUBSCRIBE request with QTYPE=ANY.  It is not the case
+   that two updates are sent because the new record matches two active
+   subscriptions.
 
-   Successful handling of a Push Notification Update Message results in
-   no response back to the server.
+   The server SHOULD encode change notifications in the most efficient
+   manner possible.  For example, when three AAAA records are deleted
+   from a given name, and no other AAAA records exist for that name, the
+   server SHOULD send a "delete an RRset from a name" update, not three
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015              [Page 12]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
+
+   separate "delete an individual RR from a name" updates.  Similarly,
+   when both an SRV and a TXT record are deleted from a given name, and
+   no other records of any kind exist for that name, the server SHOULD
+   send a "delete all RRsets from a name" update, not two separate
+   "delete an RRset from a name" updates.
+
+   Reception of a Push Notification Update Message results in no
+   response back to the server.
 
    The TTL of an added record is stored by the client and decremented as
    time passes, with the caveat that for as long as a relevant
@@ -610,17 +689,9 @@ Internet-Draft           DNS Push Notifications               March 2015
    For as long as a relevant subscription remains active, the client
    SHOULD assume that when a record goes away the server will notify it
    of that fact.  Consequently, a client does not have to poll to verify
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015              [Page 11]
-
-Internet-Draft           DNS Push Notifications               March 2015
-
-
    that the record is still there.  Once a subscription is cancelled
    (individually, or as a result of the TCP connection being closed)
-   record aging contines and records are removed from the local cache
+   record aging resumes and records are removed from the local cache
    when their TTL reaches zero.
 
 7.  Acknowledgements
@@ -637,6 +708,27 @@ Internet-Draft           DNS Push Notifications               March 2015
 
    This document defines two DNS OpCodes: SUBSCRIBE with (tentative)
    value 6 and UNSUBSCRIBE with (tentative) value 7.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015              [Page 13]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
 
 9.  Security Considerations
 
@@ -666,14 +758,6 @@ Internet-Draft           DNS Push Notifications               March 2015
    snapshot in time and recommendations will continue to change.
    Updated versions or errata may exist for these recommendations.
 
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015              [Page 12]
-
-Internet-Draft           DNS Push Notifications               March 2015
-
-
 9.2.  TLS Name Authentication
 
    As described in Section 6.1, the client discovers the DNS Push
@@ -691,6 +775,16 @@ Internet-Draft           DNS Push Notifications               March 2015
    level compression SHOULD be disabled when using TLS versions 1.2 and
    earlier.  In the draft version of TLS 1.3 [I-D.ietf-tls-tls13], TLS-
    level compression has been removed completely.
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015              [Page 14]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
 
 9.4.  TLS Session Resumption
 
@@ -722,14 +816,6 @@ Internet-Draft           DNS Push Notifications               March 2015
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               August 1980.
 
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015              [Page 13]
-
-Internet-Draft           DNS Push Notifications               March 2015
-
-
    [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
               793, September 1981.
 
@@ -748,6 +834,13 @@ Internet-Draft           DNS Push Notifications               March 2015
    [RFC2136]  Vixie, P., Thomson, S., Rekhter, Y., and J. Bound,
               "Dynamic Updates in the Domain Name System (DNS UPDATE)",
               RFC 2136, April 1997.
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015              [Page 15]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
 
    [RFC2782]  Gulbrandsen, A., Vixie, P., and L. Esibov, "A DNS RR for
               specifying the location of services (DNS SRV)", RFC 2782,
@@ -776,16 +869,6 @@ Internet-Draft           DNS Push Notifications               March 2015
               Sekar, K., "DNS Long-Lived Queries", draft-sekar-dns-
               llq-01 (work in progress), August 2006.
 
-
-
-
-
-
-Pusateri & Cheshire     Expires September 9, 2015              [Page 14]
-
-Internet-Draft           DNS Push Notifications               March 2015
-
-
    [IPJ.9-4-TCPSYN]
               Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
               Internet Protocol Journal, Cisco Systems, Volume 9, Number
@@ -806,6 +889,14 @@ Internet-Draft           DNS Push Notifications               March 2015
    [XEP-0060]
               Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
+
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015              [Page 16]
+
+Internet-Draft           DNS Push Notifications               March 2015
+
 
 Authors' Addresses
 
@@ -837,4 +928,25 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires September 9, 2015              [Page 15]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 10, 2015              [Page 17]
