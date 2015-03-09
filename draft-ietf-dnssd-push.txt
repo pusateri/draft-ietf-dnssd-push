@@ -124,8 +124,8 @@ Internet-Draft           DNS Push Notifications               March 2015
    [XEP-0060] and Atom [RFC4287] are examples.  While DNS servers are
    generally highly tuned and capable of a high rate of query/response
    traffic, adding a publish/subscribe model for tracking changes to DNS
-   records results in more timely notification of changes with reduced
-   CPU usage and network traffic.
+   records can result in more timely notification of changes with
+   reduced CPU usage and lower network traffic.
 
    Multicast DNS [RFC6762] implementations always listen on a well known
    link-local IP multicast group, and new services and updates are sent
@@ -228,8 +228,9 @@ Internet-Draft           DNS Push Notifications               March 2015
 
    undergoing maintenance procedures, or the server is overloaded and
    can no longer provide the information to all the clients that wish to
-   receive it.  The client can try to re-subscribe at a later time or to
-   another DNS server supporting DNS Push Notifications for the zone.
+   receive it.  The client can try to re-subscribe at a later time or
+   connect to another server supporting DNS Push Notifications for the
+   zone.
 
    Transport Layer Security (TLS) [RFC5246] is well understood and
    deployed across many protocols running over TCP.  It is designed to
@@ -249,9 +250,9 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 5.  State Considerations
 
-   Each DNS server is capable and handling some finite number of DNS
-   Push Notification subscriptions.  This number will vary from DNS
-   server to DNS server and is based on physical machine
+   Each DNS Push Notification server is capable and handling some finite
+   number of Push Notification subscriptions.  This number will vary
+   from server to server and is based on physical machine
    characteristics, network bandwidth, and operating system resource
    allocation.  After a client establishes a connection to a DNS server,
    each record subscription is individually accepted or rejected.
@@ -276,7 +277,6 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 
 
-
 Pusateri & Cheshire    Expires September 10, 2015               [Page 5]
 
 Internet-Draft           DNS Push Notifications               March 2015
@@ -288,14 +288,15 @@ Internet-Draft           DNS Push Notifications               March 2015
    the appropriate server, and connecting to it.  The client may then
    add and remove Push Notification subscriptions over this connection.
    In accordance with the current set of active subscriptions the server
-   sends asynchronous Push Notifications to the client.  The exchange
-   terminates when either end closes the TCP connection with a TCP RST.
+   sends relevant asynchronous Push Notifications to the client.  The
+   exchange terminates when either end closes the TCP connection with a
+   TCP RST.
 
 6.1.  Discovery
 
    The first step in DNS Push Notification subscription is to discover
    an appropriate DNS server that supports DNS Push Notifications for
-   the desired zone.  The client must also determine which TCP port on
+   the desired zone.  The client MUST also determine which TCP port on
    the server is listening for connections, which need not be (and often
    is not) the typical TCP port 53 used for conventional DNS.
 
@@ -329,7 +330,6 @@ Internet-Draft           DNS Push Notifications               March 2015
        name of the server providing DNS Push Notifications for the zone.
        The port number on which to contact the server is in the SRV
        record "port" field.  The address(es) of the target host MAY be
-       included in the Additional Section, however, the address records
 
 
 
@@ -338,8 +338,9 @@ Pusateri & Cheshire    Expires September 10, 2015               [Page 6]
 Internet-Draft           DNS Push Notifications               March 2015
 
 
-       SHOULD be authenticated before use as described in Section 9.2
-       [I-D.ietf-dane-srv].
+       included in the Additional Section, however, the address records
+       SHOULD be authenticated before use as described below in
+       Section 9.2 [I-D.ietf-dane-srv].
 
    7.  More than one SRV record may be returned.  In this case, the
        "priority" and "weight" values in the returned SRV records are
@@ -356,7 +357,6 @@ Internet-Draft           DNS Push Notifications               March 2015
    If a server closes a DNS Push Notification subscription connection,
    the client SHOULD repeat the discovery process in order to determine
    the preferred DNS server for subscriptions at that time.
-
 
 
 
@@ -482,10 +482,10 @@ Internet-Draft           DNS Push Notifications               March 2015
    in the SUBSCRIBE request that generated this SUBSCRIBE response.
 
    ANCOUNT MUST be zero, and the Answer Section MUST be empty.
-   Any records in the Answer Section MUST be silently ignored.  If the
-   subscription was accepted and there are positive answers for the
-   requested name, type and class, then these positive answers MUST be
-   communicated to the client in an immediately following Push
+   Any records in the Answer Section MUST be silently ignored.
+   If the subscription was accepted and there are positive answers for
+   the requested name, type and class, then these positive answers MUST
+   be communicated to the client in an immediately following Push
    Notification Update, not in the Answer Section of the SUBSCRIBE
    response.  This simplifying requirement is made so that there is only
    a single way that information is communicated to a DNS Push
@@ -702,9 +702,9 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 8.  IANA Considerations
 
-   This document defines the service name: "_dns-push._tcp".  It is only
-   applicable for the TCP protocol.  This name is to be published in the
-   IANA Service Name Registry.
+   This document defines the service name: "_dns-push._tcp".
+   It is only applicable for the TCP protocol.
+   This name is to be published in the IANA Service Name Registry.
 
    This document defines two DNS OpCodes: SUBSCRIBE with (tentative)
    value 6 and UNSUBSCRIBE with (tentative) value 7.
