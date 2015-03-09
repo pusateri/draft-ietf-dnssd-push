@@ -138,16 +138,16 @@ Internet-Draft           DNS Push Notifications               March 2015
    record changes in a timely manner without polling.
 
    DNS Long-Lived Queries (LLQ) [I-D.sekar-dns-llq] is an existing
-   deployed UDP-based solution to provide asynchronous change
-   notifications.  This document builds on experience gained with that
-   protocol, with an improved design that uses long-lived TCP
-   connections instead of UDP, and adopts the syntax and semantics of
-   DNS Update messages [RFC2136] instead of inventing a new vocabulary
-   of messages to communicate DNS zone changes.
-
-
-
-
+   deployed solution to provide asynchronous change notifications.  Even
+   though it can be used over TCP, LLQ is defined primarily as a UDP-
+   based protocol, and as such it defines its own equivalents of
+   existing TCP features like the three-way handshake.  This document
+   builds on experience gained with the LLQ protocol, with an improved
+   design that uses long-lived TCP connections instead of UDP (and
+   therefore doesn't need to duplicate existing TCP functionality), and
+   adopts the syntax and semantics of DNS Update messages [RFC2136]
+   instead of inventing a new vocabulary of messages to communicate DNS
+   zone changes.
 
 
 
@@ -384,7 +384,7 @@ Internet-Draft           DNS Push Notifications               March 2015
    communicated to the client in an immediately following Push
    Notification Update, not in the Answer Section of the SUBSCRIBE
    response.  This simplifying requirement is made so that there is only
-   a single way that information is communicted to a DNS Push
+   a single way that information is communicated to a DNS Push
    Notification client.  Since a DNS Push Notification client has to
 
 
@@ -400,19 +400,19 @@ Internet-Draft           DNS Push Notifications               March 2015
 
    Supported RCODEs are as follows:
 
-   +-----------+-------+-----------------------------------------------+
-   | Mneumonic | Value | Description                                   |
-   +-----------+-------+-----------------------------------------------+
-   | NOERROR   |   0   | SUBSCRIBE successful                          |
-   | FORMERR   |   1   | Server failed to process request due to a     |
-   |           |       | malformed request                             |
-   | SERVFAIL  |   2   | Server failed to process request due to       |
-   |           |       | resource exhaustion                           |
-   | NOTIMP    |   4   | Server does not implement DNS Push            |
-   |           |       | Notifications                                 |
-   | REFUSED   |   5   | Server refuses to process request for policy  |
-   |           |       | or security reasons                           |
-   +-----------+-------+-----------------------------------------------+
+   +----------+-------+------------------------------------------------+
+   | Mnemonic | Value | Description                                    |
+   +----------+-------+------------------------------------------------+
+   | NOERROR  |   0   | SUBSCRIBE successful                           |
+   | FORMERR  |   1   | Server failed to process request due to a      |
+   |          |       | malformed request                              |
+   | SERVFAIL |   2   | Server failed to process request due to        |
+   |          |       | resource exhaustion                            |
+   | NOTIMP   |   4   | Server does not implement DNS Push             |
+   |          |       | Notifications                                  |
+   | REFUSED  |   5   | Server refuses to process request for policy   |
+   |          |       | or security reasons                            |
+   +----------+-------+------------------------------------------------+
 
                           Table 1: Response codes
 
@@ -435,7 +435,7 @@ Internet-Draft           DNS Push Notifications               March 2015
    matches only a CNAME in the zone, and nothing else.
 
    Note that a client may SUBSCRIBE to records that are unknown to the
-   server at the time of the requesta and this is not an error.  The
+   server at the time of the request and this is not an error.  The
    server MUST accept these requests and send Push Notifications if and
    when matches are found in the future.
 
@@ -467,7 +467,7 @@ Internet-Draft           DNS Push Notifications               March 2015
    No response message is generated as a result of processing an
    UNSUBSCRIBE message.
 
-   Having being sucessfully revoked with a correctly-formatted
+   Having being successfully revoked with a correctly-formatted
    UNSUBSCRIBE message, the previously referenced subscription is no
    longer active and the server MAY discard the state associated with it
    immediately, or later, at the server's discretion.
@@ -508,7 +508,7 @@ Internet-Draft           DNS Push Notifications               March 2015
 
 6.4.  DNS Push Notification Update Messages
 
-   Once a subscription has been sucessfully established, the server
+   Once a subscription has been successfully established, the server
    generates Push Notification Updates to send to the client as
    appropriate.  An initial Push Notification Update will be sent
    immediately in the case that the answer set was non-empty at the
@@ -543,7 +543,7 @@ Internet-Draft           DNS Push Notifications               March 2015
    Section MUST be empty.
 
    For DNS Push Notifications, PRCOUNT MUST be zero, and the
-   Prerequesite Section MUST be empty.
+   Prerequisite Section MUST be empty.
 
    For DNS Push Notifications, ADCOUNT MUST be zero, and the Additional
    Data Section MUST be empty.

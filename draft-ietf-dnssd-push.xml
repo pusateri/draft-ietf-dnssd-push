@@ -160,7 +160,7 @@
 
      <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group, and new services and updates are sent for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
 
-     <t><xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> is an existing deployed UDP-based solution to provide asynchronous change notifications. This document builds on experience gained with that protocol, with an improved design that uses long-lived TCP connections instead of UDP, and adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref> instead of inventing a new vocabulary of messages to communicate DNS zone changes.</t>
+     <t><xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> is an existing deployed solution to provide asynchronous change notifications. Even though it can be used over TCP, LLQ is defined primarily as a UDP-based protocol, and as such it defines its own equivalents of existing TCP features like the three-way handshake. This document builds on experience gained with the LLQ protocol, with an improved design that uses long-lived TCP connections instead of UDP (and therefore doesn't need to duplicate existing TCP functionality), and adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref> instead of inventing a new vocabulary of messages to communicate DNS zone changes.</t>
 <?rfc needLines="20" ?>
    </section>
 
@@ -223,11 +223,11 @@
 
        <t>The RCODE in the SUBSCRIBE response indicates whether or not the subscription was accepted.
        The Answer Section MUST be empty. If the subscription was accepted and the there are positive answers for the requested name, type and class, then these positive answers MUST be communicated to the client in an immediately following Push Notification Update, not in the Answer Section of the SUBSCRIBE response.
-       This simplifying requirement is made so that there is only a single way that information is communicted to a DNS Push Notification client. Since a DNS Push Notification client has to parse information received via Push Notification Updates anyway, it is simpler if it does not also have to parse information received via the Answer Section of a SUBSCRIBE response.</t>
+       This simplifying requirement is made so that there is only a single way that information is communicated to a DNS Push Notification client. Since a DNS Push Notification client has to parse information received via Push Notification Updates anyway, it is simpler if it does not also have to parse information received via the Answer Section of a SUBSCRIBE response.</t>
 
        <t>Supported RCODEs are as follows:</t>
        <texttable anchor="table_update_rcodes" title="Response codes">
-       <ttcol align="left">Mneumonic</ttcol>
+       <ttcol align="left">Mnemonic</ttcol>
        <ttcol align="center">Value</ttcol>
        <ttcol align="left">Description</ttcol>
        <c>NOERROR</c><c>0</c><c>SUBSCRIBE successful</c>
@@ -245,7 +245,7 @@
 
        <t>Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</t>
 
-       <t>Note that a client may SUBSCRIBE to records that are unknown to the server at the time of the requesta and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
+       <t>Note that a client may SUBSCRIBE to records that are unknown to the server at the time of the request and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
      </section>
 
      <section title="DNS Push Notification UNSUBSCRIBE">
@@ -255,12 +255,12 @@
 
        <t>No response message is generated as a result of processing an UNSUBSCRIBE message.</t>
 
-       <t>Having being sucessfully revoked with a correctly-formatted UNSUBSCRIBE message, the previously referenced subscription is no longer active and the server MAY discard the state associated with it immediately, or later, at the server's discretion.</t>
+       <t>Having being successfully revoked with a correctly-formatted UNSUBSCRIBE message, the previously referenced subscription is no longer active and the server MAY discard the state associated with it immediately, or later, at the server's discretion.</t>
 <?rfc needLines="28" ?>
      </section>
 
      <section title="DNS Push Notification Update Messages">
-       <t>Once a subscription has been sucessfully established, the server generates Push Notification Updates to send to the client as appropriate. An initial Push Notification Update will be sent immediately in the case that the answer set was non-empty at the moment the subscription was established. Subsequent changes to the answer set are then communicated in subsequent Push Notification Updates.</t>
+       <t>Once a subscription has been successfully established, the server generates Push Notification Updates to send to the client as appropriate. An initial Push Notification Update will be sent immediately in the case that the answer set was non-empty at the moment the subscription was established. Subsequent changes to the answer set are then communicated in subsequent Push Notification Updates.</t>
 
        <t>The format of Push Notification Updates borrows from the existing <xref target="RFC2136">DNS Update</xref> protocol, with some simplifications.</t>
        <t>The following figure shows the existing DNS header Update format:
@@ -286,7 +286,7 @@
 
        <t>For DNS Push Notifications, ZOCOUNT MUST be zero, and the Zone Section MUST be empty.</t>
 
-       <t>For DNS Push Notifications, PRCOUNT MUST be zero, and the Prerequesite Section MUST be empty.</t>
+       <t>For DNS Push Notifications, PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.</t>
 
        <t>For DNS Push Notifications, ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.</t>
 
