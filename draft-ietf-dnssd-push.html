@@ -398,12 +398,12 @@
 <link href="#rfc.authors" rel="Chapter"/>
 
 
-  <meta name="generator" content="xml2rfc version 2.4.9 - http://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.5.0 - http://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2015-3-9" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-01" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-6-1" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
   <meta name="description" content="The Domain Name System (DNS) was designed to efficiently return matching records for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
 
@@ -427,12 +427,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 10, 2015</td>
+  <td class="left">Expires: December 3, 2015</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">March 9, 2015</td>
+  <td class="right">June 1, 2015</td>
 </tr>
 
     	
@@ -440,7 +440,7 @@
   </table>
 
   <p class="title">DNS Push Notifications<br />
-  <span class="filename">draft-ietf-dnssd-push-00</span></p>
+  <span class="filename">draft-ietf-dnssd-push-01</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
@@ -452,7 +452,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 10, 2015.</p>
+<p>This Internet-Draft will expire on December 3, 2015.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -507,7 +507,7 @@
 <p id="rfc.section.4.p.3">If a client closes the connection, it is signaling that it is no longer interested in receiving updates to any of the records it has subscribed. It is informing the server that the server may release all state information it has been keeping with regards to this client. This may occur because the client computer has been disconnected from the network, has gone to sleep, or the application requiring the records has terminated.</p>
 <p id="rfc.section.4.p.4">If a server closes the connection, it is informing the client that it can no longer provide updates for the subscribed records. This may occur because the server application software or operating system is restarting, the application terminated unexpectedly, the server is undergoing maintenance procedures, or the server is overloaded and can no longer provide the information to all the clients that wish to receive it. The client can try to re-subscribe at a later time or connect to another server supporting DNS Push Notifications for the zone.</p>
 <p id="rfc.section.4.p.5">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification.</p>
-<p id="rfc.section.4.p.6">Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Additional security measures such as authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <a href="#IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</a>.</p>
+<p id="rfc.section.4.p.6">Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <a href="#IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</a>.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> State Considerations</h1>
 <p id="rfc.section.5.p.1">Each DNS Push Notification server is capable and handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Notifications for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> Protocol Operation</h1>
@@ -643,7 +643,7 @@
 <p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns-push._tcp</samp>.<br/> It is only applicable for the TCP protocol.<br/> This name is to be published in the IANA Service Name Registry.</p>
 <p id="rfc.section.8.p.2">This document defines two DNS OpCodes: SUBSCRIBE with (tentative) value 6 and UNSUBSCRIBE with (tentative) value 7.</p>
 <h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
-<p id="rfc.section.9.p.1">Strict TLS support is mandatory in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
+<p id="rfc.section.9.p.1">TLS support is mandatory in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
 <h1 id="rfc.section.9.1"><a href="#rfc.section.9.1">9.1.</a> Security Services</h1>
 <p id="rfc.section.9.1.p.1">It is the goal of using TLS to provide the following security services: </p>
 
@@ -657,13 +657,13 @@
 </dl>
 
 <p> </p>
-<p id="rfc.section.9.1.p.2">Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <a href="#I-D.ietf-uta-tls-bcp">TLS Recommendations</a> <cite title="NONE">[I-D.ietf-uta-tls-bcp]</cite> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</p>
+<p id="rfc.section.9.1.p.2">Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <a href="#RFC7525">TLS Recommendations</a> <cite title="NONE">[RFC7525]</cite> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</p>
 <h1 id="rfc.section.9.2"><a href="#rfc.section.9.2">9.2.</a> <a href="#tls_name_auth" id="tls_name_auth">TLS Name Authentication</a></h1>
-<p id="rfc.section.9.2.p.1">As described in <a href="#discovery">Section 6.1</a>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <samp>_dns-push._tcp.&lt;zone&gt;</samp>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <a href="#I-D.ietf-dane-srv">[I-D.ietf-dane-srv]</a>. This procedure uses the TLS Sever Name Indication (SNI) extension <a href="#RFC6066">[RFC6066]</a> to inform the server of the name the client has authenticated through the use of TLSA records.</p>
+<p id="rfc.section.9.2.p.1">As described in <a href="#discovery">Section 6.1</a>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <samp>_dns-push._tcp.&lt;zone&gt;</samp>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <a href="#I-D.ietf-dane-srv">[I-D.ietf-dane-srv]</a>. This procedure uses the TLS Sever Name Indication (SNI) extension <a href="#RFC6066">[RFC6066]</a> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</p>
 <h1 id="rfc.section.9.3"><a href="#rfc.section.9.3">9.3.</a> TLS Compression</h1>
 <p id="rfc.section.9.3.p.1">In order to reduce the chances of compression related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <a href="#I-D.ietf-tls-tls13">TLS 1.3</a> <cite title="NONE">[I-D.ietf-tls-tls13]</cite>, TLS-level compression has been removed completely.</p>
 <h1 id="rfc.section.9.4"><a href="#rfc.section.9.4">9.4.</a> TLS Session Resumption</h1>
-<p id="rfc.section.9.4.p.1">TLS Session Resumption MUST be disabled on DNS Push Notification servers. It is not useful to have subscription state cached for long periods of time. It is also not desirable for subscription state to be maintained while the client is not connected.</p>
+<p id="rfc.section.9.4.p.1">TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <a href="#RFC5246">[RFC5246]</a> or operate in stateless mode by sending a Session Ticket <a href="#RFC5077">[RFC5077]</a> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection.</p>
 <h1 id="rfc.references"><a href="#rfc.references">10.</a> References</h1>
 <h1 id="rfc.references.1"><a href="#rfc.references.1">10.1.</a> Normative References</h1>
 <table>
@@ -672,19 +672,13 @@
       <td class="reference">
         <b id="I-D.ietf-dane-srv">[I-D.ietf-dane-srv]</b>
       </td>
-      <td class="top"><a>Finch, T.</a>, <a>Miller, M.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dane-srv-11">Using DNS-Based Authentication of Named Entities (DANE) TLSA Records with SRV Records</a>", Internet-Draft draft-ietf-dane-srv-11, February 2015.</td>
+      <td class="top"><a>Finch, T.</a>, <a>Miller, M.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dane-srv-14">Using DNS-Based Authentication of Named Entities (DANE) TLSA Records with SRV Records</a>", Internet-Draft draft-ietf-dane-srv-14, April 2015.</td>
     </tr>
     <tr>
       <td class="reference">
         <b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b>
       </td>
-      <td class="top"><a>Dierks, T.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-04">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-04, January 2015.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="I-D.ietf-uta-tls-bcp">[I-D.ietf-uta-tls-bcp]</b>
-      </td>
-      <td class="top"><a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/draft-ietf-uta-tls-bcp-11">Recommendations for Secure Use of TLS and DTLS</a>", Internet-Draft draft-ietf-uta-tls-bcp-11, February 2015.</td>
+      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-05">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-05, March 2015.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -795,6 +789,12 @@
     </tr>
     <tr>
       <td class="reference">
+        <b id="RFC5077">[RFC5077]</b>
+      </td>
+      <td class="top"><a>Salowey, J.</a>, <a>Zhou, H.</a>, <a>Eronen, P.</a> and <a>H. Tschofenig</a>, "<a href="http://tools.ietf.org/html/rfc5077">Transport Layer Security (TLS) Session Resumption without Server-Side State</a>", RFC 5077, January 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
         <b id="RFC6762">[RFC6762]</b>
       </td>
       <td class="top"><a>Cheshire, S.</a> and <a>M. Krochmal</a>, "<a href="http://tools.ietf.org/html/rfc6762">Multicast DNS</a>", RFC 6762, February 2013.</td>
@@ -804,6 +804,12 @@
         <b id="RFC6763">[RFC6763]</b>
       </td>
       <td class="top"><a>Cheshire, S.</a> and <a>M. Krochmal</a>, "<a href="http://tools.ietf.org/html/rfc6763">DNS-Based Service Discovery</a>", RFC 6763, February 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7525">[RFC7525]</b>
+      </td>
+      <td class="top"><a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/rfc7525">Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</a>", BCP 195, RFC 7525, May 2015.</td>
     </tr>
     <tr>
       <td class="reference">

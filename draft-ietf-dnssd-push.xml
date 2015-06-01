@@ -16,16 +16,17 @@
 <!ENTITY RFC2136 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2136.xml">
 <!ENTITY RFC2782 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2782.xml">
 <!ENTITY RFC4287 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4287.xml">
+<!ENTITY RFC5077 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5077.xml">
 <!ENTITY RFC5246 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml">
 <!ENTITY RFC5966 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5966.xml">
 <!ENTITY RFC6066 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6066.xml">
 <!ENTITY RFC6195 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6195.xml">
 <!ENTITY RFC6762 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6762.xml">
 <!ENTITY RFC6763 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6763.xml">
+<!ENTITY RFC7525 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7525.xml">
 <!ENTITY XEP-0060 PUBLIC ""  "http://xmpp.org/extensions/refs/reference.XSF.XEP-0060.xml">
 <!ENTITY I-D.ietf-dnssd-hybrid SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnssd-hybrid.xml">
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
-<!ENTITY I-D.ietf-uta-tls-bcp SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-uta-tls-bcp.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
 <!ENTITY I-D.ietf-dane-srv SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dane-srv.xml">
 ]>
@@ -54,7 +55,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-00" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-01" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -108,7 +109,7 @@
      </address>
    </author>
 
-   <date year="2015" month="March"/>
+   <date year="2015" month="June"/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -181,7 +182,7 @@
 
      <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification.</t>
 
-     <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Additional security measures such as authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <xref target="IPJ.9-4-TCPSYN"/>.</t>
+     <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <xref target="IPJ.9-4-TCPSYN"/>.</t>
    </section>
 
    <section title="State Considerations">
@@ -383,7 +384,7 @@
    </section>
 
    <section anchor="Security" title="Security Considerations">
-     <t>Strict TLS support is mandatory in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
+     <t>TLS support is mandatory in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
      <section title="Security Services">
        <t>It is the goal of using TLS to provide the following security services:
          <list style="hanging">
@@ -392,11 +393,11 @@
            <t hangText="Authentication">An end-point of the TLS communication is authenticated as the intended entity to communicate with.</t>
          </list>
        </t>
-       <t>Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <xref target="I-D.ietf-uta-tls-bcp">TLS Recommendations</xref> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</t>
+       <t>Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <xref target="RFC7525">TLS Recommendations</xref> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</t>
      </section>
 
      <section anchor="tls_name_auth" title="TLS Name Authentication">
-       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="I-D.ietf-dane-srv"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records.</t>
+       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="I-D.ietf-dane-srv"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</t>
      </section>
 
      <section title="TLS Compression">
@@ -404,7 +405,7 @@
      </section>
 
      <section title="TLS Session Resumption">
-       <t>TLS Session Resumption MUST be disabled on DNS Push Notification servers. It is not useful to have subscription state cached for long periods of time. It is also not desirable for subscription state to be maintained while the client is not connected.</t>
+       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection.</t>
      </section>
    </section>
  </middle>
@@ -428,7 +429,6 @@
    <references title="Normative References">
      &I-D.ietf-dane-srv;
      &I-D.ietf-tls-tls13;
-     &I-D.ietf-uta-tls-bcp;
      &RFC0768;
      &RFC0793;
      &RFC1034;
@@ -449,8 +449,10 @@
      &I-D.ietf-dnssd-hybrid;
      &RFC1996;
      &RFC4287;
+     &RFC5077;
      &RFC6762;
      &RFC6763;
+     &RFC7525;
      &XEP-0060;
 
      <reference anchor='IPJ.9-4-TCPSYN'>
