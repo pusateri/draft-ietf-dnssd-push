@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                       Seeking affiliation
 Intended status: Standards Track                             S. Cheshire
-Expires: December 3, 2015                                     Apple Inc.
-                                                            June 1, 2015
+Expires: December 9, 2015                                     Apple Inc.
+                                                            June 7, 2015
 
 
                          DNS Push Notifications
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 3, 2015.
+   This Internet-Draft will expire on December 9, 2015.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 1]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 1]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 2]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 2]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -165,7 +165,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 3]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 3]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -221,7 +221,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 4]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 4]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -232,21 +232,24 @@ Internet-Draft           DNS Push Notifications                June 2015
    connect to another server supporting DNS Push Notifications for the
    zone.
 
+   Connection setup over TCP ensures return reachability and alleviates
+   concerns of state overload at the server through anonymous
+   subscriptions.  All subscribers are guaranteed to be reachable by the
+   server by virtue of the TCP three-way handshake.  Because TCP SYN
+   flooding attacks are possible with any protocol over TCP,
+   implementers are encouraged to use industry best practices to guard
+   against such attacks [IPJ.9-4-TCPSYN].
+
    Transport Layer Security (TLS) [RFC5246] is well understood and
    deployed across many protocols running over TCP.  It is designed to
    prevent eavesdropping, tampering, or message forgery.  TLS is
    REQUIRED for every connection between a client subscriber and server
-   in this protocol specification.
-
-   Connection setup over TCP ensures return reachability and alleviates
-   concerns of state overload at the server through anonymous
-   subscriptions.  All subscribers are guaranteed to be reachable by the
-   server by virtue of the TCP three-way handshake.  Additional security
-   measures such as client authentication during TLS negotiation MAY
-   also be employed to increase the trust relationship between client
-   and server.  Because TCP SYN flooding attacks are possible with any
-   protocol over TCP, implementers are encouraged to use industry best
-   practices to guard against such attacks [IPJ.9-4-TCPSYN].
+   in this protocol specification.  Additional security measures such as
+   client authentication during TLS negotiation MAY also be employed to
+   increase the trust relationship between client and server.
+   Additional authentication of the SRV target using DNSSEC verification
+   and DANE TLSA records [I-D.ietf-dane-srv] is strongly encouraged.
+   See below in Section 9.2 for details.
 
 5.  State Considerations
 
@@ -274,10 +277,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-
-
-
-Pusateri & Cheshire     Expires December 3, 2015                [Page 5]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 5]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -333,7 +333,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 6]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 6]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -389,7 +389,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 7]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 7]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -445,7 +445,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 8]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 8]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -501,7 +501,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015                [Page 9]
+Pusateri & Cheshire     Expires December 9, 2015                [Page 9]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -557,7 +557,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 10]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 10]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -613,7 +613,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 11]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 11]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -669,7 +669,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 12]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 12]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -725,7 +725,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 13]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 13]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -781,7 +781,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 14]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 14]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -837,7 +837,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 15]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 15]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -893,7 +893,7 @@ Internet-Draft           DNS Push Notifications                June 2015
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 16]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 16]
 
 Internet-Draft           DNS Push Notifications                June 2015
 
@@ -949,4 +949,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires December 3, 2015               [Page 17]
+Pusateri & Cheshire     Expires December 9, 2015               [Page 17]
