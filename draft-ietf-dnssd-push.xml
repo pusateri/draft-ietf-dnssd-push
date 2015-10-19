@@ -24,11 +24,11 @@
 <!ENTITY RFC6762 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6762.xml">
 <!ENTITY RFC6763 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6763.xml">
 <!ENTITY RFC7525 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7525.xml">
+<!ENTITY RFC7673 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7673.xml">
 <!ENTITY XEP-0060 PUBLIC ""  "http://xmpp.org/extensions/refs/reference.XSF.XEP-0060.xml">
 <!ENTITY I-D.ietf-dnssd-hybrid SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnssd-hybrid.xml">
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
-<!ENTITY I-D.ietf-dane-srv SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dane-srv.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
@@ -109,7 +109,7 @@
      </address>
    </author>
 
-   <date year="2015" month="June"/>
+   <date year="2015" month="October"/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -182,7 +182,7 @@
 
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <xref target="IPJ.9-4-TCPSYN"/>.</t>
 
-     <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <xref target="I-D.ietf-dane-srv"/> is strongly encouraged. See below in <xref target="tls_name_auth"/> for details.</t>
+     <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <xref target="RFC7673"/> is strongly encouraged. See below in <xref target="tls_name_auth"/> for details.</t>
 
    </section>
 
@@ -209,7 +209,7 @@
             <t>If the zone in question does not offer DNS Push Notifications then SRV record MUST NOT exist and the SRV query will return a negative answer.</t>
 
             <t>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.
-            The SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> <xref target="I-D.ietf-dane-srv"/>.</t>
+            The SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> <xref target="RFC7673"/>.</t>
 
             <t>More than one SRV record may be returned. In this case, the <spanx style="verb">priority</spanx> and <spanx style="verb">weight</spanx> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <xref target="RFC2782">the SRV specification</xref>, the server with the lowest <spanx style="verb">priority</spanx> is first contacted. If more than one server has the same <spanx style="verb">priority</spanx>, the <spanx style="verb">weight</spanx> is indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected. If a server is not reachable or is not willing to accept a subscription request, then a subsequent server is to be contacted.</t>
 
@@ -220,7 +220,7 @@
      </section>
 
      <section title="DNS Push Notification SUBSCRIBE">
-       <t>A DNS Push Notification client indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TCP connection to the server. A SUBSCRIBE request is formatted identically to a conventional <xref target="RFC1035">DNS QUERY request</xref>, except that the opcode is SUBSCRIBE (6) instead of QUERY (0). If neither QTYPE nor QCLASS are ANY (255) then this is a specific subscription to changes for the given name, type and class. If one or both of QTYPE or QCLASS are ANY (255) then this is a wildcard subscription to changes for the given name for any type and/or class, as appropriate.</t>
+       <t>A DNS Push Notification client indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TCP connection to the server. A SUBSCRIBE request is formatted identically to a conventional <xref target="RFC1035">DNS QUERY request</xref>, except that the opcode is SUBSCRIBE (6) instead of QUERY (0). If neither QTYPE nor QCLASS are ANY (255) then this is a specific subscription to changes for the given name, type and class. If one or both of QTYPE or QCLASS are ANY (255) then this subscription matches any type and/or any class, as appropriate.</t>
 
        <t>In a SUBSCRIBE request the DNS Header QR bit MUST be zero.<vspace />
        If the QR bit is not zero the message is not a SUBSCRIBE request.</t>
@@ -275,7 +275,7 @@
 
        <t>A client MUST not send a SUBSCRIBE message that duplicates the name, type and class of an existing active subscription. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and "Foo.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately close the TCP connection.</t>
 
-       <t>Wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a wildcard ("*") in the zone, and nothing else.</t>
+       <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a wildcard ("*") in the zone, and nothing else.</t>
 
        <t>Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</t>
 
@@ -398,7 +398,7 @@
      </section>
 
      <section anchor="tls_name_auth" title="TLS Name Authentication">
-       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="I-D.ietf-dane-srv"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</t>
+       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns-push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</t>
      </section>
 
      <section title="TLS Compression">
@@ -428,7 +428,6 @@
     filing system or remote ones accessed by http (http://domain/dir/... ).-->
 
    <references title="Normative References">
-     &I-D.ietf-dane-srv;
      &I-D.ietf-tls-tls13;
      &RFC0768;
      &RFC0793;
@@ -442,6 +441,7 @@
      &RFC5966;
      &RFC6066;
      &RFC6195;
+     &RFC7673;
    </references>
 
    <references title="Informative References">
