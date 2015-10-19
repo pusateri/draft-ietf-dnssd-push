@@ -150,6 +150,7 @@
      Other mechanisms such as a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref> can also generate changes to a DNS zone.
      This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6195"/>.</t>
 
+<?rfc needLines="7" ?>
      <section title="Requirements Language">
        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
        "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
@@ -182,6 +183,7 @@
      <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for DNS Updates, DNS Queries, and DNS Push Notification Queries.</t>
 
      <t>DNS Push Notification clients are NOT required to implement DNS Update Prerequisite processing. Prerequisites are used to perform tentative atomic test-and-set type operations on the server, and that concept has no application when it comes to an authoritative server informing a client of changes to DNS records.</t>
+<?rfc needLines="14" ?>
    </section>
 
    <section title="Transport">
@@ -201,7 +203,7 @@
 
    <section title="State Considerations">
      <t>Each DNS Push Notification server is capable and handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Notifications for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
-<?rfc needLines="12" ?>
+<?rfc needLines="30" ?>
    </section>
 
    <section title="Protocol Operation">
@@ -299,7 +301,7 @@
        <t>A client may SUBSCRIBE to records that are unknown to the server at the time of the request and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
 
        <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/>. A client MUST NOT include an actual EDNS0 TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request this is an error and the server MUST immediately close the TCP connection. In a SUBSCRIBE response the server MUST include an EDNS0 TCP Keepalive option specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a SUBSCRIBE response that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
-
+<?rfc needLines="20" ?>
      </section>
 
      <section title="DNS Push Notification UNSUBSCRIBE">
@@ -310,6 +312,7 @@
        <t>No response message is generated as a result of processing an UNSUBSCRIBE message.</t>
 
        <t>Having being successfully revoked with a correctly-formatted UNSUBSCRIBE message, the previously referenced subscription is no longer active and the server MAY discard the state associated with it immediately, or later, at the server's discretion.</t>
+<?rfc needLines="30" ?>
      </section>
 
      <section title="DNS Push Notification Update Messages">
@@ -388,7 +391,7 @@
        <t>Reception of a Push Notification Update Message results in no response back to the server.</t>
 
        <t>The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</t>
-
+<?rfc needLines="30" ?>
      </section>
 
      <section title="DNS RECONFIRM">
@@ -418,7 +421,7 @@
        <t>No response message is generated as a result of processing a RECONFIRM message.</t>
 
        <t>If the server receiving the RECONFIRM request determines that the records are in fact no longer valid, then subsequent DNS Push Notification Update Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised printer is no longer present has the side effect of informing all other interested clients that the printer in question is now gone.</t>
-
+<?rfc needLines="45" ?>
      </section>
 
      <section title="DNS Push Notification Termination Message">
@@ -512,7 +515,8 @@
 
      <section title="TLS Session Resumption">
        <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection.</t>
-     </section>
+<?rfc needLines="30" ?>
+</section>
    </section>
  </middle>
 
