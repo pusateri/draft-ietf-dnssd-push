@@ -29,6 +29,8 @@
 <!ENTITY XEP-0060 PUBLIC ""  "http://xmpp.org/extensions/refs/reference.XSF.XEP-0060.xml">
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
+<!ENTITY I-D.ietf-dnsop-5966bis SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-5966bis.xml">
+<!ENTITY I-D.wouters-edns-tcp-keepalive SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.wouters-edns-tcp-keepalive.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
@@ -55,7 +57,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-01" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-02" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -163,6 +165,11 @@
      <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group, and new services and updates are sent for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
 
      <t><xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> is an existing deployed solution to provide asynchronous change notifications. Even though it can be used over TCP, LLQ is defined primarily as a UDP-based protocol, and as such it defines its own equivalents of existing TCP features like the three-way handshake. This document builds on experience gained with the LLQ protocol, with an improved design that uses long-lived TCP connections instead of UDP (and therefore doesn't need to duplicate existing TCP functionality), and adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref> instead of inventing a new vocabulary of messages to communicate DNS zone changes.</t>
+
+     <t>Because DNS Push Notifications impose a certain load on the responding server (though less load that rapid polling of that server) DNS Push Notification clients SHOULD exercise restraint in issuing DNS Push Notification subscriptions. A subscription SHOULD only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results of that subscription to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display).</t>
+
+     <t>A DNS Push Notification client MUST not routinely keep a DNS Push Notification subscription active 24 hours a day 7 days a week just to keep a list in memory up to date so that it will be really fast if the user does choose to bring up an on-screen display of that data. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
+
 <?rfc needLines="20" ?>
    </section>
 
@@ -178,9 +185,9 @@
    </section>
 
    <section title="Transport">
-     <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC5966"/>. Following that precendent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TCP.</t>
+     <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC5966"/><xref target="I-D.ietf-dnsop-5966bis"/>. Following that precendent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP.</t>
 
-     <t>Either end of the TCP connection can terminate all of the subscriptions on that connection by simply closing the connection abruptly with a TCP RST. (An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription.)</t>
+     <t>Either end of the TCP connection can terminate all of the subscriptions on that connection by simply closing the connection abruptly with a TCP FIN or RST. (An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription.)</t>
 
      <t>If a client closes the connection, it is signaling that it is no longer interested in receiving updates to any of the records it has subscribed. It is informing the server that the server may release all state information it has been keeping with regards to this client. This may occur because the client computer has been disconnected from the network, has gone to sleep, or the application requiring the records has terminated.</t>
 
@@ -198,11 +205,11 @@
    </section>
 
    <section title="Protocol Operation">
-     <t>A DNS Push Notification exchange begins with the client discovering the appropriate server, and connecting to it. The client may then add and remove Push Notification subscriptions over this connection. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. The exchange terminates when either end closes the TCP connection with a TCP RST.</t>
+     <t>A DNS Push Notification exchange begins with the client discovering the appropriate server, and then making a TLS/TCP connection to it. The client may then add and remove Push Notification subscriptions over this connection. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. The exchange terminates when either end closes the TCP connection with a TCP FIN or RST.</t>
 
      <t>A client SHOULD NOT make multiple TLS/TCP connections to the same DNS Push Notification server. A client SHOULD share a single TLS/TCP connection for all requests to the same DNS Push Notification server. This shared connection should be used for all DNS Queries and DNS Push Notification Queries queries to that server, and for DNS Update requests too when the <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record indicates that the same server also handles DNS Update requests. This is to reduce unnecessary load on the DNS Push Notification server.</t>
 
-     <t>However, a single client device may be home to multiple client software instances that don't know about each other, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address. This is undesirable from an efficiency stanpoint, but may be unavoidable in some situations, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address.</t>
+     <t>However, a single client device may be home to multiple independent client software instances that don't know about each other, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address. This is undesirable from an efficiency stanpoint, but may be unavoidable in some situations, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address.</t>
 
       <section anchor="discovery" title="Discovery">
         <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone. The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS.</t>
@@ -290,6 +297,9 @@
        <t>Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</t>
 
        <t>A client may SUBSCRIBE to records that are unknown to the server at the time of the request and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
+
+       <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/>. A client MUST NOT include an actual EDNS0 TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request this is an error and the server MUST immediately close the TCP connection. In a SUBSCRIBE response the server MUST include an EDNS0 TCP Keepalive option specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a SUBSCRIBE response that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
+
      </section>
 
      <section title="DNS Push Notification UNSUBSCRIBE">
@@ -310,7 +320,7 @@
 <?rfc needLines="28" ?>
 
        <t>The following figure shows the existing DNS Update header format:
-       <figure align="center" anchor="packet_header"><artwork align="center"><![CDATA[
+       <figure align="center" anchor="packet_header1"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
@@ -373,11 +383,96 @@
 
        <t>The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" update, not three separate "delete an individual RR from a name" updates. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" update, not two separate "delete an RRset from a name" updates.</t>
 
+       <t>All Push Notification Update Messages MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/> specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a Push Notification Update Message that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
+
        <t>Reception of a Push Notification Update Message results in no response back to the server.</t>
 
        <t>The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</t>
 
      </section>
+
+     <section title="DNS RECONFIRM">
+       <t>Sometimes, particularly when used with a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believe may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client sends a DNS RECONFIRM message to request that the server re-verify that the data is still valid. For a Hybrid Proxy, this causes it to issue new Multicast DNS requests to ascertain whether the target device is still present. For other kinds of DNS server the RECONFIRM operation is currently undefined and should be sliently ignored.
+
+       A RECONFIRM request is formatted similarly to a conventional <xref target="RFC1035">DNS QUERY request</xref>, except that the opcode is RECONFIRM (8) instead of QUERY (0). QTYPE MUST NOT be the value ANY (255). QCLASS MUST NOT be the value ANY (255).</t>
+
+       <t>In a RECONFIRM request the DNS Header QR bit MUST be zero.<vspace />
+       If the QR bit is not zero the message is not a RECONFIRM request.</t>
+
+       <t>The AA, TC, RD, RA, Z, AD, and CD bits, the ID field, and the RCODE field, MUST be zero on transmission, and MUST be silently ignored on reception.</t>
+
+       <t>Like a DNS QUERY request, a RECONFIRM request MUST contain exactly one question. Since RECONFIRM requests are sent over TCP, multiple RECONFIRM requests can be concatenated in a single TCP stream and packed efficiently into TCP segments, so the ability to pack multiple RECONFIRM operations into a single DNS message within that TCP stream would add extra complexity for little benefit.</t>
+
+       <t>ANCOUNT MUST be nonzero, and the Answer Section MUST contain the rdata for the record(s) that the client believes to be in doubt.</t>
+
+       <t>NSCOUNT MUST be zero, and the Authority Section MUST be empty.<vspace />
+       Any records in the Authority Section MUST be silently ignored.</t>
+
+       <t>ARCOUNT MUST be zero, and the Additional Section MUST be empty.<vspace />
+       Any records in the Additional Section MUST be silently ignored.</t>
+
+       <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a wildcard ("*") in the zone, and nothing else.</t>
+
+       <t>Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</t>
+
+       <t>No response message is generated as a result of processing a RECONFIRM message.</t>
+
+       <t>If the server receiving the RECONFIRM request determines that the records are in fact no longer valid, then subsequent DNS Push Notification Update Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised printer is no longer present has the side effect of informing all other interested clients that the printer in question is now gone.</t>
+
+     </section>
+
+     <section title="DNS Push Notification Termination Message">
+       <t>If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behavour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server MAY instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message.</t>
+
+       <t>The format of a Termination Message is similar to a Push Notification Update.</t>
+       
+<?rfc needLines="28" ?>
+
+       <t>The following figure shows the existing DNS Update header format:
+       <figure align="center" anchor="packet_header2"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                      ID                       |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|   Opcode  |          Z         |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ZOCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    PRCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    UPCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ADCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+               ]]></artwork>
+       </figure>
+       </t>
+
+       <t>For Termination Messages the following rules apply:</t>
+
+       <t>The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).<vspace />
+       Messages received where this is not true are not Termination Messages and should be silently ignored.</t>
+
+       <t>ID and the Z bits MUST be zero on transmission,<vspace />
+       and MUST be silently ignored on reception.</t>
+
+       <t>ZOCOUNT MUST be zero, and the Zone Section MUST be empty.<vspace />
+       Any records in the Zone Section MUST be silently ignored.</t>
+
+       <t>PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.<vspace />
+       Any records in the Prerequisite Section MUST be silently ignored.</t>
+
+       <t>UPCOUNT MUST be zero, and the Update Section MUST be empty.<vspace />
+       Any records in the Update Section MUST be silently ignored.</t>
+
+       <t>ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.<vspace />
+       Any records in the Additional Data Section MUST be silently ignored.</t>
+
+       <t>The RCODE MUST contain a code giving the reason for termination. [Codes to be determined.] The Termination Message MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/> where the idle timeout indicates the time the client SHOULD wait before attempting to reconnect.</t>
+
+     </section>
+
 <?rfc needLines="10" ?>
    </section>
 
@@ -453,6 +548,8 @@
      &RFC6066;
      &RFC6195;
      &RFC7673;
+     &I-D.ietf-dnsop-5966bis;
+     &I-D.wouters-edns-tcp-keepalive;
    </references>
 
    <references title="Informative References">
