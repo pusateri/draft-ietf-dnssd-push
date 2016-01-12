@@ -387,13 +387,13 @@
 <link href="#rfc.section.6.4" rel="Chapter" title="6.4 DNS Push Notification Update Messages"/>
 <link href="#rfc.section.6.5" rel="Chapter" title="6.5 DNS RECONFIRM"/>
 <link href="#rfc.section.6.6" rel="Chapter" title="6.6 DNS Push Notification Termination Message"/>
-<link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations"/>
+<link href="#rfc.section.7.1" rel="Chapter" title="7.1 Security Services"/>
+<link href="#rfc.section.7.2" rel="Chapter" title="7.2 TLS Name Authentication"/>
+<link href="#rfc.section.7.3" rel="Chapter" title="7.3 TLS Compression"/>
+<link href="#rfc.section.7.4" rel="Chapter" title="7.4 TLS Session Resumption"/>
 <link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations"/>
-<link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
-<link href="#rfc.section.9.1" rel="Chapter" title="9.1 Security Services"/>
-<link href="#rfc.section.9.2" rel="Chapter" title="9.2 TLS Name Authentication"/>
-<link href="#rfc.section.9.3" rel="Chapter" title="9.3 TLS Compression"/>
-<link href="#rfc.section.9.4" rel="Chapter" title="9.4 TLS Session Resumption"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 Acknowledgements"/>
 <link href="#rfc.references" rel="Chapter" title="10 References"/>
 <link href="#rfc.references.1" rel="Chapter" title="10.1 Normative References"/>
 <link href="#rfc.references.2" rel="Chapter" title="10.2 Informative References"/>
@@ -479,14 +479,14 @@
 <li>6.4.   <a href="#rfc.section.6.4">DNS Push Notification Update Messages</a></li>
 <li>6.5.   <a href="#rfc.section.6.5">DNS RECONFIRM</a></li>
 <li>6.6.   <a href="#rfc.section.6.6">DNS Push Notification Termination Message</a></li>
-</ul><li>7.   <a href="#rfc.section.7">Acknowledgements</a></li>
-<li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
-<li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
-<ul><li>9.1.   <a href="#rfc.section.9.1">Security Services</a></li>
-<li>9.2.   <a href="#rfc.section.9.2">TLS Name Authentication</a></li>
-<li>9.3.   <a href="#rfc.section.9.3">TLS Compression</a></li>
-<li>9.4.   <a href="#rfc.section.9.4">TLS Session Resumption</a></li>
-</ul><li>10.   <a href="#rfc.references">References</a></li>
+</ul><li>7.   <a href="#rfc.section.7">Security Considerations</a></li>
+<ul><li>7.1.   <a href="#rfc.section.7.1">Security Services</a></li>
+<li>7.2.   <a href="#rfc.section.7.2">TLS Name Authentication</a></li>
+<li>7.3.   <a href="#rfc.section.7.3">TLS Compression</a></li>
+<li>7.4.   <a href="#rfc.section.7.4">TLS Session Resumption</a></li>
+</ul><li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
+<li>9.   <a href="#rfc.section.9">Acknowledgements</a></li>
+<li>10.   <a href="#rfc.references">References</a></li>
 <ul><li>10.1.   <a href="#rfc.references.1">Normative References</a></li>
 <li>10.2.   <a href="#rfc.references.2">Informative References</a></li>
 </ul><li><a href="#rfc.authors">Authors' Addresses</a></li>
@@ -514,7 +514,7 @@
 <p id="rfc.section.4.p.3">If a client closes the connection, it is signaling that it is no longer interested in receiving updates to any of the records it has subscribed. It is informing the server that the server may release all state information it has been keeping with regards to this client. This may occur because the client computer has been disconnected from the network, has gone to sleep, or the application requiring the records has terminated.</p>
 <p id="rfc.section.4.p.4">If a server closes the connection, it is informing the client that it can no longer provide updates for the subscribed records. This may occur because the server application software or operating system is restarting, the application terminated unexpectedly, the server is undergoing maintenance procedures, or the server is overloaded and can no longer provide the information to all the clients that wish to receive it. The client can try to re-subscribe at a later time or connect to another server supporting DNS Push Notifications for the zone.</p>
 <p id="rfc.section.4.p.5">Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <a href="#IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</a> <a href="#RFC4953">[RFC4953]</a>.</p>
-<p id="rfc.section.4.p.6">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <a href="#RFC7673">[RFC7673]</a> is strongly encouraged. See below in <a href="#tls_name_auth">Section 9.2</a> for details.</p>
+<p id="rfc.section.4.p.6">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <a href="#RFC7673">[RFC7673]</a> is strongly encouraged. See below in <a href="#tls_name_auth">Section 7.2</a> for details.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> State Considerations</h1>
 <p id="rfc.section.5.p.1">Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Notifications for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> Protocol Operation</h1>
@@ -533,7 +533,7 @@
   <li>If no SOA record is returned, the client then strips off the leading label from the requested name. If the resulting name has at least one label in it, the client sends a new SOA query and processing continues at step 2 above. If the resulting name is empty (the root label) then this is a network configuration error and the client gives up. The client MAY retry the operation at a later time.</li>
   <li>Once the SOA is known, the client sends a DNS query with type <a href="#RFC2782">SRV</a> <cite title="NONE">[RFC2782]</cite> for the record name <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp>, where &lt;zone&gt; is the owner name of the discovered SOA record.</li>
   <li>If the zone in question does not offer DNS Push Notifications then SRV record MUST NOT exist and the SRV query will return a negative answer.</li>
-  <li>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.  The SRV <samp>target</samp> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <samp>port</samp> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <a href="#tls_name_auth">Section 9.2</a> <a href="#RFC7673">[RFC7673]</a>.</li>
+  <li>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.  The SRV <samp>target</samp> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <samp>port</samp> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <a href="#tls_name_auth">Section 7.2</a> <a href="#RFC7673">[RFC7673]</a>.</li>
   <li>More than one SRV record may be returned. In this case, the <samp>priority</samp> and <samp>weight</samp> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <a href="#RFC2782">the SRV specification</a> <cite title="NONE">[RFC2782]</cite>, the server with the lowest <samp>priority</samp> is first contacted. If more than one server has the same <samp>priority</samp>, the <samp>weight</samp> is indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected. If a server is not reachable or is not willing to accept a subscription request, then a subsequent server is to be contacted.</li>
 </ol>
 
@@ -694,16 +694,11 @@
 <p id="rfc.section.6.6.p.9">UPCOUNT MUST be zero, and the Update Section MUST be empty.<br/> Any records in the Update Section MUST be silently ignored.</p>
 <p id="rfc.section.6.6.p.10">ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.<br/> Any records in the Additional Data Section MUST be silently ignored.</p>
 <p id="rfc.section.6.6.p.11">The RCODE MUST contain a code giving the reason for termination. [Codes to be determined.] The Termination Message MUST contain an EDNS0 TCP Keepalive option <a href="#I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</a> where the idle timeout indicates the time the client SHOULD wait before attempting to reconnect.</p>
-<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a></h1>
-<p id="rfc.section.7.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</p>
-<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a></h1>
-<p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns&#8209;push&#8209;tls._tcp</samp>.<br/> It is only applicable for the TCP protocol.<br/> This name is to be published in the IANA Service Name Registry.</p>
-<p id="rfc.section.8.p.2">This document defines three DNS OpCodes: SUBSCRIBE with (tentative) value 6, UNSUBSCRIBE with (tentative) value 7, and RECONFIRM with (tentative) value 8.</p>
-<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
-<p id="rfc.section.9.p.1">TLS support is REQUIRED in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
-<p id="rfc.section.9.p.2">DNSSEC is RECOMMENDED for DNS Push Notifications. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
-<h1 id="rfc.section.9.1"><a href="#rfc.section.9.1">9.1.</a> Security Services</h1>
-<p id="rfc.section.9.1.p.1">It is the goal of using TLS to provide the following security services: </p>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
+<p id="rfc.section.7.p.1">TLS support is REQUIRED in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
+<p id="rfc.section.7.p.2">DNSSEC is RECOMMENDED for DNS Push Notifications. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
+<h1 id="rfc.section.7.1"><a href="#rfc.section.7.1">7.1.</a> Security Services</h1>
+<p id="rfc.section.7.1.p.1">It is the goal of using TLS to provide the following security services: </p>
 
 <dl>
   <dt>Confidentiality</dt>
@@ -715,13 +710,19 @@
 </dl>
 
 <p> </p>
-<p id="rfc.section.9.1.p.2">Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <a href="#RFC7525">TLS Recommendations</a> <cite title="NONE">[RFC7525]</cite> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</p>
-<h1 id="rfc.section.9.2"><a href="#rfc.section.9.2">9.2.</a> <a href="#tls_name_auth" id="tls_name_auth">TLS Name Authentication</a></h1>
-<p id="rfc.section.9.2.p.1">As described in <a href="#discovery">Section 6.1</a>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <a href="#RFC7673">[RFC7673]</a>. This procedure uses the TLS Sever Name Indication (SNI) extension <a href="#RFC6066">[RFC6066]</a> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</p>
-<h1 id="rfc.section.9.3"><a href="#rfc.section.9.3">9.3.</a> TLS Compression</h1>
-<p id="rfc.section.9.3.p.1">In order to reduce the chances of compression related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <a href="#I-D.ietf-tls-tls13">TLS 1.3</a> <cite title="NONE">[I-D.ietf-tls-tls13]</cite>, TLS-level compression has been removed completely.</p>
-<h1 id="rfc.section.9.4"><a href="#rfc.section.9.4">9.4.</a> TLS Session Resumption</h1>
-<p id="rfc.section.9.4.p.1">TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <a href="#RFC5246">[RFC5246]</a> or operate in stateless mode by sending a Session Ticket <a href="#RFC5077">[RFC5077]</a> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection. Use of TLS Session Resumption allows a new TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</p>
+<p id="rfc.section.7.1.p.2">Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <a href="#RFC7525">TLS Recommendations</a> <cite title="NONE">[RFC7525]</cite> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</p>
+<h1 id="rfc.section.7.2"><a href="#rfc.section.7.2">7.2.</a> <a href="#tls_name_auth" id="tls_name_auth">TLS Name Authentication</a></h1>
+<p id="rfc.section.7.2.p.1">As described in <a href="#discovery">Section 6.1</a>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <a href="#RFC7673">[RFC7673]</a>. This procedure uses the TLS Sever Name Indication (SNI) extension <a href="#RFC6066">[RFC6066]</a> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</p>
+<h1 id="rfc.section.7.3"><a href="#rfc.section.7.3">7.3.</a> TLS Compression</h1>
+<p id="rfc.section.7.3.p.1">In order to reduce the chances of compression related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <a href="#I-D.ietf-tls-tls13">TLS 1.3</a> <cite title="NONE">[I-D.ietf-tls-tls13]</cite>, TLS-level compression has been removed completely.</p>
+<h1 id="rfc.section.7.4"><a href="#rfc.section.7.4">7.4.</a> TLS Session Resumption</h1>
+<p id="rfc.section.7.4.p.1">TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <a href="#RFC5246">[RFC5246]</a> or operate in stateless mode by sending a Session Ticket <a href="#RFC5077">[RFC5077]</a> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection. Use of TLS Session Resumption allows a new TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</p>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a></h1>
+<p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns&#8209;push&#8209;tls._tcp</samp>.<br/> It is only applicable for the TCP protocol.<br/> This name is to be published in the IANA Service Name Registry.</p>
+<p id="rfc.section.8.p.2">This document defines three DNS OpCodes: SUBSCRIBE with (tentative) value 6, UNSUBSCRIBE with (tentative) value 7, and RECONFIRM with (tentative) value 8.</p>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a></h1>
+<p id="rfc.section.9.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field.</p>
+<p id="rfc.section.9.p.2">This draft has been improved due to comments from Ran Atkinson, Mark Delany, and Markus Stenberg.</p>
 <h1 id="rfc.references"><a href="#rfc.references">10.</a> References</h1>
 <h1 id="rfc.references.1"><a href="#rfc.references.1">10.1.</a> Normative References</h1>
 <table>

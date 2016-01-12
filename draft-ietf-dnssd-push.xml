@@ -425,7 +425,6 @@
        <t>No response message is generated as a result of processing a RECONFIRM message.</t>
 
        <t>If the server receiving the RECONFIRM request determines that the records are in fact no longer valid, then subsequent DNS Push Notification Update Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised printer is no longer present has the side effect of informing all other interested clients that the printer in question is now gone.</t>
-<?rfc needLines="45" ?>
      </section>
 
      <section title="DNS Push Notification Termination Message">
@@ -479,21 +478,6 @@
        <t>The RCODE MUST contain a code giving the reason for termination. [Codes to be determined.] The Termination Message MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/> where the idle timeout indicates the time the client SHOULD wait before attempting to reconnect.</t>
 
      </section>
-
-<?rfc needLines="10" ?>
-   </section>
-
-   <section anchor="Acknowledgements" title="Acknowledgements">
-     <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field. This draft has been improved due to comments from Ran Atkinson.</t>
-<?rfc needLines="8" ?>
-   </section>
-
-   <section anchor="IANA" title="IANA Considerations">
-     <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
-     It is only applicable for the TCP protocol.<vspace />
-     This name is to be published in the IANA Service Name Registry.</t>
-     <t>This document defines three DNS OpCodes: SUBSCRIBE with (tentative) value 6, UNSUBSCRIBE with (tentative) value 7, and RECONFIRM with (tentative) value 8.</t>
-<?rfc needLines="20" ?>
    </section>
 
    <section anchor="Security" title="Security Considerations">
@@ -522,8 +506,21 @@
 
      <section title="TLS Session Resumption">
        <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection. Use of TLS Session Resumption allows a new TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
-<?rfc needLines="30" ?>
-</section>
+<?rfc needLines="9" ?>
+     </section>
+   </section>
+
+   <section anchor="IANA" title="IANA Considerations">
+     <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
+     It is only applicable for the TCP protocol.<vspace />
+     This name is to be published in the IANA Service Name Registry.</t>
+     <t>This document defines three DNS OpCodes: SUBSCRIBE with (tentative) value 6, UNSUBSCRIBE with (tentative) value 7, and RECONFIRM with (tentative) value 8.</t>
+   </section>
+
+   <section anchor="Acknowledgements" title="Acknowledgements">
+     <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field.</t>
+
+     <t>This draft has been improved due to comments from Ran Atkinson, Mark Delany, and Markus Stenberg.</t>
    </section>
  </middle>
 
