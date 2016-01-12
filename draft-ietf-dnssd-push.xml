@@ -30,7 +30,7 @@
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
 <!ENTITY I-D.ietf-dnsop-5966bis SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-5966bis.xml">
-<!ENTITY I-D.wouters-edns-tcp-keepalive SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.wouters-edns-tcp-keepalive.xml">
+<!ENTITY I-D.ietf-dnsop-edns-tcp-keepalive SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-edns-tcp-keepalive.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
@@ -57,7 +57,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-02" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-04" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -111,7 +111,7 @@
      </address>
    </author>
 
-   <date day='19' month='October' year='2015'/>
+   <date day='11' month='January' year='2016'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -167,9 +167,9 @@
 
      <t><xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> is an existing deployed solution to provide asynchronous change notifications. Even though it can be used over TCP, LLQ is defined primarily as a UDP-based protocol, and as such it defines its own equivalents of existing TCP features like the three-way handshake. This document builds on experience gained with the LLQ protocol, with an improved design that uses long-lived TCP connections instead of UDP (and therefore doesn't need to duplicate existing TCP functionality), and adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref> instead of inventing a new vocabulary of messages to communicate DNS zone changes.</t>
 
-     <t>Because DNS Push Notifications impose a certain load on the responding server (though less load that rapid polling of that server) DNS Push Notification clients SHOULD exercise restraint in issuing DNS Push Notification subscriptions. A subscription SHOULD only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results of that subscription to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display).</t>
+     <t>Because DNS Push Notifications impose a certain load on the responding server (though less load than rapid polling of that server) DNS Push Notification clients SHOULD exercise restraint in issuing DNS Push Notification subscriptions. A subscription SHOULD only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results of that subscription to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display).</t>
 
-     <t>A DNS Push Notification client MUST not routinely keep a DNS Push Notification subscription active 24 hours a day 7 days a week just to keep a list in memory up to date so that it will be really fast if the user does choose to bring up an on-screen display of that data. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
+     <t>A DNS Push Notification client MUST NOT routinely keep a DNS Push Notification subscription active 24 hours a day 7 days a week just to keep a list in memory up to date so that it will be really fast if the user does choose to bring up an on-screen display of that data. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
 <?rfc needLines="20" ?>
    </section>
@@ -202,14 +202,18 @@
    </section>
 
    <section title="State Considerations">
-     <t>Each DNS Push Notification server is capable and handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Notifications for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
+     <t>Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Notifications for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
 <?rfc needLines="30" ?>
    </section>
 
    <section title="Protocol Operation">
-     <t>A DNS Push Notification exchange begins with the client discovering the appropriate server, and then making a TLS/TCP connection to it. The client may then add and remove Push Notification subscriptions over this connection. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. The exchange terminates when either end closes the TCP connection with a TCP FIN or RST.</t>
+     <t>A DNS Push Notification exchange begins with the client discovering the appropriate server, and then making a TLS/TCP connection to it. The client may then add and remove Push Notification subscriptions over this connection. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. Note that a client MUST be prepared to receive (and silently discard) Push Notifications for subscriptions it has previously removed, since there is no way to prevent the situation where a Push Notification is in flight from server to client while the client's UNSUBSCRIBE message cancelling that subscription is simultaneously in flight from client to server.</t>
+
+     <t>The exchange between client and server terminates when either end closes the TCP connection with a TCP FIN or RST.</t>
 
      <t>A client SHOULD NOT make multiple TLS/TCP connections to the same DNS Push Notification server. A client SHOULD share a single TLS/TCP connection for all requests to the same DNS Push Notification server. This shared connection should be used for all DNS Queries and DNS Push Notification Queries queries to that server, and for DNS Update requests too when the <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record indicates that the same server also handles DNS Update requests. This is to reduce unnecessary load on the DNS Push Notification server.</t>
+
+     <t>For the purposes here, the determination of "same server" is made by inspecting the target host and port, regardless of the name being queried, or what zone if falls within. A given server may support Push Notifications (and possibly DNS Updates too) for multiple DNS zones. When a client discovers that the DNS Push Notification server (and/or DNS Update server) for several different names (including names that fall within different zones) is the same target host and port, the client SHOULD use a single shared TCP connection for all relevant operations on those names. A client SHOULD NOT open multiple TCP connections to the same target host and port just because the names being queried (or updated) happen to fall within different zones.</t>
 
      <t>However, a single client device may be home to multiple independent client software instances that don't know about each other, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address. This is undesirable from an efficiency stanpoint, but may be unavoidable in some situations, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address.</t>
 
@@ -298,9 +302,9 @@
 
        <t>Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</t>
 
-       <t>A client may SUBSCRIBE to records that are unknown to the server at the time of the request and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
+       <t>A client may SUBSCRIBE to records that are unknown to the server at the time of the request (providing that the name falls within one of the zone(s) the server is responsible for) and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
 
-       <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/>. A client MUST NOT include an actual EDNS0 TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request this is an error and the server MUST immediately close the TCP connection. In a SUBSCRIBE response the server MUST include an EDNS0 TCP Keepalive option specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a SUBSCRIBE response that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
+       <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS0 TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/>. A client MUST NOT include an actual EDNS0 TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request that does contain an actual EDNS0 TCP Keepalive option this is an error and the server MUST immediately close the TCP connection. In a SUBSCRIBE response the server MUST include an EDNS0 TCP Keepalive option specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a SUBSCRIBE response that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
 <?rfc needLines="20" ?>
      </section>
 
@@ -386,7 +390,7 @@
 
        <t>The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" update, not three separate "delete an individual RR from a name" updates. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" update, not two separate "delete an RRset from a name" updates.</t>
 
-       <t>All Push Notification Update Messages MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/> specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a Push Notification Update Message that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
+       <t>All Push Notification Update Messages MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/> specifying the idle timeout so that the client knows the frequency of keepalives it must generate to keep the connection alive. If the client receives a Push Notification Update Message that does not contain an EDNS0 TCP Keepalive option this is an error and the client MUST immediately close the TCP connection.</t>
 
        <t>Reception of a Push Notification Update Message results in no response back to the server.</t>
 
@@ -472,7 +476,7 @@
        <t>ADCOUNT MUST be zero, and the Additional Data Section MUST be empty.<vspace />
        Any records in the Additional Data Section MUST be silently ignored.</t>
 
-       <t>The RCODE MUST contain a code giving the reason for termination. [Codes to be determined.] The Termination Message MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.wouters-edns-tcp-keepalive"/> where the idle timeout indicates the time the client SHOULD wait before attempting to reconnect.</t>
+       <t>The RCODE MUST contain a code giving the reason for termination. [Codes to be determined.] The Termination Message MUST contain an EDNS0 TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/> where the idle timeout indicates the time the client SHOULD wait before attempting to reconnect.</t>
 
      </section>
 
@@ -488,12 +492,15 @@
      <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
      It is only applicable for the TCP protocol.<vspace />
      This name is to be published in the IANA Service Name Registry.</t>
-     <t>This document defines two DNS OpCodes: SUBSCRIBE with (tentative) value 6 and UNSUBSCRIBE with (tentative) value 7.</t>
+     <t>This document defines three DNS OpCodes: SUBSCRIBE with (tentative) value 6, UNSUBSCRIBE with (tentative) value 7, and RECONFIRM with (tentative) value 8.</t>
 <?rfc needLines="20" ?>
    </section>
 
    <section anchor="Security" title="Security Considerations">
-     <t>TLS support is mandatory in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
+     <t>TLS support is REQUIRED in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
+
+     <t>DNSSEC is RECOMMENDED for DNS Push Notifications. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
+
      <section title="Security Services">
        <t>It is the goal of using TLS to provide the following security services:
          <list style="hanging">
@@ -514,7 +521,7 @@
      </section>
 
      <section title="TLS Session Resumption">
-       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection.</t>
+       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, once the connection is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new connection. Use of TLS Session Resumption allows a new TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
 <?rfc needLines="30" ?>
 </section>
    </section>
@@ -553,7 +560,7 @@
      &RFC6195;
      &RFC7673;
      &I-D.ietf-dnsop-5966bis;
-     &I-D.wouters-edns-tcp-keepalive;
+     &I-D.ietf-dnsop-edns-tcp-keepalive;
    </references>
 
    <references title="Informative References">
@@ -568,15 +575,15 @@
     <organization />
 </author>
 
-<date month='October' day='19' year='2015' />
+<date day='5' month='November' year='2015'/>
 
 <abstract><t>Performing DNS-Based Service Discovery using purely link-local Multicast DNS enables discovery of services that are on the local link, but not (without some kind of proxy or similar special support) of services that are outside the local link.  Using a very large local link with thousands of hosts improves service discovery, but at the cost of large amounts of multicast traffic.  Performing DNS-Based Service Discovery using purely Unicast DNS is more efficient, but requires configuration of DNS Update keys on the devices offering the services, which can be onerous for simple devices like printers and network cameras.  Hence a compromise is needed, that provides easy service discovery without requiring either large amounts of multicast traffic or onerous configuration.</t></abstract>
 
 </front>
 
-<seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-01' />
+<seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-02' />
 <format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-01.txt' />
+        target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-02.txt' />
 </reference>
 
 
