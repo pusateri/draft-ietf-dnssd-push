@@ -128,7 +128,7 @@ Internet-Draft           DNS Push Notifications             January 2016
    many levels throughout the network.  Other network protocols have
    successfully deployed a publish/subscribe model to state changes
    following the Observer design pattern.  XMPP Publish-Subscribe
-   [XEP-0060] and Atom [RFC4287] are examples.  While DNS servers are
+   [XEP0060] and Atom [RFC4287] are examples.  While DNS servers are
    generally highly tuned and capable of a high rate of query/response
    traffic, adding a publish/subscribe model for tracking changes to DNS
    records can result in more timely notification of changes with
@@ -1091,8 +1091,8 @@ Internet-Draft           DNS Push Notifications             January 2016
    [I-D.ietf-dnsop-5966bis]
               Dickinson, J., Dickinson, S., Bellis, R., Mankin, A., and
               D. Wessels, "DNS Transport over TCP - Implementation
-              Requirements", draft-ietf-dnsop-5966bis-05 (work in
-              progress), December 2015.
+              Requirements", draft-ietf-dnsop-5966bis-06 (work in
+              progress), January 2016.
 
    [I-D.ietf-dnsop-edns-tcp-keepalive]
               Wouters, P., Abley, J., Dickinson, S., and R. Bellis, "The
@@ -1240,8 +1240,7 @@ Internet-Draft           DNS Push Notifications             January 2016
               (DTLS)", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May
               2015, <http://www.rfc-editor.org/info/rfc7525>.
 
-   [XEP-0060]
-              Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
+   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
 
 Authors' Addresses
@@ -1263,6 +1262,7 @@ Authors' Addresses
 
    Phone: +1 408 974 3207
    Email: cheshire@apple.com
+
 
 
 

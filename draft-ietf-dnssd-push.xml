@@ -26,7 +26,6 @@
 <!ENTITY RFC6763 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6763.xml">
 <!ENTITY RFC7525 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7525.xml">
 <!ENTITY RFC7673 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7673.xml">
-<!ENTITY XEP-0060 PUBLIC ""  "http://xmpp.org/extensions/refs/reference.XSF.XEP-0060.xml">
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
 <!ENTITY I-D.ietf-dnsop-5966bis SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-5966bis.xml">
@@ -161,7 +160,7 @@
    </section>
 
    <section title="Motivation">
-     <t>As the domain name system continues to adapt to new uses and changes in deployment, polling has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model to state changes following the Observer design pattern. <xref target="XEP-0060">XMPP Publish-Subscribe</xref> and <xref target="RFC4287">Atom</xref> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can result in more timely notification of changes with reduced CPU usage and lower network traffic.</t>
+     <t>As the domain name system continues to adapt to new uses and changes in deployment, polling has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model to state changes following the Observer design pattern. <xref target="XEP0060">XMPP Publish-Subscribe</xref> and <xref target="RFC4287">Atom</xref> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can result in more timely notification of changes with reduced CPU usage and lower network traffic.</t>
 
      <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group, and new services and updates are sent for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
 
@@ -590,7 +589,33 @@
      &RFC6762;
      &RFC6763;
      &RFC7525;
-     &XEP-0060;
+
+     <reference anchor="XEP0060">
+       <front>
+         <title>Publish-Subscribe</title>
+         <author initials="P." surname="Millard" fullname="Peter Millard">
+           <organization/>
+           <address>
+             <email/>
+           </address>
+         </author>
+         <author initials="P." surname="Saint-Andre" fullname="Peter Saint-Andre">
+           <organization/>
+           <address>
+             <email>peter@andyet.net</email>
+           </address>
+         </author>
+         <author initials="R." surname="Meijer" fullname="Ralph Meijer">
+           <organization/>
+           <address>
+             <email>ralphm@ik.nu</email>
+           </address>
+         </author>
+         <date day="01" month="July" year="2010"/>
+       </front>
+       <seriesInfo name="XSF XEP" value="0060"/>
+       <format type="HTML" target="http://xmpp.org/extensions/xep-0060.html"/>
+     </reference>
 
      <reference anchor='IPJ.9-4-TCPSYN'>
        <front>

@@ -499,7 +499,7 @@
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> Requirements Language</h1>
 <p id="rfc.section.1.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119">"Key words for use in RFCs to Indicate Requirement Levels"</a> <cite title="NONE">[RFC2119]</cite>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> Motivation</h1>
-<p id="rfc.section.2.p.1">As the domain name system continues to adapt to new uses and changes in deployment, polling has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model to state changes following the Observer design pattern. <a href="#XEP-0060">XMPP Publish-Subscribe</a> <cite title="NONE">[XEP-0060]</cite> and <a href="#RFC4287">Atom</a> <cite title="NONE">[RFC4287]</cite> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can result in more timely notification of changes with reduced CPU usage and lower network traffic.</p>
+<p id="rfc.section.2.p.1">As the domain name system continues to adapt to new uses and changes in deployment, polling has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model to state changes following the Observer design pattern. <a href="#XEP0060">XMPP Publish-Subscribe</a> <cite title="NONE">[XEP0060]</cite> and <a href="#RFC4287">Atom</a> <cite title="NONE">[RFC4287]</cite> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can result in more timely notification of changes with reduced CPU usage and lower network traffic.</p>
 <p><a href="#RFC6762">Multicast DNS</a> <cite title="NONE">[RFC6762]</cite> implementations always listen on a well known link-local IP multicast group, and new services and updates are sent for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <a href="#RFC6763">DNS Service Discovery</a> <cite title="NONE">[RFC6763]</cite> is used across a wide area network using Unicast DNS (possibly facilitated via a <a href="#I-D.ietf-dnssd-hybrid">Hybrid Proxy</a> <cite title="NONE">[I-D.ietf-dnssd-hybrid]</cite>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</p>
 <p><a href="#I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</a> <cite title="NONE">[I-D.sekar-dns-llq]</cite> is an existing deployed solution to provide asynchronous change notifications. Even though it can be used over TCP, LLQ is defined primarily as a UDP-based protocol, and as such it defines its own equivalents of existing TCP features like the three-way handshake. This document builds on experience gained with the LLQ protocol, with an improved design that uses long-lived TCP connections instead of UDP (and therefore doesn't need to duplicate existing TCP functionality), and adopts the syntax and semantics of <a href="#RFC2136">DNS Update messages</a> <cite title="NONE">[RFC2136]</cite> instead of inventing a new vocabulary of messages to communicate DNS zone changes.</p>
 <p id="rfc.section.2.p.4">Because DNS Push Notifications impose a certain load on the responding server (though less load than rapid polling of that server) DNS Push Notification clients SHOULD exercise restraint in issuing DNS Push Notification subscriptions. A subscription SHOULD only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results of that subscription to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display).</p>
@@ -731,7 +731,7 @@
       <td class="reference">
         <b id="I-D.ietf-dnsop-5966bis">[I-D.ietf-dnsop-5966bis]</b>
       </td>
-      <td class="top"><a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Bellis, R.</a>, <a>Mankin, A.</a> and <a>D. Wessels</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dnsop-5966bis-05">DNS Transport over TCP - Implementation Requirements</a>", Internet-Draft draft-ietf-dnsop-5966bis-05, December 2015.</td>
+      <td class="top"><a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Bellis, R.</a>, <a>Mankin, A.</a> and <a>D. Wessels</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dnsop-5966bis-06">DNS Transport over TCP - Implementation Requirements</a>", Internet-Draft draft-ietf-dnsop-5966bis-06, January 2016.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -890,7 +890,7 @@
     </tr>
     <tr>
       <td class="reference">
-        <b id="XEP-0060">[XEP-0060]</b>
+        <b id="XEP0060">[XEP0060]</b>
       </td>
       <td class="top"><a>Millard, P.</a>, <a href="mailto:peter@andyet.net">Saint-Andre, P.</a> and <a href="mailto:ralphm@ik.nu">R. Meijer</a>, "<a>Publish-Subscribe</a>", XSF XEP 0060, July 2010.</td>
     </tr>
