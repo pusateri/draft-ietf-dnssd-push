@@ -342,30 +342,43 @@ Internet-Draft           DNS Push Notifications               March 2016
 
    An individual subscription is terminated by sending an UNSUBSCRIBE
    message for that specific subscription, or all subscriptions can be
-   cancelled at once by the client closing the connection with a TCP
-   RST.  When a client terminates an individual subscription (via
-   UNSUBSCRIBE) or all subscriptions on that connection (by closing the
-   connection) it is signalling to the server that it is longer
-   interested in receiving those particular updates.  It is informing
-   the server that the server may release any state information it has
-   been keeping with regards to these particular subscriptions.
+   cancelled at once by the client closing the connection.  When a
+   client terminates an individual subscription (via UNSUBSCRIBE) or all
+   subscriptions on that connection (by closing the connection) it is
+   signalling to the server that it is longer interested in receiving
+   those particular updates.  It is informing the server that the server
+   may release any state information it has been keeping with regards to
+   these particular subscriptions.
 
    After terminating its last subscription on a connection via
-   UNSUBSCRIBE, a client MAY close the connection immediately with a TCP
-   FIN, or it may keep it open if it anticipates performing further
-   operations on that connection in the future.  If a client wishes to
-   keep an idle connection open, it MUST meet its keepalive obligations
+   UNSUBSCRIBE, a client MAY close the connection immediately, or it may
+   keep it open if it anticipates performing further operations on that
+   connection in the future.  If a client wishes to keep an idle
+   connection open, it MUST continue to meet its keepalive obligations
    [I-D.ietf-dnsop-edns-tcp-keepalive] or the server is entitled to
    close the connection (see below).
 
    If a client plans to terminate one or more subscriptions on a
    connection and doesn't intend to keep that connection open, then as
    an efficiency optimization it MAY instead choose to simply close the
-   connection with a TCP RST, which implicitly terminates all
-   subscriptions on that connection.  This may occur because the client
-   computer is being shut down, is going to sleep, the application
-   requiring the subscriptions has terminated, or simply because the
-   last active subscription on that connection has been cancelled.
+   connection, which implicitly terminates all subscriptions on that
+   connection.  This may occur because the client computer is being shut
+   down, is going to sleep, the application requiring the subscriptions
+   has terminated, or simply because the last active subscription on
+   that connection has been cancelled.
+
+   When closing a connection, a client will generally do an abortive
+   disconnect, sending a TCP RST.  This immediately discards all
+   remaining inbound and outbound data, which is appropriate if the
+   client no longer has any interest in this data.  In the BSD sockets
+   API, sending a TCP RST is achieved by setting the SO_LINGER option
+   with a time of 0 seconds and then closing the socket.
+
+   If a client has performed operations on this connection that it would
+   not want lost (like DNS updates) then the client SHOULD do an orderly
+   disconnect, sending a TCP FIN.  In the BSD sockets API, sending a TCP
+   FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the
+   socket open until all remaining data has been read from it.
 
 4.2.  Server-Initiated Termination
 
@@ -373,6 +386,14 @@ Internet-Draft           DNS Push Notifications               March 2016
    that uses EDNS(0) TCP Keepalive [I-D.ietf-dnsop-edns-tcp-keepalive]
    (either SUBSCRIBE, where Keepalive is implicit, or some other DNS
    message, with an explicit an EDNS(0) TCP Keepalive option) then after
+
+
+
+Pusateri & Cheshire    Expires September 22, 2016               [Page 7]
+
+Internet-Draft           DNS Push Notifications               March 2016
+
+
    30 seconds of inactivity the server SHOULD close the connection.  If
    no data has been sent on the connection the server MAY abort the
    connection with a TCP RST.  If data has been sent on the connection
@@ -385,14 +406,6 @@ Internet-Draft           DNS Push Notifications               March 2016
    connection alive.  If the idle timeout for that connection changes,
    then the server communicates this by placing an updated EDNS(0) TCP
    Keepalive option in a subsequent message to the client.
-
-
-
-
-Pusateri & Cheshire    Expires September 22, 2016               [Page 7]
-
-Internet-Draft           DNS Push Notifications               March 2016
-
 
    At both servers and clients, the generation or reception of any
    request, response, update, or keepalive traffic resets the keepalive
@@ -429,6 +442,14 @@ Internet-Draft           DNS Push Notifications               March 2016
    required deadline.  TCP-layer keepalives also only verify liveness of
    the remote networking stack, whereas DNS-layer keepalives provide
    higher assurance of liveness of the remote server application
+
+
+
+Pusateri & Cheshire    Expires September 22, 2016               [Page 8]
+
+Internet-Draft           DNS Push Notifications               March 2016
+
+
    software -- though this a limited benefit, since there is no reason
    to expect that DNS Push Notification server software will routinely
    become wedged and unresponsive.]
@@ -442,14 +463,6 @@ Internet-Draft           DNS Push Notifications               March 2016
 
    Apart from the cases described above, a server MUST NOT close a
    connection with a DNS Push Notification client, except in
-
-
-
-Pusateri & Cheshire    Expires September 22, 2016               [Page 8]
-
-Internet-Draft           DNS Push Notifications               March 2016
-
-
    extraordinary error conditions.  Closing the connection is the
    client's responsibility, to be done at the client's discretion, when
    it so chooses.  A DNS Push Notification server only closes a DNS Push
@@ -484,19 +497,6 @@ Internet-Draft           DNS Push Notifications               March 2016
    to resource constraints.  Token bucket rate limiting schemes are also
    effective in providing fairness by a server across numerous client
    requests.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1520,8 +1520,8 @@ Internet-Draft           DNS Push Notifications               March 2016
    previous work completed in this field.
 
    This draft has been improved due to comments from Ran Atkinson, Tim
-   Chown, Mark Delany, Ralph Droms, Bernie Holz, Jan Komissar, Manju
-   Shankar Rao, Markus Stenberg, and Dave Thaler.
+   Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju
+   Shankar Rao, Markus Stenberg, Dave Thaler, and Soraia Zlatkovic.
 
 10.  References
 
