@@ -395,7 +395,7 @@ Internet-Draft           DNS Push Notifications               March 2016
 
 
    At both servers and clients, the generation or reception of any
-   request, response, update, or keepalive message resets the keepalive
+   request, response, update, or keepalive traffic resets the keepalive
    timer for that connection.
 
    In the absence of any requests, responses, or update messages on a

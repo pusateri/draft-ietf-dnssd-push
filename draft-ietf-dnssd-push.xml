@@ -229,7 +229,7 @@
 
        <t>In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</t>
 
-       <t>At both servers and clients, the generation or reception of any request, response, update, or keepalive message resets the keepalive timer for that connection.</t>
+       <t>At both servers and clients, the generation or reception of any request, response, update, or keepalive traffic resets the keepalive timer for that connection.</t>
 
        <t>In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</t>
 
