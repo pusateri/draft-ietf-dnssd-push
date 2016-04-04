@@ -499,7 +499,7 @@
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> Introduction</h1>
-<p id="rfc.section.1.p.1">DNS records may be updated using <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite>.  Other mechanisms such as a <a href="#I-D.ietf-dnssd-hybrid">Hybrid Proxy</a> <cite title="NONE">[I-D.ietf-dnssd-hybrid]</cite> can also generate changes to a DNS zone.  This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <a href="#RFC6763">DNS Service Discovery</a> <cite title="NONE">[RFC6763]</cite> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <a href="#RFC1034">[RFC1034]</a> <a href="#RFC1035">[RFC1035]</a> <a href="#RFC6195">[RFC6195]</a>.</p>
+<p id="rfc.section.1.p.1">DNS records may be updated using <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite>.  Other mechanisms such as a <a href="#I-D.ietf-dnssd-hybrid">Hybrid Proxy</a> <cite title="NONE">[I-D.ietf-dnssd-hybrid]</cite> can also generate changes to a DNS zone.  This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <a href="#RFC6763">DNS Service Discovery</a> <cite title="NONE">[RFC6763]</cite> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <a href="#RFC1034">[RFC1034]</a> <a href="#RFC1035">[RFC1035]</a> <a href="#RFC6895">[RFC6895]</a>.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> Requirements Language</h1>
 <p id="rfc.section.1.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119">"Key words for use in RFCs to Indicate Requirement Levels"</a> <cite title="NONE">[RFC2119]</cite>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> Motivation</h1>
@@ -518,7 +518,7 @@
 <p id="rfc.section.3.p.7">DNS Push Notification clients are NOT required to implement DNS Update Prerequisite processing. Prerequisites are used to perform tentative atomic test-and-set type operations when a client updates records on a server, and that concept has no applicability when it comes to an authoritative server informing a client of changes to DNS records.</p>
 <p id="rfc.section.3.p.8">This DNS Push Notification specification includes support for DNS classes, for completeness. However, in practice, it is anticipated that for the foreseeable future the only DNS class in use will be DNS class "IN", as it is today with existing DNS servers and clients. A DNS Push Notification server MAY choose to implement only DNS class "IN".</p>
 <h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> Transport</h1>
-<p id="rfc.section.4.p.1">Implementations of <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> MAY use either User Datagram Protocol <a href="#RFC0768">(UDP)</a> <cite title="NONE">[RFC0768]</cite> or Transmission Control Protocol <a href="#RFC0793">(TCP)</a> <cite title="NONE">[RFC0793]</cite> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <a href="#RFC1123">[RFC1123]</a>. This requirement to use UDP has subsequently been relaxed <a href="#RFC5966">[RFC5966]</a><a href="#I-D.ietf-dnsop-5966bis">[I-D.ietf-dnsop-5966bis]</a>.</p>
+<p id="rfc.section.4.p.1">Implementations of <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> MAY use either User Datagram Protocol <a href="#RFC0768">(UDP)</a> <cite title="NONE">[RFC0768]</cite> or Transmission Control Protocol <a href="#RFC0793">(TCP)</a> <cite title="NONE">[RFC0793]</cite> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <a href="#RFC1123">[RFC1123]</a>. This requirement to use UDP has subsequently been relaxed <a href="#RFC7766">[RFC7766]</a>.</p>
 <p id="rfc.section.4.p.2">In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP.</p>
 <p id="rfc.section.4.p.3">Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <a href="#IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</a> <a href="#RFC4953">[RFC4953]</a>.</p>
 <p id="rfc.section.4.p.4">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <a href="#RFC7673">[RFC7673]</a> is strongly encouraged. See below in <a href="#tls_name_auth">Section 7.2</a> for details.</p>
@@ -810,12 +810,6 @@
   <tbody>
     <tr>
       <td class="reference">
-        <b id="I-D.ietf-dnsop-5966bis">[I-D.ietf-dnsop-5966bis]</b>
-      </td>
-      <td class="top"><a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Bellis, R.</a>, <a>Mankin, A.</a> and <a>D. Wessels</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dnsop-5966bis-06">DNS Transport over TCP - Implementation Requirements</a>", Internet-Draft draft-ietf-dnsop-5966bis-06, January 2016.</td>
-    </tr>
-    <tr>
-      <td class="reference">
         <b id="I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</b>
       </td>
       <td class="top"><a>Wouters, P.</a>, <a>Abley, J.</a>, <a>Dickinson, S.</a> and <a>R. Bellis</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dnsop-edns-tcp-keepalive-06">The edns-tcp-keepalive EDNS0 Option</a>", Internet-Draft draft-ietf-dnsop-edns-tcp-keepalive-06, February 2016.</td>
@@ -824,7 +818,7 @@
       <td class="reference">
         <b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b>
       </td>
-      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-11">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-11, December 2015.</td>
+      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-12">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-12, March 2016.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -876,21 +870,9 @@
     </tr>
     <tr>
       <td class="reference">
-        <b id="RFC4953">[RFC4953]</b>
-      </td>
-      <td class="top"><a>Touch, J.</a>, "<a href="http://tools.ietf.org/html/rfc4953">Defending TCP Against Spoofing Attacks</a>", RFC 4953, DOI 10.17487/RFC4953, July 2007.</td>
-    </tr>
-    <tr>
-      <td class="reference">
         <b id="RFC5246">[RFC5246]</b>
       </td>
       <td class="top"><a>Dierks, T.</a> and <a>E. Rescorla</a>, "<a href="http://tools.ietf.org/html/rfc5246">The Transport Layer Security (TLS) Protocol Version 1.2</a>", RFC 5246, DOI 10.17487/RFC5246, August 2008.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC5966">[RFC5966]</b>
-      </td>
-      <td class="top"><a>Bellis, R.</a>, "<a href="http://tools.ietf.org/html/rfc5966">DNS Transport over TCP - Implementation Requirements</a>", RFC 5966, DOI 10.17487/RFC5966, August 2010.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -900,21 +882,27 @@
     </tr>
     <tr>
       <td class="reference">
-        <b id="RFC6195">[RFC6195]</b>
-      </td>
-      <td class="top"><a>Eastlake 3rd, D.</a>, "<a href="http://tools.ietf.org/html/rfc6195">Domain Name System (DNS) IANA Considerations</a>", RFC 6195, DOI 10.17487/RFC6195, March 2011.</td>
-    </tr>
-    <tr>
-      <td class="reference">
         <b id="RFC6891">[RFC6891]</b>
       </td>
       <td class="top"><a>Damas, J.</a>, <a>Graff, M.</a> and <a>P. Vixie</a>, "<a href="http://tools.ietf.org/html/rfc6891">Extension Mechanisms for DNS (EDNS(0))</a>", STD 75, RFC 6891, DOI 10.17487/RFC6891, April 2013.</td>
     </tr>
     <tr>
       <td class="reference">
+        <b id="RFC6895">[RFC6895]</b>
+      </td>
+      <td class="top"><a>Eastlake 3rd, D.</a>, "<a href="http://tools.ietf.org/html/rfc6895">Domain Name System (DNS) IANA Considerations</a>", BCP 42, RFC 6895, DOI 10.17487/RFC6895, April 2013.</td>
+    </tr>
+    <tr>
+      <td class="reference">
         <b id="RFC7673">[RFC7673]</b>
       </td>
       <td class="top"><a>Finch, T.</a>, <a>Miller, M.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/rfc7673">Using DNS-Based Authentication of Named Entities (DANE) TLSA Records with SRV Records</a>", RFC 7673, DOI 10.17487/RFC7673, October 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7766">[RFC7766]</b>
+      </td>
+      <td class="top"><a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Bellis, R.</a>, <a>Mankin, A.</a> and <a>D. Wessels</a>, "<a href="http://tools.ietf.org/html/rfc7766">DNS Transport over TCP - Implementation Requirements</a>", RFC 7766, DOI 10.17487/RFC7766, March 2016.</td>
     </tr>
   </tbody>
 </table>
@@ -950,6 +938,12 @@
         <b id="RFC4287">[RFC4287]</b>
       </td>
       <td class="top"><a>Nottingham, M.</a> and <a>R. Sayre</a>, "<a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication Format</a>", RFC 4287, DOI 10.17487/RFC4287, December 2005.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC4953">[RFC4953]</b>
+      </td>
+      <td class="top"><a>Touch, J.</a>, "<a href="http://tools.ietf.org/html/rfc4953">Defending TCP Against Spoofing Attacks</a>", RFC 4953, DOI 10.17487/RFC4953, July 2007.</td>
     </tr>
     <tr>
       <td class="reference">

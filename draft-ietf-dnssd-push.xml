@@ -19,17 +19,16 @@
 <!ENTITY RFC4953 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4953.xml">
 <!ENTITY RFC5077 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5077.xml">
 <!ENTITY RFC5246 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml">
-<!ENTITY RFC5966 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5966.xml">
 <!ENTITY RFC6066 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6066.xml">
-<!ENTITY RFC6195 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6195.xml">
 <!ENTITY RFC6891 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6891.xml">
+<!ENTITY RFC6895 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6895.xml">
 <!ENTITY RFC6762 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6762.xml">
 <!ENTITY RFC6763 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6763.xml">
 <!ENTITY RFC7525 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7525.xml">
 <!ENTITY RFC7673 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7673.xml">
+<!ENTITY RFC7766 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7766.xml">
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
-<!ENTITY I-D.ietf-dnsop-5966bis SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-5966bis.xml">
 <!ENTITY I-D.ietf-dnsop-edns-tcp-keepalive SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-edns-tcp-keepalive.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -148,7 +147,7 @@
    <section title="Introduction">
      <t>DNS records may be updated using <xref target="RFC2136">DNS Update</xref>.
      Other mechanisms such as a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref> can also generate changes to a DNS zone.
-     This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6195"/>.</t>
+     This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6895"/>.</t>
 
 <?rfc needLines="7" ?>
      <section title="Requirements Language">
@@ -200,7 +199,7 @@
    </section>
 
    <section title="Transport">
-     <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC5966"/><xref target="I-D.ietf-dnsop-5966bis"/>.</t>
+     <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC7766"/>.</t>
 
      <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP.</t>
 
@@ -660,14 +659,12 @@
      &RFC2119;
      &RFC2136;
      &RFC2782;
-     &RFC4953;
      &RFC5246;
-     &RFC5966;
      &RFC6066;
-     &RFC6195;
      &RFC6891;
+     &RFC6895;
      &RFC7673;
-     &I-D.ietf-dnsop-5966bis;
+     &RFC7766;
      &I-D.ietf-dnsop-edns-tcp-keepalive;
    </references>
 
@@ -697,6 +694,7 @@
 
      &RFC1996;
      &RFC4287;
+     &RFC4953;
      &RFC5077;
      &RFC6762;
      &RFC6763;
