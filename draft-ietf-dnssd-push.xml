@@ -30,6 +30,7 @@
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
 <!ENTITY I-D.ietf-dnsop-edns-tcp-keepalive SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-edns-tcp-keepalive.xml">
+<!ENTITY I-D.ietf-dprive-dns-over-tls SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dprive-dns-over-tls.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
@@ -110,7 +111,7 @@
      </address>
    </author>
 
-   <date day='21' month='March' year='2016'/>
+   <date day='4' month='April' year='2016'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -166,12 +167,13 @@
 
      <t><xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> is an existing deployed solution to provide asynchronous change notifications. Even though it can be used over TCP, LLQ is defined primarily as a UDP-based protocol, and as such it defines its own equivalents of existing TCP features like the three-way handshake. This document builds on experience gained with the LLQ protocol, with an improved design that uses long-lived TCP connections instead of UDP (and therefore doesn't need to duplicate existing TCP functionality), and adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref> instead of inventing a new vocabulary of messages to communicate DNS zone changes.</t>
 
-<?rfc needLines="20" ?>
      <t>Because DNS Push Notifications impose a certain load on the responding server (though less load than rapid polling of that server) DNS Push Notification clients SHOULD exercise restraint in issuing DNS Push Notification subscriptions. A subscription SHOULD only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results of that subscription to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display). Implementations MAY want to implement idle timeouts, so that if the user ceases interacting with the device, the display showing the result of the DNS Push Notification subscription is automatically dismissed after a certain period of inactivity. For example, if a user presses the "Print" button on their phone, and then leaves the phone showing the printer discovery screen until the phone goes to sleep, then the printer discovery screen should be automatically dismissed as the device goes to sleep. If the user does still intend to print, this will require them to press the "Print" button again when they wake their phone up.</t>
 
      <t>A DNS Push Notification client MUST NOT routinely keep a DNS Push Notification subscription active 24 hours a day 7 days a week just to keep a list in memory up to date so that it will be really fast if the user does choose to bring up an on-screen display of that data. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
-<?rfc needLines="24" ?>
+     <t>Generally, a client SHOULD NOT keep a connection to a server open indefinitely if it has no active subscriptions on that connection. After 30 seconds with no active subscriptions the client SHOULD close the idle connection, and, if needed in the future, open a new connection.</t>
+
+<?rfc needLines="2" ?>
    </section>
 
    <section title="Overview">
@@ -195,7 +197,7 @@
      <t>DNS Push Notification clients are NOT required to implement DNS Update Prerequisite processing. Prerequisites are used to perform tentative atomic test-and-set type operations when a client updates records on a server, and that concept has no applicability when it comes to an authoritative server informing a client of changes to DNS records.</t>
 
      <t>This DNS Push Notification specification includes support for DNS classes, for completeness. However, in practice, it is anticipated that for the foreseeable future the only DNS class in use will be DNS class "IN", as it is today with existing DNS servers and clients. A DNS Push Notification server MAY choose to implement only DNS class "IN".</t>
-<?rfc needLines="14" ?>
+<?rfc needLines="24" ?>
    </section>
 
    <section title="Transport">
@@ -223,6 +225,13 @@
 
        <t>If a client has performed operations on this connection that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TCP FIN. In the BSD sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.</t>
 
+       <t>In the first SUBSCRIBE response on a connection, the server MUST include an explicit EDNS(0) TCP Keepalive option. If the first SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive option this is an error and the client MUST immediately close the TCP connection and not attempt any further DNS Push Notification requests to that server until one hour has passed. This situation may occur if a client connects to a server that doesn't implement DNS Push Notifications at all, and it is important not to burden such servers with continuous retries.</t>
+
+       <t>Upon receiving an error response from the server, a client SHOULD NOT close the connection. An error relating to one particular operation on a connection does not necessarily imply that all other operations on that connection have also failed, or that future operations will fail. The client should assume that the server will make its own decision about whether or not to close the connection, based on the server's determination of whether the error condition pertains to this particular operation, or would also apply to any subsequent operations. If the server does not close the connection then the client SHOULD continue to use that connection for subsequent operations.</t>
+
+       <t>Upon receiving a Termination Message from the server (see below), a client MUST immediately close the connection.</t>
+
+<?rfc needLines="38" ?>
      </section>
 
      <section title="Server-Initiated Termination">
@@ -232,17 +241,17 @@
 
        <t>In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</t>
 
-       <t>At both servers and clients, the generation or reception of any request, response, update, or keepalive traffic resets the keepalive timer for that connection.</t>
+       <t>At both servers and clients, the generation or reception of any complete request, response, update, or keepalive message resets the keepalive timer for that connection.</t>
 
        <t>In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</t>
 
-       <t>If a client disconnects from the network abruptly, without closing its connection, the server learns of this after failing to receive further traffic from that client. If no requests, responses, update messages or keepalive traffic occurs on a connection for 1.5 times the idle timeout, then this indicates that the client is probably no longer on the network, and the server SHOULD abort the connection with a TCP RST.</t>
+       <t>If a client disconnects from the network abruptly, without closing its connection, the server learns of this after failing to receive further traffic from that client. If no requests, responses, update messages or keepalive traffic occurs on a connection for 1.5 times the idle timeout, then this indicates that the client is probably no longer on the network, and the server SHOULD abort the connection with a TCP RST. The time before the server closes the connection is intentionally 50% longer than the time before the client is required to generate keepalive traffic, to allow for differences in clock rate and network propagation delays.</t>
 
        <t>[We need to discuss the nature of "the required keepalives". Are they TCP-layer keepalives? DNS-layer keepalives? There is currently no DNS-layer keepalive or 'no-op' operation defined. What would that operation be? A DNS QUERY containing zero questions? A DNS SUBSCRIBE containing zero questions? An "empty" DNS message over the TCP connection (just a pair of zero bytes, signifying a zero-length message)? One benefit of TCP-layer keepalives is that they transmit fewer bytes, and involve less software overhead for processing those bytes. Another benefit is that it is more feasible to implement these in networking offload hardware, which can allow devices to meet their TCP keepalive obligations while sleeping. This is particularly important for battery-powered devices like mobile phones and tablets. On the other hand, using TCP-layer keepalives requires an API for a client to tell the networking stack at what frequency to perform TCP-layer keepalives, and an API for a server to request the networking stack to inform it when TCP-layer keepalives are not received by the required deadline. TCP-layer keepalives also only verify liveness of the remote networking stack, whereas DNS-layer keepalives provide higher assurance of liveness of the remote server application software -- though this a limited benefit, since there is no reason to expect that DNS Push Notification server software will routinely become wedged and unresponsive.]</t>
 
-       <t>After sending an error response to a client, the server MAY close the connection with a TCP FIN.</t>
+       <t>After sending an error response to a client, the server MAY close the connection with a TCP FIN, or may allow the connection to remain open. For error conditions that only affect the single operation in question, the server SHOULD return an error response to the client and leave the connection open for further operations. For error conditions that are likely to make all operations unsuccessful in the immediate future, the server SHOULD return an error response to the client and then close the connection with a TCP FIN.</t>
 
-       <t>If the server is overloaded and needs to shed load, it MAY send a Termination Message to the client and close the connection with a TCP FIN.</t>
+       <t>If the server is overloaded and needs to shed load, it SHOULD send a Termination Message to the client and close the connection with a TCP FIN.</t>
 
        <t>Apart from the cases described above, a server MUST NOT close a connection with a DNS Push Notification client, except in extraordinary error conditions. Closing the connection is the client's responsibility, to be done at the client's discretion, when it so chooses. A DNS Push Notification server only closes a DNS Push Notification connection under exceptional circumstances, such as when the server application software or underlying operating system is restarting, the server application terminated unexpectedly (perhaps due to a bug that makes it crash), or the server is undergoing maintenance procedures. When possible, a DNS Push Notification server SHOULD send a Termination Message (<xref target="termination"/> ) informing the client of the reason for the connection being closed.</t>
 
@@ -270,17 +279,20 @@
 
      <t>However, server implementers and operators should be aware that this connection sharing may not be possible in all cases. A single client device may be home to multiple independent client software instances that don't know about each other, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address. This is undesirable from an efficiency standpoint, but may be unavoidable in some situations, so a DNS Push Notification server MUST be prepared to accept multiple connections from the same client IP address.</t>
 
+     <t>Clients SHOULD silently ignore unrecognized messages (both requests and responses) over the TLS/TCP connection. For example, UNSUBSCRIBE and RECONFIRM currently generate no response, but if future versions of this specification change that, existing clients SHOULD silently ignore these unexpected responses. This allows for backwards compatibility with future enhancements.</t>
+
       <section anchor="discovery" title="Discovery">
-        <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone. The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS.</t>
+        <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone. The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS, or TCP port 853 used for <xref target="I-D.ietf-dprive-dns-over-tls">DNS over TLS</xref>.</t>
         <t>
           <list style="numbers">
             <t>The client begins the discovery by sending a DNS query to the local resolver with record type <xref target="RFC1035">SOA</xref> for the name of the record it wishes to subscribe.</t>
 
-            <t>If the SOA record exists, it MUST be returned in the Answer Section of the reply. If not, the local resolver SHOULD include the SOA record for the zone of the requested name in the Authority Section.</t>
+            <t>If the SOA record exists, it MUST be returned in the Answer Section of the response. If not, the local resolver SHOULD include the SOA record for the zone of the requested name in the Authority Section.</t>
 
             <t>If no SOA record is returned, the client then strips off the leading label from the requested name. If the resulting name has at least one label in it, the client sends a new SOA query and processing continues at step 2 above. If the resulting name is empty (the root label) then this is a network configuration error and the client gives up. The client MAY retry the operation at a later time.</t>
 
-            <t>Once the SOA is known, the client sends a DNS query with type <xref target="RFC2782">SRV</xref> for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
+            <t>Once the SOA is known (either by virtue of being seen in the Answer Section, or in the Authority Section), the client sends a DNS query with type <xref target="RFC2782">SRV</xref> for the record name
+            <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
 
             <t>If the zone in question does not offer DNS Push Notifications then SRV record MUST NOT exist and the SRV query will return a negative answer.</t>
 
@@ -298,10 +310,16 @@
      <section title="DNS Push Notification SUBSCRIBE">
        <t>A DNS Push Notification client indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TCP connection to the server. A SUBSCRIBE request is formatted identically to a conventional <xref target="RFC1035">DNS QUERY request</xref>, except that the opcode is SUBSCRIBE (6) instead of QUERY (0). If neither QTYPE nor QCLASS are ANY (255) then this is a specific subscription to changes for the given name, type and class. If one or both of QTYPE or QCLASS are ANY (255) then this subscription matches any type and/or any class, as appropriate.</t>
 
+       <t>NOTE: A little-known quirk of DNS is that in DNS QUERY requests, QTYPE and QCLASS 255 mean "ANY" not "ALL". They indicate that the server should respond with ANY matching records of its choosing, not necessarily ALL matching records. This can lead to some surprising and unexpected results, were a query returns some valid answers but not all of them, and makes QTYPE=ANY queries less useful than people sometimes imagine.</t>
+
+       <t>When used in conjunction with DNS SUBSCRIBE, QTYPE and QCLASS 255 should be interpreted to mean "ALL", not "ANY". After accepting a subscription where one or both of QTYPE or QCLASS are 255, the server MUST send Push Notification Updates for ALL record changes that match the subscription, not just some of them.</t>
+
        <t>In a SUBSCRIBE request the DNS Header QR bit MUST be zero.<vspace />
        If the QR bit is not zero the message is not a SUBSCRIBE request.</t>
 
-       <t>The AA, TC, RD, RA, Z, AD, and CD bits, the ID field, and the RCODE field, MUST be zero on transmission, and MUST be silently ignored on reception.</t>
+       <t>The AA, TC, RD, RA, Z, AD, and CD bits, and the RCODE field, MUST be zero on transmission, and MUST be silently ignored on reception.</t>
+
+       <t>The ID field may be set to any value of the client's choosing, and the server MUST echo this value back in the response message. The client is not required to select unique ID values; it is permissible to use the same value (e.g., zero) for all operations. Since the name, qtype, and qclass are sufficient to uniquely identify a SUBSCRIBE operation on a connection, the name, qtype, and qclass in a SUBSCRIBE response are sufficient to correlate a response with its corresponding request. However, for convenience, the client may put any value it chooses in the ID field of the SUBSCRIBE request, and the server MUST echo that value back unchanged in the SUBSCRIBE response. Note that the ID field of Push Notification Update Messages is always zero, since a Push Notification Update Message could potentially match more than one subscription, or could relate to a subscription that the client has just cancelled with an UNSUBSCRIBE message.</t>
 
        <t>Like a DNS QUERY request, a SUBSCRIBE request MUST contain exactly one question. Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE requests can be concatenated in a single TCP stream and packed efficiently into TCP segments, so the ability to pack multiple SUBSCRIBE operations into a single DNS message within that TCP stream would add extra complexity for little benefit.</t>
 
@@ -325,7 +343,7 @@
 
        <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS(0) TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/>. A client MUST NOT include an actual EDNS(0) TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request that does contain an actual EDNS(0) TCP Keepalive option this is an error and the server MUST immediately close the TCP connection.</t>
 
-       <t>A SUBSCRIBE operation MAY include an explicit <xref target="RFC6891">EDNS(0)</xref> OPT record where necessary to carry additional information.</t>
+       <t>A SUBSCRIBE operation MAY include an explicit <xref target="RFC6891">EDNS(0)</xref> OPT record where necessary to carry additional EDNS(0) information other than a TCP Keepalive option.</t>
 
        <t>The presence of a SUBSCRIBE operation on a connection indicates to the server that the client fully implements
        <xref target="RFC6891">EDNS(0)</xref>, and can correctly understand any response that conforms to that specification. After receiving a SUBSCRIBE request, the server MAY include OPT record in any of its responses, as needed.</t>
@@ -336,7 +354,9 @@
        <t>In a SUBSCRIBE response the DNS Header QR bit MUST be one.<vspace />
        If the QR bit is not one the message is not a SUBSCRIBE response.</t>
 
-       <t>The AA, TC, RD, RA, Z, AD, and CD bits, and the ID field, MUST be zero on transmission, and MUST be silently ignored on reception.</t>
+       <t>The AA, TC, RD, RA, Z, AD, and CD bits, MUST be zero on transmission, and MUST be silently ignored on reception.</t>
+
+       <t>The ID field MUST echo the value given in the ID field of the SUBSCRIBE request.</t>
 
        <t>The Question Section MUST echo back the values provided by the client in the SUBSCRIBE request that generated this SUBSCRIBE response.</t>
 
@@ -372,7 +392,7 @@
        <t>The server MAY include EDNS(0) TCP Keepalive options in subsequent messages, if the idle timeout changes. If the client receives subsequent messages that do not contain an explicit EDNS(0) TCP Keepalive option then the idle timeout for that connection remains unchanged at that time.</t>
 
 <?rfc needLines="20" ?>
-       <t>In an error response, with nonzero RCODE, the server MUST contain an EDNS(0) TCP Keepalive option specifying the delay before the client tries again:
+       <t>In an error response, with nonzero RCODE, the server MUST contain an EDNS(0) TCP Keepalive option specifying the delay before the client submits further requests to this server:
          <list style="bullets">
            <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of one minute is RECOMMENDED, to avoid high load from defective clients.</t>
 
@@ -388,8 +408,11 @@
 
            <t>For other RCODE values, the retry delay should be set by the server as appropriate for that error condition. By default, a value of 5 minutes is RECOMMENDED.</t>
          </list>
-       After sending an error response the server MAY close the TCP connection with a FIN, or MAY allow it to remain open. Clients MUST correctly handle both cases.
        </t>
+
+       <t>For RCODE = 9 (NOTAUTH), the time delay applies to requests for other names falling within the same zone. Requests for names falling within other zones are not subject to the delay. For all other RCODEs the time delay applies to all subsequent requests to this server.</t>
+
+       <t>After sending an error response the server MAY close the TCP connection with a FIN, or MAY allow it to remain open, depending on the nature of the error. Clients MUST correctly handle both cases.</t>
 
 <?rfc needLines="20" ?>
      </section>
@@ -517,14 +540,13 @@
        <t>No response message is generated as a result of processing a RECONFIRM message.</t>
 
        <t>If the server receiving the RECONFIRM request determines that the records are in fact no longer valid, then subsequent DNS Push Notification Update Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised printer is no longer present has the side effect of informing all other interested clients that the printer in question is now gone.</t>
-<?rfc needLines="42" ?>
      </section>
 
      <section anchor="termination" title="DNS Push Notification Termination Message">
-       <t>If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behaviour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server SHOULD instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) immediately closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message.</t>
+       <t>If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behaviour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server SHOULD instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) immediately closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message. Upon successful reception of the Termination Message the client is expected to close the connection. The server SHOULD set a timer and, if the client has not closed the connection within a reasonable time, the server SHOULD then terminate the TCP connection with a TCP RST. The RECOMMENDED time the server should wait before terminating the TCP connection with a TCP RST is ten seconds.</t>
 
        <t>The format of a Termination Message is similar to a Push Notification Update.</t>
-       
+
 <?rfc needLines="28" ?>
 
        <t>The following figure shows the existing DNS Update header format:
@@ -582,7 +604,7 @@
 
        <t>In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</t>
 
-       <t>In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one for each successive client, yielding a post-restart reconnection rate of ten clients per second).</t>
+       <t>In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</t>
 
 <?rfc needLines="15" ?>
      </section>
@@ -668,6 +690,9 @@
      &I-D.ietf-dnsop-edns-tcp-keepalive;
    </references>
 
+<!-- Use needLines to make sure "Authors' Addresses" line doesn't appear as the last line on the page -->
+<?rfc needLines="9" ?>
+
    <references title="Informative References">
 
      &I-D.sekar-dns-llq;
@@ -746,6 +771,7 @@
        <format type='HTML' octets='65566' target="http://www.cisco.com/web/about/ac123/ac147/archived_issues/ipj_9-4/syn_flooding_attacks.html" />
      </reference>
 
+     &I-D.ietf-dprive-dns-over-tls;
    </references>
  </back>
 </rfc>
