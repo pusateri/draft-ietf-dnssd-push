@@ -406,8 +406,8 @@
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-07" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-4-4" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-08" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-7-8" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
   <meta name="description" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
 
@@ -431,12 +431,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: October 6, 2016</td>
+  <td class="left">Expires: January 9, 2017</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">April 4, 2016</td>
+  <td class="right">July 8, 2016</td>
 </tr>
 
     	
@@ -444,7 +444,7 @@
   </table>
 
   <p class="title">DNS Push Notifications<br />
-  <span class="filename">draft-ietf-dnssd-push-07</span></p>
+  <span class="filename">draft-ietf-dnssd-push-08</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
@@ -456,7 +456,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 6, 2016.</p>
+<p>This Internet-Draft will expire on January 9, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -499,7 +499,8 @@
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> Introduction</h1>
-<p id="rfc.section.1.p.1">DNS records may be updated using <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite>.  Other mechanisms such as a <a href="#I-D.ietf-dnssd-hybrid">Hybrid Proxy</a> <cite title="NONE">[I-D.ietf-dnssd-hybrid]</cite> can also generate changes to a DNS zone.  This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <a href="#RFC6763">DNS Service Discovery</a> <cite title="NONE">[RFC6763]</cite> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <a href="#RFC1034">[RFC1034]</a> <a href="#RFC1035">[RFC1035]</a> <a href="#RFC6895">[RFC6895]</a>.</p>
+<p id="rfc.section.1.p.1">IMPORTANT NOTE: This document currently references the EDNS(0) TCP Keepalive option <a href="#RFC7828">[RFC7828]</a>.  As a result of discussions about this document, the community came to the realization that DNS needs explicit session-level signaling, to complement the current EDNS(0) per-message signaling.  As a result, work on <a href="#I-D.bellis-dnsop-session-signal">DNS Session Signaling</a> <cite title="NONE">[I-D.bellis-dnsop-session-signal]</cite> is underway, and this document will be updated shortly to make use of those new Session Signaling mechanisms once they are agreed.</p>
+<p id="rfc.section.1.p.2">DNS records may be updated using <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite>.  Other mechanisms such as a <a href="#I-D.ietf-dnssd-hybrid">Hybrid Proxy</a> <cite title="NONE">[I-D.ietf-dnssd-hybrid]</cite> can also generate changes to a DNS zone.  This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <a href="#RFC6763">DNS Service Discovery</a> <cite title="NONE">[RFC6763]</cite> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <a href="#RFC1034">[RFC1034]</a> <a href="#RFC1035">[RFC1035]</a> <a href="#RFC6895">[RFC6895]</a>.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> Requirements Language</h1>
 <p id="rfc.section.1.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119">"Key words for use in RFCs to Indicate Requirement Levels"</a> <cite title="NONE">[RFC2119]</cite>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> Motivation</h1>
@@ -525,8 +526,8 @@
 <p id="rfc.section.4.p.4">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <a href="#RFC7673">[RFC7673]</a> is strongly encouraged. See below in <a href="#tls_name_auth">Section 7.2</a> for details.</p>
 <p id="rfc.section.4.p.5">A DNS Push Notification session begins with a client connecting to a DNS Push Notification server. Over that connection the client then issues DNS operation requests, such as SUBSCRIBE.</p>
 <h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> Client-Initiated Termination</h1>
-<p id="rfc.section.4.1.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signalling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
-<p id="rfc.section.4.1.p.2">After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations <a href="#I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</a> or the server is entitled to close the connection (see below).</p>
+<p id="rfc.section.4.1.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
+<p id="rfc.section.4.1.p.2">After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations <a href="#RFC7828">[RFC7828]</a> or the server is entitled to close the connection (see below).</p>
 <p id="rfc.section.4.1.p.3">If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</p>
 <p id="rfc.section.4.1.p.4">When closing a connection, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</p>
 <p id="rfc.section.4.1.p.5">If a client has performed operations on this connection that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TCP FIN. In the BSD sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.</p>
@@ -534,7 +535,7 @@
 <p id="rfc.section.4.1.p.7">Upon receiving an error response from the server, a client SHOULD NOT close the connection. An error relating to one particular operation on a connection does not necessarily imply that all other operations on that connection have also failed, or that future operations will fail. The client should assume that the server will make its own decision about whether or not to close the connection, based on the server's determination of whether the error condition pertains to this particular operation, or would also apply to any subsequent operations. If the server does not close the connection then the client SHOULD continue to use that connection for subsequent operations.</p>
 <p id="rfc.section.4.1.p.8">Upon receiving a Termination Message from the server (see below), a client MUST immediately close the connection.</p>
 <h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> Server-Initiated Termination</h1>
-<p id="rfc.section.4.2.p.1">If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive <a href="#I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</a> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</p>
+<p id="rfc.section.4.2.p.1">If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive <a href="#RFC7828">[RFC7828]</a> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</p>
 <p id="rfc.section.4.2.p.2">In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</p>
 <p id="rfc.section.4.2.p.3">At both servers and clients, the generation or reception of any complete request, response, update, or keepalive message resets the keepalive timer for that connection.</p>
 <p id="rfc.section.4.2.p.4">In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</p>
@@ -585,7 +586,7 @@
 <p id="rfc.section.6.2.p.13">DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</p>
 <p id="rfc.section.6.2.p.14">Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a literal CNAME record in the zone, and nothing else.</p>
 <p id="rfc.section.6.2.p.15">A client may SUBSCRIBE to records that are unknown to the server at the time of the request (providing that the name falls within one of the zone(s) the server is responsible for) and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</p>
-<p id="rfc.section.6.2.p.16">Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS(0) TCP Keepalive option <a href="#I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</a>. A client MUST NOT include an actual EDNS(0) TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request that does contain an actual EDNS(0) TCP Keepalive option this is an error and the server MUST immediately close the TCP connection.</p>
+<p id="rfc.section.6.2.p.16">Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS(0) TCP Keepalive option <a href="#RFC7828">[RFC7828]</a>. A client MUST NOT include an actual EDNS(0) TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request that does contain an actual EDNS(0) TCP Keepalive option this is an error and the server MUST immediately close the TCP connection.</p>
 <p id="rfc.section.6.2.p.17">A SUBSCRIBE operation MAY include an explicit <a href="#RFC6891">EDNS(0)</a> <cite title="NONE">[RFC6891]</cite> OPT record where necessary to carry additional EDNS(0) information other than a TCP Keepalive option.</p>
 <p id="rfc.section.6.2.p.18">The presence of a SUBSCRIBE operation on a connection indicates to the server that the client fully implements <a href="#RFC6891">EDNS(0)</a> <cite title="NONE">[RFC6891]</cite>, and can correctly understand any response that conforms to that specification. After receiving a SUBSCRIBE request, the server MAY include OPT record in any of its responses, as needed.</p>
 <p id="rfc.section.6.2.p.19">Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</p>
@@ -711,7 +712,7 @@
 <p id="rfc.section.6.4.p.13">In the case where a single change affects more than one active subscription, only one update is sent. For example, an update adding a given record may match both a SUBSCRIBE request with the same QTYPE and a different SUBSCRIBE request with QTYPE=ANY. It is not the case that two updates are sent because the new record matches two active subscriptions.</p>
 <p id="rfc.section.6.4.p.14">The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" update, not three separate "delete an individual RR from a name" updates. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" update, not two separate "delete an RRset from a name" updates.</p>
 <p id="rfc.section.6.4.p.15">A server SHOULD combine multiple change notifications in a single Update Message when possible, even if those change notifications apply to different subscriptions. Conceptually, a Push Notification Update Message is a connection-level concept, not a subscription-level concept.</p>
-<p id="rfc.section.6.4.p.16">Push Notification Update Messages MAY contain an EDNS(0) TCP Keepalive option <a href="#I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</a> if the idle timeout has changed since the last time the server sent an EDNS(0) TCP Keepalive option on this connection.</p>
+<p id="rfc.section.6.4.p.16">Push Notification Update Messages MAY contain an EDNS(0) TCP Keepalive option <a href="#RFC7828">[RFC7828]</a> if the idle timeout has changed since the last time the server sent an EDNS(0) TCP Keepalive option on this connection.</p>
 <p id="rfc.section.6.4.p.17">In the event that the server wishes to inform a client of a new idle timeout for the connection, the server MAY combine that with the next message it sends to the client, or the server MAY send an empty Push Notification Update Message (zero records in the Update Section) to carry the EDNS(0) TCP Keepalive option. Clients MUST correctly receive and process the EDNS(0) TCP Keepalive option in both cases.</p>
 <p id="rfc.section.6.4.p.18">Reception of a Push Notification Update Message does not directly generate a response back to the server. (Updates may indirectly generate other operations; e.g., a Push Notification Update Message declaring the appearance of a PTR record could lead to a query for the SRV record named in the rdata of that PTR record<a href="#RFC6763">[RFC6763]</a>.</p>
 <p id="rfc.section.6.4.p.19">The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</p>
@@ -783,7 +784,7 @@
   </tbody>
 </table>
 <p id="rfc.section.6.6.p.12">This document specifies only these two RCODE values for Termination Messages. Servers sending Termination Messages SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination Messages, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</p>
-<p id="rfc.section.6.6.p.13">The Termination Message MUST contain an EDNS(0) TCP Keepalive option <a href="#I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</a>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</p>
+<p id="rfc.section.6.6.p.13">The Termination Message MUST contain an EDNS(0) TCP Keepalive option <a href="#RFC7828">[RFC7828]</a>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</p>
 <p id="rfc.section.6.6.p.14">In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</p>
 <p id="rfc.section.6.6.p.15">In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
@@ -821,15 +822,15 @@
   <tbody>
     <tr>
       <td class="reference">
-        <b id="I-D.ietf-dnsop-edns-tcp-keepalive">[I-D.ietf-dnsop-edns-tcp-keepalive]</b>
+        <b id="I-D.bellis-dnsop-session-signal">[I-D.bellis-dnsop-session-signal]</b>
       </td>
-      <td class="top"><a>Wouters, P.</a>, <a>Abley, J.</a>, <a>Dickinson, S.</a> and <a>R. Bellis</a>, "<a href="http://tools.ietf.org/html/draft-ietf-dnsop-edns-tcp-keepalive-06">The edns-tcp-keepalive EDNS0 Option</a>", Internet-Draft draft-ietf-dnsop-edns-tcp-keepalive-06, February 2016.</td>
+      <td class="top"><a>Bellis, R.</a>, <a>Cheshire, S.</a>, <a>Marcon, J.</a>, <a>Mankin, A.</a> and <a>T. Pusateri</a>, "<a href="http://tools.ietf.org/html/draft-bellis-dnsop-session-signal-00">DNS Session Signaling</a>", Internet-Draft draft-bellis-dnsop-session-signal-00, July 2016.</td>
     </tr>
     <tr>
       <td class="reference">
         <b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b>
       </td>
-      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-12">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-12, March 2016.</td>
+      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-13">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-13, May 2016.</td>
     </tr>
     <tr>
       <td class="reference">
@@ -914,6 +915,12 @@
         <b id="RFC7766">[RFC7766]</b>
       </td>
       <td class="top"><a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Bellis, R.</a>, <a>Mankin, A.</a> and <a>D. Wessels</a>, "<a href="http://tools.ietf.org/html/rfc7766">DNS Transport over TCP - Implementation Requirements</a>", RFC 7766, DOI 10.17487/RFC7766, March 2016.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7828">[RFC7828]</b>
+      </td>
+      <td class="top"><a>Wouters, P.</a>, <a>Abley, J.</a>, <a>Dickinson, S.</a> and <a>R. Bellis</a>, "<a href="http://tools.ietf.org/html/rfc7828">The edns-tcp-keepalive EDNS0 Option</a>", RFC 7828, DOI 10.17487/RFC7828, April 2016.</td>
     </tr>
   </tbody>
 </table>

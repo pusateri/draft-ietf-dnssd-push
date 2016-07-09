@@ -27,9 +27,10 @@
 <!ENTITY RFC7525 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7525.xml">
 <!ENTITY RFC7673 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7673.xml">
 <!ENTITY RFC7766 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7766.xml">
+<!ENTITY RFC7828 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7828.xml">
 <!ENTITY I-D.sekar-dns-llq SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
-<!ENTITY I-D.ietf-dnsop-edns-tcp-keepalive SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dnsop-edns-tcp-keepalive.xml">
+<!ENTITY I-D.bellis-dnsop-session-signal SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.bellis-dnsop-session-signal.xml">
 <!ENTITY I-D.ietf-dprive-dns-over-tls SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dprive-dns-over-tls.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -57,7 +58,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-07" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-08" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -111,7 +112,7 @@
      </address>
    </author>
 
-   <date day='4' month='April' year='2016'/>
+   <date day='8' month='July' year='2016'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -146,6 +147,12 @@
  <middle>
 
    <section title="Introduction">
+     <t>IMPORTANT NOTE: This document currently references the EDNS(0) TCP Keepalive option <xref target="RFC7828"/>.
+     As a result of discussions about this document, the community came to the realization that DNS needs explicit
+     session-level signaling, to complement the current EDNS(0) per-message signaling.
+     As a result, work on <xref target="I-D.bellis-dnsop-session-signal">DNS Session Signaling</xref> is underway,
+     and this document will be updated shortly to make use of those new Session Signaling mechanisms once they are agreed.</t>
+
      <t>DNS records may be updated using <xref target="RFC2136">DNS Update</xref>.
      Other mechanisms such as a <xref target="I-D.ietf-dnssd-hybrid">Hybrid Proxy</xref> can also generate changes to a DNS zone.
      This document specifies a protocol for Unicast DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6895"/>.</t>
@@ -214,10 +221,10 @@
 <?rfc needLines="18" ?>
      <section title="Client-Initiated Termination">
 
-       <t>An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signalling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
+       <t>An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
 
        <t>After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations
-       <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/> or the server is entitled to close the connection (see below).</t>
+       <xref target="RFC7828"/> or the server is entitled to close the connection (see below).</t>
 
        <t>If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</t>
 
@@ -237,7 +244,7 @@
      <section title="Server-Initiated Termination">
 
        <t>If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive
-       <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</t>
+       <xref target="RFC7828"/> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</t>
 
        <t>In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</t>
 
@@ -341,7 +348,7 @@
 
        <t>A client may SUBSCRIBE to records that are unknown to the server at the time of the request (providing that the name falls within one of the zone(s) the server is responsible for) and this is not an error. The server MUST accept these requests and send Push Notifications if and when matches are found in the future.</t>
 
-       <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS(0) TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/>. A client MUST NOT include an actual EDNS(0) TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request that does contain an actual EDNS(0) TCP Keepalive option this is an error and the server MUST immediately close the TCP connection.</t>
+       <t>Since all SUBSCRIBE operations are implicitly long-lived operations, the server MUST interpret a SUBSCRIBE request as if it contained an EDNS(0) TCP Keepalive option <xref target="RFC7828"/>. A client MUST NOT include an actual EDNS(0) TCP Keepalive option in the request, since it is automatic, and implied by the semantics of SUBSCRIBE. If a server receives a SUBSCRIBE request that does contain an actual EDNS(0) TCP Keepalive option this is an error and the server MUST immediately close the TCP connection.</t>
 
        <t>A SUBSCRIBE operation MAY include an explicit <xref target="RFC6891">EDNS(0)</xref> OPT record where necessary to carry additional EDNS(0) information other than a TCP Keepalive option.</t>
 
@@ -503,7 +510,7 @@
        <t>A server SHOULD combine multiple change notifications in a single Update Message when possible, even if those change notifications apply to different subscriptions. Conceptually, a Push Notification Update Message is a connection-level concept, not a subscription-level concept.</t>
 
        <t>Push Notification Update Messages MAY contain an EDNS(0) TCP Keepalive option
-       <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/>
+       <xref target="RFC7828"/>
        if the idle timeout has changed since the last time the server sent an EDNS(0) TCP Keepalive option on this connection.</t>
 
        <t>In the event that the server wishes to inform a client of a new idle timeout for the connection, the server MAY combine that with the next message it sends to the client, or the server MAY send an empty Push Notification Update Message (zero records in the Update Section) to carry the EDNS(0) TCP Keepalive option. Clients MUST correctly receive and process the EDNS(0) TCP Keepalive option in both cases.</t>
@@ -600,7 +607,7 @@
 
        <t>This document specifies only these two RCODE values for Termination Messages. Servers sending Termination Messages SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination Messages, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</t>
 
-       <t>The Termination Message MUST contain an EDNS(0) TCP Keepalive option <xref target="I-D.ietf-dnsop-edns-tcp-keepalive"/>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</t>
+       <t>The Termination Message MUST contain an EDNS(0) TCP Keepalive option <xref target="RFC7828"/>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</t>
 
        <t>In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</t>
 
@@ -687,7 +694,8 @@
      &RFC6895;
      &RFC7673;
      &RFC7766;
-     &I-D.ietf-dnsop-edns-tcp-keepalive;
+     &RFC7828;
+     &I-D.bellis-dnsop-session-signal;
    </references>
 
 <!-- Use needLines to make sure "Authors' Addresses" line doesn't appear as the last line on the page -->
