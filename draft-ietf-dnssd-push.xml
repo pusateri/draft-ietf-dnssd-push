@@ -58,7 +58,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-08" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-09" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -112,7 +112,7 @@
      </address>
    </author>
 
-   <date day='8' month='July' year='2016'/>
+   <date day='22' month='July' year='2016'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -217,55 +217,6 @@
      <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <xref target="RFC7673"/> is strongly encouraged. See below in <xref target="tls_name_auth"/> for details.</t>
 
      <t>A DNS Push Notification session begins with a client connecting to a DNS Push Notification server. Over that connection the client then issues DNS operation requests, such as SUBSCRIBE.</t>
-
-<?rfc needLines="18" ?>
-     <section title="Client-Initiated Termination">
-
-       <t>An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
-
-       <t>After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations
-       <xref target="RFC7828"/> or the server is entitled to close the connection (see below).</t>
-
-       <t>If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</t>
-
-       <t>When closing a connection, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</t>
-
-       <t>If a client has performed operations on this connection that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TCP FIN. In the BSD sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.</t>
-
-       <t>In the first SUBSCRIBE response on a connection, the server MUST include an explicit EDNS(0) TCP Keepalive option. If the first SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive option this is an error and the client MUST immediately close the TCP connection and not attempt any further DNS Push Notification requests to that server until one hour has passed. This situation may occur if a client connects to a server that doesn't implement DNS Push Notifications at all, and it is important not to burden such servers with continuous retries.</t>
-
-       <t>Upon receiving an error response from the server, a client SHOULD NOT close the connection. An error relating to one particular operation on a connection does not necessarily imply that all other operations on that connection have also failed, or that future operations will fail. The client should assume that the server will make its own decision about whether or not to close the connection, based on the server's determination of whether the error condition pertains to this particular operation, or would also apply to any subsequent operations. If the server does not close the connection then the client SHOULD continue to use that connection for subsequent operations.</t>
-
-       <t>Upon receiving a Termination Message from the server (see below), a client MUST immediately close the connection.</t>
-
-<?rfc needLines="38" ?>
-     </section>
-
-     <section title="Server-Initiated Termination">
-
-       <t>If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive
-       <xref target="RFC7828"/> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</t>
-
-       <t>In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</t>
-
-       <t>At both servers and clients, the generation or reception of any complete request, response, update, or keepalive message resets the keepalive timer for that connection.</t>
-
-       <t>In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</t>
-
-       <t>If a client disconnects from the network abruptly, without closing its connection, the server learns of this after failing to receive further traffic from that client. If no requests, responses, update messages or keepalive traffic occurs on a connection for 1.5 times the idle timeout, then this indicates that the client is probably no longer on the network, and the server SHOULD abort the connection with a TCP RST. The time before the server closes the connection is intentionally 50% longer than the time before the client is required to generate keepalive traffic, to allow for differences in clock rate and network propagation delays.</t>
-
-       <t>[We need to discuss the nature of "the required keepalives". Are they TCP-layer keepalives? DNS-layer keepalives? There is currently no DNS-layer keepalive or 'no-op' operation defined. What would that operation be? A DNS QUERY containing zero questions? A DNS SUBSCRIBE containing zero questions? An "empty" DNS message over the TCP connection (just a pair of zero bytes, signifying a zero-length message)? One benefit of TCP-layer keepalives is that they transmit fewer bytes, and involve less software overhead for processing those bytes. Another benefit is that it is more feasible to implement these in networking offload hardware, which can allow devices to meet their TCP keepalive obligations while sleeping. This is particularly important for battery-powered devices like mobile phones and tablets. On the other hand, using TCP-layer keepalives requires an API for a client to tell the networking stack at what frequency to perform TCP-layer keepalives, and an API for a server to request the networking stack to inform it when TCP-layer keepalives are not received by the required deadline. TCP-layer keepalives also only verify liveness of the remote networking stack, whereas DNS-layer keepalives provide higher assurance of liveness of the remote server application software -- though this a limited benefit, since there is no reason to expect that DNS Push Notification server software will routinely become wedged and unresponsive.]</t>
-
-       <t>After sending an error response to a client, the server MAY close the connection with a TCP FIN, or may allow the connection to remain open. For error conditions that only affect the single operation in question, the server SHOULD return an error response to the client and leave the connection open for further operations. For error conditions that are likely to make all operations unsuccessful in the immediate future, the server SHOULD return an error response to the client and then close the connection with a TCP FIN.</t>
-
-       <t>If the server is overloaded and needs to shed load, it SHOULD send a Termination Message to the client and close the connection with a TCP FIN.</t>
-
-       <t>Apart from the cases described above, a server MUST NOT close a connection with a DNS Push Notification client, except in extraordinary error conditions. Closing the connection is the client's responsibility, to be done at the client's discretion, when it so chooses. A DNS Push Notification server only closes a DNS Push Notification connection under exceptional circumstances, such as when the server application software or underlying operating system is restarting, the server application terminated unexpectedly (perhaps due to a bug that makes it crash), or the server is undergoing maintenance procedures. When possible, a DNS Push Notification server SHOULD send a Termination Message (<xref target="termination"/> ) informing the client of the reason for the connection being closed.</t>
-
-       <t>After a connection is closed by the server, the client SHOULD try to reconnect, to that server, or to another server supporting DNS Push Notifications for the zone. If reconnecting to the same server, and there was a Termination Message or error response containing a EDNS(0) TCP Keepalive option, the client MUST respect the indicated delay before attempting to reconnect.</t>
-
-<?rfc needLines="18" ?>
-     </section>
    </section>
 
    <section title="State Considerations">
@@ -548,74 +499,120 @@
 
        <t>If the server receiving the RECONFIRM request determines that the records are in fact no longer valid, then subsequent DNS Push Notification Update Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised printer is no longer present has the side effect of informing all other interested clients that the printer in question is now gone.</t>
      </section>
+     <section  title="Termination">
+       <section title="Client-Initiated Termination">
 
-     <section anchor="termination" title="DNS Push Notification Termination Message">
-       <t>If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behaviour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server SHOULD instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) immediately closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message. Upon successful reception of the Termination Message the client is expected to close the connection. The server SHOULD set a timer and, if the client has not closed the connection within a reasonable time, the server SHOULD then terminate the TCP connection with a TCP RST. The RECOMMENDED time the server should wait before terminating the TCP connection with a TCP RST is ten seconds.</t>
+         <t>An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
 
-       <t>The format of a Termination Message is similar to a Push Notification Update.</t>
+         <t>After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations
+         <xref target="RFC7828"/> or the server is entitled to close the connection (see below).</t>
 
-<?rfc needLines="28" ?>
+         <t>If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</t>
 
-       <t>The following figure shows the existing DNS Update header format:
-       <figure align="center" anchor="packet_header2"><artwork align="center"><![CDATA[
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                      ID                       |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|QR|   Opcode  |          Z         |   RCODE   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    ZOCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    PRCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    UPCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    ADCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-               ]]></artwork>
-       </figure>
-       </t>
+         <t>When closing a connection, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</t>
 
-       <t>For Termination Messages the following rules apply:</t>
+         <t>If a client has performed operations on this connection that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TCP FIN. In the BSD sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.</t>
 
-       <t>The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).<vspace />
-       Messages received where this is not true are not Termination Messages and should be silently ignored.</t>
+         <t>In the first SUBSCRIBE response on a connection, the server MUST include an explicit EDNS(0) TCP Keepalive option. If the first SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive option this is an error and the client MUST immediately close the TCP connection and not attempt any further DNS Push Notification requests to that server until one hour has passed. This situation may occur if a client connects to a server that doesn't implement DNS Push Notifications at all, and it is important not to burden such servers with continuous retries.</t>
 
-       <t>ID and the Z bits MUST be zero on transmission,<vspace />
-       and MUST be silently ignored on reception.</t>
+         <t>Upon receiving an error response from the server, a client SHOULD NOT close the connection. An error relating to one particular operation on a connection does not necessarily imply that all other operations on that connection have also failed, or that future operations will fail. The client should assume that the server will make its own decision about whether or not to close the connection, based on the server's determination of whether the error condition pertains to this particular operation, or would also apply to any subsequent operations. If the server does not close the connection then the client SHOULD continue to use that connection for subsequent operations.</t>
 
-       <t>ZOCOUNT MUST be zero, and the Zone Section MUST be empty.<vspace />
-       Any records in the Zone Section MUST be silently ignored.</t>
+<?rfc needLines="38" ?>
+       </section>
 
-       <t>PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.<vspace />
-       Any records in the Prerequisite Section MUST be silently ignored.</t>
+       <section title="Server-Initiated Termination">
 
-       <t>UPCOUNT MUST be zero, and the Update Section MUST be empty.<vspace />
-       Any records in the Update Section MUST be silently ignored.</t>
+         <t>If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive
+         <xref target="RFC7828"/> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</t>
 
-       <t>ADCOUNT specifies the number of records in the Additional Data Section, e.g., the EDNS(0) OPT record..</t>
+         <t>In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</t>
 
-       <t>The RCODE MUST contain a nonzero code giving the reason for termination, as indicated below:</t>
-       <texttable title="Termination Response codes">
-       <ttcol align="left">Mnemonic</ttcol>
-       <ttcol align="center">Value</ttcol>
-       <ttcol align="left">Description</ttcol>
-       <c>SERVFAIL</c><c>2</c><c>The server is overloaded due to resource exhaustion.</c>
-       <c>REFUSED</c><c>5</c><c>The server has been reconfigured and is no longer accepting DNS Push Notification requests for one or more of the currently subscribed names.</c>
-       </texttable>
+         <t>At both servers and clients, the generation or reception of any complete request, response, update, or keepalive message resets the keepalive timer for that connection.</t>
 
-       <t>This document specifies only these two RCODE values for Termination Messages. Servers sending Termination Messages SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination Messages, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</t>
+         <t>In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</t>
 
-       <t>The Termination Message MUST contain an EDNS(0) TCP Keepalive option <xref target="RFC7828"/>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</t>
+         <t>If a client disconnects from the network abruptly, without closing its connection, the server learns of this after failing to receive further traffic from that client. If no requests, responses, update messages or keepalive traffic occurs on a connection for 1.5 times the idle timeout, then this indicates that the client is probably no longer on the network, and the server SHOULD abort the connection with a TCP RST. The time before the server closes the connection is intentionally 50% longer than the time before the client is required to generate keepalive traffic, to allow for differences in clock rate and network propagation delays.</t>
 
-       <t>In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</t>
+         <t>[We need to discuss the nature of "the required keepalives". Are they TCP-layer keepalives? DNS-layer keepalives? There is currently no DNS-layer keepalive or 'no-op' operation defined. What would that operation be? A DNS QUERY containing zero questions? A DNS SUBSCRIBE containing zero questions? An "empty" DNS message over the TCP connection (just a pair of zero bytes, signifying a zero-length message)? One benefit of TCP-layer keepalives is that they transmit fewer bytes, and involve less software overhead for processing those bytes. Another benefit is that it is more feasible to implement these in networking offload hardware, which can allow devices to meet their TCP keepalive obligations while sleeping. This is particularly important for battery-powered devices like mobile phones and tablets. On the other hand, using TCP-layer keepalives requires an API for a client to tell the networking stack at what frequency to perform TCP-layer keepalives, and an API for a server to request the networking stack to inform it when TCP-layer keepalives are not received by the required deadline. TCP-layer keepalives also only verify liveness of the remote networking stack, whereas DNS-layer keepalives provide higher assurance of liveness of the remote server application software -- though this a limited benefit, since there is no reason to expect that DNS Push Notification server software will routinely become wedged and unresponsive.]</t>
 
-       <t>In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</t>
+         <t>After sending an error response to a client, the server MAY close the connection with a TCP FIN, or may allow the connection to remain open. For error conditions that only affect the single operation in question, the server SHOULD return an error response to the client and leave the connection open for further operations. For error conditions that are likely to make all operations unsuccessful in the immediate future, the server SHOULD return an error response to the client and then close the connection with a TCP FIN.</t>
 
-<?rfc needLines="15" ?>
+         <t>If the server is overloaded and needs to shed load, it SHOULD send a Termination Message to the client and close the connection with a TCP FIN.</t>
+
+         <t>Apart from the cases described above, a server MUST NOT close a connection with a DNS Push Notification client, except in extraordinary error conditions. Closing the connection is the client's responsibility, to be done at the client's discretion, when it so chooses. A DNS Push Notification server only closes a DNS Push Notification connection under exceptional circumstances, such as when the server application software or underlying operating system is restarting, the server application terminated unexpectedly (perhaps due to a bug that makes it crash), or the server is undergoing maintenance procedures. When possible, a DNS Push Notification server SHOULD send a Termination Message (<xref target="termination_msg"/>) informing the client of the reason for the connection being closed.</t>
+
+         <t>After a connection is closed by the server, the client SHOULD try to reconnect, to that server, or to another server supporting DNS Push Notifications for the zone. If reconnecting to the same server, and there was a Termination Message or error response containing a EDNS(0) TCP Keepalive option, the client MUST respect the indicated delay before attempting to reconnect.</t>
+
+<?rfc needLines="18" ?>
+       </section>
+
+       <section anchor="termination_msg" title="DNS Push Notification Termination Message">
+         <t>If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behaviour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server SHOULD instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) immediately closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message. Upon successful reception of the Termination Message the client is expected to close the connection. The server SHOULD set a timer and, if the client has not closed the connection within a reasonable time, the server SHOULD then terminate the TCP connection with a TCP RST. The RECOMMENDED time the server should wait before terminating the TCP connection with a TCP RST is ten seconds.</t>
+
+         <t>The format of a Termination Message is similar to a Push Notification Update.</t>
+
+  <?rfc needLines="28" ?>
+
+         <t>The following figure shows the existing DNS Update header format:
+         <figure align="center" anchor="packet_header2"><artwork align="center"><![CDATA[
+                                  1  1  1  1  1  1
+    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                      ID                       |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |QR|   Opcode  |          Z         |   RCODE   |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    ZOCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    PRCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    UPCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    ADCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+                 ]]></artwork>
+         </figure>
+         </t>
+
+         <t>For Termination Messages the following rules apply:</t>
+
+         <t>The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).<vspace />
+         Messages received where this is not true are not Termination Messages and should be silently ignored.</t>
+
+         <t>ID and the Z bits MUST be zero on transmission,<vspace />
+         and MUST be silently ignored on reception.</t>
+
+         <t>ZOCOUNT MUST be zero, and the Zone Section MUST be empty.<vspace />
+         Any records in the Zone Section MUST be silently ignored.</t>
+
+         <t>PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.<vspace />
+         Any records in the Prerequisite Section MUST be silently ignored.</t>
+
+         <t>UPCOUNT MUST be zero, and the Update Section MUST be empty.<vspace />
+         Any records in the Update Section MUST be silently ignored.</t>
+
+         <t>ADCOUNT specifies the number of records in the Additional Data Section, e.g., the EDNS(0) OPT record..</t>
+
+         <t>The RCODE MUST contain a nonzero code giving the reason for termination, as indicated below:</t>
+         <texttable title="Termination Response codes">
+         <ttcol align="left">Mnemonic</ttcol>
+         <ttcol align="center">Value</ttcol>
+         <ttcol align="left">Description</ttcol>
+         <c>SERVFAIL</c><c>2</c><c>The server is overloaded due to resource exhaustion.</c>
+         <c>REFUSED</c><c>5</c><c>The server has been reconfigured and is no longer accepting DNS Push Notification requests for one or more of the currently subscribed names.</c>
+         </texttable>
+
+         <t>This document specifies only these two RCODE values for Termination Messages. Servers sending Termination Messages SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination Messages, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</t>
+
+         <t>The Termination Message MUST contain an EDNS(0) TCP Keepalive option <xref target="RFC7828"/>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</t>
+
+         <t>In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</t>
+
+         <t>In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</t>
+       </section>
      </section>
-   </section>
+     <?rfc needLines="18" ?>
+  </section>
 
    <section anchor="Security" title="Security Considerations">
      <t>TLS support is REQUIRED in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>

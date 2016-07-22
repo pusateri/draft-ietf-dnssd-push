@@ -379,8 +379,6 @@
 <link href="#rfc.section.2" rel="Chapter" title="2 Motivation"/>
 <link href="#rfc.section.3" rel="Chapter" title="3 Overview"/>
 <link href="#rfc.section.4" rel="Chapter" title="4 Transport"/>
-<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Client-Initiated Termination"/>
-<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Server-Initiated Termination"/>
 <link href="#rfc.section.5" rel="Chapter" title="5 State Considerations"/>
 <link href="#rfc.section.6" rel="Chapter" title="6 Protocol Operation"/>
 <link href="#rfc.section.6.1" rel="Chapter" title="6.1 Discovery"/>
@@ -388,7 +386,10 @@
 <link href="#rfc.section.6.3" rel="Chapter" title="6.3 DNS Push Notification UNSUBSCRIBE"/>
 <link href="#rfc.section.6.4" rel="Chapter" title="6.4 DNS Push Notification Update Messages"/>
 <link href="#rfc.section.6.5" rel="Chapter" title="6.5 DNS RECONFIRM"/>
-<link href="#rfc.section.6.6" rel="Chapter" title="6.6 DNS Push Notification Termination Message"/>
+<link href="#rfc.section.6.6" rel="Chapter" title="6.6 Termination"/>
+<link href="#rfc.section.6.6.1" rel="Chapter" title="6.6.1 Client-Initiated Termination"/>
+<link href="#rfc.section.6.6.2" rel="Chapter" title="6.6.2 Server-Initiated Termination"/>
+<link href="#rfc.section.6.6.3" rel="Chapter" title="6.6.3 DNS Push Notification Termination Message"/>
 <link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations"/>
 <link href="#rfc.section.7.1" rel="Chapter" title="7.1 Security Services"/>
 <link href="#rfc.section.7.2" rel="Chapter" title="7.2 TLS Name Authentication"/>
@@ -402,12 +403,12 @@
 <link href="#rfc.authors" rel="Chapter"/>
 
 
-  <meta name="generator" content="xml2rfc version 2.5.0 - http://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.5.1 - http://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-08" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-7-8" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-09" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-7-22" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
   <meta name="description" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static. When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism for a client to be asynchronously notified when these changes occur. This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
 
@@ -431,12 +432,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: January 9, 2017</td>
+  <td class="left">Expires: January 23, 2017</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">July 8, 2016</td>
+  <td class="right">July 22, 2016</td>
 </tr>
 
     	
@@ -444,7 +445,7 @@
   </table>
 
   <p class="title">DNS Push Notifications<br />
-  <span class="filename">draft-ietf-dnssd-push-08</span></p>
+  <span class="filename">draft-ietf-dnssd-push-09</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
@@ -456,7 +457,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 9, 2017.</p>
+<p>This Internet-Draft will expire on January 23, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -473,17 +474,18 @@
 </ul><li>2.   <a href="#rfc.section.2">Motivation</a></li>
 <li>3.   <a href="#rfc.section.3">Overview</a></li>
 <li>4.   <a href="#rfc.section.4">Transport</a></li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">Client-Initiated Termination</a></li>
-<li>4.2.   <a href="#rfc.section.4.2">Server-Initiated Termination</a></li>
-</ul><li>5.   <a href="#rfc.section.5">State Considerations</a></li>
+<li>5.   <a href="#rfc.section.5">State Considerations</a></li>
 <li>6.   <a href="#rfc.section.6">Protocol Operation</a></li>
 <ul><li>6.1.   <a href="#rfc.section.6.1">Discovery</a></li>
 <li>6.2.   <a href="#rfc.section.6.2">DNS Push Notification SUBSCRIBE</a></li>
 <li>6.3.   <a href="#rfc.section.6.3">DNS Push Notification UNSUBSCRIBE</a></li>
 <li>6.4.   <a href="#rfc.section.6.4">DNS Push Notification Update Messages</a></li>
 <li>6.5.   <a href="#rfc.section.6.5">DNS RECONFIRM</a></li>
-<li>6.6.   <a href="#rfc.section.6.6">DNS Push Notification Termination Message</a></li>
-</ul><li>7.   <a href="#rfc.section.7">Security Considerations</a></li>
+<li>6.6.   <a href="#rfc.section.6.6">Termination</a></li>
+<ul><li>6.6.1.   <a href="#rfc.section.6.6.1">Client-Initiated Termination</a></li>
+<li>6.6.2.   <a href="#rfc.section.6.6.2">Server-Initiated Termination</a></li>
+<li>6.6.3.   <a href="#rfc.section.6.6.3">DNS Push Notification Termination Message</a></li>
+</ul></ul><li>7.   <a href="#rfc.section.7">Security Considerations</a></li>
 <ul><li>7.1.   <a href="#rfc.section.7.1">Security Services</a></li>
 <li>7.2.   <a href="#rfc.section.7.2">TLS Name Authentication</a></li>
 <li>7.3.   <a href="#rfc.section.7.3">TLS Compression</a></li>
@@ -525,26 +527,6 @@
 <p id="rfc.section.4.p.3">Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake. Because TCP SYN flooding attacks are possible with any protocol over TCP, implementers are encouraged to use industry best practices to guard against such attacks <a href="#IPJ.9-4-TCPSYN">[IPJ.9-4-TCPSYN]</a> <a href="#RFC4953">[RFC4953]</a>.</p>
 <p id="rfc.section.4.p.4">Transport Layer Security <a href="#RFC5246">(TLS)</a> <cite title="NONE">[RFC5246]</cite> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server. Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <a href="#RFC7673">[RFC7673]</a> is strongly encouraged. See below in <a href="#tls_name_auth">Section 7.2</a> for details.</p>
 <p id="rfc.section.4.p.5">A DNS Push Notification session begins with a client connecting to a DNS Push Notification server. Over that connection the client then issues DNS operation requests, such as SUBSCRIBE.</p>
-<h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> Client-Initiated Termination</h1>
-<p id="rfc.section.4.1.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
-<p id="rfc.section.4.1.p.2">After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations <a href="#RFC7828">[RFC7828]</a> or the server is entitled to close the connection (see below).</p>
-<p id="rfc.section.4.1.p.3">If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</p>
-<p id="rfc.section.4.1.p.4">When closing a connection, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</p>
-<p id="rfc.section.4.1.p.5">If a client has performed operations on this connection that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TCP FIN. In the BSD sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.</p>
-<p id="rfc.section.4.1.p.6">In the first SUBSCRIBE response on a connection, the server MUST include an explicit EDNS(0) TCP Keepalive option. If the first SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive option this is an error and the client MUST immediately close the TCP connection and not attempt any further DNS Push Notification requests to that server until one hour has passed. This situation may occur if a client connects to a server that doesn't implement DNS Push Notifications at all, and it is important not to burden such servers with continuous retries.</p>
-<p id="rfc.section.4.1.p.7">Upon receiving an error response from the server, a client SHOULD NOT close the connection. An error relating to one particular operation on a connection does not necessarily imply that all other operations on that connection have also failed, or that future operations will fail. The client should assume that the server will make its own decision about whether or not to close the connection, based on the server's determination of whether the error condition pertains to this particular operation, or would also apply to any subsequent operations. If the server does not close the connection then the client SHOULD continue to use that connection for subsequent operations.</p>
-<p id="rfc.section.4.1.p.8">Upon receiving a Termination Message from the server (see below), a client MUST immediately close the connection.</p>
-<h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> Server-Initiated Termination</h1>
-<p id="rfc.section.4.2.p.1">If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive <a href="#RFC7828">[RFC7828]</a> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</p>
-<p id="rfc.section.4.2.p.2">In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</p>
-<p id="rfc.section.4.2.p.3">At both servers and clients, the generation or reception of any complete request, response, update, or keepalive message resets the keepalive timer for that connection.</p>
-<p id="rfc.section.4.2.p.4">In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</p>
-<p id="rfc.section.4.2.p.5">If a client disconnects from the network abruptly, without closing its connection, the server learns of this after failing to receive further traffic from that client. If no requests, responses, update messages or keepalive traffic occurs on a connection for 1.5 times the idle timeout, then this indicates that the client is probably no longer on the network, and the server SHOULD abort the connection with a TCP RST. The time before the server closes the connection is intentionally 50% longer than the time before the client is required to generate keepalive traffic, to allow for differences in clock rate and network propagation delays.</p>
-<p id="rfc.section.4.2.p.6">[We need to discuss the nature of "the required keepalives". Are they TCP-layer keepalives? DNS-layer keepalives? There is currently no DNS-layer keepalive or 'no-op' operation defined. What would that operation be? A DNS QUERY containing zero questions? A DNS SUBSCRIBE containing zero questions? An "empty" DNS message over the TCP connection (just a pair of zero bytes, signifying a zero-length message)? One benefit of TCP-layer keepalives is that they transmit fewer bytes, and involve less software overhead for processing those bytes. Another benefit is that it is more feasible to implement these in networking offload hardware, which can allow devices to meet their TCP keepalive obligations while sleeping. This is particularly important for battery-powered devices like mobile phones and tablets. On the other hand, using TCP-layer keepalives requires an API for a client to tell the networking stack at what frequency to perform TCP-layer keepalives, and an API for a server to request the networking stack to inform it when TCP-layer keepalives are not received by the required deadline. TCP-layer keepalives also only verify liveness of the remote networking stack, whereas DNS-layer keepalives provide higher assurance of liveness of the remote server application software -- though this a limited benefit, since there is no reason to expect that DNS Push Notification server software will routinely become wedged and unresponsive.]</p>
-<p id="rfc.section.4.2.p.7">After sending an error response to a client, the server MAY close the connection with a TCP FIN, or may allow the connection to remain open. For error conditions that only affect the single operation in question, the server SHOULD return an error response to the client and leave the connection open for further operations. For error conditions that are likely to make all operations unsuccessful in the immediate future, the server SHOULD return an error response to the client and then close the connection with a TCP FIN.</p>
-<p id="rfc.section.4.2.p.8">If the server is overloaded and needs to shed load, it SHOULD send a Termination Message to the client and close the connection with a TCP FIN.</p>
-<p id="rfc.section.4.2.p.9">Apart from the cases described above, a server MUST NOT close a connection with a DNS Push Notification client, except in extraordinary error conditions. Closing the connection is the client's responsibility, to be done at the client's discretion, when it so chooses. A DNS Push Notification server only closes a DNS Push Notification connection under exceptional circumstances, such as when the server application software or underlying operating system is restarting, the server application terminated unexpectedly (perhaps due to a bug that makes it crash), or the server is undergoing maintenance procedures. When possible, a DNS Push Notification server SHOULD send a Termination Message (<a href="#termination">Section 6.6</a> ) informing the client of the reason for the connection being closed.</p>
-<p id="rfc.section.4.2.p.10">After a connection is closed by the server, the client SHOULD try to reconnect, to that server, or to another server supporting DNS Push Notifications for the zone. If reconnecting to the same server, and there was a Termination Message or error response containing a EDNS(0) TCP Keepalive option, the client MUST respect the indicated delay before attempting to reconnect.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> State Considerations</h1>
 <p id="rfc.section.5.p.1">Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a connection to a DNS server, each record subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous connections to alternate DNS servers that support DNS Push Notifications for the zone and distribute record subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> Protocol Operation</h1>
@@ -729,38 +711,58 @@
 <p id="rfc.section.6.5.p.10">Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a CNAME in the zone, and nothing else.</p>
 <p id="rfc.section.6.5.p.11">No response message is generated as a result of processing a RECONFIRM message.</p>
 <p id="rfc.section.6.5.p.12">If the server receiving the RECONFIRM request determines that the records are in fact no longer valid, then subsequent DNS Push Notification Update Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised printer is no longer present has the side effect of informing all other interested clients that the printer in question is now gone.</p>
-<h1 id="rfc.section.6.6"><a href="#rfc.section.6.6">6.6.</a> <a href="#termination" id="termination">DNS Push Notification Termination Message</a></h1>
-<p id="rfc.section.6.6.p.1">If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behaviour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server SHOULD instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) immediately closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message. Upon successful reception of the Termination Message the client is expected to close the connection. The server SHOULD set a timer and, if the client has not closed the connection within a reasonable time, the server SHOULD then terminate the TCP connection with a TCP RST. The RECOMMENDED time the server should wait before terminating the TCP connection with a TCP RST is ten seconds.</p>
-<p id="rfc.section.6.6.p.2">The format of a Termination Message is similar to a Push Notification Update.</p>
+<h1 id="rfc.section.6.6"><a href="#rfc.section.6.6">6.6.</a> Termination</h1>
+<h1 id="rfc.section.6.6.1"><a href="#rfc.section.6.6.1">6.6.1.</a> Client-Initiated Termination</h1>
+<p id="rfc.section.6.6.1.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE message for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
+<p id="rfc.section.6.6.1.p.2">After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST continue to meet its keepalive obligations <a href="#RFC7828">[RFC7828]</a> or the server is entitled to close the connection (see below).</p>
+<p id="rfc.section.6.6.1.p.3">If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</p>
+<p id="rfc.section.6.6.1.p.4">When closing a connection, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</p>
+<p id="rfc.section.6.6.1.p.5">If a client has performed operations on this connection that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TCP FIN. In the BSD sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.</p>
+<p id="rfc.section.6.6.1.p.6">In the first SUBSCRIBE response on a connection, the server MUST include an explicit EDNS(0) TCP Keepalive option. If the first SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive option this is an error and the client MUST immediately close the TCP connection and not attempt any further DNS Push Notification requests to that server until one hour has passed. This situation may occur if a client connects to a server that doesn't implement DNS Push Notifications at all, and it is important not to burden such servers with continuous retries.</p>
+<p id="rfc.section.6.6.1.p.7">Upon receiving an error response from the server, a client SHOULD NOT close the connection. An error relating to one particular operation on a connection does not necessarily imply that all other operations on that connection have also failed, or that future operations will fail. The client should assume that the server will make its own decision about whether or not to close the connection, based on the server's determination of whether the error condition pertains to this particular operation, or would also apply to any subsequent operations. If the server does not close the connection then the client SHOULD continue to use that connection for subsequent operations.</p>
+<h1 id="rfc.section.6.6.2"><a href="#rfc.section.6.6.2">6.6.2.</a> Server-Initiated Termination</h1>
+<p id="rfc.section.6.6.2.p.1">If a client makes a connection and then fails to send any DNS message that uses EDNS(0) TCP Keepalive <a href="#RFC7828">[RFC7828]</a> (either SUBSCRIBE, where Keepalive is implicit, or some other DNS message, with an explicit an EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the server SHOULD close the connection. If no data has been sent on the connection the server MAY abort the connection with a TCP RST. If data has been sent on the connection then the server SHOULD close the connection gracefully with a TCP FIN so that the data is reliably delivered.</p>
+<p id="rfc.section.6.6.2.p.2">In the response to the first successful SUBSCRIBE, the included EDNS(0) TCP Keepalive option specifies the idle timeout so that the client knows the frequency of traffic it must generate to keep the connection alive. If the idle timeout for that connection changes, then the server communicates this by placing an updated EDNS(0) TCP Keepalive option in a subsequent message to the client.</p>
+<p id="rfc.section.6.6.2.p.3">At both servers and clients, the generation or reception of any complete request, response, update, or keepalive message resets the keepalive timer for that connection.</p>
+<p id="rfc.section.6.6.2.p.4">In the absence of any requests, responses, or update messages on a connection, a client MUST generate keepalive traffic before the idle timeout expires, or the server is entitled to close the connection.</p>
+<p id="rfc.section.6.6.2.p.5">If a client disconnects from the network abruptly, without closing its connection, the server learns of this after failing to receive further traffic from that client. If no requests, responses, update messages or keepalive traffic occurs on a connection for 1.5 times the idle timeout, then this indicates that the client is probably no longer on the network, and the server SHOULD abort the connection with a TCP RST. The time before the server closes the connection is intentionally 50% longer than the time before the client is required to generate keepalive traffic, to allow for differences in clock rate and network propagation delays.</p>
+<p id="rfc.section.6.6.2.p.6">[We need to discuss the nature of "the required keepalives". Are they TCP-layer keepalives? DNS-layer keepalives? There is currently no DNS-layer keepalive or 'no-op' operation defined. What would that operation be? A DNS QUERY containing zero questions? A DNS SUBSCRIBE containing zero questions? An "empty" DNS message over the TCP connection (just a pair of zero bytes, signifying a zero-length message)? One benefit of TCP-layer keepalives is that they transmit fewer bytes, and involve less software overhead for processing those bytes. Another benefit is that it is more feasible to implement these in networking offload hardware, which can allow devices to meet their TCP keepalive obligations while sleeping. This is particularly important for battery-powered devices like mobile phones and tablets. On the other hand, using TCP-layer keepalives requires an API for a client to tell the networking stack at what frequency to perform TCP-layer keepalives, and an API for a server to request the networking stack to inform it when TCP-layer keepalives are not received by the required deadline. TCP-layer keepalives also only verify liveness of the remote networking stack, whereas DNS-layer keepalives provide higher assurance of liveness of the remote server application software -- though this a limited benefit, since there is no reason to expect that DNS Push Notification server software will routinely become wedged and unresponsive.]</p>
+<p id="rfc.section.6.6.2.p.7">After sending an error response to a client, the server MAY close the connection with a TCP FIN, or may allow the connection to remain open. For error conditions that only affect the single operation in question, the server SHOULD return an error response to the client and leave the connection open for further operations. For error conditions that are likely to make all operations unsuccessful in the immediate future, the server SHOULD return an error response to the client and then close the connection with a TCP FIN.</p>
+<p id="rfc.section.6.6.2.p.8">If the server is overloaded and needs to shed load, it SHOULD send a Termination Message to the client and close the connection with a TCP FIN.</p>
+<p id="rfc.section.6.6.2.p.9">Apart from the cases described above, a server MUST NOT close a connection with a DNS Push Notification client, except in extraordinary error conditions. Closing the connection is the client's responsibility, to be done at the client's discretion, when it so chooses. A DNS Push Notification server only closes a DNS Push Notification connection under exceptional circumstances, such as when the server application software or underlying operating system is restarting, the server application terminated unexpectedly (perhaps due to a bug that makes it crash), or the server is undergoing maintenance procedures. When possible, a DNS Push Notification server SHOULD send a Termination Message (<a href="#termination_msg">Section 6.6.3</a> ) informing the client of the reason for the connection being closed.</p>
+<p id="rfc.section.6.6.2.p.10">After a connection is closed by the server, the client SHOULD try to reconnect, to that server, or to another server supporting DNS Push Notifications for the zone. If reconnecting to the same server, and there was a Termination Message or error response containing a EDNS(0) TCP Keepalive option, the client MUST respect the indicated delay before attempting to reconnect.</p>
+<h1 id="rfc.section.6.6.3"><a href="#rfc.section.6.6.3">6.6.3.</a> <a href="#termination_msg" id="termination_msg">DNS Push Notification Termination Message</a></h1>
+<p id="rfc.section.6.6.3.p.1">If a server is low on resources it MAY simply terminate a client connection with a TCP RST. However, the likely behaviour of the client may be simply to reconnect immediately, putting more burden on the server. Therefore, a server SHOULD instead choose to shed client load by (a) sending a DNS Push Notification Termination Message and then (b) immediately closing the client connection with a TCP FIN instead of RST, thereby facilitating reliable delivery of the Termination Message. Upon successful reception of the Termination Message the client is expected to close the connection. The server SHOULD set a timer and, if the client has not closed the connection within a reasonable time, the server SHOULD then terminate the TCP connection with a TCP RST. The RECOMMENDED time the server should wait before terminating the TCP connection with a TCP RST is ten seconds.</p>
+<p id="rfc.section.6.6.3.p.2">The format of a Termination Message is similar to a Push Notification Update.</p>
 <div id="rfc.figure.2"/>
 <div id="packet_header2"/>
 <pre>
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                      ID                       |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|QR|   Opcode  |          Z         |   RCODE   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    ZOCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    PRCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    UPCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                    ADCOUNT                    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-               </pre>
+                                  1  1  1  1  1  1
+    0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                      ID                       |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |QR|   Opcode  |          Z         |   RCODE   |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    ZOCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    PRCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    UPCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  |                    ADCOUNT                    |
+  +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+                 </pre>
 <p class="figure">Figure 2</p>
-<p id="rfc.section.6.6.p.3">The following figure shows the existing DNS Update header format: </p>
-<p id="rfc.section.6.6.p.4">For Termination Messages the following rules apply:</p>
-<p id="rfc.section.6.6.p.5">The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).<br/> Messages received where this is not true are not Termination Messages and should be silently ignored.</p>
-<p id="rfc.section.6.6.p.6">ID and the Z bits MUST be zero on transmission,<br/> and MUST be silently ignored on reception.</p>
-<p id="rfc.section.6.6.p.7">ZOCOUNT MUST be zero, and the Zone Section MUST be empty.<br/> Any records in the Zone Section MUST be silently ignored.</p>
-<p id="rfc.section.6.6.p.8">PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.<br/> Any records in the Prerequisite Section MUST be silently ignored.</p>
-<p id="rfc.section.6.6.p.9">UPCOUNT MUST be zero, and the Update Section MUST be empty.<br/> Any records in the Update Section MUST be silently ignored.</p>
-<p id="rfc.section.6.6.p.10">ADCOUNT specifies the number of records in the Additional Data Section, e.g., the EDNS(0) OPT record..</p>
-<p id="rfc.section.6.6.p.11">The RCODE MUST contain a nonzero code giving the reason for termination, as indicated below:</p>
+<p id="rfc.section.6.6.3.p.3">The following figure shows the existing DNS Update header format: </p>
+<p id="rfc.section.6.6.3.p.4">For Termination Messages the following rules apply:</p>
+<p id="rfc.section.6.6.3.p.5">The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).<br/> Messages received where this is not true are not Termination Messages and should be silently ignored.</p>
+<p id="rfc.section.6.6.3.p.6">ID and the Z bits MUST be zero on transmission,<br/> and MUST be silently ignored on reception.</p>
+<p id="rfc.section.6.6.3.p.7">ZOCOUNT MUST be zero, and the Zone Section MUST be empty.<br/> Any records in the Zone Section MUST be silently ignored.</p>
+<p id="rfc.section.6.6.3.p.8">PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.<br/> Any records in the Prerequisite Section MUST be silently ignored.</p>
+<p id="rfc.section.6.6.3.p.9">UPCOUNT MUST be zero, and the Update Section MUST be empty.<br/> Any records in the Update Section MUST be silently ignored.</p>
+<p id="rfc.section.6.6.3.p.10">ADCOUNT specifies the number of records in the Additional Data Section, e.g., the EDNS(0) OPT record..</p>
+<p id="rfc.section.6.6.3.p.11">The RCODE MUST contain a nonzero code giving the reason for termination, as indicated below:</p>
 <table cellpadding="3" cellspacing="0" class="tt full center">
   <caption>Termination Response codes</caption>
   <thead>
@@ -783,10 +785,10 @@
     </tr>
   </tbody>
 </table>
-<p id="rfc.section.6.6.p.12">This document specifies only these two RCODE values for Termination Messages. Servers sending Termination Messages SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination Messages, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</p>
-<p id="rfc.section.6.6.p.13">The Termination Message MUST contain an EDNS(0) TCP Keepalive option <a href="#RFC7828">[RFC7828]</a>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</p>
-<p id="rfc.section.6.6.p.14">In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</p>
-<p id="rfc.section.6.6.p.15">In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</p>
+<p id="rfc.section.6.6.3.p.12">This document specifies only these two RCODE values for Termination Messages. Servers sending Termination Messages SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination Messages, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</p>
+<p id="rfc.section.6.6.3.p.13">The Termination Message MUST contain an EDNS(0) TCP Keepalive option <a href="#RFC7828">[RFC7828]</a>. The client MUST wait for the time indicated in the EDNS(0) TCP Keepalive option's idle timeout before attempting any new connections to this server. A client that receives a Termination Message without an EDNS(0) TCP Keepalive option SHOULD treat it as equivalent to a TCP Keepalive option with a zero timeout value.</p>
+<p id="rfc.section.6.6.3.p.14">In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the EDNS(0) TCP Keepalive option's idle timeout MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</p>
+<p id="rfc.section.6.6.3.p.15">In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different EDNS(0) TCP Keepalive values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#Security" id="Security">Security Considerations</a></h1>
 <p id="rfc.section.7.p.1">TLS support is REQUIRED in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <samp>STARTTLS</samp>.</p>
 <p id="rfc.section.7.p.2">DNSSEC is RECOMMENDED for DNS Push Notifications. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
@@ -830,7 +832,7 @@
       <td class="reference">
         <b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b>
       </td>
-      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-13">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-13, May 2016.</td>
+      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-14">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-14, July 2016.</td>
     </tr>
     <tr>
       <td class="reference">
