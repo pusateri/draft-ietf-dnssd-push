@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                       Seeking affiliation
 Intended status: Standards Track                             S. Cheshire
-Expires: January 23, 2017                                     Apple Inc.
-                                                           July 22, 2016
+Expires: March 1, 2017                                        Apple Inc.
+                                                         August 28, 2016
 
 
                          DNS Push Notifications
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 23, 2017.
+   This Internet-Draft will expire on March 1, 2017.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire     Expires January 23, 2017                [Page 1]
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 1]
 
-Internet-Draft           DNS Push Notifications                July 2016
+Internet-Draft           DNS Push Notifications              August 2016
 
 
    include Simplified BSD License text as described in Section 4.e of
@@ -71,55 +71,48 @@ Table of Contents
    4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   6
    5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   6
    6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   7
-     6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   8
+     6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   9
      6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  10
-     6.3.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  15
-     6.4.  DNS Push Notification Update Messages . . . . . . . . . .  16
-     6.5.  DNS RECONFIRM . . . . . . . . . . . . . . . . . . . . . .  19
-     6.6.  Termination . . . . . . . . . . . . . . . . . . . . . . .  20
-       6.6.1.  Client-Initiated Termination  . . . . . . . . . . . .  20
+       6.2.1.  DNS Session Signaling SUBSCRIBE TLV . . . . . . . . .  10
+       6.2.2.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  11
+       6.2.3.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  12
+     6.3.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  16
+     6.4.  DNS Push Notification Update Messages . . . . . . . . . .  17
+     6.5.  DNS Session Signaling Push Notification RECONFIRM TLV . .  20
+     6.6.  Termination . . . . . . . . . . . . . . . . . . . . . . .  21
+       6.6.1.  Client-Initiated Termination  . . . . . . . . . . . .  21
        6.6.2.  Server-Initiated Termination  . . . . . . . . . . . .  22
-       6.6.3.  DNS Push Notification Termination Message . . . . . .  24
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  26
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  26
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  27
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  27
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  27
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  27
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  28
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  28
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  28
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  30
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  31
+       6.6.3.  DNS Session Signaling Termination TLV . . . . . . . .  23
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  24
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  25
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  25
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  25
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  26
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  26
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  26
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  26
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  26
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  28
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  29
 
 1.  Introduction
-
-   IMPORTANT NOTE: This document currently references the EDNS(0) TCP
-   Keepalive option [RFC7828].  As a result of discussions about this
-   document, the community came to the realization that DNS needs
-   explicit session-level signaling, to complement the current EDNS(0)
-   per-message signaling.  As a result, work on DNS Session Signaling
-   [I-D.bellis-dnsop-session-signal] is underway, and this document will
-   be updated shortly to make use of those new Session Signaling
-   mechanisms once they are agreed.
 
    DNS records may be updated using DNS Update [RFC2136].  Other
    mechanisms such as a Hybrid Proxy [I-D.ietf-dnssd-hybrid] can also
    generate changes to a DNS zone.  This document specifies a protocol
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 2]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    for Unicast DNS clients to subscribe to receive asynchronous
    notifications of changes to RRSets of interest.  It is immediately
    relevant in the case of DNS Service Discovery [RFC6763] but is not
    limited to that use case, and provides a general DNS mechanism for
    DNS record change notifications.  Familiarity with the DNS protocol
    and DNS packet formats is assumed [RFC1034] [RFC1035] [RFC6895].
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 2]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
 1.1.  Requirements Language
 
@@ -163,19 +156,20 @@ Internet-Draft           DNS Push Notifications                July 2016
    instead of inventing a new vocabulary of messages to communicate DNS
    zone changes.
 
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 3]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    Because DNS Push Notifications impose a certain load on the
    responding server (though less load than rapid polling of that
    server) DNS Push Notification clients SHOULD exercise restraint in
    issuing DNS Push Notification subscriptions.  A subscription SHOULD
    only be active when there is a valid reason to need live data (for
    example, an on-screen display is currently showing the results of
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 3]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    that subscription to the user) and the subscription SHOULD be
    cancelled as soon as the need for that data ends (for example, when
    the user dismisses that display).  Implementations MAY want to
@@ -218,20 +212,20 @@ Internet-Draft           DNS Push Notifications                July 2016
    in updates to these records, it unsubscribes.
 
    The DNS Push Notification server for a zone is any server capable
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 4]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    of generating the correct change notifications for a name.
    It may be a master, slave, or stealth name server [RFC1996].
    Consequently, the "_dns-push-tls._tcp.<zone>" SRV record for a
    zone MAY reference the same target host and port as that zone's
    "_dns-update-tls._tcp.<zone>" SRV record.  When the same target host
    and port is offered for both DNS Updates and DNS Push Notifications,
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 4]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    a client MAY use a single TCP connection to that server for both DNS
    Updates and DNS Push Notification Queries.
 
@@ -277,9 +271,15 @@ Internet-Draft           DNS Push Notifications                July 2016
 
 
 
-Pusateri & Cheshire     Expires January 23, 2017                [Page 5]
+
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 5]
 
-Internet-Draft           DNS Push Notifications                July 2016
+Internet-Draft           DNS Push Notifications              August 2016
 
 
 4.  Transport
@@ -313,10 +313,6 @@ Internet-Draft           DNS Push Notifications                July 2016
    and DANE TLSA records [RFC7673] is strongly encouraged.  See below in
    Section 7.2 for details.
 
-   A DNS Push Notification session begins with a client connecting to a
-   DNS Push Notification server.  Over that connection the client then
-   issues DNS operation requests, such as SUBSCRIBE.
-
 5.  State Considerations
 
    Each DNS Push Notification server is capable of handling some finite
@@ -330,19 +326,28 @@ Internet-Draft           DNS Push Notifications                July 2016
    simultaneous connections to alternate DNS servers that support DNS
    Push Notifications for the zone and distribute record subscriptions
    at its discretion.  In this way, both clients and servers can react
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 6]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    to resource constraints.  Token bucket rate limiting schemes are also
    effective in providing fairness by a server across numerous client
    requests.
 
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 6]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
 6.  Protocol Operation
+
+   The DNS Push Notification protocol is a session oriented protocol
+   that takes advantage of the concept of a DNS session defined in DNS
+   Session Signaling [I-D.ietf-dnsop-session-signal].  Per session
+   options can be sent by either side of the connection, however, the
+   client must initiate the first session option to determine if the
+   server supports session signaling.  DNS Push servers MUST support
+   session signaling.  If a server advertises DNS Push support but does
+   not support session signaling, it is not a DNS Push server.
 
    A DNS Push Notification exchange begins with the client discovering
    the appropriate server, and then making a TLS/TCP connection to it.
@@ -355,6 +360,13 @@ Internet-Draft           DNS Push Notifications                July 2016
    situation where a Push Notification is in flight from server to
    client while the client's UNSUBSCRIBE message cancelling that
    subscription is simultaneously in flight from client to server.
+
+   The client may request an IDLE timeout for the session using the DNS
+   Session Signaling IDLE Timout TLV.  The server will acknowledge the
+   request and is the ultimate authority of the IDLE timeout.  It may
+   accept the timeout value in the client request or it may modify the
+   value.  The server may also adjust the IDLE timeout at any time and
+   the client MUST accept the new timeout value.
 
    The exchange between client and server terminates when either end
    closes the TCP connection with a TCP FIN or RST.
@@ -374,6 +386,14 @@ Internet-Draft           DNS Push Notifications                July 2016
    queried, or what zone if falls within.  A given server may support
    Push Notifications (and possibly DNS Updates too) for multiple DNS
    zones.  When a client discovers that the DNS Push Notification server
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 7]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    (and/or DNS Update server) for several different names (including
    names that fall within different zones) is the same target hostname
    and port, the client SHOULD use a single shared TCP connection for
@@ -386,14 +406,6 @@ Internet-Draft           DNS Push Notifications                July 2016
    using the target hostname given in the SRV record, not the IP
    address(es) that the hostname resolves to.  If two different target
    hostnames happen to resolve to the same IP address(es), then the
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 7]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    client SHOULD NOT recognize these as the "same server" for the
    purposes of using a single shared connection to that server.  If an
    administrator wishes to use a single server for multiple zones and/or
@@ -413,11 +425,30 @@ Internet-Draft           DNS Push Notifications                July 2016
    client IP address.
 
    Clients SHOULD silently ignore unrecognized messages (both requests
-   and responses) over the TLS/TCP connection.  For example, UNSUBSCRIBE
-   and RECONFIRM currently generate no response, but if future versions
-   of this specification change that, existing clients SHOULD silently
-   ignore these unexpected responses.  This allows for backwards
-   compatibility with future enhancements.
+   and responses) over the TLS/TCP connection.  This allows for
+   backwards compatibility with future enhancements.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 8]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
 6.1.  Discovery
 
@@ -426,7 +457,7 @@ Internet-Draft           DNS Push Notifications                July 2016
    the desired zone.  The client MUST also determine which TCP port on
    the server is listening for connections, which need not be (and often
    is not) the typical TCP port 53 used for conventional DNS, or TCP
-   port 853 used for DNS over TLS [I-D.ietf-dprive-dns-over-tls].
+   port 853 used for DNS over TLS [RFC7858].
 
    1.  The client begins the discovery by sending a DNS query to the
        local resolver with record type SOA [RFC1035] for the name of the
@@ -442,14 +473,6 @@ Internet-Draft           DNS Push Notifications                July 2016
        at least one label in it, the client sends a new SOA query and
        processing continues at step 2 above.  If the resulting name is
        empty (the root label) then this is a network configuration error
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 8]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
        and the client gives up.  The client MAY retry the operation at a
        later time.
 
@@ -475,6 +498,14 @@ Internet-Draft           DNS Push Notifications                July 2016
    7.  More than one SRV record may be returned.  In this case, the
        "priority" and "weight" values in the returned SRV records are
        used to determine the order in which to contact the servers for
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                 [Page 9]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
        subscription requests.  As described in the SRV specification
        [RFC2782], the server with the lowest "priority" is first
        contacted.  If more than one server has the same "priority", the
@@ -488,106 +519,107 @@ Internet-Draft           DNS Push Notifications                July 2016
    connection, it SHOULD repeat the discovery process in order to
    determine the preferred DNS server for subscriptions at that time.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017                [Page 9]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
 6.2.  DNS Push Notification SUBSCRIBE
 
    A DNS Push Notification client indicates its desire to receive DNS
    Push Notifications for a given domain name by sending a SUBSCRIBE
-   request over the established TCP connection to the server.  A
-   SUBSCRIBE request is formatted identically to a conventional DNS
-   QUERY request [RFC1035], except that the opcode is SUBSCRIBE (6)
-   instead of QUERY (0).  If neither QTYPE nor QCLASS are ANY (255) then
-   this is a specific subscription to changes for the given name, type
-   and class.  If one or both of QTYPE or QCLASS are ANY (255) then this
-   subscription matches any type and/or any class, as appropriate.
+   request over the established TLS connection to the server.  A
+   SUBSCRIBE request is encoded in a DNS Session Signaling
+   [I-D.ietf-dnsop-session-signal] TLV.  This specification defines a
+   new DNS Session Signaling TLV for DNS Push Notification SUBSCRIBE
+   Requests/Responses.  A server may not initiate a SUBSCRIBE request.
 
-   NOTE: A little-known quirk of DNS is that in DNS QUERY requests,
-   QTYPE and QCLASS 255 mean "ANY" not "ALL".  They indicate that the
-   server should respond with ANY matching records of its choosing, not
-   necessarily ALL matching records.  This can lead to some surprising
-   and unexpected results, were a query returns some valid answers but
-   not all of them, and makes QTYPE=ANY queries less useful than people
-   sometimes imagine.
+   DNS Session Signaling messages use a different Opcode than the
+   traditional Opcode for DNS Query/Response messages.  This new Opcode
+   has an abbreviated DNS header without the resource record section
+   counts.  While this document describes the use of the DNS header
+   fields, the DNS Session Signaling document is the ultimate source of
+   the use of these fields for the Session Signaling Opcode.
 
-   When used in conjunction with DNS SUBSCRIBE, QTYPE and QCLASS 255
-   should be interpreted to mean "ALL", not "ANY".  After accepting a
-   subscription where one or both of QTYPE or QCLASS are 255, the server
-   MUST send Push Notification Updates for ALL record changes that match
-   the subscription, not just some of them.
+   A DNS Signaling Session carries an implicit IDLE Timeout of 30
+   seconds.  This timeout value can be adjusted by using the IDLE
+   Timeout TLV.  The client can request a different value but the server
+   maintains ultimate control of the timeout.  The server can set the
+   IDLE Timeout at any time.  If the client requests a new value, the
+   server can honor the request or adjust it as needed.  The client MUST
+   use the value sent by the server.  More information is available in
+   the DNS Session Signaling [I-D.ietf-dnsop-session-signal]
+   specification.
+
+6.2.1.  DNS Session Signaling SUBSCRIBE TLV
+
+   The SUBSCRIBE TLV follows the standard DNS Session Signaling 4-byte
+   header.  There is a 16-bit TYPE field containing the value assigned
+   to SUBSCRIBE followed by the TLV LENGTH and TLV DATA.  The DATA
+   consists of the standard DNS QUERY Question format including the
+   QNAME, QTYPE, and QCLASS defined in RFC 1035 [RFC1035].
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 10]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
+                                              1  1  1  1  1  1
+                0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                  MESSAGE ID                   |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |QR|   Opcode  |          Z         |   RCODE   |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |             SSOP-TYPE (SUBSCRIBE)             |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                  SSOP-LENGTH                  |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                                               |
+              \                     QNAME                     \
+              \                                               \
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                     QTYPE                     |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                     QCLASS                    |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+                                 Figure 1
+
+6.2.2.  SUBSCRIBE Request
 
    In a SUBSCRIBE request the DNS Header QR bit MUST be zero.
-   If the QR bit is not zero the message is not a SUBSCRIBE request.
 
-   The AA, TC, RD, RA, Z, AD, and CD bits, and the RCODE field, MUST be
-   zero on transmission, and MUST be silently ignored on reception.
+   The Z bits MUST be zero on transmission, and MUST be silently ignored
+   on reception.
 
-   The ID field may be set to any value of the client's choosing, and
-   the server MUST echo this value back in the response message.  The
-   client is not required to select unique ID values; it is permissible
-   to use the same value (e.g., zero) for all operations.  Since the
-   name, qtype, and qclass are sufficient to uniquely identify a
-   SUBSCRIBE operation on a connection, the name, qtype, and qclass in a
-   SUBSCRIBE response are sufficient to correlate a response with its
-   corresponding request.  However, for convenience, the client may put
-   any value it chooses in the ID field of the SUBSCRIBE request, and
-   the server MUST echo that value back unchanged in the SUBSCRIBE
-   response.  Note that the ID field of Push Notification Update
-   Messages is always zero, since a Push Notification Update Message
-   could potentially match more than one subscription, or could relate
-   to a subscription that the client has just cancelled with an
-   UNSUBSCRIBE message.
+   The return code (RCODE) field is set to 0 in a request.
 
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 10]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
+   The Message ID field MUST be set to a unique value.  This allows the
+   client to properly correlate a "Not Implemented" TLV response.  The
+   server MUST echo the value back unchanged in the SUBSCRIBE response.
 
    Like a DNS QUERY request, a SUBSCRIBE request MUST contain exactly
-   one question.  Since SUBSCRIBE requests are sent over TCP, multiple
+   one question.  There is no QCOUNT field to specify more than one
+   question.  Since SUBSCRIBE requests are sent over TCP, multiple
    SUBSCRIBE requests can be concatenated in a single TCP stream and
-   packed efficiently into TCP segments, so the ability to pack multiple
-   SUBSCRIBE operations into a single DNS message within that TCP stream
-   would add extra complexity for little benefit.
-
-   ANCOUNT MUST be zero, and the Answer Section MUST be empty.
-   Any records in the Answer Section MUST be silently ignored.
-
-   NSCOUNT MUST be zero, and the Authority Section MUST be empty.
-   Any records in the Authority Section MUST be silently ignored.
-
-   ARCOUNT specifies the number of records in the Additional Data
-   Section.  Typically this is zero, but it may be nonzero in some
-   cases, such as when the request includes an EDNS(0) OPT record.
+   packed efficiently into TCP segments.
 
    If accepted, the subscription will stay in effect until the client
    revokes the subscription or until the connection between the client
    and the server is closed.
 
    SUBSCRIBE requests on a given connection MUST be unique.  A client
-   MUST NOT send a SUBSCRIBE message that duplicates the name, type and
-   class of an existing active subscription on that TLS/TCP connection.
-   For the purpose of this matching, the established DNS case-
-   insensitivity for US-ASCII letters applies (e.g., "foo.com" and
+   MUST NOT send a SUBSCRIBE message that duplicates the QNAME, QTYPE
+   and QCLASS of an existing active subscription on that TLS/TCP
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 11]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
+   connection.  For the purpose of this matching, the established DNS
+   case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and
    "Foo.com" are the same).  If a server receives such a duplicate
    SUBSCRIBE message this is an error and the server MUST immediately
    close the TCP connection.
@@ -605,32 +637,26 @@ Internet-Draft           DNS Push Notifications                July 2016
    The server MUST accept these requests and send Push Notifications if
    and when matches are found in the future.
 
-   Since all SUBSCRIBE operations are implicitly long-lived operations,
-   the server MUST interpret a SUBSCRIBE request as if it contained an
-   EDNS(0) TCP Keepalive option [RFC7828].  A client MUST NOT include an
-   actual EDNS(0) TCP Keepalive option in the request, since it is
-   automatic, and implied by the semantics of SUBSCRIBE.  If a server
+   If neither QTYPE nor QCLASS are ANY (255) then this is a specific
+   subscription to changes for the given QNAME, QTYPE and QCLASS.  If
+   one or both of QTYPE or QCLASS are ANY (255) then this subscription
+   matches any type and/or any class, as appropriate.
 
+   NOTE: A little-known quirk of DNS is that in DNS QUERY requests,
+   QTYPE and QCLASS 255 mean "ANY" not "ALL".  They indicate that the
+   server should respond with ANY matching records of its choosing, not
+   necessarily ALL matching records.  This can lead to some surprising
+   and unexpected results, were a query returns some valid answers but
+   not all of them, and makes QTYPE=ANY queries less useful than people
+   sometimes imagine.
 
+   When used in conjunction with SUBSCRIBE, QTYPE and QCLASS 255 should
+   be interpreted to mean "ALL", not "ANY".  After accepting a
+   subscription where one or both of QTYPE or QCLASS are 255, the server
+   MUST send Push Notification Updates for ALL record changes that match
+   the subscription, not just some of them.
 
-Pusateri & Cheshire     Expires January 23, 2017               [Page 11]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
-   receives a SUBSCRIBE request that does contain an actual EDNS(0) TCP
-   Keepalive option this is an error and the server MUST immediately
-   close the TCP connection.
-
-   A SUBSCRIBE operation MAY include an explicit EDNS(0) [RFC6891] OPT
-   record where necessary to carry additional EDNS(0) information other
-   than a TCP Keepalive option.
-
-   The presence of a SUBSCRIBE operation on a connection indicates to
-   the server that the client fully implements EDNS(0) [RFC6891], and
-   can correctly understand any response that conforms to that
-   specification.  After receiving a SUBSCRIBE request, the server MAY
-   include OPT record in any of its responses, as needed.
+6.2.3.  SUBSCRIBE Response
 
    Each SUBSCRIBE request generates exactly one SUBSCRIBE response from
    the server.
@@ -638,41 +664,22 @@ Internet-Draft           DNS Push Notifications                July 2016
    In a SUBSCRIBE response the DNS Header QR bit MUST be one.
    If the QR bit is not one the message is not a SUBSCRIBE response.
 
-   The AA, TC, RD, RA, Z, AD, and CD bits, MUST be zero on transmission,
-   and MUST be silently ignored on reception.
+   The Z bits MUST be zero on transmission, and MUST be silently ignored
+   on reception.
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 12]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
    The ID field MUST echo the value given in the ID field of the
    SUBSCRIBE request.
 
-   The Question Section MUST echo back the values provided by the client
-   in the SUBSCRIBE request that generated this SUBSCRIBE response.
-
-   ANCOUNT MUST be zero, and the Answer Section MUST be empty.
-   Any records in the Answer Section MUST be silently ignored.
-   If the subscription was accepted and there are positive answers for
-   the requested name, type and class, then these positive answers MUST
-   be communicated to the client in an immediately following Push
-   Notification Update, not in the Answer Section of the SUBSCRIBE
-   response.  This simplifying requirement is made so that there is only
-   a single way that information is communicated to a DNS Push
-   Notification client.  Since a DNS Push Notification client has to
-   parse information received via Push Notification Updates anyway, it
-   is simpler if it does not also have to parse information received via
-   the Answer Section of a SUBSCRIBE response.
-
-   NSCOUNT MUST be zero, and the Authority Section MUST be empty.
-   Any records in the Authority Section MUST be silently ignored.
-
-   ARCOUNT specifies the number of records in the Additional Data
-   Section, e.g., the EDNS(0) OPT record.
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 12]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
+   The SUBSCRIBE TLV SSOP-DATA MUST echo back the QNAME, QTYPE, and
+   QCLASS provided by the client in the SUBSCRIBE request that generated
+   this SUBSCRIBE response.
 
    In the SUBSCRIBE response the RCODE indicates whether or not the
    subscription was accepted.  Supported RCODEs are as follows:
@@ -688,8 +695,8 @@ Internet-Draft           DNS Push Notifications                July 2016
    | NXDOMAIN |   3   | NOT APPLICABLE. DNS Push Notification MUST NOT |
    |          |       | return NXDOMAIN errors in response to          |
    |          |       | SUBSCRIBE requests.                            |
-   | NOTIMP   |   4   | Server does not implement DNS Push             |
-   |          |       | Notifications.                                 |
+   | NOTIMP   |   4   | Server does not recognize DNS Session          |
+   |          |       | Signaling Opcode.                              |
    | REFUSED  |   5   | Server refuses to process request for policy   |
    |          |       | or security reasons.                           |
    | NOTAUTH  |   9   | Server is not authoritative for the requested  |
@@ -705,38 +712,79 @@ Internet-Draft           DNS Push Notifications                July 2016
    clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE
    value.
 
-   In the first SUBSCRIBE response on a connection, the server MUST
-   include an explicit EDNS(0) TCP Keepalive option.  If the first
-   SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive
-   option this is an error and the client MUST immediately close the TCP
-   connection.  In this case the client should act as if the response
-   contained an EDNS(0) TCP Keepalive option with a value of one hour,
-   and not attempt any further DNS Push Notification requests to that
-   server until one hour has passed.  This situation may occur if a
-   client connects to a server that doesn't implement DNS Push
-   Notifications at all, and it is important not to burden such servers
-   with continuous retries.
-
-   The server MAY include EDNS(0) TCP Keepalive options in subsequent
-   messages, if the idle timeout changes.  If the client receives
-   subsequent messages that do not contain an explicit EDNS(0) TCP
-   Keepalive option then the idle timeout for that connection remains
-   unchanged at that time.
+   Because the RCODE NOTIMP is used to signal the server does not
+   recognize the DNS Session Signaling Opcode, another mechanism is
+   needed to convey that the server does not implement a particular DNS
+   Session Signaling TLV type.  The DNS Session Signaling specification
+   describes a special "Not Implemented" TLV for this purpose.
+   Therefore, if SUBSCRIBE request is sent and a "Not Implemented" TLV
+   is returned with the same DNS header message ID, the client knows the
+   server does not support the SUBSCRIBE TLV.
 
 
 
-Pusateri & Cheshire     Expires January 23, 2017               [Page 13]
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 13]
 
-Internet-Draft           DNS Push Notifications                July 2016
+Internet-Draft           DNS Push Notifications              August 2016
 
 
-   In an error response, with nonzero RCODE, the server MUST contain an
-   EDNS(0) TCP Keepalive option specifying the delay before the client
-   submits further requests to this server:
+   If the server sends a non-zero RCODE in the SUBSCRIBE response,
+   either the client is (at least partially) misconfigured or the server
+   resources are exhausted.  In either case, the client shouldn't retry
+   the subscription right away.  Either end can terminate the connection
+   but the client may want to try this subscription again or it may have
+   other successful subscriptions that it doesn't want to abandon.  If
+   the server sends a non-zero RCODE, then it MUST append a RECONNECT
+   delay in the response containing a delay value for the client to wait
+   before retrying.  This delay varies upon the circumstances and
+   appropriate values are suggested below for each type of error.
+
+   The SUBSCRIBE Response with non-zero error code:
+
+                                              1  1  1  1  1  1
+                0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                  MESSAGE ID                   |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |QR|   Opcode  |          Z         | RCODE > 0 |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |             SSOP-TYPE (SUBSCRIBE)             |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                  SSOP-LENGTH                  |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                                               |
+              \                     QNAME                     \
+              \                                               \
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                     QTYPE                     |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                     QCLASS                    |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+              |                RECONNECT DELAY                |
+              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+                                 Figure 2
+
+   RECONNECT DELAY: a time value, specified as a 16 bit word in network
+   byte order in units of 100 milliseconds, within which the client
+   should wait before sending additional SUBSCRIBE requests to the
+   server.
+
+   Suggested RECONNECT delays for each return error code:
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
       implementer.  A value of one minute is RECOMMENDED, to avoid high
       load from defective clients.
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 14]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
       For RCODE = 2 (SERVFAIL), which occurs due to resource exhaustion,
       the delay should be chosen according to the level of server
@@ -746,13 +794,7 @@ Internet-Draft           DNS Push Notifications                July 2016
       For RCODE = 4 (NOTIMP), which occurs on a server that doesn't
       implement DNS Push Notifications, it is unlikely that the server
       will begin supporting DNS Push Notifications in the next few
-      minutes, so the retry delay SHOULD be one hour.  Note that a
-      server that doesn't implement DNS Push Notifications will most
-      likely not implement this retry delay mechanism using the EDNS(0)
-      TCP Keepalive option either, and in this case the client will fall
-      back to the case described above specifying how to handle
-      SUBSCRIBE responses that do not contain an EDNS(0) TCP Keepalive
-      option.
+      minutes, so the retry delay SHOULD be one hour.
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
@@ -776,16 +818,6 @@ Internet-Draft           DNS Push Notifications                July 2016
       repaired at any time, the retry delay should not be set too high.
       By default, a value of 5 minutes is RECOMMENDED.
 
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 14]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
       For other RCODE values, the retry delay should be set by the
       server as appropriate for that error condition.  By default, a
       value of 5 minutes is RECOMMENDED.
@@ -800,23 +832,48 @@ Internet-Draft           DNS Push Notifications                July 2016
    connection with a FIN, or MAY allow it to remain open, depending on
    the nature of the error.  Clients MUST correctly handle both cases.
 
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 15]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
 6.3.  DNS Push Notification UNSUBSCRIBE
 
    To cancel an individual subscription without closing the entire
    connection, the client sends an UNSUBSCRIBE message over the
    established TCP connection to the server.  The UNSUBSCRIBE message is
    formatted identically to the SUBSCRIBE message which created the
-   subscription, with the exact same name, type and class, except that
-   the opcode is UNSUBSCRIBE (7) instead of SUBSCRIBE (6).
+   subscription, with the exact same QNAME, QTYPE and QCLASS, except
+   that the TLV TYPE is UNSUBSCRIBE instead of SUBSCRIBE.
 
-   A client MUST NOT send an UNSUBSCRIBE message that does not exactly
-   match the name, type and class of an existing active subscription on
+   A client MUST NOT send an UNSUBSCRIBE TLV that does not exactly match
+   the QNAME, QTYPE and QCLASS of an existing active subscription on
    that TLS/TCP connection.  If a server receives such an UNSUBSCRIBE
    message this is an error and the server MUST immediately close the
    connection.
 
-   No response message is generated as a result of processing an
-   UNSUBSCRIBE message.
+   Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response
+   from the server.
+
+   In a UNSUBSCRIBE response the DNS Header QR bit MUST be one.
+   If the QR bit is not one the message is not an UNSUBSCRIBE response.
+
+   The Z bits MUST be zero on transmission, and MUST be silently ignored
+   on reception.
+
+   The Message ID field MUST be set to a unique value.  This allows the
+   client to properly correlate a "Not Implemented" TLV response.  The
+   server MUST echo the value back unchanged in the UNSUBSCRIBE
+   response.
+
+   The UNSUBSCRIBE TLV SSOP-DATA MUST echo back the QNAME, QTYPE, and
+   QCLASS provided by the client in the UNSUBSCRIBE request that
+   generated this UNSUBSCRIBE response.
 
    Having being successfully revoked with a correctly-formatted
    UNSUBSCRIBE message, the previously referenced subscription is no
@@ -836,10 +893,9 @@ Internet-Draft           DNS Push Notifications                July 2016
 
 
 
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 15]
+Pusateri & Cheshire       Expires March 1, 2017                [Page 16]
 
-Internet-Draft           DNS Push Notifications                July 2016
+Internet-Draft           DNS Push Notifications              August 2016
 
 
 6.4.  DNS Push Notification Update Messages
@@ -873,7 +929,7 @@ Internet-Draft           DNS Push Notifications                July 2016
              |                    ADCOUNT                    |
              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-                                 Figure 1
+                                 Figure 3
 
    For DNS Push Notifications the following rules apply:
 
@@ -882,8 +938,21 @@ Internet-Draft           DNS Push Notifications                July 2016
    Update Messages and should be silently ignored for the purposes of
    Push Notification Update Message handling.
 
-   ID, the Z bits, and RCODE MUST be zero on transmission,
+   The Z bits and RCODE MUST be zero on transmission,
    and MUST be silently ignored on reception.
+
+   The ID field MUST be zero, since a Push Notification Update Message
+   could potentially match more than one subscription, or could relate
+   to a subscription that the client has just cancelled with an
+   UNSUBSCRIBE message.
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 17]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
    ZOCOUNT MUST be zero, and the Zone Section MUST be empty.
    Any records in the Zone Section MUST be silently ignored.
@@ -891,17 +960,10 @@ Internet-Draft           DNS Push Notifications                July 2016
    PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.
    Any records in the Prerequisite Section MUST be silently ignored.
 
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 16]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    UPCOUNT specifies the number of records in the Update Section.
 
    ADCOUNT specifies the number of records in the Additional Data
-   Section.  Typically this is zero, but it may be nonzero in some
+   Section.  Typically this is zero, but it may be non-zero in some
    cases, such as when the message includes an EDNS(0) OPT record.
 
    The Update Section contains the relevant change information for the
@@ -939,20 +1001,21 @@ Internet-Draft           DNS Push Notifications                July 2016
    inbound Push Notification Updates for that subscription from the
    server are still in flight.
 
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 18]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    In the case where a single change affects more than one active
    subscription, only one update is sent.  For example, an update adding
    a given record may match both a SUBSCRIBE request with the same QTYPE
    and a different SUBSCRIBE request with QTYPE=ANY.  It is not the case
    that two updates are sent because the new record matches two active
    subscriptions.
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 17]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
 
    The server SHOULD encode change notifications in the most efficient
    manner possible.  For example, when three AAAA records are deleted
@@ -969,18 +1032,6 @@ Internet-Draft           DNS Push Notifications                July 2016
    apply to different subscriptions.  Conceptually, a Push Notification
    Update Message is a connection-level concept, not a subscription-
    level concept.
-
-   Push Notification Update Messages MAY contain an EDNS(0) TCP
-   Keepalive option [RFC7828] if the idle timeout has changed since the
-   last time the server sent an EDNS(0) TCP Keepalive option on this
-   connection.
-
-   In the event that the server wishes to inform a client of a new idle
-   timeout for the connection, the server MAY combine that with the next
-   message it sends to the client, or the server MAY send an empty Push
-   Notification Update Message (zero records in the Update Section) to
-   carry the EDNS(0) TCP Keepalive option.  Clients MUST correctly
-   receive and process the EDNS(0) TCP Keepalive option in both cases.
 
    Reception of a Push Notification Update Message does not directly
    generate a response back to the server.  (Updates may indirectly
@@ -1005,52 +1056,47 @@ Internet-Draft           DNS Push Notifications                July 2016
 
 
 
-Pusateri & Cheshire     Expires January 23, 2017               [Page 18]
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 19]
 
-Internet-Draft           DNS Push Notifications                July 2016
+Internet-Draft           DNS Push Notifications              August 2016
 
 
-6.5.  DNS RECONFIRM
+6.5.  DNS Session Signaling Push Notification RECONFIRM TLV
 
    Sometimes, particularly when used with a Hybrid Proxy
    [I-D.ietf-dnssd-hybrid], a DNS Zone may contain stale data.  When a
    client encounters data that it believe may be stale (e.g., an SRV
    record referencing a target host+port that is not responding to
-   connection requests) the client sends a DNS RECONFIRM message to
-   request that the server re-verify that the data is still valid.  For
-   a Hybrid Proxy, this causes it to issue new Multicast DNS requests to
+   connection requests) the client can send a RECONFIRM TLV to request
+   that the server re-verify that the data is still valid.  For a Hybrid
+   Proxy, this causes it to issue new Multicast DNS requests to
    ascertain whether the target device is still present.  For other
-   kinds of DNS server the RECONFIRM operation is currently undefined
+   types of DNS server, the RECONFIRM operation is currently undefined
    and SHOULD be silently ignored.
 
-   A RECONFIRM request is formatted similarly to a conventional DNS
-   QUERY request [RFC1035], except that the opcode is RECONFIRM (8)
-   instead of QUERY (0).  QTYPE MUST NOT be the value ANY (255).  QCLASS
-   MUST NOT be the value ANY (255).
+   A RECONFIRM TLV request is formatted similarly to a SUBSCRIBE TLV
+   request, except that the TLV type is RECONFIRM instead of SUBSCRIBE.
+   Additionally, QTYPE MUST NOT be the value ANY (255) and QCLASS MUST
+   NOT be the value ANY (255).
 
-   In a RECONFIRM request the DNS Header QR bit MUST be zero.
-   If the QR bit is not zero the message is not a RECONFIRM request.
+   In a RECONFIRM TLV request the DNS Header QR bit MUST be zero.
+   If the QR bit is not zero the message is not a RECONFIRM TLV request.
 
-   The AA, TC, RD, RA, Z, AD, and CD bits, the ID field, and the RCODE
-   field, MUST be zero on transmission, and MUST be silently ignored on
-   reception.
+   The Z bits MUST be zero on transmission, and MUST be silently ignored
+   on reception.
 
-   Like a DNS QUERY request, a RECONFIRM request MUST contain exactly
-   one question.  Since RECONFIRM requests are sent over TCP, multiple
-   RECONFIRM requests can be concatenated in a single TCP stream and
-   packed efficiently into TCP segments, so the ability to pack multiple
-   RECONFIRM operations into a single DNS message within that TCP stream
-   would add extra complexity for little benefit.
+   The Message ID field MUST be set to a unique value.  This allows the
+   client to properly correlate a "Not Implemented" TLV response.  The
+   server MUST echo the value back unchanged in the SUBSCRIBE response.
 
-   ANCOUNT MUST be nonzero, and the Answer Section MUST contain the
-   rdata for the record(s) that the client believes to be in doubt.
-
-   NSCOUNT MUST be zero, and the Authority Section MUST be empty.
-   Any records in the Authority Section MUST be silently ignored.
-
-   ARCOUNT specifies the number of records in the Additional Data
-   Section.  Typically this is zero, but it may be nonzero in some
-   cases, such as when the request includes an EDNS(0) OPT record.
+   The return code (RCODE) field is set to 0 in a request.  The return
+   codes in the response from the server are the same as with the
+   SUBSCRIBE TLV described above.
 
    DNS wildcarding is not supported.  That is, a wildcard ("*") in a
    SUBSCRIBE message matches only a wildcard ("*") in the zone, and
@@ -1059,16 +1105,6 @@ Internet-Draft           DNS Push Notifications                July 2016
    Aliasing is not supported.  That is, a CNAME in a SUBSCRIBE message
    matches only a CNAME in the zone, and nothing else.
 
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 19]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
-   No response message is generated as a result of processing a
-   RECONFIRM message.
-
    If the server receiving the RECONFIRM request determines that the
    records are in fact no longer valid, then subsequent DNS Push
    Notification Update Messages will be generated to inform interested
@@ -1076,12 +1112,22 @@ Internet-Draft           DNS Push Notifications                July 2016
    printer is no longer present has the side effect of informing all
    other interested clients that the printer in question is now gone.
 
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 20]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
 6.6.  Termination
 
 6.6.1.  Client-Initiated Termination
 
    An individual subscription is terminated by sending an UNSUBSCRIBE
-   message for that specific subscription, or all subscriptions can be
+   TLV for that specific subscription, or all subscriptions can be
    cancelled at once by the client closing the connection.  When a
    client terminates an individual subscription (via UNSUBSCRIBE) or all
    subscriptions on that connection (by closing the connection) it is
@@ -1095,8 +1141,8 @@ Internet-Draft           DNS Push Notifications                July 2016
    keep it open if it anticipates performing further operations on that
    connection in the future.  If a client wishes to keep an idle
    connection open, it MUST continue to meet its keepalive obligations
-   [RFC7828] or the server is entitled to close the connection (see
-   below).
+   [I-D.ietf-dnsop-session-signal] or the server is entitled to close
+   the connection (see below).
 
    If a client plans to terminate one or more subscriptions on a
    connection and doesn't intend to keep that connection open, then as
@@ -1114,34 +1160,24 @@ Internet-Draft           DNS Push Notifications                July 2016
    API, sending a TCP RST is achieved by setting the SO_LINGER option
    with a time of 0 seconds and then closing the socket.
 
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 20]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    If a client has performed operations on this connection that it would
    not want lost (like DNS updates) then the client SHOULD do an orderly
    disconnect, sending a TCP FIN.  In the BSD sockets API, sending a TCP
    FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the
    socket open until all remaining data has been read from it.
 
-   In the first SUBSCRIBE response on a connection, the server MUST
-   include an explicit EDNS(0) TCP Keepalive option.  If the first
-   SUBSCRIBE response does not include an explicit EDNS(0) TCP Keepalive
-   option this is an error and the client MUST immediately close the TCP
-   connection and not attempt any further DNS Push Notification requests
-   to that server until one hour has passed.  This situation may occur
-   if a client connects to a server that doesn't implement DNS Push
-   Notifications at all, and it is important not to burden such servers
-   with continuous retries.
-
    Upon receiving an error response from the server, a client SHOULD NOT
    close the connection.  An error relating to one particular operation
    on a connection does not necessarily imply that all other operations
    on that connection have also failed, or that future operations will
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 21]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    fail.  The client should assume that the server will make its own
    decision about whether or not to close the connection, based on the
    server's determination of whether the error condition pertains to
@@ -1150,52 +1186,18 @@ Internet-Draft           DNS Push Notifications                July 2016
    client SHOULD continue to use that connection for subsequent
    operations.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 21]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
 6.6.2.  Server-Initiated Termination
 
-   If a client makes a connection and then fails to send any DNS message
-   that uses EDNS(0) TCP Keepalive [RFC7828] (either SUBSCRIBE, where
-   Keepalive is implicit, or some other DNS message, with an explicit an
-   EDNS(0) TCP Keepalive option) then after 30 seconds of inactivity the
-   server SHOULD close the connection.  If no data has been sent on the
-   connection the server MAY abort the connection with a TCP RST.  If
-   data has been sent on the connection then the server SHOULD close the
-   connection gracefully with a TCP FIN so that the data is reliably
-   delivered.
-
-   In the response to the first successful SUBSCRIBE, the included
-   EDNS(0) TCP Keepalive option specifies the idle timeout so that the
-   client knows the frequency of traffic it must generate to keep the
-   connection alive.  If the idle timeout for that connection changes,
-   then the server communicates this by placing an updated EDNS(0) TCP
-   Keepalive option in a subsequent message to the client.
+   If a client makes a connection and then fails to send any DNS Session
+   Signaling message then after a period of inactivity the server SHOULD
+   close the connection.  The default IDLE timeout in the DNS Session
+   Signaling specification is 30 seconds.  A different IDLE timeout may
+   be requested by the client and the server can modify the IDLE timeout
+   at any time by responding to a client request or initiating an IDLE
+   timeout TLV.  If no data has been sent on the connection the server
+   MAY abort the connection with a TCP RST.  If data has been sent on
+   the connection then the server SHOULD close the connection gracefully
+   with a TCP FIN so that the data is reliably delivered.
 
    At both servers and clients, the generation or reception of any
    complete request, response, update, or keepalive message resets the
@@ -1204,6 +1206,9 @@ Internet-Draft           DNS Push Notifications                July 2016
    In the absence of any requests, responses, or update messages on a
    connection, a client MUST generate keepalive traffic before the idle
    timeout expires, or the server is entitled to close the connection.
+   The client sends a IDLE Timeout TLV request as described in the DNS
+   Session Signaling specification to reset the idle timer using the
+   current value of the IDLE timeout.
 
    If a client disconnects from the network abruptly, without closing
    its connection, the server learns of this after failing to receive
@@ -1216,48 +1221,25 @@ Internet-Draft           DNS Push Notifications                July 2016
    to generate keepalive traffic, to allow for differences in clock rate
    and network propagation delays.
 
-   [We need to discuss the nature of "the required keepalives".  Are
-   they TCP-layer keepalives?  DNS-layer keepalives?  There is currently
-   no DNS-layer keepalive or 'no-op' operation defined.  What would that
-   operation be?  A DNS QUERY containing zero questions?  A DNS
-   SUBSCRIBE containing zero questions?  An "empty" DNS message over the
-   TCP connection (just a pair of zero bytes, signifying a zero-length
-   message)?  One benefit of TCP-layer keepalives is that they transmit
-   fewer bytes, and involve less software overhead for processing those
-   bytes.  Another benefit is that it is more feasible to implement
-   these in networking offload hardware, which can allow devices to meet
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 22]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
-   their TCP keepalive obligations while sleeping.  This is particularly
-   important for battery-powered devices like mobile phones and tablets.
-   On the other hand, using TCP-layer keepalives requires an API for a
-   client to tell the networking stack at what frequency to perform TCP-
-   layer keepalives, and an API for a server to request the networking
-   stack to inform it when TCP-layer keepalives are not received by the
-   required deadline.  TCP-layer keepalives also only verify liveness of
-   the remote networking stack, whereas DNS-layer keepalives provide
-   higher assurance of liveness of the remote server application
-   software -- though this a limited benefit, since there is no reason
-   to expect that DNS Push Notification server software will routinely
-   become wedged and unresponsive.]
-
    After sending an error response to a client, the server MAY close the
    connection with a TCP FIN, or may allow the connection to remain
    open.  For error conditions that only affect the single operation in
    question, the server SHOULD return an error response to the client
    and leave the connection open for further operations.  For error
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 22]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    conditions that are likely to make all operations unsuccessful in the
    immediate future, the server SHOULD return an error response to the
    client and then close the connection with a TCP FIN.
 
    If the server is overloaded and needs to shed load, it SHOULD send a
-   Termination Message to the client and close the connection with a TCP
+   Termination TLV to the client and close the connection with a TCP
    FIN.
 
    Apart from the cases described above, a server MUST NOT close a
@@ -1270,96 +1252,43 @@ Internet-Draft           DNS Push Notifications                July 2016
    restarting, the server application terminated unexpectedly (perhaps
    due to a bug that makes it crash), or the server is undergoing
    maintenance procedures.  When possible, a DNS Push Notification
-   server SHOULD send a Termination Message (Section 6.6.3 ) informing
-   the client of the reason for the connection being closed.
+   server SHOULD send a Termination TLV (Section 6.6.3) informing the
+   client of the reason for the connection being closed.
 
    After a connection is closed by the server, the client SHOULD try to
    reconnect, to that server, or to another server supporting DNS Push
    Notifications for the zone.  If reconnecting to the same server, and
-   there was a Termination Message or error response containing a
-   EDNS(0) TCP Keepalive option, the client MUST respect the indicated
-   delay before attempting to reconnect.
+   there was a Termination TLV or error response containing a RECONNECT
+   delay, the client MUST respect the indicated delay before attempting
+   to reconnect.
 
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 23]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
-6.6.3.  DNS Push Notification Termination Message
+6.6.3.  DNS Session Signaling Termination TLV
 
    If a server is low on resources it MAY simply terminate a client
    connection with a TCP RST.  However, the likely behaviour of the
    client may be simply to reconnect immediately, putting more burden on
    the server.  Therefore, a server SHOULD instead choose to shed client
-   load by (a) sending a DNS Push Notification Termination Message and
-   then (b) immediately closing the client connection with a TCP FIN
-   instead of RST, thereby facilitating reliable delivery of the
-   Termination Message.  Upon successful reception of the Termination
-   Message the client is expected to close the connection.  The server
-   SHOULD set a timer and, if the client has not closed the connection
-   within a reasonable time, the server SHOULD then terminate the TCP
-   connection with a TCP RST.  The RECOMMENDED time the server should
-   wait before terminating the TCP connection with a TCP RST is ten
-   seconds.
+   load by (a) sending a DNS Session Signaling Termination TLV and then
+   (b) immediately closing the client connection with a TCP FIN instead
+   of RST, thereby facilitating reliable delivery of the Termination
+   TLV.  Upon successful reception of the Termination TLV the client is
+   expected to close the connection.  The server SHOULD set a timer and,
+   if the client has not closed the connection within a reasonable time,
+   the server SHOULD then terminate the TCP connection with a TCP RST.
+   The RECOMMENDED time the server should wait before terminating the
+   TCP connection with a TCP RST is ten seconds.
 
-   The format of a Termination Message is similar to a Push Notification
-   Update.
-
-   The following figure shows the existing DNS Update header format:
-
-                                              1  1  1  1  1  1
-                0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |                      ID                       |
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |QR|   Opcode  |          Z         |   RCODE   |
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |                    ZOCOUNT                    |
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |                    PRCOUNT                    |
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |                    UPCOUNT                    |
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |                    ADCOUNT                    |
-              +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-
-                                 Figure 2
-
-   For Termination Messages the following rules apply:
-
-   The QR bit MUST be zero, and the Opcode MUST be UPDATE (5).
-   Messages received where this is not true are not Termination Messages
-   and should be silently ignored.
-
-   ID and the Z bits MUST be zero on transmission,
-   and MUST be silently ignored on reception.
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 24]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
-   ZOCOUNT MUST be zero, and the Zone Section MUST be empty.
-   Any records in the Zone Section MUST be silently ignored.
-
-   PRCOUNT MUST be zero, and the Prerequisite Section MUST be empty.
-   Any records in the Prerequisite Section MUST be silently ignored.
-
-   UPCOUNT MUST be zero, and the Update Section MUST be empty.
-   Any records in the Update Section MUST be silently ignored.
-
-   ADCOUNT specifies the number of records in the Additional Data
-   Section, e.g., the EDNS(0) OPT record..
-
-   The RCODE MUST contain a nonzero code giving the reason for
+   The RCODE MUST contain a non-zero code giving the reason for
    termination, as indicated below:
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 23]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
    +----------+-------+------------------------------------------------+
    | Mnemonic | Value | Description                                    |
@@ -1375,44 +1304,27 @@ Internet-Draft           DNS Push Notifications                July 2016
                         Termination Response codes
 
    This document specifies only these two RCODE values for Termination
-   Messages.  Servers sending Termination Messages SHOULD use one of
-   these two values.  However, future circumstances may create
-   situations where other RCODE values are appropriate in Termination
-   Messages, so clients MUST be prepared to accept Termination Messages
-   with any RCODE value.  In particular, a Termination Message with
-   RCODE value zero (NOERROR) is still a Termination Message and should
-   be treated as such.
-
-   The Termination Message MUST contain an EDNS(0) TCP Keepalive option
-   [RFC7828].  The client MUST wait for the time indicated in the
-   EDNS(0) TCP Keepalive option's idle timeout before attempting any new
-   connections to this server.  A client that receives a Termination
-   Message without an EDNS(0) TCP Keepalive option SHOULD treat it as
-   equivalent to a TCP Keepalive option with a zero timeout value.
+   TLVs.  Servers sending Termination TLVs SHOULD use one of these two
+   values.  However, future circumstances may create situations where
+   other RCODE values are appropriate in Termination TLVs, so clients
+   MUST be prepared to accept Termination Messages with any RCODE value.
+   In particular, a Termination Message with RCODE value zero (NOERROR)
+   is still a Termination Message and should be treated as such.
 
    In the case where the server is rejecting some, but not all, of the
    existing subscriptions (perhaps because it has been reconfigured and
    is no longer authoritative for those names) with a REFUSED (5) RCODE,
-   the EDNS(0) TCP Keepalive option's idle timeout MAY be zero,
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 25]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
-   indicating that the client SHOULD attempt to re-establish its
-   subscriptions immediately.
+   the RECONNECT delay MAY be zero, indicating that the client SHOULD
+   attempt to re-establish its subscriptions immediately.
 
    In the case where a server is terminating a large number of
    connections at once (e.g., if the system is restarting) and the
    server doesn't want to be inundated with a flood of simultaneous
-   retries, it SHOULD send different EDNS(0) TCP Keepalive values to
-   each client.  These adjustments MAY be selected randomly,
-   pseudorandomly, or deterministically (e.g., incrementing the time
-   value by one tenth of a second for each successive client, yielding a
-   post-restart reconnection rate of ten clients per second).
+   retries, it SHOULD send different RECONNECT delay values to each
+   client.  These adjustments MAY be selected randomly, pseudorandomly,
+   or deterministically (e.g., incrementing the time value by one tenth
+   of a second for each successive client, yielding a post-restart
+   reconnection rate of ten clients per second).
 
 7.  Security Considerations
 
@@ -1426,6 +1338,14 @@ Internet-Draft           DNS Push Notifications                July 2016
    associated with the desired host name, but since the desired host
    name is learned via a DNS SRV query, if the SRV query is subverted
    then the client may have a secure connection to a rogue server.
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 24]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    DNSSEC can provided added confidence that the SRV query has not been
    subverted.
 
@@ -1451,13 +1371,6 @@ Internet-Draft           DNS Push Notifications                July 2016
    recommendations will continue to change.  Updated versions or errata
    may exist for these recommendations.
 
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 26]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
 7.2.  TLS Name Authentication
 
    As described in Section 6.1, the client discovers the DNS Push
@@ -1481,6 +1394,14 @@ Internet-Draft           DNS Push Notifications                July 2016
    earlier.  In the draft version of TLS 1.3 [I-D.ietf-tls-tls13], TLS-
    level compression has been removed completely.
 
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 25]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
 7.4.  TLS Session Resumption
 
    TLS Session Resumption is permissible on DNS Push Notification
@@ -1500,19 +1421,9 @@ Internet-Draft           DNS Push Notifications                July 2016
    It is only applicable for the TCP protocol.
    This name is to be published in the IANA Service Name Registry.
 
-   This document defines three DNS OpCodes: SUBSCRIBE with (tentative)
-   value 6, UNSUBSCRIBE with (tentative) value 7, and RECONFIRM with
-   (tentative) value 8.
-
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 27]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
+   This document defines three DNS Session Signaling TLV types:
+   SUBSCRIBE with (tentative) value 3, UNSUBSCRIBE with (tentative)
+   value 4, and RECONFIRM with (tentative) value 5.
 
 9.  Acknowledgements
 
@@ -1527,15 +1438,25 @@ Internet-Draft           DNS Push Notifications                July 2016
 
 10.1.  Normative References
 
-   [I-D.bellis-dnsop-session-signal]
-              Bellis, R., Cheshire, S., Marcon, J., Mankin, A., and T.
-              Pusateri, "DNS Session Signaling", draft-bellis-dnsop-
-              session-signal-00 (work in progress), July 2016.
+   [I-D.ietf-dnsop-session-signal]
+              Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
+              Mankin, A., and T. Pusateri, "DNS Session Signaling",
+              draft-ietf-dnsop-session-signal-00 (work in progress),
+              August 2016.
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-14 (work in progress),
-              July 2016.
+              Version 1.3", draft-ietf-tls-tls13-15 (work in progress),
+              August 2016.
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 26]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               DOI 10.17487/RFC0768, August 1980,
@@ -1563,13 +1484,6 @@ Internet-Draft           DNS Push Notifications                July 2016
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 28]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    [RFC2136]  Vixie, P., Ed., Thomson, S., Rekhter, Y., and J. Bound,
               "Dynamic Updates in the Domain Name System (DNS UPDATE)",
               RFC 2136, DOI 10.17487/RFC2136, April 1997,
@@ -1590,10 +1504,15 @@ Internet-Draft           DNS Push Notifications                July 2016
               DOI 10.17487/RFC6066, January 2011,
               <http://www.rfc-editor.org/info/rfc6066>.
 
-   [RFC6891]  Damas, J., Graff, M., and P. Vixie, "Extension Mechanisms
-              for DNS (EDNS(0))", STD 75, RFC 6891,
-              DOI 10.17487/RFC6891, April 2013,
-              <http://www.rfc-editor.org/info/rfc6891>.
+
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 27]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
 
    [RFC6895]  Eastlake 3rd, D., "Domain Name System (DNS) IANA
               Considerations", BCP 42, RFC 6895, DOI 10.17487/RFC6895,
@@ -1609,35 +1528,12 @@ Internet-Draft           DNS Push Notifications                July 2016
               Requirements", RFC 7766, DOI 10.17487/RFC7766, March 2016,
               <http://www.rfc-editor.org/info/rfc7766>.
 
-   [RFC7828]  Wouters, P., Abley, J., Dickinson, S., and R. Bellis, "The
-              edns-tcp-keepalive EDNS0 Option", RFC 7828,
-              DOI 10.17487/RFC7828, April 2016,
-              <http://www.rfc-editor.org/info/rfc7828>.
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 29]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
 10.2.  Informative References
 
    [I-D.ietf-dnssd-hybrid]
               Cheshire, S., "Hybrid Unicast/Multicast DNS-Based Service
               Discovery", draft-ietf-dnssd-hybrid-03 (work in progress),
-              November 2015.
-
-   [I-D.ietf-dprive-dns-over-tls]
-              Zi, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
-              and P. Hoffman, "Specification for DNS over TLS", draft-
-              ietf-dprive-dns-over-tls-09 (work in progress), March
-              2016.
+              February 2016.
 
    [I-D.sekar-dns-llq]
               Sekar, K., "DNS Long-Lived Queries", draft-sekar-dns-
@@ -1665,6 +1561,15 @@ Internet-Draft           DNS Push Notifications                July 2016
               Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
               January 2008, <http://www.rfc-editor.org/info/rfc5077>.
 
+
+
+
+
+Pusateri & Cheshire       Expires March 1, 2017                [Page 28]
+
+Internet-Draft           DNS Push Notifications              August 2016
+
+
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
               <http://www.rfc-editor.org/info/rfc6762>.
@@ -1673,20 +1578,16 @@ Internet-Draft           DNS Push Notifications                July 2016
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
               <http://www.rfc-editor.org/info/rfc6763>.
 
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 30]
-
-Internet-Draft           DNS Push Notifications                July 2016
-
-
    [RFC7525]  Sheffer, Y., Holz, R., and P. Saint-Andre,
               "Recommendations for Secure Use of Transport Layer
               Security (TLS) and Datagram Transport Layer Security
               (DTLS)", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May
               2015, <http://www.rfc-editor.org/info/rfc7525>.
+
+   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
+              and P. Hoffman, "Specification for DNS over Transport
+              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
+              2016, <http://www.rfc-editor.org/info/rfc7858>.
 
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
@@ -1720,17 +1621,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires January 23, 2017               [Page 31]
+Pusateri & Cheshire       Expires March 1, 2017                [Page 29]
