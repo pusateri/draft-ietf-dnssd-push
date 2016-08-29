@@ -736,7 +736,7 @@ Internet-Draft           DNS Push Notifications              August 2016
    the subscription right away.  Either end can terminate the connection
    but the client may want to try this subscription again or it may have
    other successful subscriptions that it doesn't want to abandon.  If
-   the server sends a non-zero RCODE, then it MUST append a RECONNECT
+   the server sends a non-zero RCODE, then it MUST append a THROTTLE
    delay in the response containing a delay value for the client to wait
    before retrying.  This delay varies upon the circumstances and
    appropriate values are suggested below for each type of error.
@@ -762,17 +762,17 @@ Internet-Draft           DNS Push Notifications              August 2016
               +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
               |                     QCLASS                    |
               +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-              |                RECONNECT DELAY                |
+              |                 THROTTLE DELAY                |
               +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
                                  Figure 2
 
-   RECONNECT DELAY: a time value, specified as a 16 bit word in network
+   THROTTLE DELAY: a time value, specified as a 16 bit word in network
    byte order in units of 100 milliseconds, within which the client
    should wait before sending additional SUBSCRIBE requests to the
    server.
 
-   Suggested RECONNECT delays for each return error code:
+   Suggested THROTTLE delays for each return error code:
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
       implementer.  A value of one minute is RECOMMENDED, to avoid high
@@ -1258,7 +1258,7 @@ Internet-Draft           DNS Push Notifications              August 2016
    After a connection is closed by the server, the client SHOULD try to
    reconnect, to that server, or to another server supporting DNS Push
    Notifications for the zone.  If reconnecting to the same server, and
-   there was a Termination TLV or error response containing a RECONNECT
+   there was a Termination TLV or error response containing a THROTTLE
    delay, the client MUST respect the indicated delay before attempting
    to reconnect.
 
@@ -1314,13 +1314,13 @@ Internet-Draft           DNS Push Notifications              August 2016
    In the case where the server is rejecting some, but not all, of the
    existing subscriptions (perhaps because it has been reconfigured and
    is no longer authoritative for those names) with a REFUSED (5) RCODE,
-   the RECONNECT delay MAY be zero, indicating that the client SHOULD
+   the THROTTLE delay MAY be zero, indicating that the client SHOULD
    attempt to re-establish its subscriptions immediately.
 
    In the case where a server is terminating a large number of
    connections at once (e.g., if the system is restarting) and the
    server doesn't want to be inundated with a flood of simultaneous
-   retries, it SHOULD send different RECONNECT delay values to each
+   retries, it SHOULD send different THROTTLE delay values to each
    client.  These adjustments MAY be selected randomly, pseudorandomly,
    or deterministically (e.g., incrementing the time value by one tenth
    of a second for each successive client, yielding a post-restart

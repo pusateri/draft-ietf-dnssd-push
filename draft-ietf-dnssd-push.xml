@@ -344,7 +344,7 @@
 
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
          <t>Because the RCODE NOTIMP is used to signal the server does not recognize the DNS Session Signaling Opcode, another mechanism is needed to convey that the server does not implement a particular DNS Session Signaling TLV type. The DNS Session Signaling specification describes a special "Not Implemented" TLV for this purpose. Therefore, if SUBSCRIBE request is sent and a "Not Implemented" TLV is returned with the same DNS header message ID, the client knows the server does not support the SUBSCRIBE TLV.</t>
-         <t>If the server sends a non-zero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured or the server resources are exhausted. In either case, the client shouldn't retry the subscription right away. Either end can terminate the connection but the client may want to try this subscription again or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a non-zero RCODE, then it MUST append a RECONNECT delay in the response containing a delay value for the client to wait before retrying. This delay varies upon the circumstances and appropriate values are suggested below for each type of error.</t>
+         <t>If the server sends a non-zero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured or the server resources are exhausted. In either case, the client shouldn't retry the subscription right away. Either end can terminate the connection but the client may want to try this subscription again or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a non-zero RCODE, then it MUST append a THROTTLE delay in the response containing a delay value for the client to wait before retrying. This delay varies upon the circumstances and appropriate values are suggested below for each type of error.</t>
          <t>The SUBSCRIBE Response with non-zero error code:</t>
          <figure align="center" anchor="subscribe_error"><artwork align="center"><![CDATA[
                                   1  1  1  1  1  1
@@ -366,12 +366,12 @@
   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
   |                     QCLASS                    |
   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-  |                RECONNECT DELAY                |
+  |                 THROTTLE DELAY                |
   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
                  ]]></artwork>
          </figure>
-         <t>RECONNECT DELAY: a time value, specified as a 16 bit word in network byte order in units of 100 milliseconds, within which the client should wait before sending additional SUBSCRIBE requests to the server.</t>
-         <t>Suggested RECONNECT delays for each return error code:
+         <t>THROTTLE DELAY: a time value, specified as a 16 bit word in network byte order in units of 100 milliseconds, within which the client should wait before sending additional SUBSCRIBE requests to the server.</t>
+         <t>Suggested THROTTLE delays for each return error code:
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of one minute is RECOMMENDED, to avoid high load from defective clients.</t>
 
@@ -551,7 +551,7 @@
 
          <t>Apart from the cases described above, a server MUST NOT close a connection with a DNS Push Notification client, except in extraordinary error conditions. Closing the connection is the client's responsibility, to be done at the client's discretion, when it so chooses. A DNS Push Notification server only closes a DNS Push Notification connection under exceptional circumstances, such as when the server application software or underlying operating system is restarting, the server application terminated unexpectedly (perhaps due to a bug that makes it crash), or the server is undergoing maintenance procedures. When possible, a DNS Push Notification server SHOULD send a Termination TLV (<xref target="termination_tlv"/>) informing the client of the reason for the connection being closed.</t>
 
-         <t>After a connection is closed by the server, the client SHOULD try to reconnect, to that server, or to another server supporting DNS Push Notifications for the zone. If reconnecting to the same server, and there was a Termination TLV or error response containing a RECONNECT delay, the client MUST respect the indicated delay before attempting to reconnect.</t>
+         <t>After a connection is closed by the server, the client SHOULD try to reconnect, to that server, or to another server supporting DNS Push Notifications for the zone. If reconnecting to the same server, and there was a Termination TLV or error response containing a THROTTLE delay, the client MUST respect the indicated delay before attempting to reconnect.</t>
 
 <?rfc needLines="18" ?>
        </section>
@@ -570,9 +570,9 @@
 
          <t>This document specifies only these two RCODE values for Termination TLVs. Servers sending Termination TLVs SHOULD use one of these two values. However, future circumstances may create situations where other RCODE values are appropriate in Termination TLVs, so clients MUST be prepared to accept Termination Messages with any RCODE value. In particular, a Termination Message with RCODE value zero (NOERROR) is still a Termination Message and should be treated as such.</t>
 
-         <t>In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the RECONNECT delay MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</t>
+         <t>In the case where the server is rejecting some, but not all, of the existing subscriptions (perhaps because it has been reconfigured and is no longer authoritative for those names) with a REFUSED (5) RCODE, the THROTTLE delay MAY be zero, indicating that the client SHOULD attempt to re-establish its subscriptions immediately.</t>
 
-         <t>In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different RECONNECT delay values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</t>
+         <t>In the case where a server is terminating a large number of connections at once (e.g., if the system is restarting) and the server doesn't want to be inundated with a flood of simultaneous retries, it SHOULD send different THROTTLE delay values to each client. These adjustments MAY be selected randomly, pseudorandomly, or deterministically (e.g., incrementing the time value by one tenth of a second for each successive client, yielding a post-restart reconnection rate of ten clients per second).</t>
        </section>
      </section>
      <?rfc needLines="18" ?>
