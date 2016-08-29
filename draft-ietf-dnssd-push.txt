@@ -362,7 +362,7 @@ Internet-Draft           DNS Push Notifications              August 2016
    subscription is simultaneously in flight from client to server.
 
    The client may request an IDLE timeout for the session using the DNS
-   Session Signaling IDLE Timout TLV.  The server will acknowledge the
+   Session Signaling IDLE Timeout TLV.  The server will acknowledge the
    request and is the ultimate authority of the IDLE timeout.  It may
    accept the timeout value in the client request or it may modify the
    value.  The server may also adjust the IDLE timeout at any time and
