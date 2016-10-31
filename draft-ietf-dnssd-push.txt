@@ -1654,7 +1654,8 @@ Internet-Draft           DNS Push Notifications             October 2016
 
    This document defines three DNS Session Signaling TLV types:
    SUBSCRIBE with (tentative) value 64, PUSH with (tentative) value 65,
-   and UNSUBSCRIBE with (tentative) value 66.
+   UNSUBSCRIBE with (tentative) value 66, and RECONFIRM with (tentative)
+   value 67.
 
 9.  Acknowledgements
 
@@ -1664,7 +1665,6 @@ Internet-Draft           DNS Push Notifications             October 2016
    This draft has been improved due to comments from Ran Atkinson, Tim
    Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju
    Shankar Rao, Markus Stenberg, Dave Thaler, and Soraia Zlatkovic.
-
 
 
 

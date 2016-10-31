@@ -714,7 +714,11 @@
      <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
      It is only applicable for the TCP protocol.<vspace />
      This name is to be published in the IANA Service Name Registry.</t>
-     <t>This document defines three DNS Session Signaling TLV types: SUBSCRIBE with (tentative) value 64, PUSH with (tentative) value 65, and UNSUBSCRIBE with (tentative) value 66.</t>
+     <t>This document defines three DNS Session Signaling TLV types:
+     SUBSCRIBE with (tentative) value 64,
+     PUSH with (tentative) value 65,
+     UNSUBSCRIBE with (tentative) value 66, and
+     RECONFIRM with (tentative) value 67.</t>
    </section>
 
    <section anchor="Acknowledgements" title="Acknowledgements">
