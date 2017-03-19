@@ -61,7 +61,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-10" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-11" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -115,7 +115,7 @@
      </address>
    </author>
 
-   <date day='13' month='March' year='2017'/>
+   <date year='2017' month='March' day='27'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -346,7 +346,7 @@
 
          <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the connection between the client and the server is closed.</t>
 
-         <t>SUBSCRIBE requests on a given connection MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that TLS/TCP connection. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and "Foo.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
+         <t>SUBSCRIBE requests on a given connection MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that TLS/TCP connection. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and "Foo.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
 
          <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</t>
 
@@ -745,7 +745,7 @@
      <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
      It is only applicable for the TCP protocol.<vspace />
      This name is to be published in the IANA Service Name Registry <xref target="RFC6335"/><xref target="SN"/>.</t>
-     <t>This document defines three DNS Session Signaling TLV types:
+     <t>This document defines four DNS Session Signaling TLV types:
      SUBSCRIBE with (tentative) value 0x40 (64),
      PUSH with (tentative) value 0x41 (65),
      UNSUBSCRIBE with (tentative) value 0x42 (66), and
