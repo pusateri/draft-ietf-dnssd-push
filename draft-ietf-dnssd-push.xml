@@ -336,7 +336,7 @@
          </figure>
 
 
-         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
+         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>In the SUBSCRIBE TLV the SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
          The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
@@ -624,7 +624,7 @@
 \                                               \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+]]></artwork></figure>
 
-         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
+         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>In the RECONFIRM TLV the SSOP-TYPE is RECONFIRM (tentatively 0x43).
          The SSOP-LENGTH is the length of the data that follows, which specifies

@@ -585,7 +585,7 @@
 |                     CLASS                     |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</pre>
 <p class="figure">Figure 1</p>
-<p id="rfc.section.6.2.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</p>
+<p id="rfc.section.6.2.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.2.1.p.3">In the SUBSCRIBE TLV the SSOP-TYPE is SUBSCRIBE (tentatively 0x40).  The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
 <p id="rfc.section.6.2.1.p.4">A SUBSCRIBE request MUST contain exactly one question. The SUBSCRIBE TLV has no QDCOUNT field to specify more than one question. Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.2.1.p.5">If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the connection between the client and the server is closed.</p>
@@ -786,7 +786,7 @@
 \                                               \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</pre>
 <p class="figure">Figure 2</p>
-<p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
+<p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.5.1.p.3">In the RECONFIRM TLV the SSOP-TYPE is RECONFIRM (tentatively 0x43).  The SSOP-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
 <p id="rfc.section.6.5.1.p.4">A RECONFIRM request MUST contain exactly one record. The RECONFIRM TLV has no count field to specify more than one record. Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.5.1.p.5">TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value ANY (255).</p>
@@ -904,7 +904,7 @@
       <td class="reference">
         <b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b>
       </td>
-      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-18">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-18, October 2016.</td>
+      <td class="top"><a>Rescorla, E.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tls-tls13-19">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-19, March 2017.</td>
     </tr>
     <tr>
       <td class="reference">

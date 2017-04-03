@@ -698,7 +698,7 @@ Internet-Draft           DNS Push Notifications               March 2017
    is not using for any other active operation on this connection.  For
    the purposes here, a MESSAGE ID is in use on this connection if the
    client has used it in a request for which it has not yet received a
-   response, or if if the client has used it for a subscription which it
+   response, or if the client has used it for a subscription which it
    has not yet cancelled using UNSUBSCRIBE.  In the SUBSCRIBE response
    the server MUST echo back the MESSAGE ID value unchanged.
 
@@ -1482,7 +1482,7 @@ Internet-Draft           DNS Push Notifications               March 2017
    is not using for any other active operation on this connection.  For
    the purposes here, a MESSAGE ID is in use on this connection if the
    client has used it in a request for which it has not yet received a
-   response, or if if the client has used it for a subscription which it
+   response, or if the client has used it for a subscription which it
    has not yet cancelled using UNSUBSCRIBE.  In the RECONFIRM response
    the server MUST echo back the MESSAGE ID value unchanged.
 
@@ -1800,8 +1800,8 @@ Internet-Draft           DNS Push Notifications               March 2017
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-18 (work in progress),
-              October 2016.
+              Version 1.3", draft-ietf-tls-tls13-19 (work in progress),
+              March 2017.
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               DOI 10.17487/RFC0768, August 1980,
