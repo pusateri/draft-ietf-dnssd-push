@@ -74,28 +74,28 @@ Table of Contents
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .  10
      6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  12
        6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  13
-       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  15
-     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  18
-       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  19
-       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  21
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  22
-       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  23
-       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  24
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  26
-       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  26
-       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  28
-     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  30
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  31
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  31
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  31
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  32
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  32
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  32
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  32
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  33
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  33
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  34
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
+       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  16
+     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  19
+       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
+       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  23
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  24
+       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  25
+       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  26
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
+       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  29
+       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  31
+     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  33
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  34
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  35
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  35
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  37
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
 
 
 
@@ -677,20 +677,36 @@ Internet-Draft           DNS Push Notifications               March 2017
 6.2.1.  SUBSCRIBE Request
 
    A SUBSCRIBE request message begins with the standard DNS Session
-   Signaling 12-byte header [SessSig], followed by the SUBSCRIBE TLV.
-   The SSOP-DATA for the the SUBSCRIBE TLV is as follows:
+   Signaling 12-byte header [SessSig], followed by the SUBSCRIBE TLV.  A
+   SUBSCRIBE request message is illustrated below:
 
-                                             1  1  1  1  1  1
-               0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                                               |
-             \                     NAME                      \
-             \                                               \
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                     TYPE                      |
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                     CLASS                     |
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+                                     1  1  1  1  1  1
+       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |                  MESSAGE ID                   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |QR|  Opcode   |         Z          |   RCODE   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             QDCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             ANCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             NSCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             ARCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |   SSOP-TYPE = SUBSCRIBE (tentatively 0x40)    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     |                                               |   \
+     \                     NAME                      \    |
+     \                                               \    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > SSOP-DATA
+     |                     TYPE                      |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     CLASS                     |   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                                  Figure 1
 
@@ -702,15 +718,30 @@ Internet-Draft           DNS Push Notifications               March 2017
    has not yet cancelled using UNSUBSCRIBE.  In the SUBSCRIBE response
    the server MUST echo back the MESSAGE ID value unchanged.
 
-   In the SUBSCRIBE TLV the SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
-   The SSOP-LENGTH is the length of the SSOP-DATA that follows, which
-   specifies the name, type, and class of the record(s) being sought.
+   The other header fields MUST be set as described in the DNS Session
+   Signaling specification [SessSig].  The DNS Opcode is the Session
+   Signaling Opcode (tentatively 6).  The four count fields MUST be
 
-   A SUBSCRIBE request MUST contain exactly one question.  The SUBSCRIBE
-   TLV has no QDCOUNT field to specify more than one question.  Since
-   SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request
-   messages can be concatenated in a single TCP stream and packed
-   efficiently into TCP segments.
+
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 13]
+
+Internet-Draft           DNS Push Notifications               March 2017
+
+
+   empty, and the corresponding four sections MUST be empty (i.e.,
+   absent).
+
+   The SSOP-TYPE is SUBSCRIBE (tentatively 0x40).  The SSOP-LENGTH is
+   the length of the SSOP-DATA that follows, which specifies the name,
+   type, and class of the record(s) being sought.
+
+   The SSOP-DATA for a SUBSCRIBE request MUST contain exactly one
+   question.  The SSOP-DATA for a SUBSCRIBE request has no QDCOUNT field
+   to specify more than one question.  Since SUBSCRIBE requests are sent
+   over TCP, multiple SUBSCRIBE request messages can be concatenated in
+   a single TCP stream and packed efficiently into TCP segments.
 
    If accepted, the subscription will stay in effect until the client
    cancels the subscription using UNSUBSCRIBE or until the connection
@@ -722,14 +753,6 @@ Internet-Draft           DNS Push Notifications               March 2017
    For the purpose of this matching, the established DNS case-
    insensitivity for US-ASCII letters applies (e.g., "foo.com" and
    "Foo.com" are the same).  If a server receives such a duplicate
-
-
-
-Pusateri & Cheshire    Expires September 28, 2017              [Page 13]
-
-Internet-Draft           DNS Push Notifications               March 2017
-
-
    SUBSCRIBE message this is an error and the server MUST immediately
    terminate the connection with a TCP RST (or equivalent for other
    protocols).
@@ -751,6 +774,17 @@ Internet-Draft           DNS Push Notifications               March 2017
    subscription to changes for the given NAME, TYPE and CLASS.  If one
    or both of TYPE or CLASS are ANY (255) then this subscription matches
    any type and/or any class, as appropriate.
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 14]
+
+Internet-Draft           DNS Push Notifications               March 2017
+
 
    NOTE: A little-known quirk of DNS is that in DNS QUERY requests,
    QTYPE and QCLASS 255 mean "ANY" not "ALL".  They indicate that the
@@ -781,7 +815,29 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 14]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 15]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -837,7 +893,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 15]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 16]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -893,7 +949,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 16]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 17]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -949,7 +1005,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 17]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 18]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1005,7 +1061,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 18]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 19]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1013,7 +1069,58 @@ Internet-Draft           DNS Push Notifications               March 2017
 6.3.1.  PUSH Message
 
    A PUSH message begins with the standard DNS Session Signaling 12-byte
-   header [SessSig], followed by the PUSH TLV.
+   header [SessSig], followed by the PUSH TLV.  A PUSH message is
+   illustrated below:
+
+                                     1  1  1  1  1  1
+       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |                  MESSAGE ID                   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |QR|  Opcode   |         Z          |   RCODE   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             QDCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             ANCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             NSCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             ARCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |      SSOP-TYPE = PUSH (tentatively 0x42)      |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     \                     NAME                      \   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     TYPE                      |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     CLASS                     |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     RDLEN                     |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     \                     RDATA                     \    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > SSOP-DATA
+     \         NAME                                  \    |
+     +--+--+--+--+--+--+-                            |    |
+     |         TYPE                Repeated          |    |
+     +--+--+--+--+--+--+-                            |    |
+     |         CLASS                  As             |    |
+     +--+--+--+--+--+--+-                            |    |
+     |         RDLEN               Necessary         |    |
+     +--+--+--+--+--+--+-                            |    |
+     \         RDATA                                 \   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+
+                                 Figure 2
+
+
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 20]
+
+Internet-Draft           DNS Push Notifications               March 2017
+
 
    The MESSAGE ID field MUST be set to a unique value, that the server
    is not currently using for any other active outgoing request that it
@@ -1023,19 +1130,24 @@ Internet-Draft           DNS Push Notifications               March 2017
    the PUSH response the client MUST echo back the MESSAGE ID value
    unchanged.
 
-   In the PUSH TLV the SSOP-TYPE is PUSH (tentatively 0x41).  The SSOP-
-   LENGTH is the length of the SSOP-DATA that follows, which specifies
-   the changes being communicated.
+   The other header fields MUST be set as described in the DNS Session
+   Signaling specification [SessSig].  The DNS Opcode is the Session
+   Signaling Opcode (tentatively 6).  The four count fields MUST be
+   empty, and the corresponding four sections MUST be empty (i.e.,
+   absent).
 
-   The SSOP-DATA contains one or more Update records, in customary
-   Resource Record format, as used in DNS Update [RFC2136] messages.  A
-   PUSH Message MUST contain at least one Update record.  If a PUSH
-   Message is received that contains no Update records this is a fatal
-   error, and the receiver MUST immediately terminate the connection
-   with a TCP RST (or equivalent for other protocols).
+   The SSOP-TYPE is PUSH (tentatively 0x41).  The SSOP-LENGTH is the
+   length of the SSOP-DATA that follows, which specifies the changes
+   being communicated.
 
-   The SSOP-DATA contains the relevant change information for the
-   client, formatted identically to a DNS Update [RFC2136].  To recap:
+   The SSOP-DATA contains one or more Update records.  A PUSH Message
+   MUST contain at least one Update record.  If a PUSH Message is
+   received that contains no Update records this is a fatal error, and
+   the receiver MUST immediately terminate the connection with a TCP RST
+   (or equivalent for other protocols).  The Update records are
+   formatted in the customary way for Resource Records in DNS messages,
+   and interpreted according to the same rules as for DNS Update
+   [RFC2136] messages, namely:
 
       Delete all RRsets from a name:
       TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.
@@ -1061,7 +1173,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 19]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 21]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1117,7 +1229,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 20]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 22]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1173,7 +1285,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 21]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 23]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1229,7 +1341,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 22]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 24]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1285,7 +1397,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 23]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 25]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1337,14 +1449,16 @@ Internet-Draft           DNS Push Notifications               March 2017
    MAY discard the state associated with it immediately, or later, at
    the server's discretion.
 
-   Nonzero RCODE values signal some kind of error.
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 24]
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 26]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
+
+   Nonzero RCODE values signal some kind of error.
 
    RCODE value FORMERR indicates a message format error.
 
@@ -1395,9 +1509,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-
-
-Pusateri & Cheshire    Expires September 28, 2017              [Page 25]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 27]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1427,11 +1539,6 @@ Internet-Draft           DNS Push Notifications               March 2017
    effect of informing all other interested clients that the device in
    question is now gone.
 
-6.5.1.  RECONFIRM Request
-
-   A RECONFIRM request message begins with the standard DNS Session
-   Signaling 12-byte header [SessSig], followed by the RECONFIRM TLV.
-   The SSOP-DATA for the the RECONFIRM TLV is as follows:
 
 
 
@@ -1453,30 +1560,53 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 26]
+
+
+
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 28]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
 
-                                             1  1  1  1  1  1
-               0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                                               |
-             \                     NAME                      \
-             \                                               \
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                     TYPE                      |
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                     CLASS                     |
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                     RDLEN                     |
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-             |                                               |
-             \                     RDATA                     \
-             \                                               \
-             +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+6.5.1.  RECONFIRM Request
 
-                                 Figure 2
+   A RECONFIRM request message begins with the standard DNS Session
+   Signaling 12-byte header [SessSig], followed by the RECONFIRM TLV.  A
+   RECONFIRM request message is illustrated below:
+
+                                     1  1  1  1  1  1
+       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |                  MESSAGE ID                   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |QR|  Opcode   |         Z          |   RCODE   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             QDCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             ANCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             NSCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |             ARCOUNT (MUST BE ZERO)            |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |   SSOP-TYPE = RECONFIRM (tentatively 0x43)    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     \                     NAME                      \   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     TYPE                      |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     CLASS                     |     > SSOP-DATA
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     RDLEN                     |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     \                     RDATA                     \   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+
+                                 Figure 3
 
    The MESSAGE ID field MUST be set to a unique value, that the client
    is not using for any other active operation on this connection.  For
@@ -1486,16 +1616,29 @@ Internet-Draft           DNS Push Notifications               March 2017
    has not yet cancelled using UNSUBSCRIBE.  In the RECONFIRM response
    the server MUST echo back the MESSAGE ID value unchanged.
 
-   In the RECONFIRM TLV the SSOP-TYPE is RECONFIRM (tentatively 0x43).
-   The SSOP-LENGTH is the length of the data that follows, which
-   specifies the name, type, class, and content of the record being
-   disputed.
+   The other header fields MUST be set as described in the DNS Session
+   Signaling specification [SessSig].  The DNS Opcode is the Session
 
-   A RECONFIRM request MUST contain exactly one record.  The RECONFIRM
-   TLV has no count field to specify more than one record.  Since
-   RECONFIRM requests are sent over TCP, multiple RECONFIRM request
-   messages can be concatenated in a single TCP stream and packed
-   efficiently into TCP segments.
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 29]
+
+Internet-Draft           DNS Push Notifications               March 2017
+
+
+   Signaling Opcode (tentatively 6).  The four count fields MUST be
+   empty, and the corresponding four sections MUST be empty (i.e.,
+   absent).
+
+   The SSOP-TYPE is RECONFIRM (tentatively 0x43).  The SSOP-LENGTH is
+   the length of the data that follows, which specifies the name, type,
+   class, and content of the record being disputed.
+
+   The SSOP-DATA for a RECONFIRM request MUST contain exactly one
+   record.  The SSOP-DATA for a RECONFIRM request has no count field to
+   specify more than one record.  Since RECONFIRM requests are sent over
+   TCP, multiple RECONFIRM request messages can be concatenated in a
+   single TCP stream and packed efficiently into TCP segments.
 
    TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value
    ANY (255).
@@ -1509,7 +1652,32 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 27]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 28, 2017              [Page 30]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1565,7 +1733,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 28]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 31]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1621,7 +1789,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 29]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 32]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1677,7 +1845,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 30]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 33]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1733,7 +1901,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 31]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 34]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1789,7 +1957,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 32]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 35]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1845,7 +2013,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 33]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 36]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1901,7 +2069,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 34]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 37]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -1957,7 +2125,7 @@ Internet-Draft           DNS Push Notifications               March 2017
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 35]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 38]
 
 Internet-Draft           DNS Push Notifications               March 2017
 
@@ -2013,4 +2181,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire    Expires September 28, 2017              [Page 36]
+Pusateri & Cheshire    Expires September 28, 2017              [Page 39]

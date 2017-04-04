@@ -319,30 +319,52 @@
        <section title="SUBSCRIBE Request">
          <t>A SUBSCRIBE request message begins with the standard
          <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the SUBSCRIBE TLV.
-         The SSOP-DATA for the the SUBSCRIBE TLV is as follows:</t>
+         A SUBSCRIBE request message is illustrated below:</t>
 
          <figure align="center" anchor="subscribe_req"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                                               |
-\                     NAME                      \
-\                                               \
+|                  MESSAGE ID                   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                     TYPE                      |
+|QR|  Opcode   |         Z          |   RCODE   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                     CLASS                     |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+]]></artwork>
-         </figure>
-
+|             QDCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ANCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             NSCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ARCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|   SSOP-TYPE = SUBSCRIBE (tentatively 0x40)    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|                                               |   \
+\                     NAME                      \    |
+\                                               \    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > SSOP-DATA
+|                     TYPE                      |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     CLASS                     |   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
-         <t>In the SUBSCRIBE TLV the SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
+         <t>The other header fields MUST be set as described in the
+         <xref target="SessSig">DNS Session Signaling specification</xref>.
+         The DNS Opcode is the Session Signaling Opcode (tentatively 6).
+         The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</t>
+
+         <t>The SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
          The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
          the name, type, and class of the record(s) being sought.</t>
 
-         <t>A SUBSCRIBE request MUST contain exactly one question. The SUBSCRIBE TLV has no QDCOUNT field to specify more than one question. Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
+         <t>The SSOP-DATA for a SUBSCRIBE request MUST contain exactly one question.
+         The SSOP-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.
+         Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages
+         can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 
          <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the connection between the client and the server is closed.</t>
 
@@ -439,19 +461,71 @@
        <section title="PUSH Message">
 
          <t>A PUSH message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the PUSH TLV.</t>
+         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the PUSH TLV.
+         A PUSH message is illustrated below:</t>
+
+         <figure align="center" anchor="push_msg"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                  MESSAGE ID                   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|  Opcode   |         Z          |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             QDCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ANCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             NSCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ARCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|      SSOP-TYPE = PUSH (tentatively 0x42)      |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+\                     NAME                      \   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     TYPE                      |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     CLASS                     |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     RDLEN                     |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+\                     RDATA                     \    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > SSOP-DATA
+\         NAME                                  \    |
++--+--+--+--+--+--+-                            |    |
+|         TYPE                Repeated          |    |
++--+--+--+--+--+--+-                            |    |
+|         CLASS                  As             |    |
++--+--+--+--+--+--+-                            |    |
+|         RDLEN               Necessary         |    |
++--+--+--+--+--+--+-                            |    |
+\         RDATA                                 \   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the server is not currently using for any other active outgoing request that it has sent on this connection. The MESSAGE ID in the outgoing PUSH message is selected by the server and has no relationship to the MESSAGE ID in any of the client subscriptions it may relate to. In the PUSH response the client MUST echo back the MESSAGE ID value unchanged.</t>
 
-         <t>In the PUSH TLV the SSOP-TYPE is PUSH (tentatively 0x41).
+         <t>The other header fields MUST be set as described in the
+         <xref target="SessSig">DNS Session Signaling specification</xref>.
+         The DNS Opcode is the Session Signaling Opcode (tentatively 6).
+         The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</t>
+
+         <t>The SSOP-TYPE is PUSH (tentatively 0x41).
          The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
          the changes being communicated.</t>
 
-         <t>The SSOP-DATA contains one or more Update records, in customary Resource Record format, as used in <xref target="RFC2136">DNS Update</xref> messages. A PUSH Message MUST contain at least one Update record. If a PUSH Message is received that contains no Update records this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
-
 <?rfc needLines="15" ?>
-         <t>The SSOP-DATA contains the relevant change information for the client,
-         formatted identically to a <xref target="RFC2136">DNS Update</xref>. To recap:
+         <t>The SSOP-DATA contains one or more Update records.
+         A PUSH Message MUST contain at least one Update record.
+         If a PUSH Message is received that contains no Update records
+         this is a fatal error, and the receiver MUST immediately terminate
+         the connection with a TCP RST (or equivalent for other protocols).
+         The Update records are formatted in the customary way for Resource Records in DNS messages,
+         and interpreted according to the same rules as for
+         <xref target="RFC2136">DNS Update</xref> messages, namely:
+
            <list style="bullets">
              <t>Delete all RRsets from a name:<vspace />
              TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</t>
@@ -576,6 +650,7 @@
 
          <t>Having being successfully revoked with a correctly-formatted UNSUBSCRIBE message (resulting in a response with RCODE NOERROR) the previously referenced subscription is no longer active and the server MAY discard the state associated with it immediately, or later, at the server's discretion.</t>
 
+<?rfc needLines="5" ?>
          <t>Nonzero RCODE values signal some kind of error.</t>
 
          <t>RCODE value FORMERR indicates a message format error.</t>
@@ -599,38 +674,59 @@
 
        <t>If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
 
+<?rfc needLines="28" ?>
        <section title="RECONFIRM Request">
 
          <t>A RECONFIRM request message begins with the standard
          <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the RECONFIRM TLV.
-         The SSOP-DATA for the the RECONFIRM TLV is as follows:</t>
+         A RECONFIRM request message is illustrated below:</t>
 
          <figure align="center" anchor="reconfirm_req"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                                               |
-\                     NAME                      \
-\                                               \
+|                  MESSAGE ID                   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                     TYPE                      |
+|QR|  Opcode   |         Z          |   RCODE   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                     CLASS                     |
+|             QDCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                     RDLEN                     |
+|             ANCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                                               |
-\                     RDATA                     \
-\                                               \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+]]></artwork></figure>
+|             NSCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ARCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|   SSOP-TYPE = RECONFIRM (tentatively 0x43)    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+\                     NAME                      \   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     TYPE                      |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     CLASS                     |     > SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     RDLEN                     |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+\                     RDATA                     \   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
-         <t>In the RECONFIRM TLV the SSOP-TYPE is RECONFIRM (tentatively 0x43).
+         <t>The other header fields MUST be set as described in the
+         <xref target="SessSig">DNS Session Signaling specification</xref>.
+         The DNS Opcode is the Session Signaling Opcode (tentatively 6).
+         The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</t>
+
+         <t>The SSOP-TYPE is RECONFIRM (tentatively 0x43).
          The SSOP-LENGTH is the length of the data that follows, which specifies
          the name, type, class, and content of the record being disputed.</t>
 
-         <t>A RECONFIRM request MUST contain exactly one record. The RECONFIRM TLV has no count field to specify more than one record. Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
+         <t>The SSOP-DATA for a RECONFIRM request MUST contain exactly one record.
+         The SSOP-DATA for a RECONFIRM request has no count field to specify more than one record.
+         Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages
+         can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 
          <t>TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value ANY (255).</t>
 
