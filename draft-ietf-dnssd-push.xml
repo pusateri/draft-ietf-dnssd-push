@@ -115,7 +115,7 @@
      </address>
    </author>
 
-   <date year='2017' month='March' day='27'/>
+   <date year='2017' month='April' day='14'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -379,7 +379,7 @@
          <t>If neither TYPE nor CLASS are ANY (255) then this is a specific subscription to changes for the given NAME, TYPE and CLASS. If one or both of TYPE or CLASS are ANY (255) then this subscription matches any type and/or any class, as appropriate.</t>
 
 <?rfc needLines="14" ?>
-         <t>NOTE: A little-known quirk of DNS is that in DNS QUERY requests, QTYPE and QCLASS 255 mean "ANY" not "ALL". They indicate that the server should respond with ANY matching records of its choosing, not necessarily ALL matching records. This can lead to some surprising and unexpected results, were a query returns some valid answers but not all of them, and makes QTYPE=ANY queries less useful than people sometimes imagine.</t>
+         <t>NOTE: A little-known quirk of DNS is that in DNS QUERY requests, QTYPE and QCLASS 255 mean "ANY" not "ALL". They indicate that the server should respond with ANY matching records of its choosing, not necessarily ALL matching records. This can lead to some surprising and unexpected results, where a query returns some valid answers but not all of them, and makes QTYPE=ANY queries less useful than people sometimes imagine.</t>
 
          <t>When used in conjunction with SUBSCRIBE, TYPE and CLASS 255 should be interpreted to mean "ALL", not "ANY". After accepting a subscription where one or both of TYPE or CLASS are 255, the server MUST send Push Notification Updates for ALL record changes that match the subscription, not just some of them.</t>
 <?rfc needLines="48" ?>
@@ -608,14 +608,6 @@
          and the SUBSCRIBE request is subsequently unsuccessful for some reason,
          then when the UNSUBSCRIBE request is eventually processed it will be an UNSUBSCRIBE
          request for a nonexistent subscription, which will result NXDOMAIN response.</t>
-
-         <t>Note that when the
-         client issues an UNSUBSCRIBE request for an as-yet unacknowledged SUBSCRIBE request,
-         at that moment the client will have two outstanding DNS Session Signaling operations with same MESSAGE ID,
-         a SUBSCRIBE request and an UNSUBSCRIBE request, which will both receive responses, in that order.
-         When the client has multiple outstanding DNS Session Signaling operations with same MESSAGE ID,
-         care should be taken that when a DNS Session Signaling response message is received for that MESSAGE ID,
-         it is associated with the *first* unacknowledged request.</t>
 
 <?rfc needLines="48" ?>
        </section>
