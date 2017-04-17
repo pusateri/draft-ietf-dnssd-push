@@ -629,12 +629,12 @@ Internet-Draft           DNS Push Notifications               April 2017
    DNS Session Signaling TLV for DNS Push Notification SUBSCRIBE
    Requests/Responses (tentatively Session Signaling Type Code 0x40).
 
-   A server MUST NOT initiate a SUBSCRIBE request.
-
-
-
-
-
+   The entity that initiates a SUBSCRIBE request is by definition the
+   client.  A server should not send a SUBSCRIBE request over an
+   existing connection from a client.  If a server does send a SUBSCRIBE
+   request over the connection initiated by a client, it is an error and
+   the client should acknowledge the request with the error response
+   RCODE NOTAUTH (Not Authoritative).
 
 
 

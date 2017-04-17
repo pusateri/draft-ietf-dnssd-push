@@ -313,7 +313,7 @@
      <section title="DNS Push Notification SUBSCRIBE">
        <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TLS connection to the server. A SUBSCRIBE request is encoded in a <xref target="SessSig">DNS Session Signaling</xref> message. This specification defines a DNS Session Signaling TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively Session Signaling Type Code 0x40).</t>
 
-       <t>A server MUST NOT initiate a SUBSCRIBE request.</t>
+       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server should not send a SUBSCRIBE request over an existing connection from a client. If a server does send a SUBSCRIBE request over the connection initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</t>
 
 <?rfc needLines="48" ?>
        <section title="SUBSCRIBE Request">
