@@ -115,7 +115,7 @@
      </address>
    </author>
 
-   <date year='2017' month='April' day='14'/>
+   <date year='2017' month='April' day='17'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -588,10 +588,34 @@
          <t>An UNSUBSCRIBE request message begins with the standard
          <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the UNSUBSCRIBE TLV.</t>
 
-         <t>In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively 0x42).
-         The SSOP-LENGTH is zero. There is no SSOP-DATA for UNSUBSCRIBE.</t>
+         <figure align="center" anchor="unsubscribe_req"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                  MESSAGE ID                   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|  Opcode   |         Z          |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             QDCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ANCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             NSCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ARCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  SSOP-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             SSOP-LENGTH (2 octets)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|              SUBSCRIBE MESSAGE ID             |   SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+]]></artwork></figure>
+         
 
-         <t>The MESSAGE ID field MUST match the value given in the ID field of an active SUBSCRIBE request.
+         <t>In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively 0x42).
+         The SSOP-LENGTH is 2 octets.</t>
+
+         <t>The SSOP-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.
          This is how the server knows which SUBSCRIBE request is being cancelled.
          After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.
          If a server receives an UNSUBSCRIBE message

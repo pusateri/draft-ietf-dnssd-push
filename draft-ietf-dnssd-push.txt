@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                       Seeking affiliation
 Intended status: Standards Track                             S. Cheshire
-Expires: October 16, 2017                                     Apple Inc.
-                                                          April 14, 2017
+Expires: October 19, 2017                                     Apple Inc.
+                                                          April 17, 2017
 
 
                          DNS Push Notifications
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on October 16, 2017.
+   This Internet-Draft will expire on October 19, 2017.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 1]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 1]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -80,22 +80,22 @@ Table of Contents
        6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  23
      6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  24
        6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  25
-       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  26
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
-       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  29
-       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  31
-     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  33
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  34
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  35
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  35
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  37
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
+       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  27
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  29
+       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  30
+       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  32
+     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  34
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  35
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  35
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  36
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  36
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  38
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
 
 
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 2]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 2]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -165,7 +165,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 3]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 3]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -221,7 +221,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 4]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 4]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -277,7 +277,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 5]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 5]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -333,7 +333,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 6]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 6]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -389,7 +389,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 7]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 7]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -445,7 +445,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 8]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 8]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -501,7 +501,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017                [Page 9]
+Pusateri & Cheshire     Expires October 19, 2017                [Page 9]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -557,7 +557,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 10]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 10]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -613,7 +613,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 11]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 11]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -669,7 +669,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 12]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 12]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -725,7 +725,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 13]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 13]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -781,7 +781,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 14]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 14]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -837,7 +837,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 15]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 15]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -893,7 +893,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 16]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 16]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -949,7 +949,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 17]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 17]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1005,7 +1005,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 18]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 18]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1061,7 +1061,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 19]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 19]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1117,7 +1117,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 20]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 20]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1173,7 +1173,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 21]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 21]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1229,7 +1229,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 22]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 22]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1285,7 +1285,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 23]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 23]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1341,7 +1341,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 24]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 24]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1351,17 +1351,40 @@ Internet-Draft           DNS Push Notifications               April 2017
    An UNSUBSCRIBE request message begins with the standard DNS Session
    Signaling 12-byte header [SessSig], followed by the UNSUBSCRIBE TLV.
 
-   In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively
-   0x42).  The SSOP-LENGTH is zero.  There is no SSOP-DATA for
-   UNSUBSCRIBE.
+                                       1  1  1  1  1  1
+         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |                  MESSAGE ID                   |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |QR|  Opcode   |         Z          |   RCODE   |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |             QDCOUNT (MUST BE ZERO)            |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |             ANCOUNT (MUST BE ZERO)            |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |             NSCOUNT (MUST BE ZERO)            |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |             ARCOUNT (MUST BE ZERO)            |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |  SSOP-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |             SSOP-LENGTH (2 octets)            |
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+       |              SUBSCRIBE MESSAGE ID             |   SSOP-DATA
+       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-   The MESSAGE ID field MUST match the value given in the ID field of an
-   active SUBSCRIBE request.  This is how the server knows which
-   SUBSCRIBE request is being cancelled.  After receipt of the
-   UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.  If a
-   server receives an UNSUBSCRIBE message where the MESSAGE ID does not
-   match the ID of an active SUBSCRIBE request the server MUST return a
-   response containing RCODE = 3 (NXDOMAIN).
+                                 Figure 3
+
+   In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively
+   0x42).  The SSOP-LENGTH is 2 octets.
+
+   The SSOP-DATA contains the MESSAGE ID field of the value given in the
+   ID field of an active SUBSCRIBE request.  This is how the server
+   knows which SUBSCRIBE request is being cancelled.  After receipt of
+   the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.
+   If a server receives an UNSUBSCRIBE message where the MESSAGE ID does
+   not match the ID of an active SUBSCRIBE request the server MUST
+   return a response containing RCODE = 3 (NXDOMAIN).
 
    It is allowable for the client to issue an UNSUBSCRIBE request for a
    previous SUBSCRIBE request for which the client has not yet received
@@ -1371,6 +1394,14 @@ Internet-Draft           DNS Push Notifications               April 2017
    response before issuing the UNSUBSCRIBE request.  A consequence of
    this is that if the client issues an UNSUBSCRIBE request for an as-
    yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is
+
+
+
+Pusateri & Cheshire     Expires October 19, 2017               [Page 25]
+
+Internet-Draft           DNS Push Notifications               April 2017
+
+
    subsequently unsuccessful for some reason, then when the UNSUBSCRIBE
    request is eventually processed it will be an UNSUBSCRIBE request for
    a nonexistent subscription, which will result NXDOMAIN response.
@@ -1397,7 +1428,32 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 25]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires October 19, 2017               [Page 26]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1453,7 +1509,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 26]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 27]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1509,7 +1565,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 27]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 28]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1565,7 +1621,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 28]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 29]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1606,7 +1662,7 @@ Internet-Draft           DNS Push Notifications               April 2017
      \                     RDATA                     \   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
-                                 Figure 3
+                                 Figure 4
 
    The MESSAGE ID field MUST be set to a unique value, that the client
    is not using for any other active operation on this connection.  For
@@ -1621,7 +1677,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 29]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 30]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1677,7 +1733,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 30]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 31]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1733,7 +1789,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 31]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 32]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1789,7 +1845,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 32]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 33]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1845,7 +1901,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 33]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 34]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1901,7 +1957,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 34]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 35]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -1957,7 +2013,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 35]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 36]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -2013,7 +2069,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 36]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 37]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -2069,7 +2125,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 37]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 38]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -2125,7 +2181,7 @@ Internet-Draft           DNS Push Notifications               April 2017
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 38]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 39]
 
 Internet-Draft           DNS Push Notifications               April 2017
 
@@ -2181,4 +2237,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires October 16, 2017               [Page 39]
+Pusateri & Cheshire     Expires October 19, 2017               [Page 40]

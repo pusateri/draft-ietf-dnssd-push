@@ -413,7 +413,7 @@
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-11" />
-  <meta name="dct.issued" scheme="ISO8601" content="2017-4-14" />
+  <meta name="dct.issued" scheme="ISO8601" content="2017-4-17" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism" />
   <meta name="description" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism" />
 
@@ -437,12 +437,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: October 16, 2017</td>
+  <td class="left">Expires: October 19, 2017</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">April 14, 2017</td>
+  <td class="right">April 17, 2017</td>
 </tr>
 
     	
@@ -462,7 +462,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on October 16, 2017.</p>
+<p>This Internet-Draft will expire on October 19, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -764,8 +764,33 @@
 <p id="rfc.section.6.4.p.2">A server MUST NOT initiate an UNSUBSCRIBE request.</p>
 <h1 id="rfc.section.6.4.1"><a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Request</h1>
 <p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE request message begins with the standard <a href="#SessSig">DNS Session Signaling 12-byte header</a> <cite title="NONE">[SessSig]</cite>, followed by the UNSUBSCRIBE TLV.</p>
-<p id="rfc.section.6.4.1.p.2">In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively 0x42).  The SSOP-LENGTH is zero. There is no SSOP-DATA for UNSUBSCRIBE.</p>
-<p id="rfc.section.6.4.1.p.3">The MESSAGE ID field MUST match the value given in the ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.  If a server receives an UNSUBSCRIBE message where the MESSAGE ID does not match the ID of an active SUBSCRIBE request the server MUST return a response containing RCODE = 3 (NXDOMAIN).</p>
+<div id="rfc.figure.3"/>
+<div id="unsubscribe_req"/>
+<pre>
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                  MESSAGE ID                   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|  Opcode   |         Z          |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             QDCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ANCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             NSCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             ARCOUNT (MUST BE ZERO)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  SSOP-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|             SSOP-LENGTH (2 octets)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|              SUBSCRIBE MESSAGE ID             |   SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</pre>
+<p class="figure">Figure 3</p>
+<p id="rfc.section.6.4.1.p.2">In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively 0x42).  The SSOP-LENGTH is 2 octets.</p>
+<p id="rfc.section.6.4.1.p.3">The SSOP-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.  If a server receives an UNSUBSCRIBE message where the MESSAGE ID does not match the ID of an active SUBSCRIBE request the server MUST return a response containing RCODE = 3 (NXDOMAIN).</p>
 <p id="rfc.section.6.4.1.p.4">It is allowable for the client to issue an UNSUBSCRIBE request for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE request.  A consequence of this is that if the client issues an UNSUBSCRIBE request for an as-yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is subsequently unsuccessful for some reason, then when the UNSUBSCRIBE request is eventually processed it will be an UNSUBSCRIBE request for a nonexistent subscription, which will result NXDOMAIN response.</p>
 <h1 id="rfc.section.6.4.2"><a href="#rfc.section.6.4.2">6.4.2.</a> UNSUBSCRIBE Response</h1>
 <p id="rfc.section.6.4.2.p.1">Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response from the server.</p>
@@ -824,7 +849,7 @@
 <p id="rfc.section.6.5.p.2">If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
 <h1 id="rfc.section.6.5.1"><a href="#rfc.section.6.5.1">6.5.1.</a> RECONFIRM Request</h1>
 <p id="rfc.section.6.5.1.p.1">A RECONFIRM request message begins with the standard <a href="#SessSig">DNS Session Signaling 12-byte header</a> <cite title="NONE">[SessSig]</cite>, followed by the RECONFIRM TLV.  A RECONFIRM request message is illustrated below:</p>
-<div id="rfc.figure.3"/>
+<div id="rfc.figure.4"/>
 <div id="reconfirm_req"/>
 <pre>
                                 1  1  1  1  1  1
@@ -856,7 +881,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 \                     RDATA                     \   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
-<p class="figure">Figure 3</p>
+<p class="figure">Figure 4</p>
 <p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#SessSig">DNS Session Signaling specification</a> <cite title="NONE">[SessSig]</cite>.  The DNS Opcode is the Session Signaling Opcode (tentatively 6).  The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.5.1.p.4">The SSOP-TYPE is RECONFIRM (tentatively 0x43).  The SSOP-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
