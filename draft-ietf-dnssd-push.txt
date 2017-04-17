@@ -262,18 +262,18 @@ Internet-Draft           DNS Push Notifications               April 2017
    Standard DNS Queries MAY be sent over a DNS Push Notification
    connection, provided that these are queries for names falling within
    the server's zone (the <zone> in the "_dns-push-tls._tcp.<zone>" SRV
-   record).  The RD (Recursion Desired) bit MUST be zero.
+   record).  The RD (Recursion Desired) bit MUST be zero.  If a query is
+   received with the RD bit set, matching records for names falling
+   within the server's zones should be returned with the RA (Recursion
+   Available) bit clear.  If the query is for a name not in the server's
+   zone, an error with RCODE NOTAUTH (Not Authoritative) should be
+   returned.
 
    DNS Push Notification clients are NOT required to implement DNS
    Update Prerequisite processing.  Prerequisites are used to perform
    tentative atomic test-and-set type operations when a client updates
    records on a server, and that concept has no applicability when it
-   comes to an authoritative server informing a client of changes to DNS
-   records.
 
-   This DNS Push Notification specification includes support for DNS
-   classes, for completeness.  However, in practice, it is anticipated
-   that for the foreseeable future the only DNS class in use will be DNS
 
 
 
@@ -282,9 +282,17 @@ Pusateri & Cheshire     Expires October 19, 2017                [Page 5]
 Internet-Draft           DNS Push Notifications               April 2017
 
 
+   comes to an authoritative server informing a client of changes to DNS
+   records.
+
+   This DNS Push Notification specification includes support for DNS
+   classes, for completeness.  However, in practice, it is anticipated
+   that for the foreseeable future the only DNS class in use will be DNS
    class "IN", as is the reality today with existing DNS servers and
    clients.  A DNS Push Notification server MAY choose to implement only
-   DNS class "IN".
+   DNS class "IN".  If messages are received for a class other than
+   "IN", and that class is not supported, an error with RCODE NOTIMPL
+   (Not Implemented) should be returned.
 
    DNS Push Notifications impose less load on the responding server than
    rapid polling would, but Push Notifications do still have a cost, so
@@ -322,14 +330,6 @@ Internet-Draft           DNS Push Notifications               April 2017
    idle connection open for some time, subject to the constraint that it
    MUST NOT keep a connection open that has been idle for more than the
    session's idle timeout (15 seconds by default).
-
-
-
-
-
-
-
-
 
 
 
