@@ -522,7 +522,7 @@
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> Overview</h1>
 <p id="rfc.section.3.p.1">The existing <a href="#RFC2136">DNS Update protocol</a> <cite title="NONE">[RFC2136]</cite> provides a mechanism for clients to add or delete individual resource records (RRs) or entire resource record sets (RRSets) on the zone's server.</p>
 <p id="rfc.section.3.p.2">This specification adopts a simplified subset of these existing syntax and semantics, and uses them for DNS Push Notification messages going in the opposite direction, from server to client, to communicate changes to a zone. The client subscribes for Push Notifications by connecting to the server and sending DNS message(s) indicating the RRSet(s) of interest. When the client loses interest in updates to these records, it unsubscribes.</p>
-<p id="rfc.section.3.p.3">The DNS Push Notification server for a zone is any server capable<br/> of generating the correct change notifications for a name.<br/> It may be a master, slave, or stealth name server <a href="#RFC1996">[RFC1996]</a>.  Consequently, the <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record for a<br/> zone MAY reference the same target host and port as that zone's <samp>_dns&#8209;update&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Queries.</p>
+<p id="rfc.section.3.p.3">The DNS Push Notification server for a zone is any server capable<br/> of generating the correct change notifications for a name.<br/> It may be a master, slave, or stealth name server <a href="#RFC7719">[RFC7719]</a>.  Consequently, the <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record for a<br/> zone MAY reference the same target host and port as that zone's <samp>_dns&#8209;update&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Queries.</p>
 <p id="rfc.section.3.p.4">Supporting DNS Updates and DNS Push Notifications on the same server is OPTIONAL. A DNS Push Notification server does NOT also have to support DNS Update.</p>
 <p id="rfc.section.3.p.5">DNS Updates and DNS Push Notifications may be handled on different ports on the same target host, in which case they are not considered to be the "same server" for the purposes of this specification, and communications with these two ports are handled independently.</p>
 <p id="rfc.section.3.p.6">Standard DNS Queries MAY be sent over a DNS Push Notification connection, provided that these are queries for names falling within the server's zone (the &lt;zone&gt; in the <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record). The RD (Recursion Desired) bit MUST be zero.</p>
@@ -543,7 +543,7 @@
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> Protocol Operation</h1>
 <p id="rfc.section.6.p.1">The DNS Push Notification protocol is a session-oriented protocol, and makes use of <a href="#SessSig">DNS Session Signaling</a> <cite title="NONE">[SessSig]</cite>.</p>
 <p id="rfc.section.6.p.2">For details of the DNS Session Signaling message format refer to the <a href="#SessSig">DNS Session Signaling specification</a> <cite title="NONE">[SessSig]</cite>.  Those details are not repeated here.</p>
-<p id="rfc.section.6.p.3">DNS Push Notification clients and servers MUST support DNS Session Signaling, but the server MUST NOT issue any DNS Session Signaling operations until after the client has first initiated a DNS Session Signaling operation of its own.  A single server can support DNS Queries, DNS Updates, and DNS Push Notifications (using DNS Session Signaling) on the same TCP port, and until the client has sent at least one DNS Session Signaling operation the server does not know what kind of client has connected to it.  Once the client has indicated willingness to use DNS Session Signaling operations by sending one of its own, either side of the connection may then initiate further Session Signaling operations at any time.</p>
+<p id="rfc.section.6.p.3">DNS Push Notification clients and servers MUST support DNS Session Signaling, but the server SHOULD NOT issue any DNS Session Signaling operations until after the client has first initiated a DNS Session Signaling operation of its own.  A single server can support DNS Queries, DNS Updates, and DNS Push Notifications (using DNS Session Signaling) on the same TCP port, and until the client has sent at least one DNS Session Signaling operation the server does not know what kind of client has connected to it.  Once the client has indicated willingness to use DNS Session Signaling operations by sending one of its own, either side of the connection may then initiate further Session Signaling operations at any time.</p>
 <p id="rfc.section.6.p.4">A DNS Push Notification exchange begins with the client discovering the appropriate server, using the procedure described in <a href="#discovery">Section 6.1</a>, and then making a TLS/TCP connection to it.</p>
 <p id="rfc.section.6.p.5">A typical DNS Push Notification client will immediately issue a DNS Session Signaling Keepalive operation to request a session timeout or keepalive interval longer than the the 15-second defaults, but this is NOT REQUIRED.  A DNS Push Notification client MAY issue other requests on the connection first, and only issue a DNS Session Signaling Keepalive operation later if it determines that to be necessary.</p>
 <p id="rfc.section.6.p.6">Once the connection is made, the client may then add and remove Push Notification subscriptions. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. Note that a client MUST be prepared to receive (and silently ignore) Push Notifications for subscriptions it has previously removed, since there is no way to prevent the situation where a Push Notification is in flight from server to client while the client's UNSUBSCRIBE message cancelling that subscription is simultaneously in flight from client to server.</p>
@@ -1126,12 +1126,6 @@
     <tr><td class="reference"><b id="obs">[obs]</b></td><td class="top"><a href="https://en.wikipedia.org/wiki/Observer_pattern">Observer Pattern</a>"</td>, "</tr>
     <tr>
       <td class="reference">
-        <b id="RFC1996">[RFC1996]</b>
-      </td>
-      <td class="top"><a>Vixie, P.</a>, "<a href="http://tools.ietf.org/html/rfc1996">A Mechanism for Prompt Notification of Zone Changes (DNS NOTIFY)</a>", RFC 1996, DOI 10.17487/RFC1996, August 1996.</td>
-    </tr>
-    <tr>
-      <td class="reference">
         <b id="RFC4287">[RFC4287]</b>
       </td>
       <td class="top"><a>Nottingham, M.</a> and <a>R. Sayre</a>, "<a href="http://tools.ietf.org/html/rfc4287">The Atom Syndication Format</a>", RFC 4287, DOI 10.17487/RFC4287, December 2005.</td>
@@ -1183,6 +1177,12 @@
         <b id="RFC7525">[RFC7525]</b>
       </td>
       <td class="top"><a>Sheffer, Y.</a>, <a>Holz, R.</a> and <a>P. Saint-Andre</a>, "<a href="http://tools.ietf.org/html/rfc7525">Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</a>", BCP 195, RFC 7525, DOI 10.17487/RFC7525, May 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7719">[RFC7719]</b>
+      </td>
+      <td class="top"><a>Hoffman, P.</a>, <a>Sullivan, A.</a> and <a>K. Fujiwara</a>, "<a href="http://tools.ietf.org/html/rfc7719">DNS Terminology</a>", RFC 7719, DOI 10.17487/RFC7719, December 2015.</td>
     </tr>
     <tr>
       <td class="reference">

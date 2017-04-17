@@ -11,7 +11,6 @@
 <!ENTITY RFC1034 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1034.xml">
 <!ENTITY RFC1035 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1035.xml">
 <!ENTITY RFC1123 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1123.xml">
-<!ENTITY RFC1996 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1996.xml">
 <!ENTITY RFC2119 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC2136 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2136.xml">
 <!ENTITY RFC2782 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2782.xml">
@@ -28,6 +27,7 @@
 <!ENTITY RFC7413 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7413.xml">
 <!ENTITY RFC7525 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7525.xml">
 <!ENTITY RFC7673 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7673.xml">
+<!ENTITY RFC7719 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7719.xml">
 <!ENTITY RFC7766 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7766.xml">
 <!ENTITY RFC7858 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7858.xml">
 <!ENTITY I-D.dukkipati-tcpm-tcp-loss-probe SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.dukkipati-tcpm-tcp-loss-probe.xml">
@@ -199,7 +199,7 @@
 
      <t>The DNS Push Notification server for a zone is any server capable<vspace />
      of generating the correct change notifications for a name.<vspace />
-     It may be a master, slave, or stealth name server <xref target="RFC1996"/>.
+     It may be a master, slave, or stealth name server <xref target="RFC7719"/>.
      Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a<vspace />
      zone MAY reference the same target host and port as that zone's
      <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Queries.</t>
@@ -255,7 +255,7 @@
      Those details are not repeated here.</t>
 
      <t>DNS Push Notification clients and servers MUST support DNS Session
-     Signaling, but the server MUST NOT issue any DNS Session Signaling
+     Signaling, but the server SHOULD NOT issue any DNS Session Signaling
      operations until after the client has first initiated a DNS Session
      Signaling operation of its own.
      A single server can support DNS Queries, DNS Updates, and DNS Push
@@ -940,7 +940,6 @@
 <?rfc needLines="9" ?>
 
    <references title="Informative References">
-     &RFC1996;
      &RFC4287;
      &RFC4953;
      &RFC5077;
@@ -950,6 +949,7 @@
      &RFC6824;
      &RFC7413;
      &RFC7525;
+     &RFC7719;
      &RFC7858;
 
      &I-D.dukkipati-tcpm-tcp-loss-probe;
