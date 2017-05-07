@@ -642,7 +642,7 @@
     <tr>
       <td class="left">SERVFAIL</td>
       <td class="center">2</td>
-      <td class="left">Server failed to process request due to resource exhaustion.</td>
+      <td class="left">Server failed to process request due to a problem with the server.</td>
     </tr>
     <tr>
       <td class="left">NXDOMAIN</td>
@@ -672,11 +672,11 @@
   </tbody>
 </table>
 <p id="rfc.section.6.2.2.p.6">This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</p>
-<p id="rfc.section.6.2.2.p.7">If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured or the server resources are exhausted. In either case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <a href="#SessSig">[SessSig]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below: </p>
+<p id="rfc.section.6.2.2.p.7">If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <a href="#SessSig">[SessSig]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below: </p>
 
 <ul class="empty">
   <li>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</li>
-  <li>For RCODE = 2 (SERVFAIL), which occurs due to resource exhaustion, the delay should be chosen according to the level of server overload and the anticipated duration of that overload. By default, a value of one minute is RECOMMENDED.</li>
+  <li>For RCODE = 2 (SERVFAIL) the delay should be chosen according to the level of server overload and the anticipated duration of that overload. By default, a value of one minute is RECOMMENDED. If a more serious server failure occurs, the delay may be longer in accordance with the specific problem encountered.</li>
   <li>For RCODE = 4 (NOTIMP), which occurs on a server that doesn't implement <a href="#SessSig">DNS Session Signaling</a> <cite title="NONE">[SessSig]</cite>, it is unlikely that the server will begin supporting DNS Session Signaling in the next few minutes, so the retry delay SHOULD be one hour.</li>
   <li>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.<br/> This is a misconfiguration, since this server is listed in a <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record, but the server itself is not currently configured to support DNS Push Notifications. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</li>
   <li>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.  <br/>This is a misconfiguration, since this server is listed in a <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record, but the server itself is not currently configured to support DNS Push Notifications for that zone. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</li>
@@ -737,7 +737,7 @@
 <p id="rfc.section.6.3.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the server is not currently using for any other active outgoing request that it has sent on this connection. The MESSAGE ID in the outgoing PUSH message is selected by the server and has no relationship to the MESSAGE ID in any of the client subscriptions it may relate to. In the PUSH response the client MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#SessSig">DNS Session Signaling specification</a> <cite title="NONE">[SessSig]</cite>.  The DNS Opcode is the Session Signaling Opcode (tentatively 6).  The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.3.1.p.4">The SSOP-TYPE is PUSH (tentatively 0x41).  The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies the changes being communicated.</p>
-<p id="rfc.section.6.3.1.p.5">The SSOP-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains no Update records this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages with the stipulation that DNS name compression is not permitted in DNS Session Signaling TLVs.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> messages, namely: </p>
+<p id="rfc.section.6.3.1.p.5">The SSOP-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains no Update records, this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages with the stipulation that DNS name compression is not permitted in DNS Session Signaling TLVs.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> messages, namely: </p>
 
 <ul class="empty">
   <li>Delete all RRsets from a name:<br/> TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</li>
@@ -918,7 +918,7 @@
     <tr>
       <td class="left">SERVFAIL</td>
       <td class="center">2</td>
-      <td class="left">Server failed to process request due to resource exhaustion.</td>
+      <td class="left">Server failed to process request due to a problem with the server.</td>
     </tr>
     <tr>
       <td class="left">NXDOMAIN</td>
@@ -950,7 +950,7 @@
 <p id="rfc.section.6.5.2.p.6">This document specifies only these RCODE values for RECONFIRM Responses. Servers sending RECONFIRM Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in RECONFIRM Responses, so clients MUST be prepared to accept RECONFIRM Responses with any RCODE value.</p>
 <p id="rfc.section.6.5.2.p.7">Nonzero RCODE values signal some kind of error.</p>
 <p id="rfc.section.6.5.2.p.8">RCODE value FORMERR indicates a message format error, for example TYPE or CLASS being ANY (255).</p>
-<p id="rfc.section.6.5.2.p.9">RCODE value SERVFAIL indicates that the server is overloaded.</p>
+<p id="rfc.section.6.5.2.p.9">RCODE value SERVFAIL indicates that the server has exhausted its resources or other serious problem occured.</p>
 <p id="rfc.section.6.5.2.p.10">RCODE values NOTIMP indicates that the server does not support Session Signaling, and Session Signaling is required for RECONFIRM requests.</p>
 <p id="rfc.section.6.5.2.p.11">RCODE value REFUSED indicates that the server supports RECONFIRM requests but is currently not configured to accept them from this client.</p>
 <p id="rfc.section.6.5.2.p.12">RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</p>

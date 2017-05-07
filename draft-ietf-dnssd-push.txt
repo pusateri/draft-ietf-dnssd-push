@@ -812,8 +812,8 @@ Internet-Draft           DNS Push Notifications                 May 2017
    | NOERROR    |   0   | SUBSCRIBE successful.                        |
    | FORMERR    |   1   | Server failed to process request due to a    |
    |            |       | malformed request.                           |
-   | SERVFAIL   |   2   | Server failed to process request due to      |
-   |            |       | resource exhaustion.                         |
+   | SERVFAIL   |   2   | Server failed to process request due to a    |
+   |            |       | problem with the server.                     |
    | NXDOMAIN   |   3   | NOT APPLICABLE. DNS Push Notification        |
    |            |       | servers MUST NOT return NXDOMAIN errors in   |
    |            |       | response to SUBSCRIBE requests.              |
@@ -843,24 +843,26 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
    If the server sends a nonzero RCODE in the SUBSCRIBE response, either
-   the client is (at least partially) misconfigured or the server
-   resources are exhausted.  In either case, the client shouldn't retry
-   the subscription right away.  Either end can terminate the
-   connection, but the client may want to try this subscription again or
-   it may have other successful subscriptions that it doesn't want to
-   abandon.  If the server sends a nonzero RCODE then it SHOULD append a
-   Retry Delay Modifier TLV [SessSig] to the response specifying a delay
-   before the client attempts this operation again.  Recommended values
-   for the delay for different RCODE values are given below:
+   the client is (at least partially) misconfigured, the server
+   resources are exhausted, or there is some other unknown failure on
+   the server.  In any case, the client shouldn't retry the subscription
+   right away.  Either end can terminate the connection, but the client
+   may want to try this subscription again or it may have other
+   successful subscriptions that it doesn't want to abandon.  If the
+   server sends a nonzero RCODE then it SHOULD append a Retry Delay
+   Modifier TLV [SessSig] to the response specifying a delay before the
+   client attempts this operation again.  Recommended values for the
+   delay for different RCODE values are given below:
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
       implementer.  A value of five minutes is RECOMMENDED, to reduce
       the risk of high load from defective clients.
 
-      For RCODE = 2 (SERVFAIL), which occurs due to resource exhaustion,
-      the delay should be chosen according to the level of server
-      overload and the anticipated duration of that overload.  By
-      default, a value of one minute is RECOMMENDED.
+      For RCODE = 2 (SERVFAIL) the delay should be chosen according to
+      the level of server overload and the anticipated duration of that
+      overload.  By default, a value of one minute is RECOMMENDED.  If a
+      more serious server failure occurs, the delay may be longer in
+      accordance with the specific problem encountered.
 
       For RCODE = 4 (NOTIMP), which occurs on a server that doesn't
       implement DNS Session Signaling [SessSig], it is unlikely that the
@@ -888,8 +890,6 @@ Internet-Draft           DNS Push Notifications                 May 2017
       that zone.  Since it is possible that the misconfiguration may be
       repaired at any time, the retry delay should not be set too high.
       By default, a value of 5 minutes is RECOMMENDED.
-
-
 
 
 
@@ -1086,7 +1086,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
    The SSOP-DATA contains one or more Update records.  A PUSH Message
    MUST contain at least one Update record.  If a PUSH Message is
-   received that contains no Update records this is a fatal error, and
+   received that contains no Update records, this is a fatal error, and
    the receiver MUST immediately terminate the connection with a TCP RST
    (or equivalent for other protocols).  The Update records are
    formatted in the customary way for Resource Records in DNS messages
@@ -1708,8 +1708,8 @@ Internet-Draft           DNS Push Notifications                 May 2017
    | NOERROR    |   0   | RECONFIRM accepted.                          |
    | FORMERR    |   1   | Server failed to process request due to a    |
    |            |       | malformed request.                           |
-   | SERVFAIL   |   2   | Server failed to process request due to      |
-   |            |       | resource exhaustion.                         |
+   | SERVFAIL   |   2   | Server failed to process request due to a    |
+   |            |       | problem with the server.                     |
    | NXDOMAIN   |   3   | NOT APPLICABLE. DNS Push Notification        |
    |            |       | servers MUST NOT return NXDOMAIN errors in   |
    |            |       | response to RECONFIRM requests.              |
@@ -1743,7 +1743,8 @@ Internet-Draft           DNS Push Notifications                 May 2017
    RCODE value FORMERR indicates a message format error, for example
    TYPE or CLASS being ANY (255).
 
-   RCODE value SERVFAIL indicates that the server is overloaded.
+   RCODE value SERVFAIL indicates that the server has exhausted its
+   resources or other serious problem occured.
 
    RCODE values NOTIMP indicates that the server does not support
    Session Signaling, and Session Signaling is required for RECONFIRM
@@ -1776,7 +1777,6 @@ Internet-Draft           DNS Push Notifications                 May 2017
    one of these three, the server SHOULD send a DNS Session Signaling
    Retry Delay Operation TLV and then close the TCP connection, as
    described in the DNS Session Signaling specification [SessSig].
-
 
 
 
