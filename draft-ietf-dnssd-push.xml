@@ -33,8 +33,7 @@
 <!ENTITY I-D.dukkipati-tcpm-tcp-loss-probe SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.dukkipati-tcpm-tcp-loss-probe.xml">
 <!ENTITY I-D.sekar-dns-llq                 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13                SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
-
-
+<!ENTITY I-D.ietf-dprive-dtls-and-tls-profiles SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dprive-dtls-and-tls-profiles.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
@@ -115,7 +114,7 @@
      </address>
    </author>
 
-   <date year='2017' month='April' day='17'/>
+   <date year='2017' month='May' day='7'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -225,7 +224,7 @@
    <section title="Transport">
      <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC7766"/>.</t>
 
-     <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP.</t>
+     <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP, <xref target="RFC7858">see RFC 7858</xref>.</t>
 
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
      Flooding attacks are possible with any protocol, and a benefit of TCP is that there are already established industry best practices to guard against SYN flooding and similar attacks <xref target="IPJ.9-4-TCPSYN"/> <xref target="RFC4953"/>.</t>
@@ -824,9 +823,9 @@
    </section>
 
    <section title="Security Considerations" anchor="Security">
-     <t>TLS support is REQUIRED in DNS Push Notifications. There is no provision for opportunistic encryption using a mechanism like <spanx style="verb">STARTTLS</spanx>.</t>
+     <t>The Strict Privacy Usage Profile for DNS over TLS is strongly recommended for DNS Push Notifications as defined in <xref target="I-D.ietf-dprive-dtls-and-tls-profiles">Authentication and (D)TLS Profile for DNS-over-(D)TLS</xref>. The Opportunistic Privacy Usage Profile is permissible as a way to support incremental deployment of security capabilities. Cleartext connections for DNS Push Notifications are not permissible.</t>
 
-     <t>DNSSEC is RECOMMENDED for DNS Push Notifications. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
+     <t>DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
 
      <section title="Security Services">
        <t>It is the goal of using TLS to provide the following security services:
@@ -841,6 +840,7 @@
 
      <section title="TLS Name Authentication" anchor="tls_name_auth">
        <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension MUST be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</t>
+       <t>See <xref target="I-D.ietf-dprive-dtls-and-tls-profiles">Authentication and (D)TLS Profile for DNS-over-(D)TLS</xref> for more information on authenticating domain names. Also note that a DNS Push server is an authoritative server and a DNS Push client is a standard DNS client. While the terminology in <xref target="I-D.ietf-dprive-dtls-and-tls-profiles">Authentication and (D)TLS Profile for DNS-over-(D)TLS</xref> explicitly states it does not apply to authoritative servers, it does in this case apply to DNS Push Notification clients and servers.</t>
      </section>
 
      <section title="TLS Compression">
@@ -954,6 +954,7 @@
 
      &I-D.dukkipati-tcpm-tcp-loss-probe;
      &I-D.sekar-dns-llq;
+     &I-D.ietf-dprive-dtls-and-tls-profiles;
 
      <reference anchor='DisProx'>
      <front>
