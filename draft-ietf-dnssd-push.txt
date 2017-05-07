@@ -296,8 +296,8 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
    DNS Push Notifications impose less load on the responding server than
    rapid polling would, but Push Notifications do still have a cost, so
-   DNS Push Notification clients MUST NOT recklessly create an excessive
-   number of Push Notification subscriptions.  A subscription SHOULD
+   DNS Push Notification clients must not recklessly create an excessive
+   number of Push Notification subscriptions.  A subscription should
    only be active when there is a valid reason to need live data (for
    example, an on-screen display is currently showing the results to the
    user) and the subscription SHOULD be cancelled as soon as the need
@@ -313,7 +313,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    does still intend to print, this will require them to press the
    "Print" button again when they wake their phone up.
 
-   A DNS Push Notification client MUST NOT routinely keep a DNS Push
+   A DNS Push Notification client must not routinely keep a DNS Push
    Notification subscription active 24 hours a day, 7 days a week, just
    to keep a list in memory up to date so that if the user does choose
    to bring up an on-screen display of that data, it can be displayed
@@ -322,7 +322,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    case it might be needed later.
 
    Generally, as described in the DNS Session Signaling specification
-   [SessSig], a client MUST NOT keep a connection to a server open
+   [SessSig], a client must not keep a connection to a server open
    indefinitely if it has no subscriptions (or other operations) active
    on that connection.  A client MAY close a connection as soon as it
    becomes idle, and then if needed in the future, open a new connection
@@ -478,7 +478,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    A typical DNS Push Notification client will immediately issue a DNS
    Session Signaling Keepalive operation to request a session timeout or
    keepalive interval longer than the the 15-second defaults, but this
-   is NOT REQUIRED.  A DNS Push Notification client MAY issue other
+   is not required.  A DNS Push Notification client MAY issue other
    requests on the connection first, and only issue a DNS Session
    Signaling Keepalive operation later if it determines that to be
    necessary.
@@ -972,9 +972,9 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
    After sending an error response the server MAY allow the connection
    to remain open, or MAY send a DNS Push Notification Retry Delay
-   Operation TLV and then close the TCP connection, as described in the
-   DNS Session Signaling specification [SessSig].  Clients MUST
-   correctly handle both cases.
+   Operation TLV asserting the client close the TCP connection, as
+   described in the DNS Session Signaling specification [SessSig].
+   Clients MUST correctly handle both cases.
 
 
 
@@ -1966,7 +1966,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    Name Indication (SNI) extension [RFC6066] to inform the server of the
    name the client has authenticated through the use of TLSA records.
    Therefore, if the SRV record passes DNSSEC validation and a TLSA
-   record matching the target name is useable, an SNI extension MUST be
+   record matching the target name is useable, an SNI extension must be
    used for the target name to ensure the client is connecting to the
    server it has authenticated.  If the target name does not have a
    usable TLSA record, then the use of the SNI extension is optional.
@@ -1978,7 +1978,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    While the terminology in Authentication and (D)TLS Profile for DNS-
    over-(D)TLS [I-D.ietf-dprive-dtls-and-tls-profiles] explicitly states
    it does not apply to authoritative servers, it does in this case
-   apply to DNS Push Notification servers.
+   apply to DNS Push Notification clients and servers.
 
 7.3.  TLS Compression
 
