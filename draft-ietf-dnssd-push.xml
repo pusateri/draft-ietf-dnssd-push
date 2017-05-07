@@ -166,8 +166,6 @@
        "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
        and "OPTIONAL" in this document are to be interpreted as described in
        <xref target="RFC2119">"Key words for use in RFCs to Indicate Requirement Levels"</xref>.</t>
-
-<?rfc needLines="32" ?>
      </section>
    </section>
 
@@ -521,9 +519,11 @@
          If a PUSH Message is received that contains no Update records
          this is a fatal error, and the receiver MUST immediately terminate
          the connection with a TCP RST (or equivalent for other protocols).
-         The Update records are formatted in the customary way for Resource Records in DNS messages,
-         and interpreted according to the same rules as for
-         <xref target="RFC2136">DNS Update</xref> messages, namely:
+         The Update records are formatted in the customary way for Resource
+         Records in DNS messages with the stipulation that DNS name compression
+         is not permitted in DNS Session Signaling TLVs.
+         Update records in a PUSH Message are interpreted according to the same
+         rules as for <xref target="RFC2136">DNS Update</xref> messages, namely:
 
            <list style="bullets">
              <t>Delete all RRsets from a name:<vspace />
@@ -579,7 +579,7 @@
        <t>To cancel an individual subscription without closing the entire connection, the client sends an UNSUBSCRIBE message over the established TCP connection to the server. The UNSUBSCRIBE message is encoded in a
        <xref target="SessSig">DNS Session Signaling</xref> message. This specification defines a DNS Session Signaling TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively Session Signaling Type Code 0x42).</t>
 
-       <t>A server MUST NOT initiate an UNSUBSCRIBE request.</t>
+       <t>A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send a UNSUBSCRIBE request over the connection initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</t>
 
 <?rfc needLines="48" ?>
        <section title="UNSUBSCRIBE Request">
