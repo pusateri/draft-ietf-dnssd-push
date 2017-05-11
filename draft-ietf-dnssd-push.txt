@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                       Seeking affiliation
 Intended status: Standards Track                             S. Cheshire
-Expires: November 8, 2017                                     Apple Inc.
-                                                             May 7, 2017
+Expires: November 12, 2017                                    Apple Inc.
+                                                            May 11, 2017
 
 
                          DNS Push Notifications
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 8, 2017.
+   This Internet-Draft will expire on November 12, 2017.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 1]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 1]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -72,30 +72,30 @@ Table of Contents
    5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   7
    6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   8
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   9
-     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  12
-       6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  13
-       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  16
-     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  19
-       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
-       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  23
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  24
-       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  25
-       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  27
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  29
-       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  30
-       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  32
-     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  34
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  35
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  35
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  36
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  36
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  37
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  39
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
+     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  11
+       6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  12
+       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  15
+     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  18
+       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  19
+       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  22
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  23
+       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  24
+       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  26
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
+       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  29
+       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  31
+     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  33
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  34
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  35
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  38
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
 
 
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 2]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 2]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -165,7 +165,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 3]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 3]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -221,7 +221,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 4]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 4]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -277,7 +277,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 5]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 5]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -333,7 +333,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 6]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 6]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -389,7 +389,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 7]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 7]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -445,7 +445,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 8]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 8]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -501,7 +501,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017                [Page 9]
+Pusateri & Cheshire     Expires November 12, 2017               [Page 9]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -520,18 +520,17 @@ Internet-Draft           DNS Push Notifications                 May 2017
        "_dns-push-tls._tcp.<zone>", where <zone> is the owner name of
        the discovered SOA record.
 
-   6.  If the zone in question does not offer DNS Push Notifications
-       then an SRV record MUST NOT exist and the SRV query will return a
-       negative answer.
+   6.  For implementors of this specification, an authoritative answer
+       for that SRV record, and only such an answer, will determine
+       whether the zone supports DNS Push Notifications.
 
-   7.  If the zone in question is set up to offer DNS Push Notifications
-       then this SRV record MUST exist.  The SRV "target" contains the
-       name of the server providing DNS Push Notifications for the zone.
-       The port number on which to contact the server is in the SRV
-       record "port" field.  The address(es) of the target host MAY be
-       included in the Additional Section, however, the address records
-       SHOULD be authenticated before use as described below in
-       Section 7.2 and [RFC7673].
+   7.  If the SRV record does exist, the SRV "target" contains the name
+       of the server providing DNS Push Notifications for the zone.  The
+       port number on which to contact the server is in the SRV record
+       "port" field.  The address(es) of the target host MAY be included
+       in the Additional Section, however, the address records SHOULD be
+       authenticated before use as described below in Section 7.2 and
+       [RFC7673].
 
    8.  More than one SRV record may be returned.  In this case, the
        "priority" and "weight" values in the returned SRV records are
@@ -548,72 +547,17 @@ Internet-Draft           DNS Push Notifications                 May 2017
    Each time a client makes a new DNS Push Notification subscription
    connection, it SHOULD repeat the discovery process in order to
    determine the preferred DNS server for subscriptions at that time.
-
-   Note that this repeated discovery step is typically very fast and
-   typically results in no queries on the network.  The client device
-   MUST respect the DNS TTL values on records it receives, and store
-   them in its local cache with this lifetime.  This means that, as long
-   as the DNS TTL values on the authoritative records were set to
-
-
-
-Pusateri & Cheshire     Expires November 8, 2017               [Page 10]
-
-Internet-Draft           DNS Push Notifications                 May 2017
-
-
-   reasonable values, repeated application of this discovery process can
-   be completed nearly instantaneously by the client, using only
-   locally-stored cached data.
+   However, the client device MUST respect the DNS TTL values on records
+   it receives, and store them in its local cache with this lifetime.
+   This means that, as long as the DNS TTL values on the authoritative
+   records were set to reasonable values, repeated application of this
+   discovery process can be completed nearly instantaneously by the
+   client, using only locally-stored cached data.
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires November 8, 2017               [Page 11]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 10]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -669,7 +613,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 12]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 11]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -725,7 +669,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 13]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 12]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -781,7 +725,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 14]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 13]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -837,7 +781,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 15]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 14]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -893,7 +837,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 16]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 15]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -949,7 +893,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 17]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 16]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1005,7 +949,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 18]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 17]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1061,7 +1005,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 19]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 18]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1117,7 +1061,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 20]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 19]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1173,7 +1117,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 21]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 20]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1229,7 +1173,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 22]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 21]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1285,7 +1229,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 23]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 22]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1341,7 +1285,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 24]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 23]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1397,7 +1341,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 25]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 24]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1453,7 +1397,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 26]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 25]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1509,7 +1453,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 27]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 26]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1565,7 +1509,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 28]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 27]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1621,7 +1565,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 29]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 28]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1677,7 +1621,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 30]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 29]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1733,7 +1677,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 31]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 30]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1789,7 +1733,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 32]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 31]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1845,7 +1789,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 33]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 32]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1901,7 +1845,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 34]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 33]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1957,7 +1901,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 35]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 34]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2013,7 +1957,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 36]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 35]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2069,7 +2013,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 37]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 36]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2125,7 +2069,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 38]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 37]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2181,7 +2125,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 39]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 38]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2237,7 +2181,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 40]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 39]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2293,4 +2237,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 41]
+Pusateri & Cheshire     Expires November 12, 2017              [Page 40]

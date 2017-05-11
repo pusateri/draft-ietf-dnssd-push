@@ -413,7 +413,7 @@
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-11" />
-  <meta name="dct.issued" scheme="ISO8601" content="2017-5-7" />
+  <meta name="dct.issued" scheme="ISO8601" content="2017-5-11" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism" />
   <meta name="description" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled. But there exists no mechanism" />
 
@@ -437,12 +437,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: November 8, 2017</td>
+  <td class="left">Expires: November 12, 2017</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">May 7, 2017</td>
+  <td class="right">May 11, 2017</td>
 </tr>
 
     	
@@ -462,7 +462,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on November 8, 2017.</p>
+<p>This Internet-Draft will expire on November 12, 2017.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -557,14 +557,13 @@
   <li>In the example above, if an SOA record query is sent for _printers._tcp.foo.example.com and an NXDOMAIN/Name Error is returned with an SOA record in the Authority section for foo.example.com, the client should strip the leading label and query an SOA record for _tcp.foo.example.com. If a NOERROR/NODATA response is received with an SOA record in the Authority section for foo.example.com, this is sufficent. If an NXDOMAIN/Name Error response is received, the client should again strip the leading label and query an SOA record for foo.example.com. If the foo.example.com domain exists, this should result in a NOERROR response with the SOA record in the Answer section. If the domain foo.example.com does not exist, the response will likely be an NXDOMAIN/Name Error with an SOA record for example.com in the Authority section. This means the subdomain foo.example.com has not been properly delegated by example.com.</li>
   <li>If a NOERROR/NODATA response is received but contains no SOA in the Authority section, the client could try stripping the leading label and issuing another SOA query. Additional information about negative responses can be found in Section 2 of <a href="#RFC2308">[RFC2308]</a>.</li>
   <li>Once the SOA is known (either by virtue of being seen in the Answer Section, or in the Authority Section), the client sends a DNS query with type <a href="#RFC2782">SRV</a> <cite title="NONE">[RFC2782]</cite> for the record name <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp>, where &lt;zone&gt; is the owner name of the discovered SOA record.</li>
-  <li>If the zone in question does not offer DNS Push Notifications then an SRV record MUST NOT exist and the SRV query will return a negative answer.</li>
-  <li>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.  The SRV <samp>target</samp> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <samp>port</samp> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <a href="#tls_name_auth">Section 7.2</a> and <a href="#RFC7673">[RFC7673]</a>.</li>
+  <li>For implementors of this specification, an authoritative answer for that SRV record, and only such an answer, will determine whether the zone supports DNS Push Notifications.</li>
+  <li>If the SRV record does exist, the SRV <samp>target</samp> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <samp>port</samp> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <a href="#tls_name_auth">Section 7.2</a> and <a href="#RFC7673">[RFC7673]</a>.</li>
   <li>More than one SRV record may be returned. In this case, the <samp>priority</samp> and <samp>weight</samp> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <a href="#RFC2782">the SRV specification</a> <cite title="NONE">[RFC2782]</cite>, the server with the lowest <samp>priority</samp> is first contacted. If more than one server has the same <samp>priority</samp>, the <samp>weight</samp> indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected. If a server is not reachable or is not willing to accept a subscription request, then a subsequent server is to be contacted.</li>
 </ol>
 
 <p> </p>
-<p id="rfc.section.6.1.p.3">Each time a client makes a new DNS Push Notification subscription connection, it SHOULD repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time.</p>
-<p id="rfc.section.6.1.p.4">Note that this repeated discovery step is typically very fast and typically results in no queries on the network. The client device MUST respect the DNS TTL values on records it receives, and store them in its local cache with this lifetime. This means that, as long as the DNS TTL values on the authoritative records were set to reasonable values, repeated application of this discovery process can be completed nearly instantaneously by the client, using only locally-stored cached data.</p>
+<p id="rfc.section.6.1.p.3">Each time a client makes a new DNS Push Notification subscription connection, it SHOULD repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time. However, the client device MUST respect the DNS TTL values on records it receives, and store them in its local cache with this lifetime. This means that, as long as the DNS TTL values on the authoritative records were set to reasonable values, repeated application of this discovery process can be completed nearly instantaneously by the client, using only locally-stored cached data.</p>
 <h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> DNS Push Notification SUBSCRIBE</h1>
 <p id="rfc.section.6.2.p.1">After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TLS connection to the server. A SUBSCRIBE request is encoded in a <a href="#SessSig">DNS Session Signaling</a> <cite title="NONE">[SessSig]</cite> message. This specification defines a DNS Session Signaling TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively Session Signaling Type Code 0x40).</p>
 <p id="rfc.section.6.2.p.2">The entity that initiates a SUBSCRIBE request is by definition the client. A server should not send a SUBSCRIBE request over an existing connection from a client. If a server does send a SUBSCRIBE request over the connection initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</p>
