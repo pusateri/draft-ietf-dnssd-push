@@ -72,30 +72,30 @@ Table of Contents
    5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   7
    6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   8
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   9
-     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  11
-       6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  12
-       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  15
-     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  18
-       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  19
-       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  22
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  23
-       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  24
-       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  26
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
-       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  29
-       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  31
-     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  33
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  34
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  35
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  38
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
+     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  12
+       6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  13
+       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  16
+     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  19
+       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
+       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  23
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  24
+       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  25
+       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  27
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  29
+       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  30
+       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  32
+     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  34
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  35
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  35
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  36
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  36
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  37
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  39
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
 
 
 
@@ -180,7 +180,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    TCP, and therefore doesn't need to reinvent existing TCP
    functionality.  Using TCP also gives long-lived low-traffic
    connections better longevity through NAT gateways without resorting
-   to excessive keepalive traffic [SessSig].  Instead of inventing a new
+   to excessive keepalive traffic.  Instead of inventing a new
    vocabulary of messages to communicate DNS zone changes as LLQ did,
    this specification adopts the syntax and semantics of DNS Update
    messages [RFC2136].
@@ -338,10 +338,6 @@ Pusateri & Cheshire     Expires November 8, 2017                [Page 6]
 Internet-Draft           DNS Push Notifications                 May 2017
 
 
-   Additional authentication of the SRV target using DNSSEC verification
-   and DANE TLSA records [RFC7673] is strongly encouraged.  See below in
-   Section 7.2 for details.
-
 5.  State Considerations
 
    Each DNS Push Notification server is capable of handling some finite
@@ -358,6 +354,10 @@ Internet-Draft           DNS Push Notifications                 May 2017
    resource constraints.  Token bucket rate limiting schemes are also
    effective in providing fairness by a server across numerous client
    requests.
+
+
+
+
 
 
 
@@ -460,44 +460,44 @@ Internet-Draft           DNS Push Notifications                 May 2017
    port 853 used for DNS over TLS [RFC7858].
 
    1.  The client begins the discovery by sending a DNS query to its
-       local resolver, with record type SOA [RFC1035], for the domain
-       name to which it wishes to subscribe.
+       local resolver, with record type SOA [RFC1035] for the record to
+       which it wishes to subscribe.  As an example, if it wishes to
+       subscribe to PTR records with the name
+       _printers._tcp.foo.example.com, it sends an SOA query for
+       _printers._tcp.foo.example.com.  The goal is to determine the
+       authoritative server for foo.example.com.
 
-   2.  If the SOA record exists, it MUST be returned in the Answer
-       Section of the response.  If not, the local resolver SHOULD
-       include the SOA record for the zone of the requested name in the
-       Authority Section.
+   2.  If the SOA record exists as exactly specified in the query, it is
+       expected to be returned in the Answer section with a NOERROR
+       response code.  If the exact SOA record does not exist, the
+       client may get back a NOERROR/NODATA response or it may get back
+       a NXDOMAIN/Name Error response.  This depends on the resolver
+       implementation and whether the domain exists.  The client is
+       looking for an SOA record to be returned in either the Answer
+       section or the Authority section with a NOERROR response code.
+       If the client receives an NXDOMAIN/Name Error response code, it
+       should strip the leading label from the query name and if the
+       resulting name has at least one label in it, the client should
+       send a new SOA query, repeating this until a NOERROR response
+       code is received or the query name is empty.  In the case of an
+       empty name, the client may retry the operation at a later time,
+       of the client's choosing, such after a change in network
+       attachment.
 
-   3.  If no SOA record is returned, the client then strips off the
-       leading label from the requested name.  If the resulting name has
-       at least one label in it, the client sends a new SOA query and
-       processing continues at step 2 above.  If the resulting name is
-       empty (the root label) then this is a network configuration error
-       and the client gives up.  The client MAY retry the operation at a
-       later time, of the client's choosing, such after a change in
-       network attachment.
+   3.  In the example above, if an SOA record query is sent for
+       _printers._tcp.foo.example.com and an NXDOMAIN/Name Error is
+       returned with an SOA record in the Authority section for
+       foo.example.com, the client should strip the leading label and
+       query an SOA record for _tcp.foo.example.com.  If a NOERROR/
+       NODATA response is received with an SOA record in the Authority
+       section for foo.example.com, this is sufficent.  If an NXDOMAIN/
+       Name Error response is received, the client should again strip
+       the leading label and query an SOA record for foo.example.com.
+       If the foo.example.com domain exists, this should result in a
+       NOERROR response with the SOA record in the Answer section.  If
+       the domain foo.example.com does not exist, the response will
+       likely be an NXDOMAIN/Name Error with an SOA record for
 
-   4.  Once the SOA is known (either by virtue of being seen in the
-       Answer Section, or in the Authority Section), the client sends a
-       DNS query with type SRV [RFC2782] for the record name
-       "_dns-push-tls._tcp.<zone>", where <zone> is the owner name of
-       the discovered SOA record.
-
-   5.  If the zone in question does not offer DNS Push Notifications
-       then SRV record MUST NOT exist and the SRV query will return a
-       negative answer.
-
-   6.  If the zone in question is set up to offer DNS Push Notifications
-       then this SRV record MUST exist.  The SRV "target" contains the
-       name of the server providing DNS Push Notifications for the zone.
-       The port number on which to contact the server is in the SRV
-       record "port" field.  The address(es) of the target host MAY be
-       included in the Additional Section, however, the address records
-       SHOULD be authenticated before use as described below in
-       Section 7.2 [RFC7673].
-
-   7.  More than one SRV record may be returned.  In this case, the
-       "priority" and "weight" values in the returned SRV records are
 
 
 
@@ -506,6 +506,35 @@ Pusateri & Cheshire     Expires November 8, 2017                [Page 9]
 Internet-Draft           DNS Push Notifications                 May 2017
 
 
+       example.com in the Authority section.  This means the subdomain
+       foo.example.com has not been properly delegated by example.com.
+
+   4.  If a NOERROR/NODATA response is received but contains no SOA in
+       the Authority section, the client could try stripping the leading
+       label and issuing another SOA query.  Additional information
+       about negative responses can be found in Section 2 of [RFC2308].
+
+   5.  Once the SOA is known (either by virtue of being seen in the
+       Answer Section, or in the Authority Section), the client sends a
+       DNS query with type SRV [RFC2782] for the record name
+       "_dns-push-tls._tcp.<zone>", where <zone> is the owner name of
+       the discovered SOA record.
+
+   6.  If the zone in question does not offer DNS Push Notifications
+       then an SRV record MUST NOT exist and the SRV query will return a
+       negative answer.
+
+   7.  If the zone in question is set up to offer DNS Push Notifications
+       then this SRV record MUST exist.  The SRV "target" contains the
+       name of the server providing DNS Push Notifications for the zone.
+       The port number on which to contact the server is in the SRV
+       record "port" field.  The address(es) of the target host MAY be
+       included in the Additional Section, however, the address records
+       SHOULD be authenticated before use as described below in
+       Section 7.2 and [RFC7673].
+
+   8.  More than one SRV record may be returned.  In this case, the
+       "priority" and "weight" values in the returned SRV records are
        used to determine the order in which to contact the servers for
        subscription requests.  As described in the SRV specification
        [RFC2782], the server with the lowest "priority" is first
@@ -525,6 +554,14 @@ Internet-Draft           DNS Push Notifications                 May 2017
    MUST respect the DNS TTL values on records it receives, and store
    them in its local cache with this lifetime.  This means that, as long
    as the DNS TTL values on the authoritative records were set to
+
+
+
+Pusateri & Cheshire     Expires November 8, 2017               [Page 10]
+
+Internet-Draft           DNS Push Notifications                 May 2017
+
+
    reasonable values, repeated application of this discovery process can
    be completed nearly instantaneously by the client, using only
    locally-stored cached data.
@@ -557,7 +594,26 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 10]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires November 8, 2017               [Page 11]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -613,7 +669,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 11]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 12]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -669,7 +725,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 12]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 13]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -725,7 +781,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 13]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 14]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -781,7 +837,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 14]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 15]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -837,7 +893,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 15]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 16]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -893,7 +949,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 16]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 17]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -949,7 +1005,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 17]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 18]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1005,7 +1061,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 18]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 19]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1061,7 +1117,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 19]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 20]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1117,7 +1173,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 20]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 21]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1168,12 +1224,12 @@ Internet-Draft           DNS Push Notifications                 May 2017
    of that fact.  Consequently, a client does not have to poll to verify
    that the record is still there.  Once a subscription is cancelled
    (individually, or as a result of the TCP connection being closed)
-   record ageing resumes and records are removed from the local cache
+   record aging resumes and records are removed from the local cache
    when their TTL reaches zero.
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 21]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 22]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1229,7 +1285,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 22]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 23]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1285,7 +1341,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 23]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 24]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1341,7 +1397,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 24]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 25]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1397,7 +1453,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 25]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 26]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1453,7 +1509,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 26]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 27]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1509,7 +1565,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 27]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 28]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1565,7 +1621,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 28]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 29]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1621,7 +1677,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 29]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 30]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1677,7 +1733,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 30]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 31]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1733,7 +1789,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 31]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 32]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1744,7 +1800,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    TYPE or CLASS being ANY (255).
 
    RCODE value SERVFAIL indicates that the server has exhausted its
-   resources or other serious problem occured.
+   resources or other serious problem occurred.
 
    RCODE values NOTIMP indicates that the server does not support
    Session Signaling, and Session Signaling is required for RECONFIRM
@@ -1789,7 +1845,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 32]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 33]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1845,7 +1901,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 33]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 34]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1901,7 +1957,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 34]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 35]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -1957,7 +2013,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 35]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 36]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2013,7 +2069,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 36]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 37]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2069,7 +2125,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-Pusateri & Cheshire     Expires November 8, 2017               [Page 37]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 38]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
@@ -2108,6 +2164,10 @@ Internet-Draft           DNS Push Notifications                 May 2017
    [obs]      "Observer Pattern", <https://en.wikipedia.org/wiki/
               Observer_pattern>.
 
+   [RFC2308]  Andrews, M., "Negative Caching of DNS Queries (DNS
+              NCACHE)", RFC 2308, DOI 10.17487/RFC2308, March 1998,
+              <http://www.rfc-editor.org/info/rfc2308>.
+
    [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
               Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
               December 2005, <http://www.rfc-editor.org/info/rfc4287>.
@@ -2116,19 +2176,20 @@ Internet-Draft           DNS Push Notifications                 May 2017
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <http://www.rfc-editor.org/info/rfc4953>.
 
+
+
+
+
+
+Pusateri & Cheshire     Expires November 8, 2017               [Page 39]
+
+Internet-Draft           DNS Push Notifications                 May 2017
+
+
    [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
               "Transport Layer Security (TLS) Session Resumption without
               Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
               January 2008, <http://www.rfc-editor.org/info/rfc5077>.
-
-
-
-
-
-Pusateri & Cheshire     Expires November 8, 2017               [Page 38]
-
-Internet-Draft           DNS Push Notifications                 May 2017
-
 
    [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
               "Understanding Apple's Back to My Mac (BTMM) Service",
@@ -2170,21 +2231,18 @@ Internet-Draft           DNS Push Notifications                 May 2017
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
 
-Authors' Addresses
 
 
 
 
 
 
-
-
-
-
-Pusateri & Cheshire     Expires November 8, 2017               [Page 39]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 40]
 
 Internet-Draft           DNS Push Notifications                 May 2017
 
+
+Authors' Addresses
 
    Tom Pusateri
    Seeking affiliation
@@ -2235,6 +2293,4 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
 
 
-
-
-Pusateri & Cheshire     Expires November 8, 2017               [Page 40]
+Pusateri & Cheshire     Expires November 8, 2017               [Page 41]

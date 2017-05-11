@@ -13,6 +13,7 @@
 <!ENTITY RFC1123 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.1123.xml">
 <!ENTITY RFC2119 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC2136 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2136.xml">
+<!ENTITY RFC2308 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2308.xml">
 <!ENTITY RFC2782 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2782.xml">
 <!ENTITY RFC4287 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4287.xml">
 <!ENTITY RFC4953 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4953.xml">
@@ -182,8 +183,7 @@
      Instead of using UDP, this specification uses TCP,
      and therefore doesn't need to reinvent existing TCP functionality.
      Using TCP also gives long-lived low-traffic connections better longevity through NAT gateways
-     without resorting to excessive keepalive traffic
-     <xref target="SessSig"/>.
+     without resorting to excessive keepalive traffic.
      Instead of inventing a new vocabulary of messages to communicate DNS zone changes as LLQ did, this specification adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref>.</t>
 
 <?rfc needLines="9" ?>
@@ -234,7 +234,6 @@
 
      <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
 
-     <t>Additional authentication of the SRV target using DNSSEC verification and DANE TLSA records <xref target="RFC7673"/> is strongly encouraged. See below in <xref target="tls_name_auth"/> for details.</t>
 <?rfc needLines="25" ?>
    </section>
 
@@ -282,19 +281,21 @@
         <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone. The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS, or TCP port 853 used for <xref target="RFC7858">DNS over TLS</xref>.</t>
         <t>
           <list style="numbers">
-            <t>The client begins the discovery by sending a DNS query to its local resolver, with record type <xref target="RFC1035">SOA</xref>, for the domain name to which it wishes to subscribe.</t>
+            <t>The client begins the discovery by sending a DNS query to its local resolver, with record type <xref target="RFC1035">SOA</xref> for the record to which it wishes to subscribe. As an example, if it wishes to subscribe to PTR records with the name _printers._tcp.foo.example.com, it sends an SOA query for _printers._tcp.foo.example.com. The goal is to determine the authoritative server for foo.example.com.</t>
 
-            <t>If the SOA record exists, it MUST be returned in the Answer Section of the response. If not, the local resolver SHOULD include the SOA record for the zone of the requested name in the Authority Section.</t>
+            <t>If the SOA record exists as exactly specified in the query, it is expected to be returned in the Answer section with a NOERROR response code. If the exact SOA record does not exist, the client may get back a NOERROR/NODATA response or it may get back a NXDOMAIN/Name Error response. This depends on the resolver implementation and whether the domain exists. The client is looking for an SOA record to be returned in either the Answer section or the Authority section with a NOERROR response code. If the client receives an NXDOMAIN/Name Error response code, it should strip the leading label from the query name and if the resulting name has at least one label in it, the client should send a new SOA query, repeating this until a NOERROR response code is received or the query name is empty. In the case of an empty name, the client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
 
-            <t>If no SOA record is returned, the client then strips off the leading label from the requested name. If the resulting name has at least one label in it, the client sends a new SOA query and processing continues at step 2 above. If the resulting name is empty (the root label) then this is a network configuration error and the client gives up. The client MAY retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
+            <t>In the example above, if an SOA record query is sent for _printers._tcp.foo.example.com and an NXDOMAIN/Name Error is returned with an SOA record in the Authority section for foo.example.com, the client should strip the leading label and query an SOA record for _tcp.foo.example.com. If a NOERROR/NODATA response is received with an SOA record in the Authority section for foo.example.com, this is sufficent. If an NXDOMAIN/Name Error response is received, the client should again strip the leading label and query an SOA record for foo.example.com. If the foo.example.com domain exists, this should result in a NOERROR response with the SOA record in the Answer section. If the domain foo.example.com does not exist, the response will likely be an NXDOMAIN/Name Error with an SOA record for example.com in the Authority section. This means the subdomain foo.example.com has not been properly delegated by example.com.</t> 
+
+            <t>If a NOERROR/NODATA response is received but contains no SOA in the Authority section, the client could try stripping the leading label and issuing another SOA query. Additional information about negative responses can be found in Section 2 of <xref target="RFC2308"/>.</t>
 
             <t>Once the SOA is known (either by virtue of being seen in the Answer Section, or in the Authority Section), the client sends a DNS query with type <xref target="RFC2782">SRV</xref> for the record name
             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
 
-            <t>If the zone in question does not offer DNS Push Notifications then SRV record MUST NOT exist and the SRV query will return a negative answer.</t>
+            <t>If the zone in question does not offer DNS Push Notifications then an SRV record MUST NOT exist and the SRV query will return a negative answer.</t>
 
             <t>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.
-            The SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> <xref target="RFC7673"/>.</t>
+            The SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> and <xref target="RFC7673"/>.</t>
 
             <t>More than one SRV record may be returned. In this case, the <spanx style="verb">priority</spanx> and <spanx style="verb">weight</spanx> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <xref target="RFC2782">the SRV specification</xref>, the server with the lowest <spanx style="verb">priority</spanx> is first contacted. If more than one server has the same <spanx style="verb">priority</spanx>, the <spanx style="verb">weight</spanx> indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected. If a server is not reachable or is not willing to accept a subscription request, then a subsequent server is to be contacted.</t>
 
@@ -552,7 +553,7 @@
   
          <t>Reception of a PUSH message by a client generates a PUSH response back to the server.</t>
   
-         <t>The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record ageing resumes and records are removed from the local cache when their TTL reaches zero.</t>
+         <t>The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the TCP connection being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</t>
        </section>
 
        <section title="PUSH Response">
@@ -787,7 +788,7 @@
 
          <t>RCODE value FORMERR indicates a message format error, for example TYPE or CLASS being ANY (255).</t>
 
-         <t>RCODE value SERVFAIL indicates that the server has exhausted its resources or other serious problem occured.</t>
+         <t>RCODE value SERVFAIL indicates that the server has exhausted its resources or other serious problem occurred.</t>
 
          <t>RCODE values NOTIMP indicates that the server does not support Session Signaling, and Session Signaling is required for RECONFIRM requests.</t>
 
@@ -940,6 +941,7 @@
 <?rfc needLines="9" ?>
 
    <references title="Informative References">
+     &RFC2308;
      &RFC4287;
      &RFC4953;
      &RFC5077;
