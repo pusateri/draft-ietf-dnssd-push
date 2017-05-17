@@ -1972,7 +1972,8 @@ Internet-Draft           DNS Push Notifications                 May 2017
 
    This draft has been improved due to comments from Ran Atkinson, Tim
    Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju
-   Shankar Rao, Markus Stenberg, Dave Thaler, and Soraia Zlatkovic.
+   Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara
+   Dickinson, Jan Komissar, and Andrew Sullivan.
 
 10.  References
 
@@ -2008,7 +2009,6 @@ Internet-Draft           DNS Push Notifications                 May 2017
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
-
 
 
 
