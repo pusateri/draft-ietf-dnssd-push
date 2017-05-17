@@ -1973,7 +1973,7 @@ Internet-Draft           DNS Push Notifications                 May 2017
    This draft has been improved due to comments from Ran Atkinson, Tim
    Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju
    Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara
-   Dickinson, Jan Komissar, and Andrew Sullivan.
+   Dickinson, and Andrew Sullivan.
 
 10.  References
 
