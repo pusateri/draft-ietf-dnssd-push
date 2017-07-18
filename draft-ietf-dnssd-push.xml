@@ -61,7 +61,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-11" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-12" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -115,7 +115,7 @@
      </address>
    </author>
 
-   <date year='2017'/>
+   <date year='2017' month='July' day='2'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -146,9 +146,10 @@
      <t>The Domain Name System (DNS) was designed to return matching records
      efficiently for queries for data that is relatively static.
      When those records change frequently, DNS is still efficient at returning
-     the updated results when polled. But there exists no mechanism<vspace />
-     for a client to be asynchronously notified when these changes occur.<vspace />
-     This document defines a mechanism for a client to be notified<vspace />
+     the updated results when polled, as long as the polling rate is not too high.
+     But there exists no mechanism
+     for a client to be asynchronously notified when these changes occur.
+     This document defines a mechanism for a client to be notified
      of such changes to DNS records, called DNS Push Notifications.</t>
    </abstract>
  </front>
@@ -176,7 +177,8 @@
 
      <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group, and new services and updates are sent for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="DisProx">Discovery Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
 
-     <t>The <xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> mechanism is an existing deployed solution to provide asynchronous change notifications, used by Apple's <xref target="RFC6281">Back to My Mac Service</xref>.
+     <t>The <xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ)</xref> mechanism is an existing deployed solution to provide asynchronous change notifications, used by Apple's <xref target="RFC6281">Back to My Mac Service</xref>
+     introduced in Mac OS X 10.5 Leopard in 2007.
      Back to My Mac was designed in an era when the data centre operations staff asserted that it was impossible for a server to handle large numbers of mostly-idle TCP connections, so LLQ had to defined as a UDP-based protocol, effectively replicating much of TCP's connection state management logic in user space, and creating its own poor imitations of existing TCP features like the three-way handshake, flow control, and reliability.</t>
 
      <t>This document builds on experience gained with the LLQ protocol, with an improved design.
@@ -222,7 +224,7 @@
    <section title="Transport">
      <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC7766"/>.</t>
 
-     <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP, <xref target="RFC7858">see RFC 7858</xref>.</t>
+     <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP <xref target="RFC7858"/>.</t>
 
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
      Flooding attacks are possible with any protocol, and a benefit of TCP is that there are already established industry best practices to guard against SYN flooding and similar attacks <xref target="IPJ.9-4-TCPSYN"/> <xref target="RFC4953"/>.</t>
@@ -232,7 +234,7 @@
      <xref target="RFC7413">TCP Fast Open (TFO)</xref>,
      <xref target="I-D.dukkipati-tcpm-tcp-loss-probe">Tail Loss Probe (TLP)</xref>, and so on.</t>
 
-     <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, or message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
+     <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, and message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
 
 <?rfc needLines="25" ?>
    </section>
@@ -278,12 +280,19 @@
 
 <?rfc needLines="9" ?>
       <section title="Discovery" anchor="discovery">
-        <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone. The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS, or TCP port 853 used for <xref target="RFC7858">DNS over TLS</xref>.</t>
+        <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone.</t>
+
+        <t>The client begins by opening a DNS Session to its normal configured DNS recursive resolver and requesting a Push
+        Notification subscription. If this is successful, then the recursive resolver will make appropriate
+        Push Notification subscriptions on the client's behalf, and the client will recieve appropriate results.
+        If the recursive resolver does not support Push Notification subscriptions, then it will return an error code,
+        and the client should proceed to discover the appropriate server to talk to directly.
+        The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS, or TCP port 853 used for <xref target="RFC7858">DNS over TLS</xref>.</t>
         <t>
           <list style="numbers">
-            <t>The client begins the discovery by sending a DNS query to its local resolver, with record type <xref target="RFC1035">SOA</xref> for the record to which it wishes to subscribe. As an example, if it wishes to subscribe to PTR records with the name _printers._tcp.foo.example.com, it sends an SOA query for _printers._tcp.foo.example.com. The goal is to determine the authoritative server for foo.example.com.</t>
+            <t>The client begins the discovery by sending a DNS query to its local resolver, with record type <xref target="RFC1035">SOA</xref> for the record to which it wishes to subscribe. As an example, if it wishes to subscribe to PTR records with the name _printers._tcp.foo.example.com, it sends an SOA query for _printers._tcp.foo.example.com. The goal is to determine the authoritative server for _printers._tcp.foo.example.com.</t>
 
-            <t>If the SOA record exists as exactly specified in the query, it is expected to be returned in the Answer section with a NOERROR response code. If the exact SOA record does not exist, the client may get back a NOERROR/NODATA response or it may get back a NXDOMAIN/Name Error response. This depends on the resolver implementation and whether the domain exists. The client is looking for an SOA record to be returned in either the Answer section or the Authority section with a NOERROR response code. If the client receives an NXDOMAIN/Name Error response code, it should strip the leading label from the query name and if the resulting name has at least one label in it, the client should send a new SOA query, repeating this until a NOERROR response code is received or the query name is empty. In the case of an empty name, the client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
+            <t>If the SOA record exists as exactly specified in the query, it is expected to be returned in the Answer section with a NOERROR response code. If the exact SOA record does not exist, the client may get back a NOERROR/NODATA response or it may get back a NXDOMAIN/Name Error response. This depends on the resolver implementation and whether the domain exists. The client is looking for an SOA record to be returned in either the Answer section or the Authority section with a NOERROR response code. If the client receives an NXDOMAIN/Name Error response code or a response containing no SOA record, it should strip the leading label from the query name and if the resulting name has at least one label in it, the client should send a new SOA query, repeating this until a NOERROR response code is received or the query name is empty. In the case of an empty name, the client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
 
             <t>In the example above, if an SOA record query is sent for _printers._tcp.foo.example.com and an NXDOMAIN/Name Error is returned with an SOA record in the Authority section for foo.example.com, the client should strip the leading label and query an SOA record for _tcp.foo.example.com. If a NOERROR/NODATA response is received with an SOA record in the Authority section for foo.example.com, this is sufficent. If an NXDOMAIN/Name Error response is received, the client should again strip the leading label and query an SOA record for foo.example.com. If the foo.example.com domain exists, this should result in a NOERROR response with the SOA record in the Answer section. If the domain foo.example.com does not exist, the response will likely be an NXDOMAIN/Name Error with an SOA record for example.com in the Authority section. This means the subdomain foo.example.com has not been properly delegated by example.com.</t> 
 
@@ -351,7 +360,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="SessSig">DNS Session Signaling specification</xref>.
          The DNS Opcode is the Session Signaling Opcode (tentatively 6).
-         The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
          The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
@@ -364,7 +373,7 @@
 
          <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the connection between the client and the server is closed.</t>
 
-         <t>SUBSCRIBE requests on a given connection MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that TLS/TCP connection. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "foo.com" and "Foo.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
+         <t>SUBSCRIBE requests on a given connection MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that TLS/TCP connection. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
 
          <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</t>
 
@@ -414,7 +423,7 @@
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
 
 <?rfc needLines="30" ?>
-         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <xref target="SessSig"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below:
+         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <xref target="SessSig"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below:
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</t>
 
@@ -442,7 +451,7 @@
          <t>For RCODE = 9 (NOTAUTH), the time delay applies to requests for other names falling within the same zone. Requests for names falling within other zones are not subject to the delay. For all other RCODEs the time delay applies to all subsequent requests to this server.</t>
 
          <t>After sending an error response the server MAY allow the connection to remain open,
-         or MAY send a DNS Push Notification Retry Delay Operation TLV asserting the client close the TCP connection,
+         or MAY send a DNS Push Notification Retry Delay Operation TLV instructing the client to close the TCP connection,
          as described in the <xref target="SessSig">DNS Session Signaling specification</xref>.
          Clients MUST correctly handle both cases.</t>
 
@@ -506,7 +515,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="SessSig">DNS Session Signaling specification</xref>.
          The DNS Opcode is the Session Signaling Opcode (tentatively 6).
-         The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The SSOP-TYPE is PUSH (tentatively 0x41).
          The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
@@ -560,7 +569,7 @@
 
          <t>A PUSH response message begins with the standard
          <xref target="SessSig">DNS Session Signaling 12-byte header</xref>,
-         possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.</t>
+         possibly followed by one or more optional Modifier TLVs.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the PUSH
          message.</t>
@@ -731,7 +740,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="SessSig">DNS Session Signaling specification</xref>.
          The DNS Opcode is the Session Signaling Opcode (tentatively 6).
-         The four count fields MUST be empty, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The SSOP-TYPE is RECONFIRM (tentatively 0x43).
          The SSOP-LENGTH is the length of the data that follows, which specifies
@@ -795,8 +804,6 @@
          <t>RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</t>
 
          <t>RCODE value SSOPNOTIMP indicates that the server does not support RECONFIRM requests.</t>
-
-         <t>Similarly, a server would only generate SSOPNOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</t>
 
          <t>Nonzero RCODE values SERVFAIL, REFUSED and SSOPNOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
          
