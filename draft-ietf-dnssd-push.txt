@@ -403,17 +403,17 @@ Internet-Draft           DNS Push Notifications             October 2017
    the DNS Stateful Operations specification [StatefulOp].  Those
    details are not repeated here.
 
-   DNS Push Notification clients and servers MUST support DNS Session
-   Signaling, but the server SHOULD NOT issue any DNS Stateful
-   Operations operations until after the client has first initiated a
-   DNS Session Signaling operation of its own.  A single server can
-   support DNS Queries, DNS Updates, and DNS Push Notifications (using
-   DNS Stateful Operations) on the same TCP port, and until the client
-   has sent at least one DNS Stateful Operations operation the server
-   does not know what kind of client has connected to it.  Once the
-   client has indicated willingness to use DNS Stateful Operations
-   operations by sending one of its own, either side of the connection
-   may then initiate further Stateful Operations operations at any time.
+   DNS Push Notification clients and servers MUST support DNS Stateful
+   Operations, but the server SHOULD NOT issue any DNS Stateful
+   Operations messages until after the client has first initiated a DNS
+   Stateful Operation of its own.  A single server can support DNS
+   Queries, DNS Updates, and DNS Push Notifications (using DNS Stateful
+   Operations) on the same TCP port, and until the client has sent at
+   least one DNS Stateful Operations message, the server does not know
+   what kind of client has connected to it.  Once the client has
+   indicated willingness to use DNS Stateful Operations by sending one
+   of its own, either side of the connection may then initiate further
+   Stateful Operations at any time.
 
    A DNS Push Notification exchange begins with the client discovering
    the appropriate server, using the procedure described in Section 6.1,
