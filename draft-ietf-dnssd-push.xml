@@ -81,18 +81,18 @@
    <!-- Another author who claims to be an editor -->
 
    <author fullname="Tom Pusateri" initials="T.J." surname="Pusateri">
-     <organization>Seeking affiliation</organization>
+     <organization>Unaffiliated</organization>
 
      <address>
        <postal>
          <street></street>
          <!-- Reorder these if your country does things differently -->
-         <city>Hilton Head Island</city>
-         <region>SC</region>
-         <code></code>
+         <city>Raleigh</city>
+         <region>NC</region>
+         <code>27608</code>
          <country>USA</country>
        </postal>
-       <phone>+1 843 473 7394</phone>
+       <phone>+1 919 867 1330</phone>
        <email>pusateri@bangj.com</email>
        <!-- uri and facsimile elements may also be added -->
      </address>
@@ -115,7 +115,7 @@
      </address>
    </author>
 
-   <date year='2017' month='July' day='2'/>
+   <date year='2017'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -217,7 +217,7 @@
 
      <t>A DNS Push Notification client must not routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
-     <t>Generally, as described in the <xref target="SessSig">DNS Session Signaling specification</xref>, a client must not keep a connection to a server open indefinitely if it has no subscriptions (or other operations) active on that connection. A client MAY close a connection as soon as it becomes idle, and then if needed in the future, open a new connection when required. Alternatively, a client MAY speculatively keep an idle connection open for some time, subject to the constraint that it MUST NOT keep a connection open that has been idle for more than the session's idle timeout (15 seconds by default).</t>
+     <t>Generally, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>, a client must not keep a connection to a server open indefinitely if it has no subscriptions (or other operations) active on that connection. A client MAY close a connection as soon as it becomes idle, and then if needed in the future, open a new connection when required. Alternatively, a client MAY speculatively keep an idle connection open for some time, subject to the constraint that it MUST NOT keep a connection open that has been idle for more than the session's idle timeout (15 seconds by default).</t>
 <?rfc needLines="9" ?>
    </section>
 
@@ -246,32 +246,32 @@
 
    <section title="Protocol Operation">
      <t>The DNS Push Notification protocol is a session-oriented protocol, and makes use of
-     <xref target="SessSig">DNS Session Signaling</xref>.</t>
+     <xref target="StatefulOp">DNS Stateful Operations</xref>.</t>
 
-     <t>For details of the DNS Session Signaling message format refer to the
-     <xref target="SessSig">DNS Session Signaling specification</xref>.
+     <t>For details of the DNS Stateful Operations message format refer to the
+     <xref target="StatefulOp">DNS Stateful Operations specification</xref>.
      Those details are not repeated here.</t>
 
      <t>DNS Push Notification clients and servers MUST support DNS Session
-     Signaling, but the server SHOULD NOT issue any DNS Session Signaling
+     Signaling, but the server SHOULD NOT issue any DNS Stateful Operations
      operations until after the client has first initiated a DNS Session
      Signaling operation of its own.
      A single server can support DNS Queries, DNS Updates, and DNS Push
-     Notifications (using DNS Session Signaling) on the same TCP port, and
-     until the client has sent at least one DNS Session Signaling operation
+     Notifications (using DNS Stateful Operations) on the same TCP port, and
+     until the client has sent at least one DNS Stateful Operations operation
      the server does not know what kind of client has connected to it.
-     Once the client has indicated willingness to use DNS Session Signaling
+     Once the client has indicated willingness to use DNS Stateful Operations
      operations by sending one of its own, either side of the connection may
-     then initiate further Session Signaling operations at any time.</t>
+     then initiate further Stateful Operations operations at any time.</t>
 
      <t>A DNS Push Notification exchange begins with the client discovering the appropriate server,
      using the procedure described in <xref target="discovery"/>, and then making a TLS/TCP connection to it.</t>
 
      <t>A typical DNS Push Notification client will immediately issue a DNS
-     Session Signaling Keepalive operation to request a session timeout or keepalive interval
+     Stateful Operations Keepalive operation to request a session timeout or keepalive interval
      longer than the the 15-second defaults, but this is not required.
      A DNS Push Notification client MAY issue other requests on the
-     connection first, and only issue a DNS Session Signaling Keepalive
+     connection first, and only issue a DNS Stateful Operations Keepalive
      operation later if it determines that to be necessary.</t>
 
      <t>Once the connection is made, the client may then add and remove Push Notification subscriptions. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. Note that a client MUST be prepared to receive (and silently ignore) Push Notifications for subscriptions it has previously removed, since there is no way to prevent the situation where a Push Notification is in flight from server to client while the client's UNSUBSCRIBE message cancelling that subscription is simultaneously in flight from client to server.</t>
@@ -316,14 +316,14 @@
      </section>
 
      <section title="DNS Push Notification SUBSCRIBE">
-       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TLS connection to the server. A SUBSCRIBE request is encoded in a <xref target="SessSig">DNS Session Signaling</xref> message. This specification defines a DNS Session Signaling TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively Session Signaling Type Code 0x40).</t>
+       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established TLS connection to the server. A SUBSCRIBE request is encoded in a <xref target="StatefulOp">DNS Stateful Operations</xref> message. This specification defines a DNS Stateful Operations TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively Stateful Operations Type Code 0x40).</t>
 
        <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server should not send a SUBSCRIBE request over an existing connection from a client. If a server does send a SUBSCRIBE request over the connection initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</t>
 
 <?rfc needLines="48" ?>
        <section title="SUBSCRIBE Request">
          <t>A SUBSCRIBE request message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the SUBSCRIBE TLV.
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>, followed by the SUBSCRIBE TLV.
          A SUBSCRIBE request message is illustrated below:</t>
 
          <figure align="center" anchor="subscribe_req"><artwork align="center"><![CDATA[
@@ -358,8 +358,8 @@
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="SessSig">DNS Session Signaling specification</xref>.
-         The DNS Opcode is the Session Signaling Opcode (tentatively 6).
+         <xref target="StatefulOp">DNS Stateful Operations specification</xref>.
+         The DNS Opcode is the Stateful Operations Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
@@ -395,14 +395,14 @@
          <t>Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</t>
 
          <t>A SUBSCRIBE response message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>,
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
          possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>A SUBSCRIBE response message MUST NOT contain a Session Signaling Operation TLV.
-         The Session Signaling Operation TLV is NOT copied from the SUBSCRIBE request.</t>
+         <t>A SUBSCRIBE response message MUST NOT contain a Stateful Operations Operation TLV.
+         The Stateful Operations Operation TLV is NOT copied from the SUBSCRIBE request.</t>
 
 <?rfc needLines="20" ?>
          <t>In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</t>
@@ -414,7 +414,7 @@
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
          <c>NXDOMAIN</c><c>3</c><c>NOT APPLICABLE. DNS Push Notification servers MUST NOT return NXDOMAIN errors in response to SUBSCRIBE requests.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Session Signaling Opcode.</c>
+         <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Stateful Operations Opcode.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
          <c>SSOPNOTIMP</c><c>11</c><c>SUBSCRIBE operation not supported.</c>
@@ -423,15 +423,15 @@
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
 
 <?rfc needLines="30" ?>
-         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <xref target="SessSig"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below:
+         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <xref target="StatefulOp"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below:
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</t>
 
              <t>For RCODE = 2 (SERVFAIL) the delay should be chosen according to the level of server overload and the anticipated duration of that overload. By default, a value of one minute is RECOMMENDED. If a more serious server failure occurs, the delay may be longer in accordance with the specific problem encountered.</t>
 
              <t>For RCODE = 4 (NOTIMP), which occurs on a server that doesn't implement
-             <xref target="SessSig">DNS Session Signaling</xref>,
-             it is unlikely that the server will begin supporting DNS Session Signaling
+             <xref target="StatefulOp">DNS Stateful Operations</xref>,
+             it is unlikely that the server will begin supporting DNS Stateful Operations
              in the next few minutes, so the retry delay SHOULD be one hour.</t>
 
              <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.<vspace />
@@ -452,7 +452,7 @@
 
          <t>After sending an error response the server MAY allow the connection to remain open,
          or MAY send a DNS Push Notification Retry Delay Operation TLV instructing the client to close the TCP connection,
-         as described in the <xref target="SessSig">DNS Session Signaling specification</xref>.
+         as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.
          Clients MUST correctly handle both cases.</t>
 
 <?rfc needLines="48" ?>
@@ -466,7 +466,7 @@
        <section title="PUSH Message">
 
          <t>A PUSH message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the PUSH TLV.
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>, followed by the PUSH TLV.
          A PUSH message is illustrated below:</t>
 
          <figure align="center" anchor="push_msg"><artwork align="center"><![CDATA[
@@ -513,8 +513,8 @@
          <t>The MESSAGE ID field MUST be set to a unique value, that the server is not currently using for any other active outgoing request that it has sent on this connection. The MESSAGE ID in the outgoing PUSH message is selected by the server and has no relationship to the MESSAGE ID in any of the client subscriptions it may relate to. In the PUSH response the client MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="SessSig">DNS Session Signaling specification</xref>.
-         The DNS Opcode is the Session Signaling Opcode (tentatively 6).
+         <xref target="StatefulOp">DNS Stateful Operations specification</xref>.
+         The DNS Opcode is the Stateful Operations Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The SSOP-TYPE is PUSH (tentatively 0x41).
@@ -529,7 +529,7 @@
          the connection with a TCP RST (or equivalent for other protocols).
          The Update records are formatted in the customary way for Resource
          Records in DNS messages with the stipulation that DNS name compression
-         is not permitted in DNS Session Signaling TLVs.
+         is not permitted in DNS Stateful Operations TLVs.
          Update records in a PUSH Message are interpreted according to the same
          rules as for <xref target="RFC2136">DNS Update</xref> messages, namely:
 
@@ -568,14 +568,14 @@
          <t>Each PUSH message generates exactly one PUSH response from the receiver.</t>
 
          <t>A PUSH response message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>,
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
          possibly followed by one or more optional Modifier TLVs.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the PUSH
          message.</t>
 
-         <t>A PUSH response message MUST NOT contain a Session Signaling Operation TLV.
-         The Session Signaling Operation TLV is NOT copied from the PUSH message.</t>
+         <t>A PUSH response message MUST NOT contain a Stateful Operations Operation TLV.
+         The Stateful Operations Operation TLV is NOT copied from the PUSH message.</t>
 
          <t>In a PUSH response the RCODE MUST be zero. Receiving a PUSH response with a nonzero RCODE is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
 
@@ -585,7 +585,7 @@
 
      <section title="DNS Push Notification UNSUBSCRIBE">
        <t>To cancel an individual subscription without closing the entire connection, the client sends an UNSUBSCRIBE message over the established TCP connection to the server. The UNSUBSCRIBE message is encoded in a
-       <xref target="SessSig">DNS Session Signaling</xref> message. This specification defines a DNS Session Signaling TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively Session Signaling Type Code 0x42).</t>
+       <xref target="StatefulOp">DNS Stateful Operations</xref> message. This specification defines a DNS Stateful Operations TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively Stateful Operations Type Code 0x42).</t>
 
        <t>A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send a UNSUBSCRIBE request over the connection initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</t>
 
@@ -593,7 +593,7 @@
        <section title="UNSUBSCRIBE Request">
 
          <t>An UNSUBSCRIBE request message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the UNSUBSCRIBE TLV.</t>
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>, followed by the UNSUBSCRIBE TLV.</t>
 
          <figure align="center" anchor="unsubscribe_req"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
@@ -648,14 +648,14 @@
          <t>Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response from the server.</t>
 
          <t>An UNSUBSCRIBE response message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>,
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
          possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the UNSUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>An UNSUBSCRIBE response message MUST NOT contain a Session Signaling Operation TLV.
-         The Session Signaling Operation TLV is NOT copied from the UNSUBSCRIBE request.</t>
+         <t>An UNSUBSCRIBE response message MUST NOT contain a Stateful Operations Operation TLV.
+         The Stateful Operations Operation TLV is NOT copied from the UNSUBSCRIBE request.</t>
 
          <t>In the UNSUBSCRIBE response the RCODE indicates whether or not the unsubscribe request was successful. Supported RCODEs are as follows:</t>
          <texttable title="UNSUBSCRIBE Response codes">
@@ -665,7 +665,7 @@
          <c>NOERROR</c><c>0</c><c>UNSUBSCRIBE successful.</c>
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>NXDOMAIN</c><c>3</c><c>Specified subscription does not exist.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Session Signaling Opcode.</c>
+         <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Stateful Operations Opcode.</c>
          <c>SSOPNOTIMP</c><c>11</c><c>UNSUBSCRIBE operation not supported.</c>
          </texttable>
 
@@ -682,11 +682,11 @@
 
          <t>RCODE values NOTIMP and SSOPNOTIMP should not occur in practice.</t>
 
-         <t>A server would only generate NOTIMP if it did not support Session Signaling, and if the server does not support Session Signaling then it should not be possible for a client to have an active subscription to cancel.</t>
+         <t>A server would only generate NOTIMP if it did not support Stateful Operations, and if the server does not support Stateful Operations then it should not be possible for a client to have an active subscription to cancel.</t>
 
          <t>Similarly, a server would only generate SSOPNOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</t>
 
-         <t>Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Session Signaling Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="SessSig">DNS Session Signaling specification</xref>.</t>
+         <t>Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
 
 <?rfc needLines="48" ?>
        </section>
@@ -701,7 +701,7 @@
        <section title="RECONFIRM Request">
 
          <t>A RECONFIRM request message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>, followed by the RECONFIRM TLV.
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>, followed by the RECONFIRM TLV.
          A RECONFIRM request message is illustrated below:</t>
 
          <figure align="center" anchor="reconfirm_req"><artwork align="center"><![CDATA[
@@ -738,8 +738,8 @@
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="SessSig">DNS Session Signaling specification</xref>.
-         The DNS Opcode is the Session Signaling Opcode (tentatively 6).
+         <xref target="StatefulOp">DNS Stateful Operations specification</xref>.
+         The DNS Opcode is the Stateful Operations Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The SSOP-TYPE is RECONFIRM (tentatively 0x43).
@@ -765,14 +765,14 @@
          <t>Each RECONFIRM request generates exactly one RECONFIRM response from the server.</t>
 
          <t>A RECONFIRM response message begins with the standard
-         <xref target="SessSig">DNS Session Signaling 12-byte header</xref>,
+         <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
          possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>A RECONFIRM response message MUST NOT contain a Session Signaling Operation TLV.
-         The Session Signaling Operation TLV is NOT copied from the RECONFIRM request.</t>
+         <t>A RECONFIRM response message MUST NOT contain a Stateful Operations Operation TLV.
+         The Stateful Operations Operation TLV is NOT copied from the RECONFIRM request.</t>
 
          <t>In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</t>
          <texttable title="RECONFIRM Response codes">
@@ -783,7 +783,7 @@
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
          <c>NXDOMAIN</c><c>3</c><c>NOT APPLICABLE. DNS Push Notification servers MUST NOT return NXDOMAIN errors in response to RECONFIRM requests.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Session Signaling Opcode.</c>
+         <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Stateful Operations Opcode.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
          <c>SSOPNOTIMP</c><c>11</c><c>RECONFIRM operation not supported.</c>
@@ -797,7 +797,7 @@
 
          <t>RCODE value SERVFAIL indicates that the server has exhausted its resources or other serious problem occurred.</t>
 
-         <t>RCODE values NOTIMP indicates that the server does not support Session Signaling, and Session Signaling is required for RECONFIRM requests.</t>
+         <t>RCODE values NOTIMP indicates that the server does not support Stateful Operations, and Stateful Operations is required for RECONFIRM requests.</t>
 
          <t>RCODE value REFUSED indicates that the server supports RECONFIRM requests but is currently not configured to accept them from this client.</t>
 
@@ -807,7 +807,7 @@
 
          <t>Nonzero RCODE values SERVFAIL, REFUSED and SSOPNOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
          
-         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Session Signaling Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="SessSig">DNS Session Signaling specification</xref>.</t>
+         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
 
 <?rfc needLines="48" ?>
        </section>
@@ -817,7 +817,7 @@
 
        <t>An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
 
-       <t>After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST respect the maximum idle time required by the server <xref target="SessSig"/>.</t>
+       <t>After terminating its last subscription on a connection via UNSUBSCRIBE, a client MAY close the connection immediately, or it may keep it open if it anticipates performing further operations on that connection in the future. If a client wishes to keep an idle connection open, it MUST respect the maximum idle time required by the server <xref target="StatefulOp"/>.</t>
 
        <t>If a client plans to terminate one or more subscriptions on a connection and doesn't intend to keep that connection open, then as an efficiency optimization it MAY instead choose to simply close the connection, which implicitly terminates all subscriptions on that connection. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that connection has been cancelled.</t>
 
@@ -863,7 +863,7 @@
      <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
      It is only applicable for the TCP protocol.<vspace />
      This name is to be published in the IANA Service Name Registry <xref target="RFC6335"/><xref target="SN"/>.</t>
-     <t>This document defines four DNS Session Signaling TLV types:
+     <t>This document defines four DNS Stateful Operations TLV types:
      SUBSCRIBE with (tentative) value 0x40 (64),
      PUSH with (tentative) value 0x41 (65),
      UNSUBSCRIBE with (tentative) value 0x42 (66), and
@@ -911,24 +911,26 @@
      &RFC7766;
      &I-D.ietf-tls-tls13;
 
-     <reference anchor='SessSig'>
+     <reference anchor='StatefulOp'>
      <front>
-     <title>DNS Session Signaling</title>
+     <title>DNS Stateful Operations</title>
      <author initials='R' surname='Bellis' fullname='Ray Bellis'><organization /></author>
      <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'><organization /></author>
      <author initials='J' surname='Dickinson' fullname='John Dickinson'><organization /></author>
      <author initials='S' surname='Dickinson' fullname='Sara Dickinson'><organization /></author>
      <author initials='A' surname='Mankin' fullname='Allison Mankin'><organization /></author>
      <author initials='T' surname='Pusateri' fullname='Tom Pusateri'><organization /></author>
-     <date year='2017' month='March' day='13' />
-     <abstract><t>The EDNS(0) Extension Mechanism for DNS is explicitly
-     defined to only have "per-message" semantics.  This document defines a
-     new Session Signaling Opcode used to carry persistent "per-session"
-     type-length- values (TLVs), and defines an initial set of TLVs used to
-     manage session timeouts and termination.</t></abstract>
+     <date year='2017' month='September' day='13' />
+     <abstract><t>This document defines a new DNS Stateful Operation OPCODE used to
+   communicate operations within persistent stateful sessions, expressed
+   using type-length-value (TLV) syntax, and defines an initial set of
+   TLVs used to manage session timeouts and termination.  This mechanism
+   is intended to reduce the overhead of existing "per-packet" signaling
+   mechanisms with "per-message" semantics as well as defining new
+   stateful operations not defined in EDNS(0).</t></abstract>
      </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-02' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-02.txt' />
+     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-04' />
+     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-04.txt' />
      </reference>
 
      <reference anchor="SN"
@@ -967,13 +969,14 @@
      <front>
      <title>Hybrid Unicast/Multicast DNS-Based Service Discovery</title>
      <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'><organization /></author>
-     <date year='2017' month='March' day='13' />
+     <date year='2017' month='September' day='13' />
      <abstract><t>This document specifies a mechanism that uses Multicast DNS to
-     automatically populate the wide-area unicast Domain Name System namespace with
-     records describing devices and services found on the local link.</t></abstract>
+   automatically populate the wide-area unicast Domain Name System
+   namespace with records describing devices and services found on the
+   local link.</t></abstract>
      </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-06' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-06.txt' />
+     <seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-07' />
+     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-07.txt' />
      </reference>
 
      <reference anchor='IPJ.9-4-TCPSYN'>
