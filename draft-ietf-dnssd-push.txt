@@ -10,7 +10,7 @@ Expires: May 2, 2018                                          Apple Inc.
 
 
                          DNS Push Notifications
-                        draft-ietf-dnssd-push-12
+                        draft-ietf-dnssd-push-13
 
 Abstract
 
