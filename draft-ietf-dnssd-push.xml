@@ -61,7 +61,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-13" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-14" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -342,14 +342,14 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   SSOP-TYPE = SUBSCRIBE (tentatively 0x40)    |
+|    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |                                               |   \
 \                     NAME                      \    |
 \                                               \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
 |                     TYPE                      |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     CLASS                     |   /
@@ -362,12 +362,12 @@
          The DNS Opcode is the Stateful Operations Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
-         <t>The SSOP-TYPE is SUBSCRIBE (tentatively 0x40).
-         The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
+         <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
+         The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
          the name, type, and class of the record(s) being sought.</t>
 
-         <t>The SSOP-DATA for a SUBSCRIBE request MUST contain exactly one question.
-         The SSOP-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.
+         <t>The DSO-DATA for a SUBSCRIBE request MUST contain exactly one question.
+         The DSO-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.
          Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages
          can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 
@@ -417,7 +417,7 @@
          <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Stateful Operations Opcode.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
-         <c>SSOPNOTIMP</c><c>11</c><c>SUBSCRIBE operation not supported.</c>
+         <c>DSONOTIMP</c><c>11</c><c>SUBSCRIBE operation not supported.</c>
          </texttable>
 
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
@@ -485,9 +485,9 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|      SSOP-TYPE = PUSH (tentatively 0x42)      |
+|      DSO-TYPE = PUSH (tentatively 0x42)       |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 \                     NAME                      \   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -498,7 +498,7 @@
 |                     RDLEN                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 \                     RDATA                     \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
 \         NAME                                  \    |
 +--+--+--+--+--+--+-                            |    |
 |         TYPE                Repeated          |    |
@@ -517,12 +517,12 @@
          The DNS Opcode is the Stateful Operations Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
-         <t>The SSOP-TYPE is PUSH (tentatively 0x41).
-         The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies
+         <t>The DSO-TYPE is PUSH (tentatively 0x41).
+         The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
          the changes being communicated.</t>
 
 <?rfc needLines="15" ?>
-         <t>The SSOP-DATA contains one or more Update records.
+         <t>The DSO-DATA contains one or more Update records.
          A PUSH Message MUST contain at least one Update record.
          If a PUSH Message is received that contains no Update records,
          this is a fatal error, and the receiver MUST immediately terminate
@@ -611,18 +611,18 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             SSOP-LENGTH (2 octets)            |
+|              DSO-LENGTH (2 octets)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|              SUBSCRIBE MESSAGE ID             |   SSOP-DATA
+|              SUBSCRIBE MESSAGE ID             |   DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+]]></artwork></figure>
          
 
-         <t>In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively 0x42).
-         The SSOP-LENGTH is 2 octets.</t>
+         <t>In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).
+         The DSO-LENGTH is 2 octets.</t>
 
-         <t>The SSOP-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.
+         <t>The DSO-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.
          This is how the server knows which SUBSCRIBE request is being cancelled.
          After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.
          If a server receives an UNSUBSCRIBE message
@@ -666,7 +666,7 @@
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>NXDOMAIN</c><c>3</c><c>Specified subscription does not exist.</c>
          <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Stateful Operations Opcode.</c>
-         <c>SSOPNOTIMP</c><c>11</c><c>UNSUBSCRIBE operation not supported.</c>
+         <c>DSONOTIMP</c><c>11</c><c>UNSUBSCRIBE operation not supported.</c>
          </texttable>
 
          <t>This document specifies only these RCODE values for UNSUBSCRIBE Responses. Servers sending UNSUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in UNSUBSCRIBE Responses, so clients MUST be prepared to accept UNSUBSCRIBE Responses with any RCODE value.</t>
@@ -680,11 +680,11 @@
 
          <t>RCODE value NXDOMAIN indicates a MESSAGE ID that does not correspond to any active subscription.</t>
 
-         <t>RCODE values NOTIMP and SSOPNOTIMP should not occur in practice.</t>
+         <t>RCODE values NOTIMP and DSONOTIMP should not occur in practice.</t>
 
          <t>A server would only generate NOTIMP if it did not support Stateful Operations, and if the server does not support Stateful Operations then it should not be possible for a client to have an active subscription to cancel.</t>
 
-         <t>Similarly, a server would only generate SSOPNOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</t>
+         <t>Similarly, a server would only generate DSONOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</t>
 
          <t>Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
 
@@ -720,15 +720,15 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   SSOP-TYPE = RECONFIRM (tentatively 0x43)    |
+|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 \                     NAME                      \   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     TYPE                      |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     CLASS                     |     > SSOP-DATA
+|                     CLASS                     |     > DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     RDLEN                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -742,12 +742,12 @@
          The DNS Opcode is the Stateful Operations Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
-         <t>The SSOP-TYPE is RECONFIRM (tentatively 0x43).
-         The SSOP-LENGTH is the length of the data that follows, which specifies
+         <t>The DSO-TYPE is RECONFIRM (tentatively 0x43).
+         The DSO-LENGTH is the length of the data that follows, which specifies
          the name, type, class, and content of the record being disputed.</t>
 
-         <t>The SSOP-DATA for a RECONFIRM request MUST contain exactly one record.
-         The SSOP-DATA for a RECONFIRM request has no count field to specify more than one record.
+         <t>The DSO-DATA for a RECONFIRM request MUST contain exactly one record.
+         The DSO-DATA for a RECONFIRM request has no count field to specify more than one record.
          Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages
          can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 
@@ -786,7 +786,7 @@
          <c>NOTIMP</c><c>4</c><c>Server does not recognize DNS Stateful Operations Opcode.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
-         <c>SSOPNOTIMP</c><c>11</c><c>RECONFIRM operation not supported.</c>
+         <c>DSONOTIMP</c><c>11</c><c>RECONFIRM operation not supported.</c>
          </texttable>
 
          <t>This document specifies only these RCODE values for RECONFIRM Responses. Servers sending RECONFIRM Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in RECONFIRM Responses, so clients MUST be prepared to accept RECONFIRM Responses with any RCODE value.</t>
@@ -803,9 +803,9 @@
 
          <t>RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</t>
 
-         <t>RCODE value SSOPNOTIMP indicates that the server does not support RECONFIRM requests.</t>
+         <t>RCODE value DSONOTIMP indicates that the server does not support RECONFIRM requests.</t>
 
-         <t>Nonzero RCODE values SERVFAIL, REFUSED and SSOPNOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
+         <t>Nonzero RCODE values SERVFAIL, REFUSED and DSONOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
          
          <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
 

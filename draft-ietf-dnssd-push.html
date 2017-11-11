@@ -412,8 +412,8 @@
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-13" />
-  <meta name="dct.issued" scheme="ISO8601" content="2017-10-29" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-14" />
+  <meta name="dct.issued" scheme="ISO8601" content="2017-11-10" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled, as long as the polling rate is not too high.  But there exists no mechanism for a client to be asynchronously notified when these changes occur.  This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
   <meta name="description" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled, as long as the polling rate is not too high.  But there exists no mechanism for a client to be asynchronously notified when these changes occur.  This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
 
@@ -437,12 +437,12 @@
   <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-  <td class="left">Expires: May 2, 2018</td>
+  <td class="left">Expires: May 14, 2018</td>
   <td class="right">Apple Inc.</td>
 </tr>
 <tr>
   <td class="left"></td>
-  <td class="right">October 29, 2017</td>
+  <td class="right">November 10, 2017</td>
 </tr>
 
     	
@@ -450,7 +450,7 @@
   </table>
 
   <p class="title">DNS Push Notifications<br />
-  <span class="filename">draft-ietf-dnssd-push-13</span></p>
+  <span class="filename">draft-ietf-dnssd-push-14</span></p>
   
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
@@ -462,7 +462,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on May 2, 2018.</p>
+<p>This Internet-Draft will expire on May 14, 2018.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -588,14 +588,14 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   SSOP-TYPE = SUBSCRIBE (tentatively 0x40)    |
+|    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |                                               |   \
 \                     NAME                      \    |
 \                                               \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; DSO-DATA
 |                     TYPE                      |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     CLASS                     |   /
@@ -603,8 +603,8 @@
 <p class="figure">Figure 1</p>
 <p id="rfc.section.6.2.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#StatefulOp">DNS Stateful Operations specification</a> <cite title="NONE">[StatefulOp]</cite>.  The DNS Opcode is the Stateful Operations Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
-<p id="rfc.section.6.2.1.p.4">The SSOP-TYPE is SUBSCRIBE (tentatively 0x40).  The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
-<p id="rfc.section.6.2.1.p.5">The SSOP-DATA for a SUBSCRIBE request MUST contain exactly one question.  The SSOP-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.  Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
+<p id="rfc.section.6.2.1.p.4">The DSO-TYPE is SUBSCRIBE (tentatively 0x40).  The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
+<p id="rfc.section.6.2.1.p.5">The DSO-DATA for a SUBSCRIBE request MUST contain exactly one question.  The DSO-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.  Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.2.1.p.6">If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the connection between the client and the server is closed.</p>
 <p id="rfc.section.6.2.1.p.7">SUBSCRIBE requests on a given connection MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that TLS/TCP connection. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</p>
 <p id="rfc.section.6.2.1.p.8">DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</p>
@@ -665,7 +665,7 @@
       <td class="left">Server is not authoritative for the requested name.</td>
     </tr>
     <tr>
-      <td class="left">SSOPNOTIMP</td>
+      <td class="left">DSONOTIMP</td>
       <td class="center">11</td>
       <td class="left">SUBSCRIBE operation not supported.</td>
     </tr>
@@ -709,9 +709,9 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|      SSOP-TYPE = PUSH (tentatively 0x42)      |
+|      DSO-TYPE = PUSH (tentatively 0x42)       |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 \                     NAME                      \   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -722,7 +722,7 @@
 |                     RDLEN                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 \                     RDATA                     \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; SSOP-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; DSO-DATA
 \         NAME                                  \    |
 +--+--+--+--+--+--+-                            |    |
 |         TYPE                Repeated          |    |
@@ -736,8 +736,8 @@
 <p class="figure">Figure 2</p>
 <p id="rfc.section.6.3.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the server is not currently using for any other active outgoing request that it has sent on this connection. The MESSAGE ID in the outgoing PUSH message is selected by the server and has no relationship to the MESSAGE ID in any of the client subscriptions it may relate to. In the PUSH response the client MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#StatefulOp">DNS Stateful Operations specification</a> <cite title="NONE">[StatefulOp]</cite>.  The DNS Opcode is the Stateful Operations Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
-<p id="rfc.section.6.3.1.p.4">The SSOP-TYPE is PUSH (tentatively 0x41).  The SSOP-LENGTH is the length of the SSOP-DATA that follows, which specifies the changes being communicated.</p>
-<p id="rfc.section.6.3.1.p.5">The SSOP-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains no Update records, this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages with the stipulation that DNS name compression is not permitted in DNS Stateful Operations TLVs.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> messages, namely: </p>
+<p id="rfc.section.6.3.1.p.4">The DSO-TYPE is PUSH (tentatively 0x41).  The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the changes being communicated.</p>
+<p id="rfc.section.6.3.1.p.5">The DSO-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains no Update records, this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages with the stipulation that DNS name compression is not permitted in DNS Stateful Operations TLVs.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136">DNS Update</a> <cite title="NONE">[RFC2136]</cite> messages, namely: </p>
 
 <ul class="empty">
   <li>Delete all RRsets from a name:<br/> TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</li>
@@ -782,15 +782,15 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             SSOP-LENGTH (2 octets)            |
+|              DSO-LENGTH (2 octets)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|              SUBSCRIBE MESSAGE ID             |   SSOP-DATA
+|              SUBSCRIBE MESSAGE ID             |   DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</pre>
 <p class="figure">Figure 3</p>
-<p id="rfc.section.6.4.1.p.2">In the UNSUBSCRIBE TLV the SSOP-TYPE is UNSUBSCRIBE (tentatively 0x42).  The SSOP-LENGTH is 2 octets.</p>
-<p id="rfc.section.6.4.1.p.3">The SSOP-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.  If a server receives an UNSUBSCRIBE message where the MESSAGE ID does not match the ID of an active SUBSCRIBE request the server MUST return a response containing RCODE = 3 (NXDOMAIN).</p>
+<p id="rfc.section.6.4.1.p.2">In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).  The DSO-LENGTH is 2 octets.</p>
+<p id="rfc.section.6.4.1.p.3">The DSO-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.  If a server receives an UNSUBSCRIBE message where the MESSAGE ID does not match the ID of an active SUBSCRIBE request the server MUST return a response containing RCODE = 3 (NXDOMAIN).</p>
 <p id="rfc.section.6.4.1.p.4">It is allowable for the client to issue an UNSUBSCRIBE request for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE request.  A consequence of this is that if the client issues an UNSUBSCRIBE request for an as-yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is subsequently unsuccessful for some reason, then when the UNSUBSCRIBE request is eventually processed it will be an UNSUBSCRIBE request for a nonexistent subscription, which will result NXDOMAIN response.</p>
 <h1 id="rfc.section.6.4.2"><a href="#rfc.section.6.4.2">6.4.2.</a> UNSUBSCRIBE Response</h1>
 <p id="rfc.section.6.4.2.p.1">Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response from the server.</p>
@@ -829,7 +829,7 @@
       <td class="left">Server does not recognize DNS Stateful Operations Opcode.</td>
     </tr>
     <tr>
-      <td class="left">SSOPNOTIMP</td>
+      <td class="left">DSONOTIMP</td>
       <td class="center">11</td>
       <td class="left">UNSUBSCRIBE operation not supported.</td>
     </tr>
@@ -840,9 +840,9 @@
 <p id="rfc.section.6.4.2.p.8">Nonzero RCODE values signal some kind of error.</p>
 <p id="rfc.section.6.4.2.p.9">RCODE value FORMERR indicates a message format error.</p>
 <p id="rfc.section.6.4.2.p.10">RCODE value NXDOMAIN indicates a MESSAGE ID that does not correspond to any active subscription.</p>
-<p id="rfc.section.6.4.2.p.11">RCODE values NOTIMP and SSOPNOTIMP should not occur in practice.</p>
+<p id="rfc.section.6.4.2.p.11">RCODE values NOTIMP and DSONOTIMP should not occur in practice.</p>
 <p id="rfc.section.6.4.2.p.12">A server would only generate NOTIMP if it did not support Stateful Operations, and if the server does not support Stateful Operations then it should not be possible for a client to have an active subscription to cancel.</p>
-<p id="rfc.section.6.4.2.p.13">Similarly, a server would only generate SSOPNOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</p>
+<p id="rfc.section.6.4.2.p.13">Similarly, a server would only generate DSONOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</p>
 <p id="rfc.section.6.4.2.p.14">Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <a href="#StatefulOp">DNS Stateful Operations specification</a> <cite title="NONE">[StatefulOp]</cite>.</p>
 <h1 id="rfc.section.6.5"><a href="#rfc.section.6.5">6.5.</a> DNS Push Notification RECONFIRM</h1>
 <p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx">Discovery Proxy</a> <cite title="NONE">[DisProx]</cite>, a DNS Zone may contain stale data. When a client encounters data that it believe may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM request to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS requests to ascertain whether the target device is still present. For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur. Frequent RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting, and remedying, such network problems.</p>
@@ -867,15 +867,15 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |             ARCOUNT (MUST BE ZERO)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   SSOP-TYPE = RECONFIRM (tentatively 0x43)    |
+|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|  SSOP-LENGTH (number of octets in SSOP-DATA)  |
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 \                     NAME                      \   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     TYPE                      |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     CLASS                     |     &gt; SSOP-DATA
+|                     CLASS                     |     &gt; DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     RDLEN                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -884,8 +884,8 @@
 <p class="figure">Figure 4</p>
 <p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this connection. For the purposes here, a MESSAGE ID is in use on this connection if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#StatefulOp">DNS Stateful Operations specification</a> <cite title="NONE">[StatefulOp]</cite>.  The DNS Opcode is the Stateful Operations Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
-<p id="rfc.section.6.5.1.p.4">The SSOP-TYPE is RECONFIRM (tentatively 0x43).  The SSOP-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
-<p id="rfc.section.6.5.1.p.5">The SSOP-DATA for a RECONFIRM request MUST contain exactly one record.  The SSOP-DATA for a RECONFIRM request has no count field to specify more than one record.  Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
+<p id="rfc.section.6.5.1.p.4">The DSO-TYPE is RECONFIRM (tentatively 0x43).  The DSO-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
+<p id="rfc.section.6.5.1.p.5">The DSO-DATA for a RECONFIRM request MUST contain exactly one record.  The DSO-DATA for a RECONFIRM request has no count field to specify more than one record.  Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.5.1.p.6">TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value ANY (255).</p>
 <p id="rfc.section.6.5.1.p.7">DNS wildcarding is not supported. That is, a wildcard ("*") in a RECONFIRM message matches only a literal wildcard character ("*") in the zone, and nothing else.</p>
 <p id="rfc.section.6.5.1.p.8">Aliasing is not supported. That is, a CNAME in a RECONFIRM message matches only a literal CNAME record in the zone, and nothing else.</p>
@@ -941,7 +941,7 @@
       <td class="left">Server is not authoritative for the requested name.</td>
     </tr>
     <tr>
-      <td class="left">SSOPNOTIMP</td>
+      <td class="left">DSONOTIMP</td>
       <td class="center">11</td>
       <td class="left">RECONFIRM operation not supported.</td>
     </tr>
@@ -954,8 +954,8 @@
 <p id="rfc.section.6.5.2.p.10">RCODE values NOTIMP indicates that the server does not support Stateful Operations, and Stateful Operations is required for RECONFIRM requests.</p>
 <p id="rfc.section.6.5.2.p.11">RCODE value REFUSED indicates that the server supports RECONFIRM requests but is currently not configured to accept them from this client.</p>
 <p id="rfc.section.6.5.2.p.12">RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</p>
-<p id="rfc.section.6.5.2.p.13">RCODE value SSOPNOTIMP indicates that the server does not support RECONFIRM requests.</p>
-<p id="rfc.section.6.5.2.p.14">Nonzero RCODE values SERVFAIL, REFUSED and SSOPNOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</p>
+<p id="rfc.section.6.5.2.p.13">RCODE value DSONOTIMP indicates that the server does not support RECONFIRM requests.</p>
+<p id="rfc.section.6.5.2.p.14">Nonzero RCODE values SERVFAIL, REFUSED and DSONOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</p>
 <p id="rfc.section.6.5.2.p.15">Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <a href="#StatefulOp">DNS Stateful Operations specification</a> <cite title="NONE">[StatefulOp]</cite>.</p>
 <h1 id="rfc.section.6.6"><a href="#rfc.section.6.6">6.6.</a> Client-Initiated Termination</h1>
 <p id="rfc.section.6.6.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
