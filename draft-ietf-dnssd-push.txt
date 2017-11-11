@@ -438,8 +438,8 @@ Internet-Draft           DNS Push Notifications            November 2017
    subscription is simultaneously in flight from client to server.
 
    The exchange between client and server terminates when either end
-   closes the TCP connection with a TCP FIN or RST.
-
+   closes the session (e.g., closing the TLS session with a TLS
+   close_notify, or closing the TCP connection with a TCP FIN or RST).
 
 
 
@@ -1887,10 +1887,10 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    If a client has performed operations on this connection that it would
    not want lost (like DNS updates) then the client SHOULD do an orderly
-   disconnect, sending a TCP FIN.  In the BSD Sockets API, sending a TCP
-   FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the
-   socket open until all remaining data has been read from it.
-
+   disconnect, sending a TLS close_notify followed by a TCP FIN.  (In
+   the BSD Sockets API, sending a TCP FIN is achieved by calling
+   "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining
+   data has been read from it.)
 
 
 
