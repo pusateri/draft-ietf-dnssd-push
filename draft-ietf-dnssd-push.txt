@@ -1087,7 +1087,7 @@ Internet-Draft           DNS Push Notifications            November 2017
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      |             ARCOUNT (MUST BE ZERO)            |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |      DSO-TYPE = PUSH (tentatively 0x42)       |
+     |      DSO-TYPE = PUSH (tentatively 0x41)       |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      |   DSO-LENGTH (number of octets in DSO-DATA)   |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
