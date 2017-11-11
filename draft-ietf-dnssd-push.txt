@@ -138,13 +138,13 @@ Internet-Draft           DNS Push Notifications            November 2017
    As the domain name system continues to adapt to new uses and changes
    in deployment, polling has the potential to burden DNS servers at
    many levels throughout the network.  Other network protocols have
-   successfully deployed a publish/subscribe model to state changes
-   following the Observer design pattern [obs].  XMPP Publish-Subscribe
-   [XEP0060] and Atom [RFC4287] are examples.  While DNS servers are
-   generally highly tuned and capable of a high rate of query/response
-   traffic, adding a publish/subscribe model for tracking changes to DNS
-   records can result in more timely notification of changes with
-   reduced CPU usage and lower network traffic.
+   successfully deployed a publish/subscribe model following the
+   Observer design pattern [obs].  XMPP Publish-Subscribe [XEP0060] and
+   Atom [RFC4287] are examples.  While DNS servers are generally highly
+   tuned and capable of a high rate of query/response traffic, adding a
+   publish/subscribe model for tracking changes to DNS records can
+   result in more timely notification of changes with reduced CPU usage
+   and lower network traffic.
 
    Multicast DNS [RFC6762] implementations always listen on a well known
    link-local IP multicast group, and new services and updates are sent
@@ -156,11 +156,11 @@ Internet-Draft           DNS Push Notifications            November 2017
    to allow clients to learn about DNS record changes in a timely manner
    without polling.
 
-   The DNS Long-Lived Queries (LLQ) [I-D.sekar-dns-llq] mechanism is an
+   The DNS Long-Lived Queries (LLQ) mechanism [I-D.sekar-dns-llq] is an
    existing deployed solution to provide asynchronous change
    notifications, used by Apple's Back to My Mac Service [RFC6281]
    introduced in Mac OS X 10.5 Leopard in 2007.  Back to My Mac was
-   designed in an era when the data centre operations staff asserted
+   designed in an era when the data center operations staff asserted
    that it was impossible for a server to handle large numbers of
 
 
@@ -170,7 +170,7 @@ Pusateri & Cheshire       Expires May 14, 2018                  [Page 3]
 Internet-Draft           DNS Push Notifications            November 2017
 
 
-   mostly-idle TCP connections, so LLQ had to defined as a UDP-based
+   mostly-idle TCP connections, so LLQ was defined as a UDP-based
    protocol, effectively replicating much of TCP's connection state
    management logic in user space, and creating its own poor imitations
    of existing TCP features like the three-way handshake, flow control,
@@ -240,8 +240,8 @@ Internet-Draft           DNS Push Notifications            November 2017
    Update Prerequisite processing.  Prerequisites are used to perform
    tentative atomic test-and-set type operations when a client updates
    records on a server, and that concept has no applicability when it
-   comes to an authoritative server informing a client of changes to DNS
-   records.
+   comes to an authoritative server unilaterally informing a client of
+   changes to DNS records.
 
    This DNS Push Notification specification includes support for DNS
    classes, for completeness.  However, in practice, it is anticipated
@@ -460,7 +460,7 @@ Internet-Draft           DNS Push Notifications            November 2017
    DNS recursive resolver and requesting a Push Notification
    subscription.  If this is successful, then the recursive resolver
    will make appropriate Push Notification subscriptions on the client's
-   behalf, and the client will recieve appropriate results.  If the
+   behalf, and the client will receive appropriate results.  If the
    recursive resolver does not support Push Notification subscriptions,
    then it will return an error code, and the client should proceed to
    discover the appropriate server to talk to directly.  The client MUST
@@ -470,14 +470,16 @@ Internet-Draft           DNS Push Notifications            November 2017
    TLS [RFC7858].
 
    1.  The client begins the discovery by sending a DNS query to its
-       local resolver, with record type SOA [RFC1035] for the record to
-       which it wishes to subscribe.  As an example, if it wishes to
-       subscribe to PTR records with the name
-       _printers._tcp.foo.example.com, it sends an SOA query for
-       _printers._tcp.foo.example.com.  The goal is to determine the
-       authoritative server for _printers._tcp.foo.example.com.
+       local resolver, with record type SOA [RFC1035] for the record
+       name to which it wishes to subscribe.  As an example, suppose the
+       client wishes to subscribe to PTR records with the name
+       _ipp._tcp.foo.example.com (to discover Internet Printing Protocol
+       (IPP) printers [RFC8010][RFC8011] being advertised at
+       "foo.example.com").  The client begins by sending an SOA query
+       for _ipp._tcp.foo.example.com.  The goal is to determine the
+       authoritative server for _ipp._tcp.foo.example.com.
 
-   2.  If the SOA record exists as exactly specified in the query, it is
+   2.  If the SOA record exists exactly as specified in the query, it is
        expected to be returned in the Answer section with a NOERROR
        response code.  If the exact SOA record does not exist, the
        client may get back a NOERROR/NODATA response or it may get back
@@ -489,15 +491,13 @@ Internet-Draft           DNS Push Notifications            November 2017
        response containing no SOA record, it should strip the leading
        label from the query name and if the resulting name has at least
        one label in it, the client should send a new SOA query,
-       repeating this until a NOERROR response code is received or the
-       query name is empty.  In the case of an empty name, the client
-       may retry the operation at a later time, of the client's
-       choosing, such after a change in network attachment.
+       repeating this until a NOERROR response code is received [what
+       about a NOERROR response with no SOA record in the Authority
+       section?] or the query name is empty.  In the case of an empty
+       name, the client may retry the operation at a later time, of the
+       client's choosing, such after a change in network attachment.
 
-   3.  In the example above, if an SOA record query is sent for
-       _printers._tcp.foo.example.com and an NXDOMAIN/Name Error is
-       returned with an SOA record in the Authority section for
-       foo.example.com, the client should strip the leading label and
+
 
 
 
@@ -506,22 +506,28 @@ Pusateri & Cheshire       Expires May 14, 2018                  [Page 9]
 Internet-Draft           DNS Push Notifications            November 2017
 
 
-       query an SOA record for _tcp.foo.example.com.  If a NOERROR/
-       NODATA response is received with an SOA record in the Authority
-       section for foo.example.com, this is sufficent.  If an NXDOMAIN/
-       Name Error response is received, the client should again strip
-       the leading label and query an SOA record for foo.example.com.
-       If the foo.example.com domain exists, this should result in a
-       NOERROR response with the SOA record in the Answer section.  If
-       the domain foo.example.com does not exist, the response will
-       likely be an NXDOMAIN/Name Error with an SOA record for
-       example.com in the Authority section.  This means the subdomain
-       foo.example.com has not been properly delegated by example.com.
+   3.  In the example above, if an SOA record query is sent for
+       _ipp._tcp.foo.example.com and an NXDOMAIN/Name Error is returned
+       with an SOA record in the Authority section for foo.example.com,
+       the client should strip the leading label and query an SOA record
+       for _tcp.foo.example.com [why not trust the SOA record if
+       given?].  If a NOERROR/NODATA response is received with an SOA
+       record in the Authority section for foo.example.com, this is
+       sufficient.  If an NXDOMAIN/Name Error response is received, the
+       client should again strip the leading label and query an SOA
+       record for foo.example.com.  If the foo.example.com domain
+       exists, this should result in a NOERROR response with the SOA
+       record in the Answer section.  If the domain foo.example.com does
+       not exist, the response will likely be an NXDOMAIN/Name Error
+       with an SOA record for example.com in the Authority section.
+       This means the subdomain foo.example.com has not been properly
+       delegated by example.com.
 
    4.  If a NOERROR/NODATA response is received but contains no SOA in
        the Authority section, the client could try stripping the leading
        label and issuing another SOA query.  Additional information
-       about negative responses can be found in Section 2 of [RFC2308].
+       about negative responses can be found in Section 2 of the DNS
+       NCACHE specification [RFC2308].
 
    5.  Once the SOA is known (either by virtue of being seen in the
        Answer Section, or in the Authority Section), the client sends a
@@ -538,7 +544,8 @@ Internet-Draft           DNS Push Notifications            November 2017
        port number on which to contact the server is in the SRV record
        "port" field.  The address(es) of the target host MAY be included
        in the Additional Section, however, the address records SHOULD be
-       authenticated before use as described below in Section 7.2 and
+       authenticated before use as described below in Section 7.2 and in
+       the specification for using DANE TLSA Records with SRV Records
        [RFC7673].
 
    8.  More than one SRV record may be returned.  In this case, the
@@ -547,13 +554,6 @@ Internet-Draft           DNS Push Notifications            November 2017
        subscription requests.  As described in the SRV specification
        [RFC2782], the server with the lowest "priority" is first
        contacted.  If more than one server has the same "priority", the
-       "weight" indicates the weighted probability that the client
-       should contact that server.  Higher weights have higher
-       probabilities of being selected.  If a server is not reachable or
-       is not willing to accept a subscription request, then a
-       subsequent server is to be contacted.
-
-
 
 
 
@@ -561,6 +561,13 @@ Pusateri & Cheshire       Expires May 14, 2018                 [Page 10]
 
 Internet-Draft           DNS Push Notifications            November 2017
 
+
+       "weight" indicates the weighted probability that the client
+       should contact that server.  Higher weights have higher
+       probabilities of being selected.  If a server is not willing to
+       accept a subscription request, or is not reachable within a
+       reasonable time, as determined by the client, then a subsequent
+       server is to be contacted.
 
    Each time a client makes a new DNS Push Notification subscription
    connection, it SHOULD repeat the discovery process in order to
@@ -571,13 +578,6 @@ Internet-Draft           DNS Push Notifications            November 2017
    records were set to reasonable values, repeated application of this
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
-
-
-
-
-
-
-
 
 
 
@@ -908,7 +908,10 @@ Internet-Draft           DNS Push Notifications            November 2017
    server sends a nonzero RCODE then it SHOULD append a Retry Delay
    Modifier TLV [StatefulOp] to the response specifying a delay before
    the client attempts this operation again.  Recommended values for the
-   delay for different RCODE values are given below:
+   delay for different RCODE values are given below.  These recommended
+   values apply both to the default values a server should place in the
+   Retry Delay Modifier TLV, and the default values a client should
+   assume if the server provides no Retry Delay Modifier TLV.
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
       implementer.  A value of five minutes is RECOMMENDED, to reduce
@@ -923,7 +926,11 @@ Internet-Draft           DNS Push Notifications            November 2017
       For RCODE = 4 (NOTIMP), which occurs on a server that doesn't
       implement DNS Stateful Operations [StatefulOp], it is unlikely
       that the server will begin supporting DNS Stateful Operations in
-      the next few minutes, so the retry delay SHOULD be one hour.
+      the next few minutes, so the retry delay SHOULD be one hour.  Note
+      that in such a case, a server that doesn't implement DNS Stateful
+      Operations is unlikely to place a Retry Delay Modifier TLV in its
+      response, so this recommended value in particular applies to what
+      a client should assume by default.
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
@@ -938,6 +945,15 @@ Internet-Draft           DNS Push Notifications            November 2017
 
       For RCODE = 9 (NOTAUTH), which occurs on a server that implements
       DNS Push Notifications, but is not configured to be authoritative
+
+
+
+
+Pusateri & Cheshire       Expires May 14, 2018                 [Page 17]
+
+Internet-Draft           DNS Push Notifications            November 2017
+
+
       for the requested name, the retry delay may be any value selected
       by the implementer and/or configured by the operator.
       This is a misconfiguration, since this server is listed in a
@@ -946,13 +962,6 @@ Internet-Draft           DNS Push Notifications            November 2017
       that zone.  Since it is possible that the misconfiguration may be
       repaired at any time, the retry delay should not be set too high.
       By default, a value of 5 minutes is RECOMMENDED.
-
-
-
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 17]
-
-Internet-Draft           DNS Push Notifications            November 2017
-
 
       For RCODE = 11 (DNS Push SUBSCRIBE operation not supported), which
       occurs on a server that doesn't implement DNS Push Notifications,
@@ -975,15 +984,6 @@ Internet-Draft           DNS Push Notifications            November 2017
    Operation TLV instructing the client to close the TCP connection, as
    described in the DNS Stateful Operations specification [StatefulOp].
    Clients MUST correctly handle both cases.
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1465,7 +1465,8 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    An UNSUBSCRIBE response message begins with the standard DNS Stateful
    Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.
+   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.  For
+   suggested values for the Retry Delay Modifier TLV, see Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    UNSUBSCRIBE request.  This is how the client knows which request is
@@ -1504,7 +1505,6 @@ Internet-Draft           DNS Push Notifications            November 2017
    previously referenced subscription is no longer active and the server
    MAY discard the state associated with it immediately, or later, at
    the server's discretion.
-
 
 
 
@@ -1696,6 +1696,19 @@ Internet-Draft           DNS Push Notifications            November 2017
    multiple RECONFIRM request messages can be concatenated in a single
    TCP stream and packed efficiently into TCP segments.
 
+   Note that the RDLEN field is provided for consistency with the way
+   resource records are generally represented in DNS messages, though it
+   is redundant here, because the DSO-LENGTH alone is sufficient to
+   determine the length of the data.  The RDLEN field MUST be validated
+   to ensure that the length of RDATA indicated does not exceed the
+   amount of data contained in the DSO TLV structure.  If the RDLEN
+   field indicates less data than contained in the DSO TLV structure,
+   any excess bytes MUST be silently ignored, but the RECONFIRM request
+   is otherwise handled as usual.  If the RDLEN field indicates more
+   data than contained in the DSO TLV structure, a FORMERR response MUST
+   be returned.  [Note: Might it be simpler just to get rid of the RDLEN
+   field?]
+
    TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value
    ANY (255).
 
@@ -1705,19 +1718,6 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    Aliasing is not supported.  That is, a CNAME in a RECONFIRM message
    matches only a literal CNAME record in the zone, and nothing else.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1745,7 +1745,8 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    A RECONFIRM response message begins with the standard DNS Stateful
    Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.
+   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.  For
+   suggested values for the Retry Delay Modifier TLV, see Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    RECONFIRM request.  This is how the client knows which request is
@@ -1784,8 +1785,7 @@ Internet-Draft           DNS Push Notifications            November 2017
    Responses.  Servers sending RECONFIRM Responses SHOULD use one of
    these values.  However, future circumstances may create situations
    where other RCODE values are appropriate in RECONFIRM Responses, so
-   clients MUST be prepared to accept RECONFIRM Responses with any RCODE
-   value.
+
 
 
 
@@ -1793,6 +1793,9 @@ Pusateri & Cheshire       Expires May 14, 2018                 [Page 32]
 
 Internet-Draft           DNS Push Notifications            November 2017
 
+
+   clients MUST be prepared to accept RECONFIRM Responses with any RCODE
+   value.
 
    Nonzero RCODE values signal some kind of error.
 
@@ -1828,9 +1831,6 @@ Internet-Draft           DNS Push Notifications            November 2017
    one of these three, the server SHOULD send a DNS Stateful Operations
    Retry Delay Operation TLV and then close the TCP connection, as
    described in the DNS Stateful Operations specification [StatefulOp].
-
-
-
 
 
 
@@ -2228,10 +2228,10 @@ Internet-Draft           DNS Push Notifications            November 2017
               Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
               2016, <https://www.rfc-editor.org/info/rfc7858>.
 
-   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
-              Subscribe", XSF XEP 0060, July 2010.
-
-
+   [RFC8010]  Sweet, M. and I. McDonald, "Internet Printing
+              Protocol/1.1: Encoding and Transport", RFC 8010,
+              DOI 10.17487/RFC8010, January 2017,
+              <https://www.rfc-editor.org/info/rfc8010>.
 
 
 
@@ -2241,6 +2241,14 @@ Pusateri & Cheshire       Expires May 14, 2018                 [Page 40]
 
 Internet-Draft           DNS Push Notifications            November 2017
 
+
+   [RFC8011]  Sweet, M. and I. McDonald, "Internet Printing
+              Protocol/1.1: Model and Semantics", RFC 8011,
+              DOI 10.17487/RFC8011, January 2017,
+              <https://www.rfc-editor.org/info/rfc8011>.
+
+   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
+              Subscribe", XSF XEP 0060, July 2010.
 
 Authors' Addresses
 
@@ -2261,14 +2269,6 @@ Authors' Addresses
 
    Phone: +1 408 974 3207
    Email: cheshire@apple.com
-
-
-
-
-
-
-
-
 
 
 
