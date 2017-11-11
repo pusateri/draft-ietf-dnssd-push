@@ -31,7 +31,7 @@ Status of This Memo
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at http://datatracker.ietf.org/drafts/current/.
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
@@ -47,7 +47,7 @@ Copyright Notice
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-   (http://trustee.ietf.org/license-info) in effect on the date of
+   (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
 
@@ -2041,8 +2041,8 @@ Internet-Draft           DNS Push Notifications            November 2017
               July 2017.
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
-              DOI 10.17487/RFC0768, August 1980, <https://www.rfc-
-              editor.org/info/rfc768>.
+              DOI 10.17487/RFC0768, August 1980,
+              <https://www.rfc-editor.org/info/rfc768>.
 
    [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7,
               RFC 793, DOI 10.17487/RFC0793, September 1981,
@@ -2058,13 +2058,13 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    [RFC1123]  Braden, R., Ed., "Requirements for Internet Hosts -
               Application and Support", STD 3, RFC 1123,
-              DOI 10.17487/RFC1123, October 1989, <https://www.rfc-
-              editor.org/info/rfc1123>.
+              DOI 10.17487/RFC1123, October 1989,
+              <https://www.rfc-editor.org/info/rfc1123>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
-              editor.org/info/rfc2119>.
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
 
 
 
@@ -2081,18 +2081,18 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    [RFC2782]  Gulbrandsen, A., Vixie, P., and L. Esibov, "A DNS RR for
               specifying the location of services (DNS SRV)", RFC 2782,
-              DOI 10.17487/RFC2782, February 2000, <https://www.rfc-
-              editor.org/info/rfc2782>.
+              DOI 10.17487/RFC2782, February 2000,
+              <https://www.rfc-editor.org/info/rfc2782>.
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246,
-              DOI 10.17487/RFC5246, August 2008, <https://www.rfc-
-              editor.org/info/rfc5246>.
+              DOI 10.17487/RFC5246, August 2008,
+              <https://www.rfc-editor.org/info/rfc5246>.
 
    [RFC6066]  Eastlake 3rd, D., "Transport Layer Security (TLS)
               Extensions: Extension Definitions", RFC 6066,
-              DOI 10.17487/RFC6066, January 2011, <https://www.rfc-
-              editor.org/info/rfc6066>.
+              DOI 10.17487/RFC6066, January 2011,
+              <https://www.rfc-editor.org/info/rfc6066>.
 
    [RFC6335]  Cotton, M., Eggert, L., Touch, J., Westerlund, M., and S.
               Cheshire, "Internet Assigned Numbers Authority (IANA)
@@ -2163,8 +2163,8 @@ Internet-Draft           DNS Push Notifications            November 2017
               Internet Protocol Journal, Cisco Systems, Volume 9,
               Number 4, December 2006.
 
-   [obs]      "Observer Pattern", <https://en.wikipedia.org/wiki/
-              Observer_pattern>.
+   [obs]      "Observer Pattern",
+              <https://en.wikipedia.org/wiki/Observer_pattern>.
 
    [RFC2308]  Andrews, M., "Negative Caching of DNS Queries (DNS
               NCACHE)", RFC 2308, DOI 10.17487/RFC2308, March 1998,
@@ -2197,8 +2197,8 @@ Internet-Draft           DNS Push Notifications            November 2017
               <https://www.rfc-editor.org/info/rfc6281>.
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
-              DOI 10.17487/RFC6762, February 2013, <https://www.rfc-
-              editor.org/info/rfc6762>.
+              DOI 10.17487/RFC6762, February 2013,
+              <https://www.rfc-editor.org/info/rfc6762>.
 
    [RFC6763]  Cheshire, S. and M. Krochmal, "DNS-Based Service
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
