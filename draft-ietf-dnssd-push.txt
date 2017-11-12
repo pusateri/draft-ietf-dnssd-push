@@ -527,7 +527,7 @@ Internet-Draft           DNS Push Notifications            November 2017
        the Authority section, the client could try stripping the leading
        label and issuing another SOA query.  Additional information
        about negative responses can be found in Section 2 of the DNS
-       NCACHE specification [RFC2308].
+       Negative Caching specification [RFC2308].
 
    5.  Once the SOA is known (either by virtue of being seen in the
        Answer Section, or in the Authority Section), the client sends a
