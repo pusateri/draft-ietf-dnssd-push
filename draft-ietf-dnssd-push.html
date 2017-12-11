@@ -413,7 +413,7 @@
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-dnssd-push-14" />
-  <meta name="dct.issued" scheme="ISO8601" content="2017-11-10" />
+  <meta name="dct.issued" scheme="ISO8601" content="2017-12-11" />
   <meta name="dct.abstract" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled, as long as the polling rate is not too high.  But there exists no mechanism for a client to be asynchronously notified when these changes occur.  This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
   <meta name="description" content="The Domain Name System (DNS) was designed to return matching records efficiently for queries for data that is relatively static.  When those records change frequently, DNS is still efficient at returning the updated results when polled, as long as the polling rate is not too high.  But there exists no mechanism for a client to be asynchronously notified when these changes occur.  This document defines a mechanism for a client to be notified of such changes to DNS records, called DNS Push Notifications." />
 
@@ -437,12 +437,12 @@
 <td class="right">S. Cheshire</td>
 </tr>
 <tr>
-<td class="left">Expires: May 14, 2018</td>
+<td class="left">Expires: June 14, 2018</td>
 <td class="right">Apple Inc.</td>
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">November 10, 2017</td>
+<td class="right">December 11, 2017</td>
 </tr>
 
     	
@@ -458,7 +458,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on May 14, 2018.</p>
+<p>This Internet-Draft will expire on June 14, 2018.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2017 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -654,9 +654,9 @@
 <a href="#rfc.section.6.2.2">6.2.2.</a> <a href="#subresp" id="subresp">SUBSCRIBE Response</a>
 </h1>
 <p id="rfc.section.6.2.2.p.1">Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</p>
-<p id="rfc.section.6.2.2.p.2">A SUBSCRIBE response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.</p>
+<p id="rfc.section.6.2.2.p.2">A SUBSCRIBE response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional TLVs, such as a Retry Delay TLV.</p>
 <p id="rfc.section.6.2.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.  This is how the client knows which request is being responded to.</p>
-<p id="rfc.section.6.2.2.p.4">A SUBSCRIBE response message MUST NOT contain a Stateful Operations Operation TLV.  The Stateful Operations Operation TLV is NOT copied from the SUBSCRIBE request.</p>
+<p id="rfc.section.6.2.2.p.4">A SUBSCRIBE response message MUST NOT copy the original Stateful Operations SUBSCRIBE TLV.</p>
 <p id="rfc.section.6.2.2.p.5">In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</p>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>SUBSCRIBE Response codes</caption>
@@ -709,12 +709,12 @@
 </tbody>
 </table>
 <p id="rfc.section.6.2.2.p.6">This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</p>
-<p id="rfc.section.6.2.2.p.7">If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <a href="#StatefulOp" class="xref">[StatefulOp]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay Modifier TLV, and the default values a client should assume if the server provides no Retry Delay Modifier TLV.  </p>
+<p id="rfc.section.6.2.2.p.7">If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <a href="#StatefulOp" class="xref">[StatefulOp]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.  </p>
 
 <ul class="empty">
 <li>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</li>
 <li>For RCODE = 2 (SERVFAIL) the delay should be chosen according to the level of server overload and the anticipated duration of that overload. By default, a value of one minute is RECOMMENDED. If a more serious server failure occurs, the delay may be longer in accordance with the specific problem encountered.</li>
-<li>For RCODE = 4 (NOTIMP), which occurs on a server that doesn't implement <a href="#StatefulOp" class="xref">DNS Stateful Operations</a>, it is unlikely that the server will begin supporting DNS Stateful Operations in the next few minutes, so the retry delay SHOULD be one hour.  Note that in such a case, a server that doesn't implement DNS Stateful Operations is unlikely to place a Retry Delay Modifier TLV in its response, so this recommended value in particular applies to what a client should assume by default.</li>
+<li>For RCODE = 4 (NOTIMP), which occurs on a server that doesn't implement <a href="#StatefulOp" class="xref">DNS Stateful Operations</a>, it is unlikely that the server will begin supporting DNS Stateful Operations in the next few minutes, so the retry delay SHOULD be one hour.  Note that in such a case, a server that doesn't implement DNS Stateful Operations is unlikely to place a Retry Delay TLV in its response, so this recommended value in particular applies to what a client should assume by default.</li>
 <li>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.<br> This is a misconfiguration, since this server is listed in a <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record, but the server itself is not currently configured to support DNS Push Notifications. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</li>
 <li>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.  <br>This is a misconfiguration, since this server is listed in a <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record, but the server itself is not currently configured to support DNS Push Notifications for that zone. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</li>
 <li>For RCODE = 11 (DNS Push SUBSCRIBE operation not supported), which occurs on a server that doesn't implement DNS Push Notifications, it is unlikely that the server will begin supporting DNS Push Notifications in the next few minutes, so the retry delay SHOULD be one hour.</li>
@@ -795,9 +795,9 @@
 <h1 id="rfc.section.6.3.2">
 <a href="#rfc.section.6.3.2">6.3.2.</a> PUSH Response</h1>
 <p id="rfc.section.6.3.2.p.1">Each PUSH message generates exactly one PUSH response from the receiver.</p>
-<p id="rfc.section.6.3.2.p.2">A PUSH response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional Modifier TLVs.</p>
+<p id="rfc.section.6.3.2.p.2">A PUSH response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional TLVs.</p>
 <p id="rfc.section.6.3.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the PUSH message.</p>
-<p id="rfc.section.6.3.2.p.4">A PUSH response message MUST NOT contain a Stateful Operations Operation TLV.  The Stateful Operations Operation TLV is NOT copied from the PUSH message.</p>
+<p id="rfc.section.6.3.2.p.4">A PUSH response message MUST NOT copy the original Stateful Operations PUSH TLV.</p>
 <p id="rfc.section.6.3.2.p.5">In a PUSH response the RCODE MUST be zero. Receiving a PUSH response with a nonzero RCODE is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.4">
 <a href="#rfc.section.6.4">6.4.</a> DNS Push Notification UNSUBSCRIBE</h1>
@@ -837,9 +837,9 @@
 <h1 id="rfc.section.6.4.2">
 <a href="#rfc.section.6.4.2">6.4.2.</a> UNSUBSCRIBE Response</h1>
 <p id="rfc.section.6.4.2.p.1">Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response from the server.</p>
-<p id="rfc.section.6.4.2.p.2">An UNSUBSCRIBE response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.  For suggested values for the Retry Delay Modifier TLV, see <a href="#subresp" class="xref">Section 6.2.2</a>.</p>
+<p id="rfc.section.6.4.2.p.2">An UNSUBSCRIBE response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional TLVs, such as a Retry Delay TLV.  For suggested values for the Retry Delay TLV, see <a href="#subresp" class="xref">Section 6.2.2</a>.</p>
 <p id="rfc.section.6.4.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the UNSUBSCRIBE request.  This is how the client knows which request is being responded to.</p>
-<p id="rfc.section.6.4.2.p.4">An UNSUBSCRIBE response message MUST NOT contain a Stateful Operations Operation TLV.  The Stateful Operations Operation TLV is NOT copied from the UNSUBSCRIBE request.</p>
+<p id="rfc.section.6.4.2.p.4">An UNSUBSCRIBE response message MUST NOT copy the original Stateful Operations UNSUBSCRIBE TLV.</p>
 <p id="rfc.section.6.4.2.p.5">In the UNSUBSCRIBE response the RCODE indicates whether or not the unsubscribe request was successful. Supported RCODEs are as follows:</p>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>UNSUBSCRIBE Response codes</caption>
@@ -884,7 +884,7 @@
 <p id="rfc.section.6.4.2.p.11">RCODE values NOTIMP and DSONOTIMP should not occur in practice.</p>
 <p id="rfc.section.6.4.2.p.12">A server would only generate NOTIMP if it did not support Stateful Operations, and if the server does not support Stateful Operations then it should not be possible for a client to have an active subscription to cancel.</p>
 <p id="rfc.section.6.4.2.p.13">Similarly, a server would only generate DSONOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</p>
-<p id="rfc.section.6.4.2.p.14">Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <a href="#StatefulOp" class="xref">DNS Stateful Operations specification</a>.</p>
+<p id="rfc.section.6.4.2.p.14">Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay TLV and then close the TCP connection, as described in the <a href="#StatefulOp" class="xref">DNS Stateful Operations specification</a>.</p>
 <h1 id="rfc.section.6.5">
 <a href="#rfc.section.6.5">6.5.</a> DNS Push Notification RECONFIRM</h1>
 <p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believe may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM request to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS requests to ascertain whether the target device is still present. For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur. Frequent RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting, and remedying, such network problems.</p>
@@ -936,9 +936,9 @@
 <h1 id="rfc.section.6.5.2">
 <a href="#rfc.section.6.5.2">6.5.2.</a> RECONFIRM Response</h1>
 <p id="rfc.section.6.5.2.p.1">Each RECONFIRM request generates exactly one RECONFIRM response from the server.</p>
-<p id="rfc.section.6.5.2.p.2">A RECONFIRM response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.  For suggested values for the Retry Delay Modifier TLV, see <a href="#subresp" class="xref">Section 6.2.2</a>.</p>
+<p id="rfc.section.6.5.2.p.2">A RECONFIRM response message begins with the standard <a href="#StatefulOp" class="xref">DNS Stateful Operations 12-byte header</a>, possibly followed by one or more optional TLVs, such as a Retry Delay TLV.  For suggested values for the Retry Delay TLV, see <a href="#subresp" class="xref">Section 6.2.2</a>.</p>
 <p id="rfc.section.6.5.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.  This is how the client knows which request is being responded to.</p>
-<p id="rfc.section.6.5.2.p.4">A RECONFIRM response message MUST NOT contain a Stateful Operations Operation TLV.  The Stateful Operations Operation TLV is NOT copied from the RECONFIRM request.</p>
+<p id="rfc.section.6.5.2.p.4">A RECONFIRM response message MUST NOT copy the original Stateful Operations RECONFIRM TLV.</p>
 <p id="rfc.section.6.5.2.p.5">In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</p>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>RECONFIRM Response codes</caption>
@@ -999,7 +999,7 @@
 <p id="rfc.section.6.5.2.p.12">RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</p>
 <p id="rfc.section.6.5.2.p.13">RCODE value DSONOTIMP indicates that the server does not support RECONFIRM requests.</p>
 <p id="rfc.section.6.5.2.p.14">Nonzero RCODE values SERVFAIL, REFUSED and DSONOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</p>
-<p id="rfc.section.6.5.2.p.15">Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <a href="#StatefulOp" class="xref">DNS Stateful Operations specification</a>.</p>
+<p id="rfc.section.6.5.2.p.15">Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay TLV and then close the TCP connection, as described in the <a href="#StatefulOp" class="xref">DNS Stateful Operations specification</a>.</p>
 <h1 id="rfc.section.6.6">
 <a href="#rfc.section.6.6">6.6.</a> Client-Initiated Termination</h1>
 <p id="rfc.section.6.6.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the connection. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that connection (by closing the connection) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
@@ -1056,7 +1056,7 @@
 <tr>
 <td class="reference"><b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b></td>
 <td class="top">
-<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-tls-tls13-21">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-21, July 2017.</td>
+<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-tls-tls13-22">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-22, November 2017.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC0768">[RFC0768]</b></td>

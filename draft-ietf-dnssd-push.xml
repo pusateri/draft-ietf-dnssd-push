@@ -117,7 +117,7 @@
      </address>
    </author>
 
-   <date year='2017' month='November' day='10'/>
+   <date year='2017' month='December' day='11'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -412,13 +412,12 @@
 
          <t>A SUBSCRIBE response message begins with the standard
          <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
-         possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.</t>
+         possibly followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>A SUBSCRIBE response message MUST NOT contain a Stateful Operations Operation TLV.
-         The Stateful Operations Operation TLV is NOT copied from the SUBSCRIBE request.</t>
+         <t>A SUBSCRIBE response message MUST NOT copy the original Stateful Operations SUBSCRIBE TLV.</t>
 
 <?rfc needLines="20" ?>
          <t>In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</t>
@@ -439,7 +438,7 @@
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
 
 <?rfc needLines="30" ?>
-         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay Modifier TLV <xref target="StatefulOp"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay Modifier TLV, and the default values a client should assume if the server provides no Retry Delay Modifier TLV.
+         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the connection, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="StatefulOp"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</t>
 
@@ -450,7 +449,7 @@
              it is unlikely that the server will begin supporting DNS Stateful Operations
              in the next few minutes, so the retry delay SHOULD be one hour.
              Note that in such a case, a server that doesn't implement DNS Stateful Operations
-             is unlikely to place a Retry Delay Modifier TLV in its response, so this
+             is unlikely to place a Retry Delay TLV in its response, so this
              recommended value in particular applies to what a client should assume by default.</t>
 
              <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.<vspace />
@@ -588,13 +587,12 @@
 
          <t>A PUSH response message begins with the standard
          <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
-         possibly followed by one or more optional Modifier TLVs.</t>
+         possibly followed by one or more optional TLVs.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the PUSH
          message.</t>
 
-         <t>A PUSH response message MUST NOT contain a Stateful Operations Operation TLV.
-         The Stateful Operations Operation TLV is NOT copied from the PUSH message.</t>
+         <t>A PUSH response message MUST NOT copy the original Stateful Operations PUSH TLV.</t>
 
          <t>In a PUSH response the RCODE MUST be zero. Receiving a PUSH response with a nonzero RCODE is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
 
@@ -668,14 +666,13 @@
 
          <t>An UNSUBSCRIBE response message begins with the standard
          <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
-         possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.
-         For suggested values for the Retry Delay Modifier TLV, see <xref target="subresp"/>.</t>
+         possibly followed by one or more optional TLVs, such as a Retry Delay TLV.
+         For suggested values for the Retry Delay TLV, see <xref target="subresp"/>.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the UNSUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>An UNSUBSCRIBE response message MUST NOT contain a Stateful Operations Operation TLV.
-         The Stateful Operations Operation TLV is NOT copied from the UNSUBSCRIBE request.</t>
+         <t>An UNSUBSCRIBE response message MUST NOT copy the original Stateful Operations UNSUBSCRIBE TLV.</t>
 
          <t>In the UNSUBSCRIBE response the RCODE indicates whether or not the unsubscribe request was successful. Supported RCODEs are as follows:</t>
          <texttable title="UNSUBSCRIBE Response codes">
@@ -706,7 +703,7 @@
 
          <t>Similarly, a server would only generate DSONOTIMP if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</t>
 
-         <t>Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
+         <t>Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry Delay TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
 
 <?rfc needLines="48" ?>
        </section>
@@ -798,14 +795,13 @@
 
          <t>A RECONFIRM response message begins with the standard
          <xref target="StatefulOp">DNS Stateful Operations 12-byte header</xref>,
-         possibly followed by one or more optional Modifier TLVs, such as a Retry Delay Modifier TLV.
-         For suggested values for the Retry Delay Modifier TLV, see <xref target="subresp"/>.</t>
+         possibly followed by one or more optional TLVs, such as a Retry Delay TLV.
+         For suggested values for the Retry Delay TLV, see <xref target="subresp"/>.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>A RECONFIRM response message MUST NOT contain a Stateful Operations Operation TLV.
-         The Stateful Operations Operation TLV is NOT copied from the RECONFIRM request.</t>
+         <t>A RECONFIRM response message MUST NOT copy the original Stateful Operations RECONFIRM TLV.</t>
 
          <t>In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</t>
          <texttable title="RECONFIRM Response codes">
@@ -840,7 +836,7 @@
 
          <t>Nonzero RCODE values SERVFAIL, REFUSED and DSONOTIMP are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
          
-         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay Operation TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
+         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DNS Stateful Operations Retry Delay TLV and then close the TCP connection, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>.</t>
 
 <?rfc needLines="48" ?>
        </section>

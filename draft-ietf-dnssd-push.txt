@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                              Unaffiliated
 Intended status: Standards Track                             S. Cheshire
-Expires: May 14, 2018                                         Apple Inc.
-                                                       November 10, 2017
+Expires: June 14, 2018                                        Apple Inc.
+                                                       December 11, 2017
 
 
                          DNS Push Notifications
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 14, 2018.
+   This Internet-Draft will expire on June 14, 2018.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 1]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 1]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    to this document.  Code Components extracted from this document must
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 2]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 2]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 1.  Introduction
@@ -165,9 +165,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 3]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 3]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    mostly-idle TCP connections, so LLQ was defined as a UDP-based
@@ -221,9 +221,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 4]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 4]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    Standard DNS Queries MAY be sent over a DNS Push Notification
@@ -277,9 +277,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 5]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 5]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    to bring up an on-screen display of that data, it can be displayed
@@ -333,9 +333,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 6]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 6]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 5.  State Considerations
@@ -389,9 +389,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 7]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 7]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.  Protocol Operation
@@ -445,9 +445,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 8]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 8]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.1.  Discovery
@@ -501,9 +501,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                  [Page 9]
+Pusateri & Cheshire       Expires June 14, 2018                 [Page 9]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    3.  In the example above, if an SOA record query is sent for
@@ -557,9 +557,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 10]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 10]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
        "weight" indicates the weighted probability that the client
@@ -613,9 +613,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 11]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 11]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.2.  DNS Push Notification SUBSCRIBE
@@ -669,9 +669,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 12]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 12]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.2.1.  SUBSCRIBE Request
@@ -725,9 +725,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 13]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 13]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    MUST be zero, and the corresponding four sections MUST be empty
@@ -781,9 +781,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 14]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 14]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    NOTE: A little-known quirk of DNS is that in DNS QUERY requests,
@@ -837,9 +837,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 15]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 15]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.2.2.  SUBSCRIBE Response
@@ -849,15 +849,14 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    A SUBSCRIBE response message begins with the standard DNS Stateful
    Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.
+   more optional TLVs, such as a Retry Delay TLV.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    SUBSCRIBE request.  This is how the client knows which request is
    being responded to.
 
-   A SUBSCRIBE response message MUST NOT contain a Stateful Operations
-   Operation TLV.  The Stateful Operations Operation TLV is NOT copied
-   from the SUBSCRIBE request.
+   A SUBSCRIBE response message MUST NOT copy the original Stateful
+   Operations SUBSCRIBE TLV.
 
    In the SUBSCRIBE response the RCODE indicates whether or not the
    subscription was accepted.  Supported RCODEs are as follows:
@@ -893,9 +892,10 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 16]
+
+Pusateri & Cheshire       Expires June 14, 2018                [Page 16]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    If the server sends a nonzero RCODE in the SUBSCRIBE response, either
@@ -905,13 +905,13 @@ Internet-Draft           DNS Push Notifications            November 2017
    right away.  Either end can terminate the connection, but the client
    may want to try this subscription again, or it may have other
    successful subscriptions that it doesn't want to abandon.  If the
-   server sends a nonzero RCODE then it SHOULD append a Retry Delay
-   Modifier TLV [StatefulOp] to the response specifying a delay before
-   the client attempts this operation again.  Recommended values for the
-   delay for different RCODE values are given below.  These recommended
-   values apply both to the default values a server should place in the
-   Retry Delay Modifier TLV, and the default values a client should
-   assume if the server provides no Retry Delay Modifier TLV.
+   server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV
+   [StatefulOp] to the response specifying a delay before the client
+   attempts this operation again.  Recommended values for the delay for
+   different RCODE values are given below.  These recommended values
+   apply both to the default values a server should place in the Retry
+   Delay TLV, and the default values a client should assume if the
+   server provides no Retry Delay TLV.
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
       implementer.  A value of five minutes is RECOMMENDED, to reduce
@@ -928,9 +928,9 @@ Internet-Draft           DNS Push Notifications            November 2017
       that the server will begin supporting DNS Stateful Operations in
       the next few minutes, so the retry delay SHOULD be one hour.  Note
       that in such a case, a server that doesn't implement DNS Stateful
-      Operations is unlikely to place a Retry Delay Modifier TLV in its
-      response, so this recommended value in particular applies to what
-      a client should assume by default.
+      Operations is unlikely to place a Retry Delay TLV in its response,
+      so this recommended value in particular applies to what a client
+      should assume by default.
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
@@ -949,9 +949,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 17]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 17]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
       for the requested name, the retry delay may be any value selected
@@ -1005,9 +1005,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 18]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 18]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.3.  DNS Push Notification Updates
@@ -1061,9 +1061,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 19]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 19]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.3.1.  PUSH Message
@@ -1117,9 +1117,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 20]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 20]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    The MESSAGE ID field MUST be set to a unique value, that the server
@@ -1173,9 +1173,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 21]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 21]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
@@ -1229,9 +1229,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 22]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 22]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.3.2.  PUSH Response
@@ -1241,14 +1241,13 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    A PUSH response message begins with the standard DNS Stateful
    Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional Modifier TLVs.
+   more optional TLVs.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    PUSH message.
 
-   A PUSH response message MUST NOT contain a Stateful Operations
-   Operation TLV.  The Stateful Operations Operation TLV is NOT copied
-   from the PUSH message.
+   A PUSH response message MUST NOT copy the original Stateful
+   Operations PUSH TLV.
 
    In a PUSH response the RCODE MUST be zero.  Receiving a PUSH response
    with a nonzero RCODE is a fatal error, and the receiver MUST
@@ -1285,9 +1284,10 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 23]
+
+Pusateri & Cheshire       Expires June 14, 2018                [Page 23]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.4.  DNS Push Notification UNSUBSCRIBE
@@ -1341,9 +1341,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 24]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 24]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.4.1.  UNSUBSCRIBE Request
@@ -1397,9 +1397,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 25]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 25]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is
@@ -1453,9 +1453,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 26]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 26]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.4.2.  UNSUBSCRIBE Response
@@ -1465,16 +1465,15 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    An UNSUBSCRIBE response message begins with the standard DNS Stateful
    Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.  For
-   suggested values for the Retry Delay Modifier TLV, see Section 6.2.2.
+   more optional TLVs, such as a Retry Delay TLV.  For suggested values
+   for the Retry Delay TLV, see Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    UNSUBSCRIBE request.  This is how the client knows which request is
    being responded to.
 
-   An UNSUBSCRIBE response message MUST NOT contain a Stateful
-   Operations Operation TLV.  The Stateful Operations Operation TLV is
-   NOT copied from the UNSUBSCRIBE request.
+   An UNSUBSCRIBE response message MUST NOT copy the original Stateful
+   Operations UNSUBSCRIBE TLV.
 
    In the UNSUBSCRIBE response the RCODE indicates whether or not the
    unsubscribe request was successful.  Supported RCODEs are as follows:
@@ -1509,9 +1508,10 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 27]
+
+Pusateri & Cheshire       Expires June 14, 2018                [Page 27]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    Nonzero RCODE values signal some kind of error.
@@ -1536,8 +1536,8 @@ Internet-Draft           DNS Push Notifications            November 2017
    Nonzero RCODE values other than NXDOMAIN indicate a serious problem
    with the client.  After sending an error response other than
    NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry
-   Delay Operation TLV and then close the TCP connection, as described
-   in the DNS Stateful Operations specification [StatefulOp].
+   Delay TLV and then close the TCP connection, as described in the DNS
+   Stateful Operations specification [StatefulOp].
 
 
 
@@ -1565,9 +1565,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 28]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 28]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.5.  DNS Push Notification RECONFIRM
@@ -1621,9 +1621,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 29]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 29]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.5.1.  RECONFIRM Request
@@ -1677,9 +1677,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 30]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 30]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    Stateful Operations Opcode (tentatively 6).  The four count fields
@@ -1733,9 +1733,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 31]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 31]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.5.2.  RECONFIRM Response
@@ -1745,16 +1745,15 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    A RECONFIRM response message begins with the standard DNS Stateful
    Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional Modifier TLVs, such as a Retry Delay Modifier TLV.  For
-   suggested values for the Retry Delay Modifier TLV, see Section 6.2.2.
+   more optional TLVs, such as a Retry Delay TLV.  For suggested values
+   for the Retry Delay TLV, see Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    RECONFIRM request.  This is how the client knows which request is
    being responded to.
 
-   A RECONFIRM response message MUST NOT contain a Stateful Operations
-   Operation TLV.  The Stateful Operations Operation TLV is NOT copied
-   from the RECONFIRM request.
+   A RECONFIRM response message MUST NOT copy the original Stateful
+   Operations RECONFIRM TLV.
 
    In the RECONFIRM response the RCODE confirms receipt of the
    reconfirmation request.  Supported RCODEs are as follows:
@@ -1785,17 +1784,15 @@ Internet-Draft           DNS Push Notifications            November 2017
    Responses.  Servers sending RECONFIRM Responses SHOULD use one of
    these values.  However, future circumstances may create situations
    where other RCODE values are appropriate in RECONFIRM Responses, so
-
-
-
-
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 32]
-
-Internet-Draft           DNS Push Notifications            November 2017
-
-
    clients MUST be prepared to accept RECONFIRM Responses with any RCODE
    value.
+
+
+
+Pusateri & Cheshire       Expires June 14, 2018                [Page 32]
+
+Internet-Draft           DNS Push Notifications            December 2017
+
 
    Nonzero RCODE values signal some kind of error.
 
@@ -1829,8 +1826,8 @@ Internet-Draft           DNS Push Notifications            November 2017
    Nonzero RCODE values other than these three indicate a serious
    problem with the client.  After sending an error response other than
    one of these three, the server SHOULD send a DNS Stateful Operations
-   Retry Delay Operation TLV and then close the TCP connection, as
-   described in the DNS Stateful Operations specification [StatefulOp].
+   Retry Delay TLV and then close the TCP connection, as described in
+   the DNS Stateful Operations specification [StatefulOp].
 
 
 
@@ -1845,9 +1842,12 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 33]
+
+
+
+Pusateri & Cheshire       Expires June 14, 2018                [Page 33]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 6.6.  Client-Initiated Termination
@@ -1901,9 +1901,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 34]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 34]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
 7.  Security Considerations
@@ -1957,9 +1957,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 35]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 35]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    trusted TLS certificate [RFC7673].  This procedure uses the TLS Sever
@@ -2013,9 +2013,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 36]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 36]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    value 0x41 (65), UNSUBSCRIBE with (tentative) value 0x42 (66), and
@@ -2037,8 +2037,8 @@ Internet-Draft           DNS Push Notifications            November 2017
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-21 (work in progress),
-              July 2017.
+              Version 1.3", draft-ietf-tls-tls13-22 (work in progress),
+              November 2017.
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               DOI 10.17487/RFC0768, August 1980,
@@ -2069,9 +2069,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 37]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 37]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    [RFC2136]  Vixie, P., Ed., Thomson, S., Rekhter, Y., and J. Bound,
@@ -2125,9 +2125,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 38]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 38]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    [StatefulOp]
@@ -2181,9 +2181,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 39]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 39]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
@@ -2237,9 +2237,9 @@ Internet-Draft           DNS Push Notifications            November 2017
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 40]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 40]
 
-Internet-Draft           DNS Push Notifications            November 2017
+Internet-Draft           DNS Push Notifications            December 2017
 
 
    [RFC8011]  Sweet, M. and I. McDonald, "Internet Printing
@@ -2293,4 +2293,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire       Expires May 14, 2018                 [Page 41]
+Pusateri & Cheshire       Expires June 14, 2018                [Page 41]
