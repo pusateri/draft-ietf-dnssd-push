@@ -463,8 +463,8 @@ Internet-Draft           DNS Push Notifications            December 2017
    behalf, and the client will receive appropriate results.  If the
    recursive resolver does not support Push Notification subscriptions,
    then it will return an error code, and the client should proceed to
-   discover the appropriate server to talk to directly.  The client MUST
-   also determine which TCP port on the server is listening for
+   discover the appropriate server for direct communication.  The client
+   MUST also determine which TCP port on the server is listening for
    connections, which need not be (and often is not) the typical TCP
    port 53 used for conventional DNS, or TCP port 853 used for DNS over
    TLS [RFC7858].
@@ -474,28 +474,28 @@ Internet-Draft           DNS Push Notifications            December 2017
        name to which it wishes to subscribe.  As an example, suppose the
        client wishes to subscribe to PTR records with the name
        _ipp._tcp.foo.example.com (to discover Internet Printing Protocol
-       (IPP) printers [RFC8010][RFC8011] being advertised at
+       (IPP) printers [RFC8010] [RFC8011] being advertised at
        "foo.example.com").  The client begins by sending an SOA query
-       for _ipp._tcp.foo.example.com.  The goal is to determine the
-       authoritative server for _ipp._tcp.foo.example.com.
+       for _ipp._tcp.foo.example.com to the local recursive resolver.
+       The goal is to determine the authoritative server for
+       _ipp._tcp.foo.example.com.
 
-   2.  If the SOA record exists exactly as specified in the query, it is
-       expected to be returned in the Answer section with a NOERROR
-       response code.  If the exact SOA record does not exist, the
-       client may get back a NOERROR/NODATA response or it may get back
-       a NXDOMAIN/Name Error response.  This depends on the resolver
-       implementation and whether the domain exists.  The client is
-       looking for an SOA record to be returned in either the Answer
-       section or the Authority section with a NOERROR response code.
-       If the client receives an NXDOMAIN/Name Error response code or a
-       response containing no SOA record, it should strip the leading
-       label from the query name and if the resulting name has at least
-       one label in it, the client should send a new SOA query,
-       repeating this until a NOERROR response code is received [what
-       about a NOERROR response with no SOA record in the Authority
-       section?] or the query name is empty.  In the case of an empty
-       name, the client may retry the operation at a later time, of the
-       client's choosing, such after a change in network attachment.
+   2.  If the SOA record exists exactly as specified in the query, it
+       will be returned in the Answer section with a NOERROR response
+       code.  If the exact SOA record does not exist, the client may get
+       back a NOERROR/NODATA response or it may get back a NXDOMAIN/Name
+       Error response.  This depends on the resolver implementation and
+       whether the domain exists.  The client is looking for an SOA
+       record to be returned in either the Answer section or the
+       Authority section.  The MNAME from the SOA record contains the
+       server to contact directly.  If the client receives a response
+       containing no SOA record, it should strip the leading label from
+       the query name and if the resulting name has at least one label
+       in it, the client should send a new SOA query, repeating this
+       until an SOA is received or the query name is empty.  In the case
+       of an empty name, the client may retry the operation at a later
+       time, of the client's choosing, such after a change in network
+       attachment.
 
 
 
@@ -507,14 +507,11 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
    3.  In the example above, if an SOA record query is sent for
-       _ipp._tcp.foo.example.com and an NXDOMAIN/Name Error is returned
-       with an SOA record in the Authority section for foo.example.com,
-       the client should strip the leading label and query an SOA record
-       for _tcp.foo.example.com [why not trust the SOA record if
-       given?].  If a NOERROR/NODATA response is received with an SOA
-       record in the Authority section for foo.example.com, this is
-       sufficient.  If an NXDOMAIN/Name Error response is received, the
-       client should again strip the leading label and query an SOA
+       _ipp._tcp.foo.example.com and either a NOERROR/NODATA or an
+       NXDOMAIN/Name Error is returned with an SOA record in the
+       Authority section for foo.example.com, the client can then
+       contact the MNAME server directly.  If no SOA record is received,
+       the client should again strip the leading label and query an SOA
        record for foo.example.com.  If the foo.example.com domain
        exists, this should result in a NOERROR response with the SOA
        record in the Answer section.  If the domain foo.example.com does
@@ -554,6 +551,9 @@ Internet-Draft           DNS Push Notifications            December 2017
        subscription requests.  As described in the SRV specification
        [RFC2782], the server with the lowest "priority" is first
        contacted.  If more than one server has the same "priority", the
+       "weight" indicates the weighted probability that the client
+       should contact that server.  Higher weights have higher
+       probabilities of being selected.  If a server is not willing to
 
 
 
@@ -562,9 +562,6 @@ Pusateri & Cheshire       Expires June 14, 2018                [Page 10]
 Internet-Draft           DNS Push Notifications            December 2017
 
 
-       "weight" indicates the weighted probability that the client
-       should contact that server.  Higher weights have higher
-       probabilities of being selected.  If a server is not willing to
        accept a subscription request, or is not reachable within a
        reasonable time, as determined by the client, then a subsequent
        server is to be contacted.
@@ -578,6 +575,9 @@ Internet-Draft           DNS Push Notifications            December 2017
    records were set to reasonable values, repeated application of this
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
+
+
+
 
 
 
