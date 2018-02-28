@@ -953,17 +953,16 @@
      <author initials='S' surname='Dickinson' fullname='Sara Dickinson'><organization /></author>
      <author initials='A' surname='Mankin' fullname='Allison Mankin'><organization /></author>
      <author initials='T' surname='Pusateri' fullname='Tom Pusateri'><organization /></author>
-     <date year='2017' month='September' day='13' />
-     <abstract><t>This document defines a new DNS Stateful Operation OPCODE used to
-   communicate operations within persistent stateful sessions, expressed
-   using type-length-value (TLV) syntax, and defines an initial set of
-   TLVs used to manage session timeouts and termination.  This mechanism
-   is intended to reduce the overhead of existing "per-packet" signaling
-   mechanisms with "per-message" semantics as well as defining new
-   stateful operations not defined in EDNS(0).</t></abstract>
+     <date year='2018' month='January' day='26' />
+     <abstract><t>This document defines a new DNS OPCODE for DNS Stateful Operations
+   (DSO).  DSO messages communicate operations within persistent
+   stateful sessions, using type-length-value (TLV) syntax.  Three TLVs
+   are defined that manage session timeouts, termination, and encryption
+   padding, and a framework is defined for extensions to enable new
+   stateful operations.</t></abstract>
      </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-04' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-04.txt' />
+     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-05' />
+     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-05.txt' />
      </reference>
 
      <reference anchor="SN"
@@ -1002,7 +1001,7 @@
 
      <reference anchor='DisProx'>
      <front>
-     <title>Hybrid Unicast/Multicast DNS-Based Service Discovery</title>
+     <title>Discovery Proxy for Multicast DNS-Based Service Discovery</title>
      <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'><organization /></author>
      <date year='2017' month='September' day='13' />
      <abstract><t>This document specifies a mechanism that uses Multicast DNS to
