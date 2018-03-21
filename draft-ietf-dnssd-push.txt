@@ -5,8 +5,8 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                              Unaffiliated
 Intended status: Standards Track                             S. Cheshire
-Expires: June 14, 2018                                        Apple Inc.
-                                                       December 11, 2017
+Expires: September 19, 2018                                   Apple Inc.
+                                                          March 18, 2018
 
 
                          DNS Push Notifications
@@ -15,7 +15,7 @@ Expires: June 14, 2018                                        Apple Inc.
 Abstract
 
    The Domain Name System (DNS) was designed to return matching records
-   efficiently for queries for data that is relatively static.  When
+   efficiently for queries for data that are relatively static.  When
    those records change frequently, DNS is still efficient at returning
    the updated results when polled, as long as the polling rate is not
    too high.  But there exists no mechanism for a client to be
@@ -38,11 +38,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on June 14, 2018.
+   This Internet-Draft will expire on September 19, 2018.
 
 Copyright Notice
 
-   Copyright (c) 2017 IETF Trust and the persons identified as the
+   Copyright (c) 2018 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 1]
+Pusateri & Cheshire    Expires September 19, 2018               [Page 1]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
    to this document.  Code Components extracted from this document must
@@ -67,36 +67,34 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
-   2.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   3
-   3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   4
-   4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   7
-   6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   8
-     6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   9
-     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  12
+   2.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   8
+   6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   9
+     6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .  10
+     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  13
        6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  13
        6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  16
      6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  19
-       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
-       6.3.2.  PUSH Response . . . . . . . . . . . . . . . . . . . .  23
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  24
-       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  25
-       6.4.2.  UNSUBSCRIBE Response  . . . . . . . . . . . . . . . .  27
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  29
-       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  30
-       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  32
-     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  34
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  35
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  35
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  36
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  36
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  37
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  39
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
+       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  19
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  22
+       6.4.1.  UNSUBSCRIBE Request . . . . . . . . . . . . . . . . .  22
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  24
+       6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  24
+       6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  26
+     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  28
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  29
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  29
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  29
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  30
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  30
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  30
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  31
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  31
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  31
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  33
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  35
 
 
 
@@ -109,29 +107,68 @@ Table of Contents
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 2]
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 2]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 1.  Introduction
 
-   DNS records may be updated using DNS Update [RFC2136].  Other
-   mechanisms such as a Discovery Proxy [DisProx] can also generate
-   changes to a DNS zone.  This document specifies a protocol for DNS
-   clients to subscribe to receive asynchronous notifications of changes
-   to RRSets of interest.  It is immediately relevant in the case of DNS
-   Service Discovery [RFC6763] but is not limited to that use case, and
-   provides a general DNS mechanism for DNS record change notifications.
-   Familiarity with the DNS protocol and DNS packet formats is assumed
-   [RFC1034] [RFC1035] [RFC6895].
+   Domain Name System (DNS) records may be updated using DNS Update
+   [RFC2136].  Other mechanisms such as a Discovery Proxy [DisProx] can
+   also generate changes to a DNS zone.  This document specifies a
+   protocol for DNS clients to subscribe to receive asynchronous
+   notifications of changes to RRSets of interest.  It is immediately
+   relevant in the case of DNS Service Discovery [RFC6763] but is not
+   limited to that use case, and provides a general DNS mechanism for
+   DNS record change notifications.  Familiarity with the DNS protocol
+   and DNS packet formats is assumed [RFC1034] [RFC1035] [RFC6895].
 
 1.1.  Requirements Language
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in
-   "Key words for use in RFCs to Indicate Requirement Levels" [RFC2119].
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+   and "OPTIONAL" in this document are to be interpreted as described
+   in "Key words for use in RFCs to Indicate Requirement Levels",
+   when, and only when, they appear in all capitals, as shown here
+   [RFC2119] [RFC8174].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 3]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
 
 2.  Motivation
 
@@ -143,48 +180,51 @@ Internet-Draft           DNS Push Notifications            December 2017
    Atom [RFC4287] are examples.  While DNS servers are generally highly
    tuned and capable of a high rate of query/response traffic, adding a
    publish/subscribe model for tracking changes to DNS records can
-   result in more timely notification of changes with reduced CPU usage
+   deliver more timely notification of changes with reduced CPU usage
    and lower network traffic.
 
    Multicast DNS [RFC6762] implementations always listen on a well known
-   link-local IP multicast group, and new services and updates are sent
-   for all group members to receive.  Therefore, Multicast DNS already
-   has asynchronous change notification capability.  However, when DNS
-   Service Discovery [RFC6763] is used across a wide area network using
-   Unicast DNS (possibly facilitated via a Discovery Proxy [DisProx]) it
-   would be beneficial to have an equivalent capability for Unicast DNS,
-   to allow clients to learn about DNS record changes in a timely manner
-   without polling.
+   link-local IP multicast group, and record changes are sent to that
+   multicast group address for all group members to receive.  Therefore,
+   Multicast DNS already has asynchronous change notification
+   capability.  However, when DNS Service Discovery [RFC6763] is used
+   across a wide area network using Unicast DNS (possibly facilitated
+   via a Discovery Proxy [DisProx]) it would be beneficial to have an
+   equivalent capability for Unicast DNS, to allow clients to learn
+   about DNS record changes in a timely manner without polling.
 
-   The DNS Long-Lived Queries (LLQ) mechanism [I-D.sekar-dns-llq] is an
-   existing deployed solution to provide asynchronous change
-   notifications, used by Apple's Back to My Mac Service [RFC6281]
-   introduced in Mac OS X 10.5 Leopard in 2007.  Back to My Mac was
-   designed in an era when the data center operations staff asserted
-   that it was impossible for a server to handle large numbers of
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 3]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   mostly-idle TCP connections, so LLQ was defined as a UDP-based
-   protocol, effectively replicating much of TCP's connection state
-   management logic in user space, and creating its own poor imitations
-   of existing TCP features like the three-way handshake, flow control,
-   and reliability.
+   The DNS Long-Lived Queries (LLQ) mechanism [LLQ] is an existing
+   deployed solution to provide asynchronous change notifications, used
+   by Apple's Back to My Mac Service [RFC6281] introduced in Mac OS X
+   10.5 Leopard in 2007.  Back to My Mac was designed in an era when the
+   data center operations staff asserted that it was impossible for a
+   server to handle large numbers of mostly-idle TCP connections, so LLQ
+   was defined as a UDP-based protocol, effectively replicating much of
+   TCP's connection state management logic in user space, and creating
+   its own poor imitations of existing TCP features like the three-way
+   handshake, flow control, and reliability.
 
    This document builds on experience gained with the LLQ protocol, with
    an improved design.  Instead of using UDP, this specification uses
-   TCP, and therefore doesn't need to reinvent existing TCP
-   functionality.  Using TCP also gives long-lived low-traffic
-   connections better longevity through NAT gateways without resorting
-   to excessive keepalive traffic.  Instead of inventing a new
-   vocabulary of messages to communicate DNS zone changes as LLQ did,
-   this specification adopts the syntax and semantics of DNS Update
-   messages [RFC2136].
+   DNS Stateful Operations (DSO) [DSO] running over TLS over TCP, and
+   therefore doesn't need to reinvent existing TCP functionality.  Using
+   TCP also gives long-lived low-traffic connections better longevity
+   through NAT gateways without resorting to excessive keepalive
+   traffic.  Instead of inventing a new vocabulary of messages to
+   communicate DNS zone changes as LLQ did, this specification borrows
+   the established syntax and semantics of DNS Update messages
+   [RFC2136].
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 4]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
 
 3.  Overview
 
@@ -198,7 +238,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    communicate changes to a zone.  The client subscribes for Push
    Notifications by connecting to the server and sending DNS message(s)
    indicating the RRSet(s) of interest.  When the client loses interest
-   in updates to these records, it unsubscribes.
+   in receiving further updates to these records, it unsubscribes.
 
    The DNS Push Notification server for a zone is any server capable
    of generating the correct change notifications for a name.
@@ -219,13 +259,6 @@ Internet-Draft           DNS Push Notifications            December 2017
    to be the "same server" for the purposes of this specification, and
    communications with these two ports are handled independently.
 
-
-
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 4]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
    Standard DNS Queries MAY be sent over a DNS Push Notification
    connection, provided that these are queries for names falling within
    the server's zone (the <zone> in the "_dns-push-tls._tcp.<zone>" SRV
@@ -240,6 +273,15 @@ Internet-Draft           DNS Push Notifications            December 2017
    Update Prerequisite processing.  Prerequisites are used to perform
    tentative atomic test-and-set type operations when a client updates
    records on a server, and that concept has no applicability when it
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 5]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    comes to an authoritative server unilaterally informing a client of
    changes to DNS records.
 
@@ -255,59 +297,62 @@ Internet-Draft           DNS Push Notifications            December 2017
    DNS Push Notifications impose less load on the responding server than
    rapid polling would, but Push Notifications do still have a cost, so
    DNS Push Notification clients must not recklessly create an excessive
-   number of Push Notification subscriptions.  A subscription should
-   only be active when there is a valid reason to need live data (for
-   example, an on-screen display is currently showing the results to the
-   user) and the subscription SHOULD be cancelled as soon as the need
-   for that data ends (for example, when the user dismisses that
-   display).  Implementations MAY want to implement idle timeouts, so
-   that if the user ceases interacting with the device, the display
-   showing the result of the DNS Push Notification subscription is
-   automatically dismissed after a certain period of inactivity.  For
-   example, if a user presses the "Print" button on their smartphone,
-   and then leaves the phone showing the printer discovery screen until
-   the phone goes to sleep, then the printer discovery screen should be
-   automatically dismissed as the device goes to sleep.  If the user
-   does still intend to print, this will require them to press the
-   "Print" button again when they wake their phone up.
+   number of Push Notification subscriptions.  Specifically:
 
-   A DNS Push Notification client must not routinely keep a DNS Push
-   Notification subscription active 24 hours a day, 7 days a week, just
-   to keep a list in memory up to date so that if the user does choose
+   (a) A subscription should only be active when there is a valid reason
+   to need live data (for example, an on-screen display is currently
+   showing the results to the user) and the subscription SHOULD be
+   cancelled as soon as the need for that data ends (for example, when
+   the user dismisses that display).  Implementations MAY want to
+   implement idle timeouts, so that if the user ceases interacting with
+   the device, the display showing the result of the DNS Push
+   Notification subscription is automatically dismissed after a certain
+   period of inactivity.  For example, if a user presses the "Print"
+   button on their smartphone, and then leaves the phone showing the
+   printer discovery screen until the phone goes to sleep, then the
+   printer discovery screen should be automatically dismissed as the
+   device goes to sleep.  If the user does still intend to print, this
+   will require them to press the "Print" button again when they wake
+   their phone up.
 
-
-
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 5]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   to bring up an on-screen display of that data, it can be displayed
-   really fast.  DNS Push Notifications are designed to be fast enough
-   that there is no need to pre-load a "warm" list in memory just in
-   case it might be needed later.
+   (b) A DNS Push Notification client SHOULD NOT routinely keep a DNS
+   Push Notification subscription active 24 hours a day, 7 days a week,
+   just to keep a list in memory up to date so that if the user does
+   choose to bring up an on-screen display of that data, it can be
+   displayed really fast.  DNS Push Notifications are designed to be
+   fast enough that there is no need to pre-load a "warm" list in memory
+   just in case it might be needed later.
 
    Generally, as described in the DNS Stateful Operations specification
-   [StatefulOp], a client must not keep a session to a server open
-   indefinitely if it has no subscriptions (or other operations) active
-   on that session.  A client MAY close a session as soon as it becomes
-   idle, and then if needed in the future, open a new session when
-   required.  Alternatively, a client MAY speculatively keep an idle
-   session open for some time, subject to the constraint that it MUST
-   NOT keep a session open that has been idle for more than the
-   session's idle timeout (15 seconds by default).
+   [DSO], a client must not keep a session to a server open indefinitely
+   if it has no subscriptions (or other operations) active on that
+   session.  A client MAY close a session as soon as it becomes idle,
+   and then if needed in the future, open a new session when required.
+   Alternatively, a client MAY speculatively keep an idle session open
+   for some time, subject to the constraint that it MUST NOT keep a
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 6]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
+   session open that has been idle for more than the session's idle
+   timeout (15 seconds by default).
 
 4.  Transport
 
-   Implementations of DNS Update [RFC2136] MAY use either User Datagram
-   Protocol (UDP) [RFC0768] or Transmission Control Protocol (TCP)
-   [RFC0793] as the transport protocol, in keeping with the historical
-   precedent that DNS queries must first be sent over UDP [RFC1123].
-   This requirement to use UDP has subsequently been relaxed [RFC7766].
+   Other DNS operations like DNS Update [RFC2136] MAY use either User
+   Datagram Protocol (UDP) [RFC0768] or Transmission Control Protocol
+   (TCP) [RFC0793] as the transport protocol, in keeping with the
+   historical precedent that DNS queries must first be sent over UDP
+   [RFC1123].  This requirement to use UDP has subsequently been relaxed
+   [RFC7766].
 
    In keeping with the more recent precedent, DNS Push Notification is
-   defined only for TCP.  DNS Push Notification clients MUST use TLS
-   over TCP [RFC7858].
+   defined only for TCP.  DNS Push Notification clients MUST use DNS
+   Stateful Operations (DSO) [DSO] running over TLS over TCP [RFC7858].
 
    Connection setup over TCP ensures return reachability and alleviates
    concerns of state overload at the server through anonymous
@@ -315,7 +360,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    server by virtue of the TCP three-way handshake.  Flooding attacks
    are possible with any protocol, and a benefit of TCP is that there
    are already established industry best practices to guard against SYN
-   flooding and similar attacks [IPJ.9-4-TCPSYN] [RFC4953].
+   flooding and similar attacks [SYN] [RFC4953].
 
    Use of TCP also allows DNS Push Notifications to take advantage of
    current and future developments in TCP, such as Multipath TCP (MPTCP)
@@ -333,9 +378,20 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 7]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 5.  State Considerations
@@ -349,10 +405,10 @@ Internet-Draft           DNS Push Notifications            December 2017
    employ various techniques to limit subscriptions to a manageable
    level.  Correspondingly, the client is free to establish simultaneous
    sessions to alternate DNS servers that support DNS Push Notifications
-   for the zone and distribute subscriptions at its discretion.  In this
-   way, both clients and servers can react to resource constraints.
-   Token bucket rate limiting schemes are also effective in providing
-   fairness by a server across numerous client requests.
+   for the zone and distribute subscriptions at the client's discretion.
+   In this way, both clients and servers can react to resource
+   constraints.  Token bucket rate limiting schemes are also effective
+   in providing fairness by a server across numerous client requests.
 
 
 
@@ -389,29 +445,29 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 7]
+Pusateri & Cheshire    Expires September 19, 2018               [Page 8]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.  Protocol Operation
 
    The DNS Push Notification protocol is a session-oriented protocol,
-   and makes use of DNS Stateful Operations (DSO) [StatefulOp].
+   and makes use of DNS Stateful Operations (DSO) [DSO].
 
    For details of the DSO message format refer to the DNS Stateful
-   Operations specification [StatefulOp].  Those details are not
-   repeated here.
+   Operations specification [DSO].  Those details are not repeated here.
 
-   DNS Push Notification clients and servers MUST support DSO, but the
-   server SHOULD NOT issue any DSO messages until after the client has
-   first initiated a DSO message of its own.  A single server can
-   support DNS Queries, DNS Updates, and DNS Push Notifications (using
-   DSO) on the same TCP port, and until the client has sent at least one
-   DSO message, the server does not know what kind of client has
-   connected to it.  Once the client has indicated willingness to use
-   DSO by sending one of its own, either side of the session may then
-   initiate further DSO messages at any time.
+   DNS Push Notification clients and servers MUST support DSO, but (as
+   stated in the DSO specification [DSO]) the server SHOULD NOT issue
+   any DSO messages until after the client has first initiated an
+   acknowledged DSO message of its own.  A single server can support DNS
+   Queries, DNS Updates, and DNS Push Notifications (using DSO) on the
+   same TCP port, and until the client has sent at least one DSO
+   message, the server does not know what kind of client has connected
+   to it.  Once the client has indicated willingness to use DSO by
+   sending one of its own, either side of the session may then initiate
+   further DSO messages at any time.
 
    A DNS Push Notification exchange begins with the client discovering
    the appropriate server, using the procedure described in Section 6.1,
@@ -434,9 +490,6 @@ Internet-Draft           DNS Push Notifications            December 2017
    client while the client's UNSUBSCRIBE message cancelling that
    subscription is simultaneously in flight from client to server.
 
-   The exchange between client and server terminates when either end
-   closes the session (e.g., closing the TLS session with a TLS
-   close_notify, or closing the TCP connection with a TCP FIN or RST).
 
 
 
@@ -445,9 +498,12 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 8]
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018               [Page 9]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.1.  Discovery
@@ -456,7 +512,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    an appropriate DNS server that supports DNS Push Notifications for
    the desired zone.
 
-   The client begins by opening a DNS Session to its normal configured
+   The client begins by opening a DSO Session to its normal configured
    DNS recursive resolver and requesting a Push Notification
    subscription.  If this is successful, then the recursive resolver
    will make appropriate Push Notification subscriptions on the client's
@@ -501,9 +557,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                 [Page 9]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 10]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
        is merely describing the existing operation of the DNS protocol
@@ -557,9 +613,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 10]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 11]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
        below in Section 7.2 and in the specification for using DANE TLSA
@@ -613,9 +669,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 11]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 12]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.2.  DNS Push Notification SUBSCRIBE
@@ -624,77 +680,71 @@ Internet-Draft           DNS Push Notifications            December 2017
    keepalive interval if necessary, a DNS Push Notification client then
    indicates its desire to receive DNS Push Notifications for a given
    domain name by sending a SUBSCRIBE request over the established DSO
-   session to the server.  A SUBSCRIBE request is encoded in a DSO
-   [StatefulOp] message.  This specification defines a DSO TLV for DNS
-   Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type
-   Code 0x40).
+   session to the server.  A SUBSCRIBE request is encoded in a DSO [DSO]
+   message.  This specification defines a DSO TLV for DNS Push
+   Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code
+   0x40).
 
    The entity that initiates a SUBSCRIBE request is by definition the
-   client.  A server should not send a SUBSCRIBE request over an
-   existing session from a client.  If a server does send a SUBSCRIBE
-   request over a session initiated by a client, it is an error and the
-   client should acknowledge the request with the error response RCODE
-   NOTAUTH (Not Authoritative).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 12]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
+   client.  A server MUST NOT send a SUBSCRIBE request over an existing
+   session from a client.  If a server does send a SUBSCRIBE request
+   over a DSO session initiated by a client, this is a fatal error and
+   the client should immediately abort the connection with a TCP RST (or
+   equivalent for other protocols).
 
 6.2.1.  SUBSCRIBE Request
 
-   A SUBSCRIBE request message begins with the standard DSO 12-byte
-   header [StatefulOp], followed by the SUBSCRIBE TLV.  A SUBSCRIBE
-   request message is illustrated below:
+   A SUBSCRIBE request begins with the standard DSO 12-byte header
+   [DSO], followed by the SUBSCRIBE TLV.  A SUBSCRIBE request message is
+   illustrated in Figure 1.
+
+   The MESSAGE ID field MUST be set to a unique value, that the client
+   is not using for any other active operation on this session.  For the
+   purposes here, a MESSAGE ID is in use on this session if the client
+   has used it in a request for which it has not yet received a
+   response, or if the client has used it for a subscription which it
+   has not yet cancelled using UNSUBSCRIBE.  In the SUBSCRIBE response
+   the server MUST echo back the MESSAGE ID value unchanged.
+
+   The other header fields MUST be set as described in the DSO
+   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
+   6).  The four count fields MUST be zero, and the corresponding four
+   sections MUST be empty (i.e., absent).
+
+   The DSO-TYPE is SUBSCRIBE (tentatively 0x40).  The DSO-LENGTH is the
+   length of the DSO-DATA that follows, which specifies the name, type,
+   and class of the record(s) being sought.
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 13]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |                  MESSAGE ID                   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |QR|  Opcode   |         Z          |   RCODE   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             QDCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             ANCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             NSCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             ARCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     |                  MESSAGE ID                   |   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |QR|  Opcode   |         Z          |   RCODE   |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             QDCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+     |             ANCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             NSCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             ARCOUNT (MUST BE ZERO)            |   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
      |    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      |   DSO-LENGTH (number of octets in DSO-DATA)   |
@@ -708,31 +758,7 @@ Internet-Draft           DNS Push Notifications            December 2017
      |                     CLASS                     |   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
-                                 Figure 1
-
-   The MESSAGE ID field MUST be set to a unique value, that the client
-   is not using for any other active operation on this session.  For the
-   purposes here, a MESSAGE ID is in use on this session if the client
-   has used it in a request for which it has not yet received a
-   response, or if the client has used it for a subscription which it
-   has not yet cancelled using UNSUBSCRIBE.  In the SUBSCRIBE response
-   the server MUST echo back the MESSAGE ID value unchanged.
-
-   The other header fields MUST be set as described in the DSO
-   specification [StatefulOp].  The DNS Opcode is the DSO Opcode
-   (tentatively 6).  The four count fields MUST be zero, and the
-   corresponding four sections MUST be empty (i.e., absent).
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 13]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   The DSO-TYPE is SUBSCRIBE (tentatively 0x40).  The DSO-LENGTH is the
-   length of the DSO-DATA that follows, which specifies the name, type,
-   and class of the record(s) being sought.
+                        Figure 1: SUBSCRIBE Request
 
    The DSO-DATA for a SUBSCRIBE request MUST contain exactly one
    question.  The DSO-DATA for a SUBSCRIBE request has no QDCOUNT field
@@ -741,7 +767,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    a single TCP stream and packed efficiently into TCP segments.
 
    If accepted, the subscription will stay in effect until the client
-   cancels the subscription using UNSUBSCRIBE or until the session
+   cancels the subscription using UNSUBSCRIBE or until the DSO session
    between the client and the server is closed.
 
    SUBSCRIBE requests on a given session MUST be unique.  A client MUST
@@ -752,6 +778,13 @@ Internet-Draft           DNS Push Notifications            December 2017
    the same).  If a server receives such a duplicate SUBSCRIBE message
    this is an error and the server MUST immediately terminate the
    connection with a TCP RST (or equivalent for other protocols).
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 14]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
 
    DNS wildcarding is not supported.  That is, a wildcard ("*") in a
    SUBSCRIBE message matches only a literal wildcard character ("*") in
@@ -770,21 +803,6 @@ Internet-Draft           DNS Push Notifications            December 2017
    subscription to changes for the given NAME, TYPE and CLASS.  If one
    or both of TYPE or CLASS are ANY (255) then this subscription matches
    any type and/or any class, as appropriate.
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 14]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
 
    NOTE: A little-known quirk of DNS is that in DNS QUERY requests,
    QTYPE and QCLASS 255 mean "ANY" not "ALL".  They indicate that the
@@ -819,27 +837,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 15]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 15]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.2.2.  SUBSCRIBE Response
@@ -848,15 +848,17 @@ Internet-Draft           DNS Push Notifications            December 2017
    the server.
 
    A SUBSCRIBE response message begins with the standard DSO 12-byte
-   header [StatefulOp], possibly followed by one or more optional TLVs,
-   such as a Retry Delay TLV.
+   header [DSO], possibly followed by one or more optional TLVs, such as
+   a Retry Delay TLV.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    SUBSCRIBE request.  This is how the client knows which request is
    being responded to.
 
-   A SUBSCRIBE response message MUST NOT copy the original DSO SUBSCRIBE
-   TLV.
+   A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a
+   client receives a SUBSCRIBE response message containing a SUBSCRIBE
+   TLV then the response message is processed but the SUBSCRIBE TLV MUST
+   be silently ignored.
 
    In the SUBSCRIBE response the RCODE indicates whether or not the
    subscription was accepted.  Supported RCODEs are as follows:
@@ -872,7 +874,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    | NXDOMAIN  |   3   | NOT APPLICABLE. DNS Push Notification servers |
    |           |       | MUST NOT return NXDOMAIN errors in response   |
    |           |       | to SUBSCRIBE requests.                        |
-   | NOTIMP    |   4   | Server does not recognize DSO Opcode.         |
+   | NOTIMP    |   4   | Server does not implement DSO.                |
    | REFUSED   |   5   | Server refuses to process request for policy  |
    |           |       | or security reasons.                          |
    | NOTAUTH   |   9   | Server is not authoritative for the requested |
@@ -891,27 +893,25 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 16]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 16]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
-   If the server sends a nonzero RCODE in the SUBSCRIBE response, either
-   the client is (at least partially) misconfigured, the server
-   resources are exhausted, or there is some other unknown failure on
-   the server.  In any case, the client shouldn't retry the subscription
-   right away.  Either end can terminate the session, but the client may
-   want to try this subscription again, or it may have other successful
-   subscriptions that it doesn't want to abandon.  If the server sends a
-   nonzero RCODE then it SHOULD append a Retry Delay TLV [StatefulOp] to
-   the response specifying a delay before the client attempts this
-   operation again.  Recommended values for the delay for different
-   RCODE values are given below.  These recommended values apply both to
-   the default values a server should place in the Retry Delay TLV, and
-   the default values a client should assume if the server provides no
-   Retry Delay TLV.
+   If the server sends a nonzero RCODE in the SUBSCRIBE response, that
+   means (a) the client is (at least partially) misconfigured, (b) the
+   server resources are exhausted, or (c) there is some other unknown
+   failure on the server.  In any case, the client shouldn't retry the
+   subscription right away.  Either end can terminate the session, but
+   the client may want to try this subscription again, or it may have
+   other successful subscriptions that it doesn't want to abandon.  If
+   the server sends a nonzero RCODE then it SHOULD append a Retry Delay
+   TLV [DSO] to the response specifying a delay before the client
+   attempts this operation again.  Recommended values for the delay for
+   different RCODE values are given below.  These recommended values
+   apply both to the default values a server should place in the Retry
+   Delay TLV, and the default values a client should assume if the
+   server provides no Retry Delay TLV.
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
       implementer.  A value of five minutes is RECOMMENDED, to reduce
@@ -924,12 +924,12 @@ Internet-Draft           DNS Push Notifications            December 2017
       accordance with the specific problem encountered.
 
       For RCODE = 4 (NOTIMP), which occurs on a server that doesn't
-      implement DSO [StatefulOp], it is unlikely that the server will
-      begin supporting DSO in the next few minutes, so the retry delay
-      SHOULD be one hour.  Note that in such a case, a server that
-      doesn't implement DSO is unlikely to place a Retry Delay TLV in
-      its response, so this recommended value in particular applies to
-      what a client should assume by default.
+      implement DSO [DSO], it is unlikely that the server will begin
+      supporting DSO in the next few minutes, so the retry delay SHOULD
+      be one hour.  Note that in such a case, a server that doesn't
+      implement DSO is unlikely to place a Retry Delay TLV in its
+      response, so this recommended value in particular applies to what
+      a client should assume by default.
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
@@ -949,9 +949,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 17]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 17]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
       This is a misconfiguration, since this server is listed in a
@@ -980,8 +980,8 @@ Internet-Draft           DNS Push Notifications            December 2017
    After sending an error response the server MAY allow the session to
    remain open, or MAY send a DNS Push Notification Retry Delay
    Operation TLV instructing the client to close the session, as
-   described in the DSO specification [StatefulOp].  Clients MUST
-   correctly handle both cases.
+   described in the DSO specification [DSO].  Clients MUST correctly
+   handle both cases.
 
 
 
@@ -1005,9 +1005,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 18]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 18]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.3.  DNS Push Notification Updates
@@ -1019,121 +1019,18 @@ Internet-Draft           DNS Push Notifications            December 2017
    following the SUBSCRIBE Response.  Subsequent changes to the answer
    set are then communicated to the client in subsequent PUSH messages.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 19]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
 6.3.1.  PUSH Message
 
-   A PUSH message begins with the standard DSO 12-byte header
-   [StatefulOp], followed by the PUSH TLV.  A PUSH message is
-   illustrated below:
+   A PUSH message begins with the standard DSO 12-byte header [DSO],
+   followed by the PUSH TLV.  A PUSH message is illustrated in Figure 2.
 
-                                     1  1  1  1  1  1
-       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |                  MESSAGE ID                   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |QR|  Opcode   |         Z          |   RCODE   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             QDCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             ANCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             NSCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             ARCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |      DSO-TYPE = PUSH (tentatively 0x41)       |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |   DSO-LENGTH (number of octets in DSO-DATA)   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     \                     NAME                      \   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     TYPE                      |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     CLASS                     |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     RDLEN                     |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     \                     RDATA                     \    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
-     \         NAME                                  \    |
-     +--+--+--+--+--+--+-                            |    |
-     |         TYPE                Repeated          |    |
-     +--+--+--+--+--+--+-                            |    |
-     |         CLASS                  As             |    |
-     +--+--+--+--+--+--+-                            |    |
-     |         RDLEN               Necessary         |    |
-     +--+--+--+--+--+--+-                            |    |
-     \         RDATA                                 \   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-
-                                 Figure 2
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 20]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   The MESSAGE ID field MUST be set to a unique value, that the server
-   is not currently using for any other active outgoing request that it
-   has sent on this session.  The MESSAGE ID in the outgoing PUSH
-   message is selected by the server and has no relationship to the
-   MESSAGE ID in any of the client subscriptions it may relate to.  In
-   the PUSH response the client MUST echo back the MESSAGE ID value
-   unchanged.
+   The MESSAGE ID field MUST be zero.  There is no client response to a
+   PUSH message.
 
    The other header fields MUST be set as described in the DSO
-   specification [StatefulOp].  The DNS Opcode is the DSO Opcode
-   (tentatively 6).  The four count fields MUST be zero, and the
-   corresponding four sections MUST be empty (i.e., absent).
+   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
+   6).  The four count fields MUST be zero, and the corresponding four
+   sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is PUSH (tentatively 0x41).  The DSO-LENGTH is the
    length of the DSO-DATA that follows, which specifies the changes
@@ -1144,10 +1041,9 @@ Internet-Draft           DNS Push Notifications            December 2017
    received that contains no Update records, this is a fatal error, and
    the receiver MUST immediately terminate the connection with a TCP RST
    (or equivalent for other protocols).  The Update records are
-   formatted in the customary way for Resource Records in DNS messages
-   except that DNS name compression is not permitted.  Update records in
-   a PUSH Message are interpreted according to the same rules as for DNS
-   Update [RFC2136] messages, namely:
+   formatted in the customary way for Resource Records in DNS messages.
+   Update records in a PUSH Message are interpreted according to the
+   same rules as for DNS Update [RFC2136] messages, namely:
 
       Delete all RRsets from a name:
       TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.
@@ -1163,6 +1059,51 @@ Internet-Draft           DNS Push Notifications            December 2017
       Add to an RRset:
       TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.
 
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 19]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
+                                     1  1  1  1  1  1
+       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     |                  MESSAGE ID                   |   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |QR|  Opcode   |         Z          |   RCODE   |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             QDCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+     |             ANCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             NSCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             ARCOUNT (MUST BE ZERO)            |   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+     |      DSO-TYPE = PUSH (tentatively 0x41)       |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |   DSO-LENGTH (number of octets in DSO-DATA)   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     \                     NAME                      \   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     TYPE                      |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     CLASS                     |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                      TTL                      |    |
+     |                   (32 bits)                   |     > DSO-DATA
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     RDLEN                     |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     \                     RDATA                     \    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     :     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
+     :             Repeated As Necessary             :   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+
+                          Figure 2: PUSH Message
+
    When processing the records received in a PUSH Message, the receiving
    client MUST validate that the records being added or deleted
    correspond with at least one currently active subscription on that
@@ -1170,17 +1111,17 @@ Internet-Draft           DNS Push Notifications            December 2017
    the SUBSCRIBE request, subject to the usual established DNS case-
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
    request was not ANY (255) then the TYPE of the record must match the
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 21]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
    request was not ANY (255) then the CLASS of the record must match the
    CLASS given in the SUBSCRIBE request.  If a matching active
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 20]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    subscription on that session is not found, then that individual
    record addition/deletion is silently ignored.  Processing of other
    additions and deletions in this message is not affected.  The DSO
@@ -1211,9 +1152,6 @@ Internet-Draft           DNS Push Notifications            December 2017
    to different subscriptions.  Conceptually, a PUSH message is a
    session-level mechanism, not a subscription-level mechanism.
 
-   Reception of a PUSH message by a client generates a PUSH response
-   back to the server.
-
    The TTL of an added record is stored by the client and decremented as
    time passes, with the caveat that for as long as a relevant
    subscription is active, the TTL does not decrement below 1 second.
@@ -1229,65 +1167,15 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 22]
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 21]
 
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-6.3.2.  PUSH Response
-
-   Each PUSH message generates exactly one PUSH response from the
-   receiver.
-
-   A PUSH response message begins with the standard DSO 12-byte header
-   [StatefulOp], possibly followed by one or more optional TLVs.
-
-   The MESSAGE ID field MUST echo the value given in the ID field of the
-   PUSH message.
-
-   A PUSH response message MUST NOT copy the original DSO PUSH TLV.
-
-   In a PUSH response the RCODE MUST be zero.  Receiving a PUSH response
-   with a nonzero RCODE is a fatal error, and the receiver MUST
-   immediately terminate the connection with a TCP RST (or equivalent
-   for other protocols).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 23]
-
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.4.  DNS Push Notification UNSUBSCRIBE
@@ -1295,85 +1183,28 @@ Internet-Draft           DNS Push Notifications            December 2017
    To cancel an individual subscription without closing the entire DSO
    session, the client sends an UNSUBSCRIBE message over the established
    DSO session to the server.  The UNSUBSCRIBE message is encoded in a
-   DSO [StatefulOp] message.  This specification defines a DSO TLV for
-   DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO
-   Type Code 0x42).
+   DSO [DSO] message.  This specification defines a DSO TLV for DNS Push
+   Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type
+   Code 0x42).
 
    A server MUST NOT initiate an UNSUBSCRIBE request.  If a server does
-   send a UNSUBSCRIBE request over a DSO session initiated by a client,
-   it is an error and the client should acknowledge the request with the
-   error response RCODE NOTAUTH (Not Authoritative).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 24]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
+   send an UNSUBSCRIBE request over a DSO session initiated by a client,
+   this is a fatal error and the client should immediately abort the
+   connection with a TCP RST (or equivalent for other protocols).
 
 6.4.1.  UNSUBSCRIBE Request
 
-   An UNSUBSCRIBE request message begins with the standard DSO 12-byte
-   header [StatefulOp], followed by the UNSUBSCRIBE TLV.
+   An UNSUBSCRIBE request begins with the standard DSO 12-byte header
+   [DSO], followed by the UNSUBSCRIBE TLV.  An UNSUBSCRIBE request
+   message is illustrated in Figure 3.
 
-                                       1  1  1  1  1  1
-         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |                  MESSAGE ID                   |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |QR|  Opcode   |         Z          |   RCODE   |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |             QDCOUNT (MUST BE ZERO)            |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |             ANCOUNT (MUST BE ZERO)            |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |             NSCOUNT (MUST BE ZERO)            |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |             ARCOUNT (MUST BE ZERO)            |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |              DSO-LENGTH (2 octets)            |
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-       |              SUBSCRIBE MESSAGE ID             |   DSO-DATA
-       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+   The MESSAGE ID field MUST be zero.  There is no server response to a
+   UNSUBSCRIBE message.
 
-                                 Figure 3
+   The other header fields MUST be set as described in the DSO
+   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
+   6).  The four count fields MUST be zero, and the corresponding four
+   sections MUST be empty (i.e., absent).
 
    In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively
    0x42).  The DSO-LENGTH is 2 octets.
@@ -1382,52 +1213,50 @@ Internet-Draft           DNS Push Notifications            December 2017
    ID field of an active SUBSCRIBE request.  This is how the server
    knows which SUBSCRIBE request is being cancelled.  After receipt of
    the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.
-   If a server receives an UNSUBSCRIBE message where the MESSAGE ID does
-   not match the ID of an active SUBSCRIBE request the server MUST
-   return a response containing RCODE = 3 (NXDOMAIN).
 
    It is allowable for the client to issue an UNSUBSCRIBE request for a
    previous SUBSCRIBE request for which the client has not yet received
    a SUBSCRIBE response.  This is to allow for the case where a client
    starts and stops a subscription in less than the round-trip time to
    the server.  The client is NOT required to wait for the SUBSCRIBE
-   response before issuing the UNSUBSCRIBE request.  A consequence of
-   this is that if the client issues an UNSUBSCRIBE request for an as-
-   yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is
+   response before issuing the UNSUBSCRIBE request.
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 25]
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 22]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
-   subsequently unsuccessful for some reason, then when the UNSUBSCRIBE
-   request is eventually processed it will be an UNSUBSCRIBE request for
-   a nonexistent subscription, which will result NXDOMAIN response.
+                                      1  1  1  1  1  1
+        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      |                  MESSAGE ID                   |   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |QR|  Opcode   |         Z          |   RCODE   |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             QDCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+      |             ANCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             NSCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             ARCOUNT (MUST BE ZERO)            |   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+      |   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |              DSO-LENGTH (2 octets)            |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      |              SUBSCRIBE MESSAGE ID             |   > DSO-DATA
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                       Figure 3: UNSUBSCRIBE Request
 
 
 
@@ -1453,121 +1282,12 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 26]
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 23]
 
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-6.4.2.  UNSUBSCRIBE Response
-
-   Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response
-   from the server.
-
-   An UNSUBSCRIBE response message begins with the standard DSO 12-byte
-   header [StatefulOp], possibly followed by one or more optional TLVs,
-   such as a Retry Delay TLV.  For suggested values for the Retry Delay
-   TLV, see Section 6.2.2.
-
-   The MESSAGE ID field MUST echo the value given in the ID field of the
-   UNSUBSCRIBE request.  This is how the client knows which request is
-   being responded to.
-
-   An UNSUBSCRIBE response message MUST NOT copy the original DSO
-   UNSUBSCRIBE TLV.
-
-   In the UNSUBSCRIBE response the RCODE indicates whether or not the
-   unsubscribe request was successful.  Supported RCODEs are as follows:
-
-   +-----------+-------+-----------------------------------------------+
-   | Mnemonic  | Value | Description                                   |
-   +-----------+-------+-----------------------------------------------+
-   | NOERROR   |   0   | UNSUBSCRIBE successful.                       |
-   | FORMERR   |   1   | Server failed to process request due to a     |
-   |           |       | malformed request.                            |
-   | NXDOMAIN  |   3   | Specified subscription does not exist.        |
-   | NOTIMP    |   4   | Server does not recognize DSO Opcode.         |
-   | DSOTYPENI |   11  | UNSUBSCRIBE operation not supported.          |
-   +-----------+-------+-----------------------------------------------+
-
-                        UNSUBSCRIBE Response codes
-
-   This document specifies only these RCODE values for UNSUBSCRIBE
-   Responses.  Servers sending UNSUBSCRIBE Responses SHOULD use one of
-   these values.  However, future circumstances may create situations
-   where other RCODE values are appropriate in UNSUBSCRIBE Responses, so
-   clients MUST be prepared to accept UNSUBSCRIBE Responses with any
-   RCODE value.
-
-   Having being successfully revoked with a correctly-formatted
-   UNSUBSCRIBE message (resulting in a response with RCODE NOERROR) the
-   previously referenced subscription is no longer active and the server
-   MAY discard the state associated with it immediately, or later, at
-   the server's discretion.
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 27]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   Nonzero RCODE values signal some kind of error.
-
-   RCODE value FORMERR indicates a message format error.
-
-   RCODE value NXDOMAIN indicates a MESSAGE ID that does not correspond
-   to any active subscription.
-
-   RCODE values NOTIMP and DSOTYPENI should not occur in practice.
-
-   A server would only generate NOTIMP if it did not support DSO, and if
-   the server does not support DSO then it should not be possible for a
-   client to have an active subscription to cancel.
-
-   Similarly, a server would only generate DSOTYPENI if it did not
-   support Push Notifications, and if the server does not support Push
-   Notifications then it should not be possible for a client to have an
-   active subscription to cancel.
-
-   Nonzero RCODE values other than NXDOMAIN indicate a serious problem
-   with the client.  After sending an error response other than
-   NXDOMAIN, the server SHOULD send a DSO Retry Delay TLV to end the DSO
-   session, as described in the DSO specification [StatefulOp].
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 28]
-
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.5.  DNS Push Notification RECONFIRM
@@ -1595,74 +1315,11 @@ Internet-Draft           DNS Push Notifications            December 2017
    effect of informing all other interested clients that the device in
    question is now gone.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 29]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
 6.5.1.  RECONFIRM Request
 
-   A RECONFIRM request message begins with the standard DSO 12-byte
-   header [StatefulOp], followed by the RECONFIRM TLV.  A RECONFIRM
-   request message is illustrated below:
-
-                                     1  1  1  1  1  1
-       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |                  MESSAGE ID                   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |QR|  Opcode   |         Z          |   RCODE   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             QDCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             ANCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             NSCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |             ARCOUNT (MUST BE ZERO)            |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |   DSO-LENGTH (number of octets in DSO-DATA)   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     \                     NAME                      \   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     TYPE                      |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     CLASS                     |     > DSO-DATA
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     RDLEN                     |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     \                     RDATA                     \   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-
-                                 Figure 4
+   A RECONFIRM request begins with the standard DSO 12-byte header
+   [DSO], followed by the RECONFIRM TLV.  A RECONFIRM request message is
+   illustrated in Figure 4.
 
    The MESSAGE ID field MUST be set to a unique value, that the client
    is not using for any other active operation on this DSO session.  For
@@ -1673,40 +1330,57 @@ Internet-Draft           DNS Push Notifications            December 2017
    the server MUST echo back the MESSAGE ID value unchanged.
 
    The other header fields MUST be set as described in the DSO
-   specification [StatefulOp].  The DNS Opcode is the DSO Opcode
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 30]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   (tentatively 6).  The four count fields MUST be zero, and the
-   corresponding four sections MUST be empty (i.e., absent).
+   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
+   6).  The four count fields MUST be zero, and the corresponding four
+   sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is RECONFIRM (tentatively 0x43).  The DSO-LENGTH is the
    length of the data that follows, which specifies the name, type,
    class, and content of the record being disputed.
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 24]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
+                                     1  1  1  1  1  1
+       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     |                  MESSAGE ID                   |   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |QR|  Opcode   |         Z          |   RCODE   |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             QDCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+     |             ANCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             NSCOUNT (MUST BE ZERO)            |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |             ARCOUNT (MUST BE ZERO)            |   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+     |    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+     |   DSO-LENGTH (number of octets in DSO-DATA)   |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+     \                     NAME                      \   \
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     |                     TYPE                      |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
+     |                     CLASS                     |    |
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+     \                     RDATA                     \   /
+     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+
+                        Figure 4: RECONFIRM Request
 
    The DSO-DATA for a RECONFIRM request MUST contain exactly one record.
    The DSO-DATA for a RECONFIRM request has no count field to specify
    more than one record.  Since RECONFIRM requests are sent over TCP,
    multiple RECONFIRM request messages can be concatenated in a single
    TCP stream and packed efficiently into TCP segments.
-
-   Note that the RDLEN field is provided for consistency with the way
-   resource records are generally represented in DNS messages, though it
-   is redundant here, because the DSO-LENGTH alone is sufficient to
-   determine the length of the data.  The RDLEN field MUST be validated
-   to ensure that the length of RDATA indicated does not exceed the
-   amount of data contained in the DSO TLV structure.  If the RDLEN
-   field indicates less data than contained in the DSO TLV structure,
-   any excess bytes MUST be silently ignored, but the RECONFIRM request
-   is otherwise handled as usual.  If the RDLEN field indicates more
-   data than contained in the DSO TLV structure, a FORMERR response MUST
-   be returned.  [Note: Might it be simpler just to get rid of the RDLEN
-   field?]
 
    TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value
    ANY (255).
@@ -1723,19 +1397,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 31]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 25]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.5.2.  RECONFIRM Response
@@ -1744,16 +1408,18 @@ Internet-Draft           DNS Push Notifications            December 2017
    the server.
 
    A RECONFIRM response message begins with the standard DSO 12-byte
-   header [StatefulOp], possibly followed by one or more optional TLVs,
-   such as a Retry Delay TLV.  For suggested values for the Retry Delay
-   TLV, see Section 6.2.2.
+   header [DSO], possibly followed by one or more optional TLVs, such as
+   a Retry Delay TLV.  For suggested values for the Retry Delay TLV, see
+   Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    RECONFIRM request.  This is how the client knows which request is
    being responded to.
 
-   A RECONFIRM response message MUST NOT copy the original DSO RECONFIRM
-   TLV.
+   A RECONFIRM response message MUST NOT include a DSO RECONFIRM TLV.
+   If a client receives a RECONFIRM response message containing a
+   RECONFIRM TLV then the response message is processed but the
+   RECONFIRM TLV MUST be silently ignored.
 
    In the RECONFIRM response the RCODE confirms receipt of the
    reconfirmation request.  Supported RCODEs are as follows:
@@ -1769,7 +1435,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    | NXDOMAIN  |   3   | NOT APPLICABLE. DNS Push Notification servers |
    |           |       | MUST NOT return NXDOMAIN errors in response   |
    |           |       | to RECONFIRM requests.                        |
-   | NOTIMP    |   4   | Server does not recognize DSO Opcode.         |
+   | NOTIMP    |   4   | Server does not implement DSO.                |
    | REFUSED   |   5   | Server refuses to process request for policy  |
    |           |       | or security reasons.                          |
    | NOTAUTH   |   9   | Server is not authoritative for the requested |
@@ -1783,16 +1449,17 @@ Internet-Draft           DNS Push Notifications            December 2017
    Responses.  Servers sending RECONFIRM Responses SHOULD use one of
    these values.  However, future circumstances may create situations
    where other RCODE values are appropriate in RECONFIRM Responses, so
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 26]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    clients MUST be prepared to accept RECONFIRM Responses with any RCODE
    value.
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 32]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
 
    Nonzero RCODE values signal some kind of error.
 
@@ -1825,8 +1492,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    Nonzero RCODE values other than these three indicate a serious
    problem with the client.  After sending an error response other than
    one of these three, the server SHOULD send a DSO Retry Delay TLV to
-   end the DSO session, as described in the DSO specification
-   [StatefulOp].
+   end the DSO session, as described in the DSO specification [DSO].
 
 
 
@@ -1843,11 +1509,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 33]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 27]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 6.6.  Client-Initiated Termination
@@ -1866,7 +1530,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    a client MAY close the session immediately, or it may keep it open if
    it anticipates performing further operations on that session in the
    future.  If a client wishes to keep an idle session open, it MUST
-   respect the maximum idle time required by the server [StatefulOp].
+   respect the maximum idle time required by the server [DSO].
 
    If a client plans to terminate one or more subscriptions on a session
    and doesn't intend to keep that session open, then as an efficiency
@@ -1901,16 +1565,16 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 34]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 28]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
 7.  Security Considerations
 
    The Strict Privacy Usage Profile for DNS over TLS is strongly
-   recommended for DNS Push Notifications as defined in Authentication
-   and (D)TLS Profile for DNS-over-(D)TLS
+   recommended for DNS Push Notifications as defined in "Authentication
+   and (D)TLS Profile for DNS-over-(D)TLS"
    [I-D.ietf-dprive-dtls-and-tls-profiles].  The Opportunistic Privacy
    Usage Profile is permissible as a way to support incremental
    deployment of security capabilities.  Cleartext connections for DNS
@@ -1957,9 +1621,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 35]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 29]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
    trusted TLS certificate [RFC7673].  This procedure uses the TLS Sever
@@ -2013,9 +1677,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 36]
+Pusateri & Cheshire    Expires September 19, 2018              [Page 30]
 
-Internet-Draft           DNS Push Notifications            December 2017
+Internet-Draft           DNS Push Notifications               March 2018
 
 
    value 0x41 (65), UNSUBSCRIBE with (tentative) value 0x42 (66), and
@@ -2034,6 +1698,11 @@ Internet-Draft           DNS Push Notifications            December 2017
 10.  References
 
 10.1.  Normative References
+
+   [DSO]      Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
+              Mankin, A., and T. Pusateri, "DNS Stateful Operations",
+              draft-ietf-dnsop-session-signal-05 (work in progress),
+              January 2018.
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
@@ -2061,18 +1730,18 @@ Internet-Draft           DNS Push Notifications            December 2017
               DOI 10.17487/RFC1123, October 1989,
               <https://www.rfc-editor.org/info/rfc1123>.
 
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 31]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 37]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
 
    [RFC2136]  Vixie, P., Ed., Thomson, S., Rekhter, Y., and J. Bound,
               "Dynamic Updates in the Domain Name System (DNS UPDATE)",
@@ -2115,32 +1784,29 @@ Internet-Draft           DNS Push Notifications            December 2017
               Requirements", RFC 7766, DOI 10.17487/RFC7766, March 2016,
               <https://www.rfc-editor.org/info/rfc7766>.
 
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 32]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
    [ST]       "Service Name and Transport Protocol Port Number
               Registry", <http://www.iana.org/assignments/
               service-names-port-numbers/>.
 
-
-
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 38]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
-   [StatefulOp]
-              Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
-              Mankin, A., and T. Pusateri, "DNS Stateful Operations",
-              draft-ietf-dnsop-session-signal-05 (work in progress),
-              January 2018.
-
 10.2.  Informative References
 
    [DisProx]  Cheshire, S., "Discovery Proxy for Multicast DNS-Based
-              Service Discovery", draft-ietf-dnssd-hybrid-07 (work in
-              progress), September 2017.
+              Service Discovery", draft-ietf-dnssd-hybrid-08 (work in
+              progress), March 2018.
 
    [I-D.dukkipati-tcpm-tcp-loss-probe]
               Dukkipati, N., Cardwell, N., Cheng, Y., and M. Mathis,
@@ -2154,14 +1820,8 @@ Internet-Draft           DNS Push Notifications            December 2017
               dtls-and-tls-profiles-11 (work in progress), September
               2017.
 
-   [I-D.sekar-dns-llq]
-              Sekar, K., "DNS Long-Lived Queries", draft-sekar-dns-
+   [LLQ]      Sekar, K., "DNS Long-Lived Queries", draft-sekar-dns-
               llq-01 (work in progress), August 2006.
-
-   [IPJ.9-4-TCPSYN]
-              Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
-              Internet Protocol Journal, Cisco Systems, Volume 9,
-              Number 4, December 2006.
 
    [obs]      "Observer Pattern",
               <https://en.wikipedia.org/wiki/Observer_pattern>.
@@ -2178,18 +1838,17 @@ Internet-Draft           DNS Push Notifications            December 2017
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 39]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
    [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
               "Transport Layer Security (TLS) Session Resumption without
               Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
               January 2008, <https://www.rfc-editor.org/info/rfc5077>.
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 33]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
 
    [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
               "Understanding Apple's Back to My Mac (BTMM) Service",
@@ -2233,19 +1892,23 @@ Internet-Draft           DNS Push Notifications            December 2017
               DOI 10.17487/RFC8010, January 2017,
               <https://www.rfc-editor.org/info/rfc8010>.
 
-
-
-
-
-Pusateri & Cheshire       Expires June 14, 2018                [Page 40]
-
-Internet-Draft           DNS Push Notifications            December 2017
-
-
    [RFC8011]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Model and Semantics", RFC 8011,
               DOI 10.17487/RFC8011, January 2017,
               <https://www.rfc-editor.org/info/rfc8011>.
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 34]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
+   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
+              Internet Protocol Journal, Cisco Systems, Volume 9,
+              Number 4, December 2006.
 
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
@@ -2293,4 +1956,5 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire       Expires June 14, 2018                [Page 41]
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 35]

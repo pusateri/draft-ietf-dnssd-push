@@ -33,8 +33,8 @@
 <!ENTITY RFC7858 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7858.xml">
 <!ENTITY RFC8010 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8010.xml">
 <!ENTITY RFC8011 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8011.xml">
+<!ENTITY RFC8174 SYSTEM  "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY I-D.dukkipati-tcpm-tcp-loss-probe SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.dukkipati-tcpm-tcp-loss-probe.xml">
-<!ENTITY I-D.sekar-dns-llq                 SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.sekar-dns-llq.xml">
 <!ENTITY I-D.ietf-tls-tls13                SYSTEM  "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tls-tls13.xml">
 <!ENTITY I-D.ietf-dprive-dtls-and-tls-profiles SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-dprive-dtls-and-tls-profiles.xml">
 ]>
@@ -117,7 +117,7 @@
      </address>
    </author>
 
-   <date year='2017' month='December' day='11'/>
+   <date year='2018' month='March' day='18'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -146,7 +146,7 @@
 
    <abstract>
      <t>The Domain Name System (DNS) was designed to return matching records
-     efficiently for queries for data that is relatively static.
+     efficiently for queries for data that are relatively static.
      When those records change frequently, DNS is still efficient at returning
      the updated results when polled, as long as the polling rate is not too high.
      But there exists no mechanism
@@ -160,35 +160,40 @@
 <?rfc needLines="12" ?>
    <section title="Introduction">
 
-     <t>DNS records may be updated using <xref target="RFC2136">DNS Update</xref>.
+     <t>Domain Name System (DNS) records may be updated using <xref target="RFC2136">DNS Update</xref>.
      Other mechanisms such as a <xref target="DisProx">Discovery Proxy</xref> can also generate changes to a DNS zone.
      This document specifies a protocol for DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6895"/>.</t>
 
 <?rfc needLines="7" ?>
      <section title="Requirements Language">
        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-       "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
-       and "OPTIONAL" in this document are to be interpreted as described in
-       <xref target="RFC2119">"Key words for use in RFCs to Indicate Requirement Levels"</xref>.</t>
+       "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",<vspace />
+       and "OPTIONAL" in this document are to be interpreted as described<vspace />
+       in "Key words for use in RFCs to Indicate Requirement Levels",<vspace />
+       when, and only when, they appear in all capitals, as shown here<vspace />
+       <xref target="RFC2119"/> <xref target="RFC8174"/>.</t>
+<?rfc needLines="40" ?>
      </section>
    </section>
 
    <section title="Motivation">
      <t>As the domain name system continues to adapt to new uses and changes in deployment, polling has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model following the <xref target="obs">Observer design pattern</xref>.
-     <xref target="XEP0060">XMPP Publish-Subscribe</xref> and <xref target="RFC4287">Atom</xref> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can result in more timely notification of changes with reduced CPU usage and lower network traffic.</t>
+     <xref target="XEP0060">XMPP Publish-Subscribe</xref> and <xref target="RFC4287">Atom</xref> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can deliver more timely notification of changes with reduced CPU usage and lower network traffic.</t>
 
-     <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group, and new services and updates are sent for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="DisProx">Discovery Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
+     <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group, and record changes are sent to that multicast group address for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="DisProx">Discovery Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
 
-     <t>The <xref target="I-D.sekar-dns-llq">DNS Long-Lived Queries (LLQ) mechanism</xref> is an existing deployed solution to provide asynchronous change notifications, used by Apple's <xref target="RFC6281">Back to My Mac Service</xref>
+     <t>The <xref target="LLQ">DNS Long-Lived Queries (LLQ) mechanism</xref> is an existing deployed solution to provide asynchronous change notifications, used by Apple's <xref target="RFC6281">Back to My Mac Service</xref>
      introduced in Mac OS X 10.5 Leopard in 2007.
      Back to My Mac was designed in an era when the data center operations staff asserted that it was impossible for a server to handle large numbers of mostly-idle TCP connections, so LLQ was defined as a UDP-based protocol, effectively replicating much of TCP's connection state management logic in user space, and creating its own poor imitations of existing TCP features like the three-way handshake, flow control, and reliability.</t>
 
      <t>This document builds on experience gained with the LLQ protocol, with an improved design.
-     Instead of using UDP, this specification uses TCP,
+     Instead of using UDP, this specification uses
+     <xref target="DSO">DNS Stateful Operations (DSO)</xref>
+     running over TLS over TCP,
      and therefore doesn't need to reinvent existing TCP functionality.
      Using TCP also gives long-lived low-traffic connections better longevity through NAT gateways
      without resorting to excessive keepalive traffic.
-     Instead of inventing a new vocabulary of messages to communicate DNS zone changes as LLQ did, this specification adopts the syntax and semantics of <xref target="RFC2136">DNS Update messages</xref>.</t>
+     Instead of inventing a new vocabulary of messages to communicate DNS zone changes as LLQ did, this specification borrows the established syntax and semantics of <xref target="RFC2136">DNS Update messages</xref>.</t>
 
 <?rfc needLines="9" ?>
    </section>
@@ -196,7 +201,7 @@
    <section title="Overview">
      <t>The existing <xref target="RFC2136">DNS Update protocol</xref> provides a mechanism for clients to add or delete individual resource records (RRs) or entire resource record sets (RRSets) on the zone's server.</t>
 
-     <t>This specification adopts a simplified subset of these existing syntax and semantics, and uses them for DNS Push Notification messages going in the opposite direction, from server to client, to communicate changes to a zone. The client subscribes for Push Notifications by connecting to the server and sending DNS message(s) indicating the RRSet(s) of interest. When the client loses interest in updates to these records, it unsubscribes.</t>
+     <t>This specification adopts a simplified subset of these existing syntax and semantics, and uses them for DNS Push Notification messages going in the opposite direction, from server to client, to communicate changes to a zone. The client subscribes for Push Notifications by connecting to the server and sending DNS message(s) indicating the RRSet(s) of interest. When the client loses interest in receiving further updates to these records, it unsubscribes.</t>
 
      <t>The DNS Push Notification server for a zone is any server capable<vspace />
      of generating the correct change notifications for a name.<vspace />
@@ -215,21 +220,26 @@
 
      <t>This DNS Push Notification specification includes support for DNS classes, for completeness. However, in practice, it is anticipated that for the foreseeable future the only DNS class in use will be DNS class "IN", as is the reality today with existing DNS servers and clients. A DNS Push Notification server MAY choose to implement only DNS class "IN". If messages are received for a class other than "IN", and that class is not supported, an error with RCODE NOTIMPL (Not Implemented) should be returned.</t>
 
-     <t>DNS Push Notifications impose less load on the responding server than rapid polling would, but Push Notifications do still have a cost, so DNS Push Notification clients must not recklessly create an excessive number of Push Notification subscriptions. A subscription should only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display). Implementations MAY want to implement idle timeouts, so that if the user ceases interacting with the device, the display showing the result of the DNS Push Notification subscription is automatically dismissed after a certain period of inactivity. For example, if a user presses the "Print" button on their smartphone, and then leaves the phone showing the printer discovery screen until the phone goes to sleep, then the printer discovery screen should be automatically dismissed as the device goes to sleep. If the user does still intend to print, this will require them to press the "Print" button again when they wake their phone up.</t>
+     <t>DNS Push Notifications impose less load on the responding server than rapid polling would, but Push Notifications do still have a cost, so DNS Push Notification clients must not recklessly create an excessive number of Push Notification subscriptions. Specifically:</t>
 
-     <t>A DNS Push Notification client must not routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
+     <t>(a) A subscription should only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display). Implementations MAY want to implement idle timeouts, so that if the user ceases interacting with the device, the display showing the result of the DNS Push Notification subscription is automatically dismissed after a certain period of inactivity. For example, if a user presses the "Print" button on their smartphone, and then leaves the phone showing the printer discovery screen until the phone goes to sleep, then the printer discovery screen should be automatically dismissed as the device goes to sleep. If the user does still intend to print, this will require them to press the "Print" button again when they wake their phone up.</t>
 
-     <t>Generally, as described in the <xref target="StatefulOp">DNS Stateful Operations specification</xref>, a client must not keep a session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a session as soon as it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle session open for some time, subject to the constraint that it MUST NOT keep a session open that has been idle for more than the session's idle timeout (15 seconds by default).</t>
+     <t>(b) A DNS Push Notification client SHOULD NOT routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
+
+     <t>Generally, as described in the <xref target="DSO">DNS Stateful Operations specification</xref>, a client must not keep a session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a session as soon as it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle session open for some time, subject to the constraint that it MUST NOT keep a session open that has been idle for more than the session's idle timeout (15 seconds by default).</t>
 <?rfc needLines="9" ?>
    </section>
 
    <section title="Transport">
-     <t>Implementations of <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC7766"/>.</t>
+     <t>Other DNS operations like <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC7766"/>.</t>
 
-     <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP. DNS Push Notification clients MUST use TLS over TCP <xref target="RFC7858"/>.</t>
+     <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP.
+     DNS Push Notification clients MUST use
+     <xref target="DSO">DNS Stateful Operations (DSO)</xref>
+     running over TLS over TCP <xref target="RFC7858"/>.</t>
 
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
-     Flooding attacks are possible with any protocol, and a benefit of TCP is that there are already established industry best practices to guard against SYN flooding and similar attacks <xref target="IPJ.9-4-TCPSYN"/> <xref target="RFC4953"/>.</t>
+     Flooding attacks are possible with any protocol, and a benefit of TCP is that there are already established industry best practices to guard against SYN flooding and similar attacks <xref target="SYN"/> <xref target="RFC4953"/>.</t>
 
      <t>Use of TCP also allows DNS Push Notifications to take advantage of current and future developments in TCP, such as
      <xref target="RFC6824">Multipath TCP (MPTCP)</xref>,
@@ -242,21 +252,22 @@
    </section>
 
    <section title="State Considerations">
-     <t>Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a session to a DNS server, each subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous sessions to alternate DNS servers that support DNS Push Notifications for the zone and distribute subscriptions at its discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
+     <t>Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a session to a DNS server, each subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous sessions to alternate DNS servers that support DNS Push Notifications for the zone and distribute subscriptions at the client's discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
 <?rfc needLines="35" ?>
    </section>
 
    <section title="Protocol Operation">
      <t>The DNS Push Notification protocol is a session-oriented protocol, and makes use of
-     <xref target="StatefulOp">DNS Stateful Operations (DSO)</xref>.</t>
+     <xref target="DSO">DNS Stateful Operations (DSO)</xref>.</t>
 
      <t>For details of the DSO message format refer to the
-     <xref target="StatefulOp">DNS Stateful Operations specification</xref>.
+     <xref target="DSO">DNS Stateful Operations specification</xref>.
      Those details are not repeated here.</t>
 
      <t>DNS Push Notification clients and servers MUST support DSO,
-     but the server SHOULD NOT issue any DSO
-     messages until after the client has first initiated a DSO message of its own.
+     but (as stated in the <xref target="DSO">DSO specification</xref>)
+     the server SHOULD NOT issue any DSO
+     messages until after the client has first initiated an acknowledged DSO message of its own.
      A single server can support DNS Queries, DNS Updates, and DNS Push
      Notifications (using DSO) on the same TCP port, and
      until the client has sent at least one DSO message,
@@ -277,15 +288,11 @@
 
      <t>Once the session is made, the client may then add and remove Push Notification subscriptions. In accordance with the current set of active subscriptions the server sends relevant asynchronous Push Notifications to the client. Note that a client MUST be prepared to receive (and silently ignore) Push Notifications for subscriptions it has previously removed, since there is no way to prevent the situation where a Push Notification is in flight from server to client while the client's UNSUBSCRIBE message cancelling that subscription is simultaneously in flight from client to server.</t>
 
-     <t>The exchange between client and server terminates when either end closes the session
-     (e.g., closing the TLS session with a TLS close_notify,
-     or closing the TCP connection with a TCP FIN or RST).</t>
-
-<?rfc needLines="9" ?>
+<?rfc needLines="30" ?>
       <section title="Discovery" anchor="discovery">
         <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone.</t>
 
-        <t>The client begins by opening a DNS Session to its normal configured DNS recursive resolver and requesting a Push
+        <t>The client begins by opening a DSO Session to its normal configured DNS recursive resolver and requesting a Push
         Notification subscription. If this is successful, then the recursive resolver will make appropriate
         Push Notification subscriptions on the client's behalf, and the client will receive appropriate results.
         If the recursive resolver does not support Push Notification subscriptions, then it will return an error code,
@@ -353,32 +360,42 @@
      </section>
 
      <section title="DNS Push Notification SUBSCRIBE">
-       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <xref target="StatefulOp">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x40).</t>
+       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <xref target="DSO">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x40).</t>
 
-       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server should not send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a session initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</t>
+       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
-<?rfc needLines="48" ?>
        <section title="SUBSCRIBE Request">
-         <t>A SUBSCRIBE request message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>, followed by the SUBSCRIBE TLV.
-         A SUBSCRIBE request message is illustrated below:</t>
+         <t>A SUBSCRIBE request begins with the standard
+         <xref target="DSO">DSO 12-byte header</xref>, followed by the SUBSCRIBE TLV.
+         A SUBSCRIBE request message is illustrated in <xref target="subscribe_req"/>.</t>
 
-         <figure align="center" anchor="subscribe_req"><artwork align="center"><![CDATA[
+         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
+
+         <t>The other header fields MUST be set as described in the
+         <xref target="DSO">DSO specification</xref>.
+         The DNS Opcode is the DSO Opcode (tentatively 6).
+         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+
+         <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
+         The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
+         the name, type, and class of the record(s) being sought.</t>
+
+         <figure align="center" anchor="subscribe_req" title="SUBSCRIBE Request"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                  MESSAGE ID                   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|QR|  Opcode   |         Z          |   RCODE   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             QDCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ANCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             NSCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ARCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|                  MESSAGE ID                   |   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|QR|  Opcode   |         Z          |   RCODE   |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             QDCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+|             ANCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             NSCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             ARCOUNT (MUST BE ZERO)            |   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 |    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
@@ -392,23 +409,12 @@
 |                     CLASS                     |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
-         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
-
-         <t>The other header fields MUST be set as described in the
-         <xref target="StatefulOp">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (tentatively 6).
-         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
-
-         <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
-         The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
-         the name, type, and class of the record(s) being sought.</t>
-
          <t>The DSO-DATA for a SUBSCRIBE request MUST contain exactly one question.
          The DSO-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.
          Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages
          can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 
-         <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the session between the client and the server is closed.</t>
+         <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the DSO session between the client and the server is closed.</t>
 
          <t>SUBSCRIBE requests on a given session MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
 
@@ -432,13 +438,15 @@
          <t>Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</t>
 
          <t>A SUBSCRIBE response message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>,
+         <xref target="DSO">DSO 12-byte header</xref>,
          possibly followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>A SUBSCRIBE response message MUST NOT copy the original DSO SUBSCRIBE TLV.</t>
+         <t>A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.
+         If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV
+         then the response message is processed but the SUBSCRIBE TLV MUST be silently ignored.</t>
 
 <?rfc needLines="20" ?>
          <t>In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</t>
@@ -450,7 +458,7 @@
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
          <c>NXDOMAIN</c><c>3</c><c>NOT APPLICABLE. DNS Push Notification servers MUST NOT return NXDOMAIN errors in response to SUBSCRIBE requests.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not recognize DSO Opcode.</c>
+         <c>NOTIMP</c><c>4</c><c>Server does not implement DSO.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
          <c>DSOTYPENI</c><c>11</c><c>SUBSCRIBE operation not supported.</c>
@@ -459,14 +467,18 @@
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
 
 <?rfc needLines="30" ?>
-         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, either the client is (at least partially) misconfigured, the server resources are exhausted, or there is some other unknown failure on the server. In any case, the client shouldn't retry the subscription right away. Either end can terminate the session, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="StatefulOp"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
+         <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, that means
+         (a) the client is (at least partially) misconfigured,
+         (b) the server resources are exhausted, or
+         (c) there is some other unknown failure on the server.
+         In any case, the client shouldn't retry the subscription right away. Either end can terminate the session, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="DSO"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</t>
 
              <t>For RCODE = 2 (SERVFAIL) the delay should be chosen according to the level of server overload and the anticipated duration of that overload. By default, a value of one minute is RECOMMENDED. If a more serious server failure occurs, the delay may be longer in accordance with the specific problem encountered.</t>
 
              <t>For RCODE = 4 (NOTIMP), which occurs on a server that doesn't implement
-             <xref target="StatefulOp">DSO</xref>,
+             <xref target="DSO">DSO</xref>,
              it is unlikely that the server will begin supporting DSO
              in the next few minutes, so the retry delay SHOULD be one hour.
              Note that in such a case, a server that doesn't implement DSO
@@ -491,7 +503,7 @@
 
          <t>After sending an error response the server MAY allow the session to remain open,
          or MAY send a DNS Push Notification Retry Delay Operation TLV instructing the client to close the session,
-         as described in the <xref target="StatefulOp">DSO specification</xref>.
+         as described in the <xref target="DSO">DSO specification</xref>.
          Clients MUST correctly handle both cases.</t>
 
 <?rfc needLines="48" ?>
@@ -501,58 +513,16 @@
      <section title="DNS Push Notification Updates">
        <t>Once a subscription has been successfully established, the server generates PUSH messages to send to the client as appropriate. In the case that the answer set was non-empty at the moment the subscription was established, an initial PUSH message will be sent immediately following the SUBSCRIBE Response. Subsequent changes to the answer set are then communicated to the client in subsequent PUSH messages.</t>
 
-<?rfc needLines="41" ?>
        <section title="PUSH Message">
 
          <t>A PUSH message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>, followed by the PUSH TLV.
-         A PUSH message is illustrated below:</t>
+         <xref target="DSO">DSO 12-byte header</xref>, followed by the PUSH TLV.
+         A PUSH message is illustrated in <xref target="push_msg"/>.</t>
 
-         <figure align="center" anchor="push_msg"><artwork align="center"><![CDATA[
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                  MESSAGE ID                   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|QR|  Opcode   |         Z          |   RCODE   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             QDCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ANCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             NSCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ARCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|      DSO-TYPE = PUSH (tentatively 0x41)       |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   DSO-LENGTH (number of octets in DSO-DATA)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-\                     NAME                      \   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     TYPE                      |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     CLASS                     |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     RDLEN                     |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-\                     RDATA                     \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
-\         NAME                                  \    |
-+--+--+--+--+--+--+-                            |    |
-|         TYPE                Repeated          |    |
-+--+--+--+--+--+--+-                            |    |
-|         CLASS                  As             |    |
-+--+--+--+--+--+--+-                            |    |
-|         RDLEN               Necessary         |    |
-+--+--+--+--+--+--+-                            |    |
-\         RDATA                                 \   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
-
-         <t>The MESSAGE ID field MUST be set to a unique value, that the server is not currently using for any other active outgoing request that it has sent on this session. The MESSAGE ID in the outgoing PUSH message is selected by the server and has no relationship to the MESSAGE ID in any of the client subscriptions it may relate to. In the PUSH response the client MUST echo back the MESSAGE ID value unchanged.</t>
+         <t>The MESSAGE ID field MUST be zero. There is no client response to a PUSH message.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="StatefulOp">DSO specification</xref>.
+         <xref target="DSO">DSO specification</xref>.
          The DNS Opcode is the DSO Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
@@ -560,15 +530,13 @@
          The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
          the changes being communicated.</t>
 
-<?rfc needLines="15" ?>
          <t>The DSO-DATA contains one or more Update records.
          A PUSH Message MUST contain at least one Update record.
          If a PUSH Message is received that contains no Update records,
          this is a fatal error, and the receiver MUST immediately terminate
          the connection with a TCP RST (or equivalent for other protocols).
          The Update records are formatted in the customary way for Resource
-         Records in DNS messages except that DNS name compression
-         is not permitted.
+         Records in DNS messages.
          Update records in a PUSH Message are interpreted according to the same
          rules as for <xref target="RFC2136">DNS Update</xref> messages, namely:
 
@@ -586,6 +554,43 @@
            </list>
          </t>
   
+         <figure align="center" anchor="push_msg" title="PUSH Message"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|                  MESSAGE ID                   |   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|QR|  Opcode   |         Z          |   RCODE   |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             QDCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+|             ANCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             NSCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             ARCOUNT (MUST BE ZERO)            |   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+|      DSO-TYPE = PUSH (tentatively 0x41)       |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+\                     NAME                      \   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     TYPE                      |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     CLASS                     |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                      TTL                      |    |
+|                   (32 bits)                   |     > DSO-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     RDLEN                     |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+\                     RDATA                     \    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+:     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
+:             Repeated As Necessary             :   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
+
          <t>When processing the records received in a PUSH Message, the receiving client MUST validate that the records being added or deleted correspond with at least one currently active subscription on that session. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.
          If the TYPE in the SUBSCRIBE request was not ANY (255) then the TYPE of the record must match the TYPE given in the SUBSCRIBE request.
          If the CLASS in the SUBSCRIBE request was not ANY (255) then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.
@@ -597,134 +602,65 @@
   
          <t>A server SHOULD combine multiple change notifications in a single PUSH message when possible, even if those change notifications apply to different subscriptions. Conceptually, a PUSH message is a session-level mechanism, not a subscription-level mechanism.</t>
   
-         <t>Reception of a PUSH message by a client generates a PUSH response back to the server.</t>
-  
          <t>The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the DSO session being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</t>
-       </section>
-
-       <section title="PUSH Response">
-
-         <t>Each PUSH message generates exactly one PUSH response from the receiver.</t>
-
-         <t>A PUSH response message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>,
-         possibly followed by one or more optional TLVs.</t>
-
-         <t>The MESSAGE ID field MUST echo the value given in the ID field of the PUSH
-         message.</t>
-
-         <t>A PUSH response message MUST NOT copy the original DSO PUSH TLV.</t>
-
-         <t>In a PUSH response the RCODE MUST be zero. Receiving a PUSH response with a nonzero RCODE is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).</t>
-
 <?rfc needLines="48" ?>
        </section>
      </section>
 
      <section title="DNS Push Notification UNSUBSCRIBE">
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded in a
-       <xref target="StatefulOp">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</t>
+       <xref target="DSO">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</t>
 
-       <t>A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send a UNSUBSCRIBE request over a DSO session initiated by a client, it is an error and the client should acknowledge the request with the error response RCODE NOTAUTH (Not Authoritative).</t>
+       <t>A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
-<?rfc needLines="48" ?>
        <section title="UNSUBSCRIBE Request">
 
-         <t>An UNSUBSCRIBE request message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>, followed by the UNSUBSCRIBE TLV.</t>
+         <t>An UNSUBSCRIBE request begins with the standard
+         <xref target="DSO">DSO 12-byte header</xref>, followed by the UNSUBSCRIBE TLV.
+         An UNSUBSCRIBE request message is illustrated in <xref target="unsubscribe_req"/>.</t>         
 
-         <figure align="center" anchor="unsubscribe_req"><artwork align="center"><![CDATA[
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                  MESSAGE ID                   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|QR|  Opcode   |         Z          |   RCODE   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             QDCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ANCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             NSCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ARCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|              DSO-LENGTH (2 octets)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|              SUBSCRIBE MESSAGE ID             |   DSO-DATA
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+]]></artwork></figure>
-         
+         <t>The MESSAGE ID field MUST be zero. There is no server response to a UNSUBSCRIBE message.</t>
+
+         <t>The other header fields MUST be set as described in the
+         <xref target="DSO">DSO specification</xref>.
+         The DNS Opcode is the DSO Opcode (tentatively 6).
+         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).
          The DSO-LENGTH is 2 octets.</t>
 
          <t>The DSO-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.
          This is how the server knows which SUBSCRIBE request is being cancelled.
-         After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.
-         If a server receives an UNSUBSCRIBE message
-         where the MESSAGE ID does not match the ID of an active SUBSCRIBE request
-         the server MUST return a response containing RCODE = 3 (NXDOMAIN).</t>
+         After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.</t>
 
          <t>It is allowable for the client to issue an UNSUBSCRIBE request for a previous SUBSCRIBE request
          for which the client has not yet received a SUBSCRIBE response.
          This is to allow for the case where a client starts and stops a subscription in less than the
          round-trip time to the server.
-         The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE request.
-         A consequence of this is that if the
-         client issues an UNSUBSCRIBE request for an as-yet unacknowledged SUBSCRIBE request,
-         and the SUBSCRIBE request is subsequently unsuccessful for some reason,
-         then when the UNSUBSCRIBE request is eventually processed it will be an UNSUBSCRIBE
-         request for a nonexistent subscription, which will result NXDOMAIN response.</t>
+         The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE request.</t>
 
-<?rfc needLines="48" ?>
-       </section>
-
-       <section title="UNSUBSCRIBE Response">
-
-         <t>Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response from the server.</t>
-
-         <t>An UNSUBSCRIBE response message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>,
-         possibly followed by one or more optional TLVs, such as a Retry Delay TLV.
-         For suggested values for the Retry Delay TLV, see <xref target="subresp"/>.</t>
-
-         <t>The MESSAGE ID field MUST echo the value given in the ID field of the UNSUBSCRIBE request.
-         This is how the client knows which request is being responded to.</t>
-
-         <t>An UNSUBSCRIBE response message MUST NOT copy the original DSO UNSUBSCRIBE TLV.</t>
-
-         <t>In the UNSUBSCRIBE response the RCODE indicates whether or not the unsubscribe request was successful. Supported RCODEs are as follows:</t>
-         <texttable title="UNSUBSCRIBE Response codes">
-         <ttcol align="left">Mnemonic</ttcol>
-         <ttcol align="center">Value</ttcol>
-         <ttcol align="left">Description</ttcol>
-         <c>NOERROR</c><c>0</c><c>UNSUBSCRIBE successful.</c>
-         <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
-         <c>NXDOMAIN</c><c>3</c><c>Specified subscription does not exist.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not recognize DSO Opcode.</c>
-         <c>DSOTYPENI</c><c>11</c><c>UNSUBSCRIBE operation not supported.</c>
-         </texttable>
-
-         <t>This document specifies only these RCODE values for UNSUBSCRIBE Responses. Servers sending UNSUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in UNSUBSCRIBE Responses, so clients MUST be prepared to accept UNSUBSCRIBE Responses with any RCODE value.</t>
-
-         <t>Having being successfully revoked with a correctly-formatted UNSUBSCRIBE message (resulting in a response with RCODE NOERROR) the previously referenced subscription is no longer active and the server MAY discard the state associated with it immediately, or later, at the server's discretion.</t>
-
-<?rfc needLines="5" ?>
-         <t>Nonzero RCODE values signal some kind of error.</t>
-
-         <t>RCODE value FORMERR indicates a message format error.</t>
-
-         <t>RCODE value NXDOMAIN indicates a MESSAGE ID that does not correspond to any active subscription.</t>
-
-         <t>RCODE values NOTIMP and DSOTYPENI should not occur in practice.</t>
-
-         <t>A server would only generate NOTIMP if it did not support DSO, and if the server does not support DSO then it should not be possible for a client to have an active subscription to cancel.</t>
-
-         <t>Similarly, a server would only generate DSOTYPENI if it did not support Push Notifications, and if the server does not support Push Notifications then it should not be possible for a client to have an active subscription to cancel.</t>
-
-         <t>Nonzero RCODE values other than NXDOMAIN indicate a serious problem with the client. After sending an error response other than NXDOMAIN, the server SHOULD send a DSO Retry Delay TLV to end the DSO session, as described in the <xref target="StatefulOp">DSO specification</xref>.</t>
+         <figure align="center" anchor="unsubscribe_req" title="UNSUBSCRIBE Request"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|                  MESSAGE ID                   |   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|QR|  Opcode   |         Z          |   RCODE   |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             QDCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+|             ANCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             NSCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             ARCOUNT (MUST BE ZERO)            |   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|              DSO-LENGTH (2 octets)            |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|              SUBSCRIBE MESSAGE ID             |   > DSO-DATA
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
 <?rfc needLines="48" ?>
        </section>
@@ -735,48 +671,16 @@
 
        <t>If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
 
-<?rfc needLines="28" ?>
        <section title="RECONFIRM Request">
 
-         <t>A RECONFIRM request message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>, followed by the RECONFIRM TLV.
-         A RECONFIRM request message is illustrated below:</t>
-
-         <figure align="center" anchor="reconfirm_req"><artwork align="center"><![CDATA[
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                  MESSAGE ID                   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|QR|  Opcode   |         Z          |   RCODE   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             QDCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ANCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             NSCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|             ARCOUNT (MUST BE ZERO)            |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   DSO-LENGTH (number of octets in DSO-DATA)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-\                     NAME                      \   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     TYPE                      |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     CLASS                     |     > DSO-DATA
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     RDLEN                     |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-\                     RDATA                     \   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
+         <t>A RECONFIRM request begins with the standard
+         <xref target="DSO">DSO 12-byte header</xref>, followed by the RECONFIRM TLV.
+         A RECONFIRM request message is illustrated in <xref target="reconfirm_req"/>.</t>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="StatefulOp">DSO specification</xref>.
+         <xref target="DSO">DSO specification</xref>.
          The DNS Opcode is the DSO Opcode (tentatively 6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
@@ -784,22 +688,39 @@
          The DSO-LENGTH is the length of the data that follows, which specifies
          the name, type, class, and content of the record being disputed.</t>
 
+         <figure align="center" anchor="reconfirm_req" title="RECONFIRM Request"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|                  MESSAGE ID                   |   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|QR|  Opcode   |         Z          |   RCODE   |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             QDCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+|             ANCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             NSCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             ARCOUNT (MUST BE ZERO)            |   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|   DSO-LENGTH (number of octets in DSO-DATA)   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+\                     NAME                      \   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|                     TYPE                      |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
+|                     CLASS                     |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+\                     RDATA                     \   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
+
          <t>The DSO-DATA for a RECONFIRM request MUST contain exactly one record.
          The DSO-DATA for a RECONFIRM request has no count field to specify more than one record.
          Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages
          can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
-
-         <t>Note that the RDLEN field is provided for consistency with the way resource
-         records are generally represented in DNS messages, though it is redundant here,
-         because the DSO-LENGTH alone is sufficient to determine the length of the data.
-         The RDLEN field MUST be validated to ensure that the length of RDATA indicated does
-         not exceed the amount of data contained in the DSO TLV structure.
-         If the RDLEN field indicates less data than contained in the DSO TLV structure,
-         any excess bytes MUST be silently ignored, but the RECONFIRM request is otherwise handled as usual.
-         If the RDLEN field indicates more data than contained in the DSO TLV structure,
-         a FORMERR response MUST be returned.
-         [Note: Might it be simpler just to get rid of the RDLEN field?]
-         </t>
 
          <t>TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value ANY (255).</t>
 
@@ -815,14 +736,16 @@
          <t>Each RECONFIRM request generates exactly one RECONFIRM response from the server.</t>
 
          <t>A RECONFIRM response message begins with the standard
-         <xref target="StatefulOp">DSO 12-byte header</xref>,
+         <xref target="DSO">DSO 12-byte header</xref>,
          possibly followed by one or more optional TLVs, such as a Retry Delay TLV.
          For suggested values for the Retry Delay TLV, see <xref target="subresp"/>.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.
          This is how the client knows which request is being responded to.</t>
 
-         <t>A RECONFIRM response message MUST NOT copy the original DSO RECONFIRM TLV.</t>
+         <t>A RECONFIRM response message MUST NOT include a DSO RECONFIRM TLV.
+         If a client receives a RECONFIRM response message containing a RECONFIRM TLV
+         then the response message is processed but the RECONFIRM TLV MUST be silently ignored.</t>
 
          <t>In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</t>
          <texttable title="RECONFIRM Response codes">
@@ -833,7 +756,7 @@
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
          <c>NXDOMAIN</c><c>3</c><c>NOT APPLICABLE. DNS Push Notification servers MUST NOT return NXDOMAIN errors in response to RECONFIRM requests.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not recognize DSO Opcode.</c>
+         <c>NOTIMP</c><c>4</c><c>Server does not implement DSO.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
          <c>DSOTYPENI</c><c>11</c><c>RECONFIRM operation not supported.</c>
@@ -857,7 +780,7 @@
 
          <t>Nonzero RCODE values SERVFAIL, REFUSED and DSOTYPENI are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
          
-         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DSO Retry Delay TLV to end the DSO session, as described in the <xref target="StatefulOp">DSO specification</xref>.</t>
+         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DSO Retry Delay TLV to end the DSO session, as described in the <xref target="DSO">DSO specification</xref>.</t>
 
 <?rfc needLines="48" ?>
        </section>
@@ -867,7 +790,7 @@
 
        <t>An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the DSO session. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that DSO session (by ending the session) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
 
-       <t>After terminating its last subscription on a session via UNSUBSCRIBE, a client MAY close the session immediately, or it may keep it open if it anticipates performing further operations on that session in the future. If a client wishes to keep an idle session open, it MUST respect the maximum idle time required by the server <xref target="StatefulOp"/>.</t>
+       <t>After terminating its last subscription on a session via UNSUBSCRIBE, a client MAY close the session immediately, or it may keep it open if it anticipates performing further operations on that session in the future. If a client wishes to keep an idle session open, it MUST respect the maximum idle time required by the server <xref target="DSO"/>.</t>
 
        <t>If a client plans to terminate one or more subscriptions on a session and doesn't intend to keep that session open, then as an efficiency optimization it MAY instead choose to simply close the session, which implicitly terminates all subscriptions on that session. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that session has been cancelled.</t>
 
@@ -883,7 +806,7 @@
    </section>
 
    <section title="Security Considerations" anchor="Security">
-     <t>The Strict Privacy Usage Profile for DNS over TLS is strongly recommended for DNS Push Notifications as defined in <xref target="I-D.ietf-dprive-dtls-and-tls-profiles">Authentication and (D)TLS Profile for DNS-over-(D)TLS</xref>. The Opportunistic Privacy Usage Profile is permissible as a way to support incremental deployment of security capabilities. Cleartext connections for DNS Push Notifications are not permissible.</t>
+     <t>The Strict Privacy Usage Profile for DNS over TLS is strongly recommended for DNS Push Notifications as defined in <xref target="I-D.ietf-dprive-dtls-and-tls-profiles">"Authentication and (D)TLS Profile for DNS-over-(D)TLS"</xref>. The Opportunistic Privacy Usage Profile is permissible as a way to support incremental deployment of security capabilities. Cleartext connections for DNS Push Notifications are not permissible.</t>
 
      <t>DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
 
@@ -963,18 +886,19 @@
      &RFC6895;
      &RFC7673;
      &RFC7766;
+     &RFC8174;
      &I-D.ietf-tls-tls13;
 
-     <reference anchor='StatefulOp'>
+     <reference anchor='DSO'>
      <front>
      <title>DNS Stateful Operations</title>
      <author initials='R' surname='Bellis' fullname='Ray Bellis'><organization /></author>
      <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'><organization /></author>
      <author initials='J' surname='Dickinson' fullname='John Dickinson'><organization /></author>
      <author initials='S' surname='Dickinson' fullname='Sara Dickinson'><organization /></author>
-     <author initials='A' surname='Mankin' fullname='Allison Mankin'><organization /></author>
+     <author initials='T' surname='Lemon' fullname='Ted Lemon'><organization /></author>
      <author initials='T' surname='Pusateri' fullname='Tom Pusateri'><organization /></author>
-     <date year='2018' month='January' day='26' />
+     <date month='March' day='19' year='2018' />
      <abstract><t>This document defines a new DNS OPCODE for DNS Stateful Operations
    (DSO).  DSO messages communicate operations within persistent
    stateful sessions, using type-length-value (TLV) syntax.  Three TLVs
@@ -982,8 +906,8 @@
    padding, and a framework is defined for extensions to enable new
    stateful operations.</t></abstract>
      </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-05' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-05.txt' />
+     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-07' />
+     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-07.txt' />
      </reference>
 
      <reference anchor="ST"
@@ -1017,24 +941,43 @@
      &RFC8011;
 
      &I-D.dukkipati-tcpm-tcp-loss-probe;
-     &I-D.sekar-dns-llq;
+
+<reference anchor='LLQ'>
+<front>
+<title>DNS Long-Lived Queries</title>
+
+<author initials='K' surname='Sekar' fullname='Kiren Sekar'>
+    <organization />
+</author>
+
+<date month='August' day='28' year='2006' />
+
+<abstract><t>This document proposes a method of extending unicast DNS to support long-lived queries, thus allowing clients to learn about changes to DNS data without polling the server.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-sekar-dns-llq-01' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-sekar-dns-llq-01.txt' />
+</reference>
+
      &I-D.ietf-dprive-dtls-and-tls-profiles;
 
      <reference anchor='DisProx'>
      <front>
      <title>Discovery Proxy for Multicast DNS-Based Service Discovery</title>
      <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'><organization /></author>
-     <date year='2017' month='September' day='13' />
+     <date year='2018' month='March' day='18'/>
      <abstract><t>This document specifies a mechanism that uses Multicast DNS to
    automatically populate the wide-area unicast Domain Name System
    namespace with records describing devices and services found on the
    local link.</t></abstract>
      </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-07' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-07.txt' />
+     <seriesInfo name='Internet-Draft' value='draft-ietf-dnssd-hybrid-08' />
+     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnssd-hybrid-08.txt' />
      </reference>
 
-     <reference anchor='IPJ.9-4-TCPSYN'>
+     <reference anchor='SYN'>
        <front>
          <title>Defenses Against TCP SYN Flooding Attacks</title>
          <author initials='W.' surname='Eddy' fullname='Wesley Eddy'>
