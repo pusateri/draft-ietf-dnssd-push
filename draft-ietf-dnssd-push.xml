@@ -292,22 +292,52 @@
         If the recursive resolver does not support Push Notification subscriptions, then it will return an error code,
         and the client should proceed to discover the appropriate server for direct communication.
         The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS, or TCP port 853 used for <xref target="RFC7858">DNS over TLS</xref>.</t>
+
+        <t>The algorithm described here is an iterative algorithm,
+        which starts with the full name of the record to which the
+        client wishes to subscribe. Successive SOA queries are then
+        issued, trimming one label each time, until
+        the closest enclosing authoritative server is discovered.
+        There is also an optimization to enable the client to
+        take a "short cut" directly to the SOA record of
+        the closest enclosing authoritative server in many cases.</t>
+
         <t>
           <list style="numbers">
-            <t>The client begins the discovery by sending a DNS query to its  local resolver, with record type <xref target="RFC1035">SOA</xref> for the record name to which it wishes to subscribe. As an example, suppose the client wishes to subscribe to PTR records with the name _ipp._tcp.foo.example.com (to discover Internet Printing Protocol (IPP) printers <xref target="RFC8010"/> <xref target="RFC8011"/> being advertised at "foo.example.com"). The client begins by sending an SOA query for _ipp._tcp.foo.example.com to the local recursive resolver. The goal is to determine the authoritative server for _ipp._tcp.foo.example.com.</t>
+            <t>The client begins the discovery by sending a DNS query to its  local resolver, with record type <xref target="RFC1035">SOA</xref> for the record name to which it wishes to subscribe. As an example, suppose the client wishes to subscribe to PTR records with the name _ipp._tcp.foo.example.com (to discover Internet Printing Protocol (IPP) printers <xref target="RFC8010"/> <xref target="RFC8011"/> being advertised at "foo.example.com"). The client begins by sending an SOA query for _ipp._tcp.foo.example.com to the local recursive resolver. The goal is to determine the server authoritative for the name _ipp._tcp.foo.example.com. The DNS zone containing the name _ipp._tcp.foo.example.com could be example.com, or foo.example.com, or _tcp.foo.example.com, or even _ipp._tcp.foo.example.com. The client does not know in advance where the closest enclosing zone cut occurs, which is why it uses the procedure described here to discover this information.</t>
 
-            <t>If the SOA record exists exactly as specified in the query, it will be returned in the Answer section with a NOERROR response code. If the exact SOA record does not exist, the client may get back a NOERROR/NODATA response or it may get back a NXDOMAIN/Name Error response. This depends on the resolver implementation and whether the domain exists. The client is looking for an SOA record to be returned in either the Answer section or the Authority section. The MNAME from the SOA record contains the server to contact directly. If the client receives a response containing no SOA record, it should strip the leading label from the query name and if the resulting name has at least one label in it, the client should send a new SOA query, repeating this until an SOA is received or the query name is empty. In the case of an empty name, the client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
+            <t>If the requested SOA record exists, it will be returned in the Answer section with a NOERROR response code, and
+            the client has succeeded in discovering the information it needs.
+            (This text is not placing any new requirements on DNS recursive resolvers.
+            It is merely describing the existing operation of the DNS protocol
+            <xref target="RFC1034"/> <xref target="RFC1035"/>.)</t>
 
-            <t>In the example above, if an SOA record query is sent for _ipp._tcp.foo.example.com and either a NOERROR/NODATA or an NXDOMAIN/Name Error is returned with an SOA record in the Authority section for foo.example.com, the client can then contact the MNAME server directly. If no SOA record is received, the client should again strip the leading label and query an SOA record for foo.example.com. If the foo.example.com domain exists, this should result in a NOERROR response with the SOA record in the Answer section. If the domain foo.example.com does not exist, the response will likely be an NXDOMAIN/Name Error with an SOA record for example.com in the Authority section. This means the subdomain foo.example.com has not been properly delegated by example.com.</t> 
+            <t>If the requested SOA record does not exist, the client will get back a NOERROR/NODATA response or an NXDOMAIN/Name Error response.
+            In either case, the local resolver SHOULD include the SOA record for the zone of the requested name in the Authority Section.
+            If the SOA record is received in the Authority Section, then
+            the client has succeeded in discovering the information it needs.
+            (This text is not placing any new requirements on DNS recursive resolvers.
+            It is merely describing the existing operation of the DNS protocol regarding negative responses <xref target="RFC2308"/>.)</t>
 
-            <t>If a NOERROR/NODATA response is received but contains no SOA in the Authority section, the client could try stripping the leading label and issuing another SOA query. Additional information about negative responses can be found in Section 2 of <xref target="RFC2308">the DNS Negative Caching specification</xref>.</t>
+            <t>If the client receives a response containing no SOA record,
+            then it proceeds with the iterative approach.
+            The client strips the leading label from the current query name and if the resulting name has at least one label in it, the client sends a new SOA query, and processing continues at step 2 above, repeating the iterative search until either an SOA is received, or the query name is empty. In the case of an empty name, this is a network configuration error which should not happen and the client gives up. The client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
 
             <t>Once the SOA is known (either by virtue of being seen in the Answer Section, or in the Authority Section), the client sends a DNS query with type <xref target="RFC2782">SRV</xref> for the record name
             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
 
-            <t>For implementors of this specification, an authoritative answer for that SRV record, and only such an answer, will determine whether the zone supports DNS Push Notifications.</t>
+            <t>If the zone in question does not offer DNS Push Notifications then SRV record MUST NOT exist, and the SRV query will return a negative answer.
+            (The <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx> service type is
+            allocated by IANA for this purpose, and, like any allocated IANA service type,
+            MUST NOT be used for other services.
+            Other services that require an IANA service type
+            should use a unique service type allocated by IANA for that service
+            <xref target="RFC6335"/><xref target="ST"/>.)</t>
 
-            <t>If the SRV record does exist, the SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> and in
+            <t>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.
+            (If this SRV record does not exist then the zone is not correctly
+            configured for DNS Push Notifications as specified in this document.)
+            The SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> and in
             <xref target="RFC7673">the specification for using DANE TLSA Records with SRV Records</xref>.</t>
 
             <t>More than one SRV record may be returned. In this case, the <spanx style="verb">priority</spanx> and <spanx style="verb">weight</spanx> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <xref target="RFC2782">the SRV specification</xref>, the server with the lowest <spanx style="verb">priority</spanx> is first contacted. If more than one server has the same <spanx style="verb">priority</spanx>, the <spanx style="verb">weight</spanx> indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected.
@@ -887,7 +917,7 @@
    <section title="IANA Considerations" anchor="IANA">
      <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
      It is only applicable for the TCP protocol.<vspace />
-     This name is to be published in the IANA Service Name Registry <xref target="RFC6335"/><xref target="SN"/>.</t>
+     This name is to be published in the IANA Registry Service Types <xref target="RFC6335"/><xref target="ST"/>.</t>
      <t>This document defines four DNS Stateful Operations TLV types:
      SUBSCRIBE with (tentative) value 0x40 (64),
      PUSH with (tentative) value 0x41 (65),
@@ -957,7 +987,7 @@
      <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-05.txt' />
      </reference>
 
-     <reference anchor="SN"
+     <reference anchor="ST"
      target="http://www.iana.org/assignments/service-names-port-numbers/">
        <front>
          <title>Service Name and Transport Protocol Port Number Registry</title>
