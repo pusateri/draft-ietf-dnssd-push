@@ -397,35 +397,32 @@ Internet-Draft           DNS Push Notifications            December 2017
 6.  Protocol Operation
 
    The DNS Push Notification protocol is a session-oriented protocol,
-   and makes use of DNS Stateful Operations [StatefulOp].
+   and makes use of DNS Stateful Operations (DSO) [StatefulOp].
 
-   For details of the DNS Stateful Operations message format refer to
-   the DNS Stateful Operations specification [StatefulOp].  Those
-   details are not repeated here.
+   For details of the DSO message format refer to the DNS Stateful
+   Operations specification [StatefulOp].  Those details are not
+   repeated here.
 
-   DNS Push Notification clients and servers MUST support DNS Stateful
-   Operations, but the server SHOULD NOT issue any DNS Stateful
-   Operations messages until after the client has first initiated a DNS
-   Stateful Operation of its own.  A single server can support DNS
-   Queries, DNS Updates, and DNS Push Notifications (using DNS Stateful
-   Operations) on the same TCP port, and until the client has sent at
-   least one DNS Stateful Operations message, the server does not know
-   what kind of client has connected to it.  Once the client has
-   indicated willingness to use DNS Stateful Operations by sending one
-   of its own, either side of the connection may then initiate further
-   Stateful Operations at any time.
+   DNS Push Notification clients and servers MUST support DSO, but the
+   server SHOULD NOT issue any DSO messages until after the client has
+   first initiated a DSO message of its own.  A single server can
+   support DNS Queries, DNS Updates, and DNS Push Notifications (using
+   DSO) on the same TCP port, and until the client has sent at least one
+   DSO message, the server does not know what kind of client has
+   connected to it.  Once the client has indicated willingness to use
+   DSO by sending one of its own, either side of the connection may then
+   initiate further DSO messages at any time.
 
    A DNS Push Notification exchange begins with the client discovering
    the appropriate server, using the procedure described in Section 6.1,
    and then making a TLS/TCP connection to it.
 
-   A typical DNS Push Notification client will immediately issue a DNS
-   Stateful Operations Keepalive operation to request a session timeout
-   or keepalive interval longer than the the 15-second defaults, but
-   this is not required.  A DNS Push Notification client MAY issue other
-   requests on the connection first, and only issue a DNS Stateful
-   Operations Keepalive operation later if it determines that to be
-   necessary.
+   A typical DNS Push Notification client will immediately issue a DSO
+   Keepalive operation to request a session timeout or keepalive
+   interval longer than the the 15-second defaults, but this is not
+   required.  A DNS Push Notification client MAY issue other requests on
+   the connection first, and only issue a DSO Keepalive operation later
+   if it determines that to be necessary.
 
    Once the connection is made, the client may then add and remove Push
    Notification subscriptions.  In accordance with the current set of
@@ -440,6 +437,9 @@ Internet-Draft           DNS Push Notifications            December 2017
    The exchange between client and server terminates when either end
    closes the session (e.g., closing the TLS session with a TLS
    close_notify, or closing the TCP connection with a TCP FIN or RST).
+
+
+
 
 
 
@@ -624,10 +624,10 @@ Internet-Draft           DNS Push Notifications            December 2017
    keepalive interval if necessary, a DNS Push Notification client then
    indicates its desire to receive DNS Push Notifications for a given
    domain name by sending a SUBSCRIBE request over the established TLS
-   connection to the server.  A SUBSCRIBE request is encoded in a DNS
-   Stateful Operations [StatefulOp] message.  This specification defines
-   a DNS Stateful Operations TLV for DNS Push Notification SUBSCRIBE
-   Requests/Responses (tentatively Stateful Operations Type Code 0x40).
+   connection to the server.  A SUBSCRIBE request is encoded in a DSO
+   [StatefulOp] message.  This specification defines a DSO TLV for DNS
+   Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type
+   Code 0x40).
 
    The entity that initiates a SUBSCRIBE request is by definition the
    client.  A server should not send a SUBSCRIBE request over an
@@ -676,9 +676,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 6.2.1.  SUBSCRIBE Request
 
-   A SUBSCRIBE request message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], followed by the SUBSCRIBE
-   TLV.  A SUBSCRIBE request message is illustrated below:
+   A SUBSCRIBE request message begins with the standard DSO 12-byte
+   header [StatefulOp], followed by the SUBSCRIBE TLV.  A SUBSCRIBE
+   request message is illustrated below:
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -718,10 +718,10 @@ Internet-Draft           DNS Push Notifications            December 2017
    has not yet cancelled using UNSUBSCRIBE.  In the SUBSCRIBE response
    the server MUST echo back the MESSAGE ID value unchanged.
 
-   The other header fields MUST be set as described in the DNS Stateful
-   Operations specification [StatefulOp].  The DNS Opcode is the
-   Stateful Operations Opcode (tentatively 6).  The four count fields
-
+   The other header fields MUST be set as described in the DSO
+   specification [StatefulOp].  The DNS Opcode is the DSO Opcode
+   (tentatively 6).  The four count fields MUST be zero, and the
+   corresponding four sections MUST be empty (i.e., absent).
 
 
 
@@ -729,9 +729,6 @@ Pusateri & Cheshire       Expires June 14, 2018                [Page 13]
 
 Internet-Draft           DNS Push Notifications            December 2017
 
-
-   MUST be zero, and the corresponding four sections MUST be empty
-   (i.e., absent).
 
    The DSO-TYPE is SUBSCRIBE (tentatively 0x40).  The DSO-LENGTH is the
    length of the DSO-DATA that follows, which specifies the name, type,
@@ -774,6 +771,9 @@ Internet-Draft           DNS Push Notifications            December 2017
    subscription to changes for the given NAME, TYPE and CLASS.  If one
    or both of TYPE or CLASS are ANY (255) then this subscription matches
    any type and/or any class, as appropriate.
+
+
+
 
 
 
@@ -847,16 +847,16 @@ Internet-Draft           DNS Push Notifications            December 2017
    Each SUBSCRIBE request generates exactly one SUBSCRIBE response from
    the server.
 
-   A SUBSCRIBE response message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional TLVs, such as a Retry Delay TLV.
+   A SUBSCRIBE response message begins with the standard DSO 12-byte
+   header [StatefulOp], possibly followed by one or more optional TLVs,
+   such as a Retry Delay TLV.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    SUBSCRIBE request.  This is how the client knows which request is
    being responded to.
 
-   A SUBSCRIBE response message MUST NOT copy the original Stateful
-   Operations SUBSCRIBE TLV.
+   A SUBSCRIBE response message MUST NOT copy the original DSO SUBSCRIBE
+   TLV.
 
    In the SUBSCRIBE response the RCODE indicates whether or not the
    subscription was accepted.  Supported RCODEs are as follows:
@@ -872,13 +872,12 @@ Internet-Draft           DNS Push Notifications            December 2017
    | NXDOMAIN  |   3   | NOT APPLICABLE. DNS Push Notification servers |
    |           |       | MUST NOT return NXDOMAIN errors in response   |
    |           |       | to SUBSCRIBE requests.                        |
-   | NOTIMP    |   4   | Server does not recognize DNS Stateful        |
-   |           |       | Operations Opcode.                            |
+   | NOTIMP    |   4   | Server does not recognize DSO Opcode.         |
    | REFUSED   |   5   | Server refuses to process request for policy  |
    |           |       | or security reasons.                          |
    | NOTAUTH   |   9   | Server is not authoritative for the requested |
    |           |       | name.                                         |
-   | DSONOTIMP |   11  | SUBSCRIBE operation not supported.            |
+   | DSOTYPENI |   11  | SUBSCRIBE operation not supported.            |
    +-----------+-------+-----------------------------------------------+
 
                          SUBSCRIBE Response codes
@@ -889,6 +888,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    where other RCODE values are appropriate in SUBSCRIBE Responses, so
    clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE
    value.
+
 
 
 
@@ -924,13 +924,12 @@ Internet-Draft           DNS Push Notifications            December 2017
       accordance with the specific problem encountered.
 
       For RCODE = 4 (NOTIMP), which occurs on a server that doesn't
-      implement DNS Stateful Operations [StatefulOp], it is unlikely
-      that the server will begin supporting DNS Stateful Operations in
-      the next few minutes, so the retry delay SHOULD be one hour.  Note
-      that in such a case, a server that doesn't implement DNS Stateful
-      Operations is unlikely to place a Retry Delay TLV in its response,
-      so this recommended value in particular applies to what a client
-      should assume by default.
+      implement DSO [StatefulOp], it is unlikely that the server will
+      begin supporting DSO in the next few minutes, so the retry delay
+      SHOULD be one hour.  Note that in such a case, a server that
+      doesn't implement DSO is unlikely to place a Retry Delay TLV in
+      its response, so this recommended value in particular applies to
+      what a client should assume by default.
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
@@ -945,7 +944,8 @@ Internet-Draft           DNS Push Notifications            December 2017
 
       For RCODE = 9 (NOTAUTH), which occurs on a server that implements
       DNS Push Notifications, but is not configured to be authoritative
-
+      for the requested name, the retry delay may be any value selected
+      by the implementer and/or configured by the operator.
 
 
 
@@ -954,8 +954,6 @@ Pusateri & Cheshire       Expires June 14, 2018                [Page 17]
 Internet-Draft           DNS Push Notifications            December 2017
 
 
-      for the requested name, the retry delay may be any value selected
-      by the implementer and/or configured by the operator.
       This is a misconfiguration, since this server is listed in a
       "_dns-push-tls._tcp.<zone>" SRV record, but the server itself is
       not currently configured to support DNS Push Notifications for
@@ -982,8 +980,10 @@ Internet-Draft           DNS Push Notifications            December 2017
    After sending an error response the server MAY allow the connection
    to remain open, or MAY send a DNS Push Notification Retry Delay
    Operation TLV instructing the client to close the TCP connection, as
-   described in the DNS Stateful Operations specification [StatefulOp].
-   Clients MUST correctly handle both cases.
+   described in the DSO specification [StatefulOp].  Clients MUST
+   correctly handle both cases.
+
+
 
 
 
@@ -1068,9 +1068,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 6.3.1.  PUSH Message
 
-   A PUSH message begins with the standard DNS Stateful Operations
-   12-byte header [StatefulOp], followed by the PUSH TLV.  A PUSH
-   message is illustrated below:
+   A PUSH message begins with the standard DSO 12-byte header
+   [StatefulOp], followed by the PUSH TLV.  A PUSH message is
+   illustrated below:
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1130,11 +1130,10 @@ Internet-Draft           DNS Push Notifications            December 2017
    the PUSH response the client MUST echo back the MESSAGE ID value
    unchanged.
 
-   The other header fields MUST be set as described in the DNS Stateful
-   Operations specification [StatefulOp].  The DNS Opcode is the
-   Stateful Operations Opcode (tentatively 6).  The four count fields
-   MUST be zero, and the corresponding four sections MUST be empty
-   (i.e., absent).
+   The other header fields MUST be set as described in the DSO
+   specification [StatefulOp].  The DNS Opcode is the DSO Opcode
+   (tentatively 6).  The four count fields MUST be zero, and the
+   corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is PUSH (tentatively 0x41).  The DSO-LENGTH is the
    length of the DSO-DATA that follows, which specifies the changes
@@ -1146,10 +1145,9 @@ Internet-Draft           DNS Push Notifications            December 2017
    the receiver MUST immediately terminate the connection with a TCP RST
    (or equivalent for other protocols).  The Update records are
    formatted in the customary way for Resource Records in DNS messages
-   with the stipulation that DNS name compression is not permitted in
-   DNS Stateful Operations TLVs.  Update records in a PUSH Message are
-   interpreted according to the same rules as for DNS Update [RFC2136]
-   messages, namely:
+   except that DNS name compression is not permitted.  Update records in
+   a PUSH Message are interpreted according to the same rules as for DNS
+   Update [RFC2136] messages, namely:
 
       Delete all RRsets from a name:
       TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.
@@ -1170,6 +1168,8 @@ Internet-Draft           DNS Push Notifications            December 2017
    correspond with at least one currently active subscription on that
    connection.  Specifically, the record name MUST match the name given
    in the SUBSCRIBE request, subject to the usual established DNS case-
+   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
+   request was not ANY (255) then the TYPE of the record must match the
 
 
 
@@ -1178,8 +1178,6 @@ Pusateri & Cheshire       Expires June 14, 2018                [Page 21]
 Internet-Draft           DNS Push Notifications            December 2017
 
 
-   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
-   request was not ANY (255) then the TYPE of the record must match the
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
    request was not ANY (255) then the CLASS of the record must match the
    CLASS given in the SUBSCRIBE request.  If a matching active
@@ -1229,6 +1227,8 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
+
+
 Pusateri & Cheshire       Expires June 14, 2018                [Page 22]
 
 Internet-Draft           DNS Push Notifications            December 2017
@@ -1239,20 +1239,20 @@ Internet-Draft           DNS Push Notifications            December 2017
    Each PUSH message generates exactly one PUSH response from the
    receiver.
 
-   A PUSH response message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional TLVs.
+   A PUSH response message begins with the standard DSO 12-byte header
+   [StatefulOp], possibly followed by one or more optional TLVs.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    PUSH message.
 
-   A PUSH response message MUST NOT copy the original Stateful
-   Operations PUSH TLV.
+   A PUSH response message MUST NOT copy the original DSO PUSH TLV.
 
    In a PUSH response the RCODE MUST be zero.  Receiving a PUSH response
    with a nonzero RCODE is a fatal error, and the receiver MUST
    immediately terminate the connection with a TCP RST (or equivalent
    for other protocols).
+
+
 
 
 
@@ -1295,15 +1295,15 @@ Internet-Draft           DNS Push Notifications            December 2017
    To cancel an individual subscription without closing the entire
    connection, the client sends an UNSUBSCRIBE message over the
    established TCP connection to the server.  The UNSUBSCRIBE message is
-   encoded in a DNS Stateful Operations [StatefulOp] message.  This
-   specification defines a DNS Stateful Operations TLV for DNS Push
-   Notification UNSUBSCRIBE Requests/Responses (tentatively Stateful
-   Operations Type Code 0x42).
+   encoded in a DSO [StatefulOp] message.  This specification defines a
+   DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses
+   (tentatively DSO Type Code 0x42).
 
    A server MUST NOT initiate an UNSUBSCRIBE request.  If a server does
    send a UNSUBSCRIBE request over the connection initiated by a client,
    it is an error and the client should acknowledge the request with the
    error response RCODE NOTAUTH (Not Authoritative).
+
 
 
 
@@ -1348,9 +1348,8 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 6.4.1.  UNSUBSCRIBE Request
 
-   An UNSUBSCRIBE request message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], followed by the UNSUBSCRIBE
-   TLV.
+   An UNSUBSCRIBE request message begins with the standard DSO 12-byte
+   header [StatefulOp], followed by the UNSUBSCRIBE TLV.
 
                                        1  1  1  1  1  1
          0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1394,6 +1393,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    the server.  The client is NOT required to wait for the SUBSCRIBE
    response before issuing the UNSUBSCRIBE request.  A consequence of
    this is that if the client issues an UNSUBSCRIBE request for an as-
+   yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is
 
 
 
@@ -1402,10 +1402,10 @@ Pusateri & Cheshire       Expires June 14, 2018                [Page 25]
 Internet-Draft           DNS Push Notifications            December 2017
 
 
-   yet unacknowledged SUBSCRIBE request, and the SUBSCRIBE request is
    subsequently unsuccessful for some reason, then when the UNSUBSCRIBE
    request is eventually processed it will be an UNSUBSCRIBE request for
    a nonexistent subscription, which will result NXDOMAIN response.
+
 
 
 
@@ -1463,17 +1463,17 @@ Internet-Draft           DNS Push Notifications            December 2017
    Each UNSUBSCRIBE request generates exactly one UNSUBSCRIBE response
    from the server.
 
-   An UNSUBSCRIBE response message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional TLVs, such as a Retry Delay TLV.  For suggested values
-   for the Retry Delay TLV, see Section 6.2.2.
+   An UNSUBSCRIBE response message begins with the standard DSO 12-byte
+   header [StatefulOp], possibly followed by one or more optional TLVs,
+   such as a Retry Delay TLV.  For suggested values for the Retry Delay
+   TLV, see Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    UNSUBSCRIBE request.  This is how the client knows which request is
    being responded to.
 
-   An UNSUBSCRIBE response message MUST NOT copy the original Stateful
-   Operations UNSUBSCRIBE TLV.
+   An UNSUBSCRIBE response message MUST NOT copy the original DSO
+   UNSUBSCRIBE TLV.
 
    In the UNSUBSCRIBE response the RCODE indicates whether or not the
    unsubscribe request was successful.  Supported RCODEs are as follows:
@@ -1485,9 +1485,8 @@ Internet-Draft           DNS Push Notifications            December 2017
    | FORMERR   |   1   | Server failed to process request due to a     |
    |           |       | malformed request.                            |
    | NXDOMAIN  |   3   | Specified subscription does not exist.        |
-   | NOTIMP    |   4   | Server does not recognize DNS Stateful        |
-   |           |       | Operations Opcode.                            |
-   | DSONOTIMP |   11  | UNSUBSCRIBE operation not supported.          |
+   | NOTIMP    |   4   | Server does not recognize DSO Opcode.         |
+   | DSOTYPENI |   11  | UNSUBSCRIBE operation not supported.          |
    +-----------+-------+-----------------------------------------------+
 
                         UNSUBSCRIBE Response codes
@@ -1509,6 +1508,7 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
+
 Pusateri & Cheshire       Expires June 14, 2018                [Page 27]
 
 Internet-Draft           DNS Push Notifications            December 2017
@@ -1521,23 +1521,23 @@ Internet-Draft           DNS Push Notifications            December 2017
    RCODE value NXDOMAIN indicates a MESSAGE ID that does not correspond
    to any active subscription.
 
-   RCODE values NOTIMP and DSONOTIMP should not occur in practice.
+   RCODE values NOTIMP and DSOTYPENI should not occur in practice.
 
-   A server would only generate NOTIMP if it did not support Stateful
-   Operations, and if the server does not support Stateful Operations
-   then it should not be possible for a client to have an active
-   subscription to cancel.
+   A server would only generate NOTIMP if it did not support DSO, and if
+   the server does not support DSO then it should not be possible for a
+   client to have an active subscription to cancel.
 
-   Similarly, a server would only generate DSONOTIMP if it did not
+   Similarly, a server would only generate DSOTYPENI if it did not
    support Push Notifications, and if the server does not support Push
    Notifications then it should not be possible for a client to have an
    active subscription to cancel.
 
    Nonzero RCODE values other than NXDOMAIN indicate a serious problem
    with the client.  After sending an error response other than
-   NXDOMAIN, the server SHOULD send a DNS Stateful Operations Retry
-   Delay TLV and then close the TCP connection, as described in the DNS
-   Stateful Operations specification [StatefulOp].
+   NXDOMAIN, the server SHOULD send a DSO Retry Delay TLV and then close
+   the TCP connection, as described in the DSO specification
+   [StatefulOp].
+
 
 
 
@@ -1628,9 +1628,9 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 6.5.1.  RECONFIRM Request
 
-   A RECONFIRM request message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], followed by the RECONFIRM
-   TLV.  A RECONFIRM request message is illustrated below:
+   A RECONFIRM request message begins with the standard DSO 12-byte
+   header [StatefulOp], followed by the RECONFIRM TLV.  A RECONFIRM
+   request message is illustrated below:
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1672,8 +1672,8 @@ Internet-Draft           DNS Push Notifications            December 2017
    has not yet cancelled using UNSUBSCRIBE.  In the RECONFIRM response
    the server MUST echo back the MESSAGE ID value unchanged.
 
-   The other header fields MUST be set as described in the DNS Stateful
-   Operations specification [StatefulOp].  The DNS Opcode is the
+   The other header fields MUST be set as described in the DSO
+   specification [StatefulOp].  The DNS Opcode is the DSO Opcode
 
 
 
@@ -1682,9 +1682,8 @@ Pusateri & Cheshire       Expires June 14, 2018                [Page 30]
 Internet-Draft           DNS Push Notifications            December 2017
 
 
-   Stateful Operations Opcode (tentatively 6).  The four count fields
-   MUST be zero, and the corresponding four sections MUST be empty
-   (i.e., absent).
+   (tentatively 6).  The four count fields MUST be zero, and the
+   corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is RECONFIRM (tentatively 0x43).  The DSO-LENGTH is the
    length of the data that follows, which specifies the name, type,
@@ -1733,6 +1732,7 @@ Internet-Draft           DNS Push Notifications            December 2017
 
 
 
+
 Pusateri & Cheshire       Expires June 14, 2018                [Page 31]
 
 Internet-Draft           DNS Push Notifications            December 2017
@@ -1743,17 +1743,17 @@ Internet-Draft           DNS Push Notifications            December 2017
    Each RECONFIRM request generates exactly one RECONFIRM response from
    the server.
 
-   A RECONFIRM response message begins with the standard DNS Stateful
-   Operations 12-byte header [StatefulOp], possibly followed by one or
-   more optional TLVs, such as a Retry Delay TLV.  For suggested values
-   for the Retry Delay TLV, see Section 6.2.2.
+   A RECONFIRM response message begins with the standard DSO 12-byte
+   header [StatefulOp], possibly followed by one or more optional TLVs,
+   such as a Retry Delay TLV.  For suggested values for the Retry Delay
+   TLV, see Section 6.2.2.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
    RECONFIRM request.  This is how the client knows which request is
    being responded to.
 
-   A RECONFIRM response message MUST NOT copy the original Stateful
-   Operations RECONFIRM TLV.
+   A RECONFIRM response message MUST NOT copy the original DSO RECONFIRM
+   TLV.
 
    In the RECONFIRM response the RCODE confirms receipt of the
    reconfirmation request.  Supported RCODEs are as follows:
@@ -1769,13 +1769,12 @@ Internet-Draft           DNS Push Notifications            December 2017
    | NXDOMAIN  |   3   | NOT APPLICABLE. DNS Push Notification servers |
    |           |       | MUST NOT return NXDOMAIN errors in response   |
    |           |       | to RECONFIRM requests.                        |
-   | NOTIMP    |   4   | Server does not recognize DNS Stateful        |
-   |           |       | Operations Opcode.                            |
+   | NOTIMP    |   4   | Server does not recognize DSO Opcode.         |
    | REFUSED   |   5   | Server refuses to process request for policy  |
    |           |       | or security reasons.                          |
    | NOTAUTH   |   9   | Server is not authoritative for the requested |
    |           |       | name.                                         |
-   | DSONOTIMP |   11  | RECONFIRM operation not supported.            |
+   | DSOTYPENI |   11  | RECONFIRM operation not supported.            |
    +-----------+-------+-----------------------------------------------+
 
                          RECONFIRM Response codes
@@ -1786,6 +1785,7 @@ Internet-Draft           DNS Push Notifications            December 2017
    where other RCODE values are appropriate in RECONFIRM Responses, so
    clients MUST be prepared to accept RECONFIRM Responses with any RCODE
    value.
+
 
 
 
@@ -1802,9 +1802,8 @@ Internet-Draft           DNS Push Notifications            December 2017
    RCODE value SERVFAIL indicates that the server has exhausted its
    resources or other serious problem occurred.
 
-   RCODE values NOTIMP indicates that the server does not support
-   Stateful Operations, and Stateful Operations is required for
-   RECONFIRM requests.
+   RCODE values NOTIMP indicates that the server does not support DSO,
+   and DSO is required for RECONFIRM requests.
 
    RCODE value REFUSED indicates that the server supports RECONFIRM
    requests but is currently not configured to accept them from this
@@ -1816,18 +1815,19 @@ Internet-Draft           DNS Push Notifications            December 2017
    to pass on the RECONFIRM request to the ultimate source of the
    information, and in these cases the server should return NOERROR.
 
-   RCODE value DSONOTIMP indicates that the server does not support
+   RCODE value DSOTYPENI indicates that the server does not support
    RECONFIRM requests.
 
-   Nonzero RCODE values SERVFAIL, REFUSED and DSONOTIMP are benign from
+   Nonzero RCODE values SERVFAIL, REFUSED and DSOTYPENI are benign from
    the client's point of view.  The client may log them to aid in
    debugging, but otherwise they require no special action.
 
    Nonzero RCODE values other than these three indicate a serious
    problem with the client.  After sending an error response other than
-   one of these three, the server SHOULD send a DNS Stateful Operations
-   Retry Delay TLV and then close the TCP connection, as described in
-   the DNS Stateful Operations specification [StatefulOp].
+   one of these three, the server SHOULD send a DSO Retry Delay TLV and
+   then close the TCP connection, as described in the DSO specification
+   [StatefulOp].
+
 
 
 
