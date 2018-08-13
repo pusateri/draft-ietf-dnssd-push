@@ -1646,8 +1646,8 @@ Internet-Draft           DNS Push Notifications               March 2018
 
    In order to reduce the chances of compression-related attacks, TLS-
    level compression SHOULD be disabled when using TLS versions 1.2 and
-   earlier.  In the draft version of TLS 1.3 [RFC8446], TLS-level
-   compression has been removed completely.
+   earlier.  In TLS 1.3 [RFC8446], TLS-level compression has been
+   removed completely.
 
 7.4.  TLS Session Resumption
 
