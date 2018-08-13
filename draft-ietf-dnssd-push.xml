@@ -167,10 +167,10 @@
 <?rfc needLines="7" ?>
      <section title="Requirements Language">
        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-       "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",<vspace />
-       and "OPTIONAL" in this document are to be interpreted as described<vspace />
-       in "Key words for use in RFCs to Indicate Requirement Levels",<vspace />
-       when, and only when, they appear in all capitals, as shown here<vspace />
+       "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+       and "OPTIONAL" in this document are to be interpreted as described
+       in "Key words for use in RFCs to Indicate Requirement Levels",
+       when, and only when, they appear in all capitals, as shown here
        <xref target="RFC2119"/> <xref target="RFC8174"/>.</t>
 <?rfc needLines="40" ?>
      </section>
@@ -203,10 +203,10 @@
 
      <t>This specification adopts a simplified subset of these existing syntax and semantics, and uses them for DNS Push Notification messages going in the opposite direction, from server to client, to communicate changes to a zone. The client subscribes for Push Notifications by connecting to the server and sending DNS message(s) indicating the RRSet(s) of interest. When the client loses interest in receiving further updates to these records, it unsubscribes.</t>
 
-     <t>The DNS Push Notification server for a zone is any server capable<vspace />
-     of generating the correct change notifications for a name.<vspace />
+     <t>The DNS Push Notification server for a zone is any server capable
+     of generating the correct change notifications for a name.
      It may be a master, slave, or stealth name server <xref target="RFC7719"/>.
-     Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a<vspace />
+     Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a
      zone MAY reference the same target host and port as that zone's
      <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Queries.</t>
 
@@ -485,11 +485,11 @@
              is unlikely to place a Retry Delay TLV in its response, so this
              recommended value in particular applies to what a client should assume by default.</t>
 
-             <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.<vspace />
-             This is a misconfiguration, since this server is listed in a <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record, but the server itself is not currently configured to support DNS Push Notifications. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</t>
+             <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
+             <t>This is a misconfiguration, since this server is listed in a <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record, but the server itself is not currently configured to support DNS Push Notifications. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</t>
 
-             <t>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.
-             <vspace />This is a misconfiguration, since this server is listed in a <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record, but the server itself is not currently configured to support DNS Push Notifications for that zone. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</t>
+             <t>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
+             <t>This is a misconfiguration, since this server is listed in a <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record, but the server itself is not currently configured to support DNS Push Notifications for that zone. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</t>
 
              <t>For RCODE = 11 (DNS Push SUBSCRIBE operation not supported),
              which occurs on a server that doesn't implement DNS Push Notifications,

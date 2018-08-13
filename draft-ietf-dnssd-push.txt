@@ -129,11 +129,11 @@ Internet-Draft           DNS Push Notifications               March 2018
 1.1.  Requirements Language
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
-   and "OPTIONAL" in this document are to be interpreted as described
-   in "Key words for use in RFCs to Indicate Requirement Levels",
-   when, and only when, they appear in all capitals, as shown here
-   [RFC2119] [RFC8174].
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   "Key words for use in RFCs to Indicate Requirement Levels", when, and
+   only when, they appear in all capitals, as shown here [RFC2119]
+   [RFC8174].
 
 
 
@@ -240,11 +240,11 @@ Internet-Draft           DNS Push Notifications               March 2018
    indicating the RRSet(s) of interest.  When the client loses interest
    in receiving further updates to these records, it unsubscribes.
 
-   The DNS Push Notification server for a zone is any server capable
-   of generating the correct change notifications for a name.
-   It may be a master, slave, or stealth name server [RFC7719].
-   Consequently, the "_dns-push-tls._tcp.<zone>" SRV record for a
-   zone MAY reference the same target host and port as that zone's
+   The DNS Push Notification server for a zone is any server capable of
+   generating the correct change notifications for a name.  It may be a
+   master, slave, or stealth name server [RFC7719].  Consequently, the
+   "_dns-push-tls._tcp.<zone>" SRV record for a zone MAY reference the
+   same target host and port as that zone's
    "_dns-update-tls._tcp.<zone>" SRV record.  When the same target host
    and port is offered for both DNS Updates and DNS Push Notifications,
    a client MAY use a single TCP connection to that server for both DNS
@@ -935,6 +935,7 @@ Internet-Draft           DNS Push Notifications               March 2018
       DNS Push Notifications, but is currently configured to disallow
       DNS Push Notifications, the retry delay may be any value selected
       by the implementer and/or configured by the operator.
+
       This is a misconfiguration, since this server is listed in a
       "_dns-push-tls._tcp.<zone>" SRV record, but the server itself is
       not currently configured to support DNS Push Notifications.  Since
@@ -944,8 +945,7 @@ Internet-Draft           DNS Push Notifications               March 2018
 
       For RCODE = 9 (NOTAUTH), which occurs on a server that implements
       DNS Push Notifications, but is not configured to be authoritative
-      for the requested name, the retry delay may be any value selected
-      by the implementer and/or configured by the operator.
+
 
 
 
@@ -953,6 +953,9 @@ Pusateri & Cheshire    Expires September 19, 2018              [Page 17]
 
 Internet-Draft           DNS Push Notifications               March 2018
 
+
+      for the requested name, the retry delay may be any value selected
+      by the implementer and/or configured by the operator.
 
       This is a misconfiguration, since this server is listed in a
       "_dns-push-tls._tcp.<zone>" SRV record, but the server itself is
@@ -982,9 +985,6 @@ Internet-Draft           DNS Push Notifications               March 2018
    Operation TLV instructing the client to close the session, as
    described in the DSO specification [DSO].  Clients MUST correctly
    handle both cases.
-
-
-
 
 
 
