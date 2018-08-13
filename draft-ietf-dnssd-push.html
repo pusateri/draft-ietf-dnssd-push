@@ -406,7 +406,7 @@
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.9.6 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.10.0 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Pusateri, T. and S. Cheshire" />
@@ -941,7 +941,7 @@
 <h1 id="rfc.section.7">
 <a href="#rfc.section.7">7.</a> <a href="#Security" id="Security">Security Considerations</a>
 </h1>
-<p id="rfc.section.7.p.1">The Strict Privacy Usage Profile for DNS over TLS is strongly recommended for DNS Push Notifications as defined in <a href="#I-D.ietf-dprive-dtls-and-tls-profiles" class="xref">"Authentication and (D)TLS Profile for DNS-over-(D)TLS"</a>. The Opportunistic Privacy Usage Profile is permissible as a way to support incremental deployment of security capabilities. Cleartext connections for DNS Push Notifications are not permissible.</p>
+<p id="rfc.section.7.p.1">The Strict Privacy Usage Profile for DNS over TLS is strongly recommended for DNS Push Notifications as defined in <a href="#RFC8310" class="xref">"Usage Profiles for DNS over TLS and DNS over DTLS"</a>. The Opportunistic Privacy Usage Profile is permissible as a way to support incremental deployment of security capabilities. Cleartext connections for DNS Push Notifications are not permissible.</p>
 <p id="rfc.section.7.p.2">DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
 <h1 id="rfc.section.7.1">
 <a href="#rfc.section.7.1">7.1.</a> Security Services</h1>
@@ -962,10 +962,10 @@
 <a href="#rfc.section.7.2">7.2.</a> <a href="#tls_name_auth" id="tls_name_auth">TLS Name Authentication</a>
 </h1>
 <p id="rfc.section.7.2.p.1">As described in <a href="#discovery" class="xref">Section 6.1</a>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <a href="#RFC7673" class="xref">[RFC7673]</a>. This procedure uses the TLS Sever Name Indication (SNI) extension <a href="#RFC6066" class="xref">[RFC6066]</a> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional.</p>
-<p id="rfc.section.7.2.p.2">See <a href="#I-D.ietf-dprive-dtls-and-tls-profiles" class="xref">Authentication and (D)TLS Profile for DNS-over-(D)TLS</a> for more information on authenticating domain names. Also note that a DNS Push server is an authoritative server and a DNS Push client is a standard DNS client. While the terminology in <a href="#I-D.ietf-dprive-dtls-and-tls-profiles" class="xref">Authentication and (D)TLS Profile for DNS-over-(D)TLS</a> explicitly states it does not apply to authoritative servers, it does in this case apply to DNS Push Notification clients and servers.</p>
+<p id="rfc.section.7.2.p.2">See <a href="#RFC8310" class="xref">Usage Profiles for DNS over TLS and DNS over DTLS</a> for more information on authenticating domain names. Also note that a DNS Push server is an authoritative server and a DNS Push client is a standard DNS client. While the terminology in <a href="#RFC8310" class="xref">Usage Profiles for DNS over TLS and DNS over DTLS</a> explicitly states it does not apply to authoritative servers, it does in this case apply to DNS Push Notification clients and servers.</p>
 <h1 id="rfc.section.7.3">
 <a href="#rfc.section.7.3">7.3.</a> TLS Compression</h1>
-<p id="rfc.section.7.3.p.1">In order to reduce the chances of compression-related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <a href="#I-D.ietf-tls-tls13" class="xref">TLS 1.3</a>, TLS-level compression has been removed completely.</p>
+<p id="rfc.section.7.3.p.1">In order to reduce the chances of compression-related attacks, TLS-level compression SHOULD be disabled when using TLS versions 1.2 and earlier. In the draft version of <a href="#RFC8446" class="xref">TLS 1.3</a>, TLS-level compression has been removed completely.</p>
 <h1 id="rfc.section.7.4">
 <a href="#rfc.section.7.4">7.4.</a> TLS Session Resumption</h1>
 <p id="rfc.section.7.4.p.1">TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <a href="#RFC5246" class="xref">[RFC5246]</a> or operate in stateless mode by sending a Session Ticket <a href="#RFC5077" class="xref">[RFC5077]</a> to the client for it to store. However, once the DSO session is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption allows a new TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</p>
@@ -987,12 +987,7 @@
 <tr>
 <td class="reference"><b id="DSO">[DSO]</b></td>
 <td class="top">
-<a>Bellis, R.</a>, <a>Cheshire, S.</a>, <a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Mankin, A.</a> and <a>T. Pusateri</a>, "<a href="https://tools.ietf.org/html/draft-ietf-dnsop-session-signal-05">DNS Stateful Operations</a>", Internet-Draft draft-ietf-dnsop-session-signal-05, January 2018.</td>
-</tr>
-<tr>
-<td class="reference"><b id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</b></td>
-<td class="top">
-<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-tls-tls13-26">The Transport Layer Security (TLS) Protocol Version 1.3</a>", Internet-Draft draft-ietf-tls-tls13-26, March 2018.</td>
+<a>Bellis, R.</a>, <a>Cheshire, S.</a>, <a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Lemon, T.</a> and <a>T. Pusateri</a>, "<a href="https://tools.ietf.org/html/draft-ietf-dnsop-session-signal-14">DNS Stateful Operations</a>", Internet-Draft draft-ietf-dnsop-session-signal-14, August 2018.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC0768">[RFC0768]</b></td>
@@ -1070,6 +1065,11 @@
 <a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
 </tr>
 <tr>
+<td class="reference"><b id="RFC8446">[RFC8446]</b></td>
+<td class="top">
+<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/rfc8446">The Transport Layer Security (TLS) Protocol Version 1.3</a>", RFC 8446, DOI 10.17487/RFC8446, August 2018.</td>
+</tr>
+<tr>
 <td class="reference"><b id="ST">[ST]</b></td>
 <td class="top">"<a href="http://www.iana.org/assignments/service-names-port-numbers/">Service Name and Transport Protocol Port Number Registry</a>"</td>
 </tr>
@@ -1086,11 +1086,6 @@
 <td class="reference"><b id="I-D.dukkipati-tcpm-tcp-loss-probe">[I-D.dukkipati-tcpm-tcp-loss-probe]</b></td>
 <td class="top">
 <a>Dukkipati, N.</a>, <a>Cardwell, N.</a>, <a>Cheng, Y.</a> and <a>M. Mathis</a>, "<a href="https://tools.ietf.org/html/draft-dukkipati-tcpm-tcp-loss-probe-01">Tail Loss Probe (TLP): An Algorithm for Fast Recovery of Tail Losses</a>", Internet-Draft draft-dukkipati-tcpm-tcp-loss-probe-01, February 2013.</td>
-</tr>
-<tr>
-<td class="reference"><b id="I-D.ietf-dprive-dtls-and-tls-profiles">[I-D.ietf-dprive-dtls-and-tls-profiles]</b></td>
-<td class="top">
-<a>Dickinson, S.</a>, <a>Gillmor, D.</a> and <a>T. Reddy</a>, "<a href="https://tools.ietf.org/html/draft-ietf-dprive-dtls-and-tls-profiles-11">Usage and (D)TLS Profiles for DNS-over-(D)TLS</a>", Internet-Draft draft-ietf-dprive-dtls-and-tls-profiles-11, September 2017.</td>
 </tr>
 <tr>
 <td class="reference"><b id="LLQ">[LLQ]</b></td>
@@ -1164,12 +1159,17 @@
 <tr>
 <td class="reference"><b id="RFC8010">[RFC8010]</b></td>
 <td class="top">
-<a>Sweet, M.</a> and <a>I. McDonald</a>, "<a href="https://tools.ietf.org/html/rfc8010">Internet Printing Protocol/1.1: Encoding and Transport</a>", RFC 8010, DOI 10.17487/RFC8010, January 2017.</td>
+<a>Sweet, M.</a> and <a>I. McDonald</a>, "<a href="https://tools.ietf.org/html/rfc8010">Internet Printing Protocol/1.1: Encoding and Transport</a>", STD 92, RFC 8010, DOI 10.17487/RFC8010, January 2017.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC8011">[RFC8011]</b></td>
 <td class="top">
-<a>Sweet, M.</a> and <a>I. McDonald</a>, "<a href="https://tools.ietf.org/html/rfc8011">Internet Printing Protocol/1.1: Model and Semantics</a>", RFC 8011, DOI 10.17487/RFC8011, January 2017.</td>
+<a>Sweet, M.</a> and <a>I. McDonald</a>, "<a href="https://tools.ietf.org/html/rfc8011">Internet Printing Protocol/1.1: Model and Semantics</a>", STD 92, RFC 8011, DOI 10.17487/RFC8011, January 2017.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8310">[RFC8310]</b></td>
+<td class="top">
+<a>Dickinson, S.</a>, <a>Gillmor, D.</a> and <a>T. Reddy</a>, "<a href="https://tools.ietf.org/html/rfc8310">Usage Profiles for DNS over TLS and DNS over DTLS</a>", RFC 8310, DOI 10.17487/RFC8310, March 2018.</td>
 </tr>
 <tr>
 <td class="reference"><b id="SYN">[SYN]</b></td>
