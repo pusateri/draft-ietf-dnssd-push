@@ -205,10 +205,10 @@
 
      <t>The DNS Push Notification server for a zone is any server capable
      of generating the correct change notifications for a name.
-     It may be a master, slave, or stealth name server <xref target="RFC7719"/>.
+     It may be a primary, secondary, or stealth name server <xref target="RFC7719"/>.
      Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a
      zone MAY reference the same target host and port as that zone's
-     <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Queries.</t>
+     <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Subscriptions.</t>
 
      <t>Supporting DNS Updates and DNS Push Notifications on the same server is OPTIONAL. A DNS Push Notification server does NOT also have to support DNS Update.</t>
 
@@ -409,8 +409,7 @@
 |                     CLASS                     |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
-         <t>The DSO-DATA for a SUBSCRIBE request MUST contain exactly one question.
-         The DSO-DATA for a SUBSCRIBE request has no QDCOUNT field to specify more than one question.
+         <t>The DSO-DATA for a SUBSCRIBE request MUST contain exactly one subscribe TLV.
          Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE request messages
          can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 

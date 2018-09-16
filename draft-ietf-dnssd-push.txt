@@ -242,13 +242,13 @@ Internet-Draft           DNS Push Notifications               March 2018
 
    The DNS Push Notification server for a zone is any server capable of
    generating the correct change notifications for a name.  It may be a
-   master, slave, or stealth name server [RFC7719].  Consequently, the
-   "_dns-push-tls._tcp.<zone>" SRV record for a zone MAY reference the
-   same target host and port as that zone's
+   primary, secondary, or stealth name server [RFC7719].  Consequently,
+   the "_dns-push-tls._tcp.<zone>" SRV record for a zone MAY reference
+   the same target host and port as that zone's
    "_dns-update-tls._tcp.<zone>" SRV record.  When the same target host
    and port is offered for both DNS Updates and DNS Push Notifications,
    a client MAY use a single TCP connection to that server for both DNS
-   Updates and DNS Push Notification Queries.
+   Updates and DNS Push Notification Subscriptions.
 
    Supporting DNS Updates and DNS Push Notifications on the same server
    is OPTIONAL.  A DNS Push Notification server does NOT also have to
@@ -761,10 +761,9 @@ Internet-Draft           DNS Push Notifications               March 2018
                         Figure 1: SUBSCRIBE Request
 
    The DSO-DATA for a SUBSCRIBE request MUST contain exactly one
-   question.  The DSO-DATA for a SUBSCRIBE request has no QDCOUNT field
-   to specify more than one question.  Since SUBSCRIBE requests are sent
-   over TCP, multiple SUBSCRIBE request messages can be concatenated in
-   a single TCP stream and packed efficiently into TCP segments.
+   subscribe TLV.  Since SUBSCRIBE requests are sent over TCP, multiple
+   SUBSCRIBE request messages can be concatenated in a single TCP stream
+   and packed efficiently into TCP segments.
 
    If accepted, the subscription will stay in effect until the client
    cancels the subscription using UNSUBSCRIBE or until the DSO session
@@ -778,6 +777,7 @@ Internet-Draft           DNS Push Notifications               March 2018
    the same).  If a server receives such a duplicate SUBSCRIBE message
    this is an error and the server MUST immediately terminate the
    connection with a TCP RST (or equivalent for other protocols).
+
 
 
 
