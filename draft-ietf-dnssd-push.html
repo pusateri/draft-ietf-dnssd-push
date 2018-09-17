@@ -595,15 +595,16 @@
 <p> </p>
 <p id="rfc.section.6.1.p.5">Each time a client makes a new DNS Push Notification subscription session, it SHOULD repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time. However, the client device MUST respect the DNS TTL values on records it receives, and store them in its local cache with this lifetime. This means that, as long as the DNS TTL values on the authoritative records were set to reasonable values, repeated application of this discovery process can be completed nearly instantaneously by the client, using only locally-stored cached data.</p>
 <h1 id="rfc.section.6.2">
-<a href="#rfc.section.6.2">6.2.</a> DNS Push Notification SUBSCRIBE</h1>
+<a href="#rfc.section.6.2">6.2.</a> <a href="#subscribe" id="subscribe">DNS Push Notification SUBSCRIBE</a>
+</h1>
 <p id="rfc.section.6.2.p.1">After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <a href="#DSO" class="xref">DSO</a> message. This specification defines a DSO TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x40).</p>
 <p id="rfc.section.6.2.p.2">The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.2.1">
 <a href="#rfc.section.6.2.1">6.2.1.</a> SUBSCRIBE Request</h1>
 <p id="rfc.section.6.2.1.p.1">A SUBSCRIBE request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the SUBSCRIBE TLV.  A SUBSCRIBE request message is illustrated in <a href="#subscribe_req" class="xref">Figure 1</a>.</p>
 <p id="rfc.section.6.2.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</p>
-<p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
-<p id="rfc.section.6.2.1.p.4">The DSO-TYPE is SUBSCRIBE (tentatively 0x40).  The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
+<p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.2.1.p.4">The DSO-TYPE is SUBSCRIBE.  The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
 <div id="rfc.figure.1"></div>
 <div id="subscribe_req"></div>
 <pre>
@@ -622,7 +623,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
+|              DSO-TYPE = SUBSCRIBE             |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -724,10 +725,11 @@
 <a href="#rfc.section.6.3">6.3.</a> DNS Push Notification Updates</h1>
 <p id="rfc.section.6.3.p.1">Once a subscription has been successfully established, the server generates PUSH messages to send to the client as appropriate. In the case that the answer set was non-empty at the moment the subscription was established, an initial PUSH message will be sent immediately following the SUBSCRIBE Response. Subsequent changes to the answer set are then communicated to the client in subsequent PUSH messages.</p>
 <h1 id="rfc.section.6.3.1">
-<a href="#rfc.section.6.3.1">6.3.1.</a> PUSH Message</h1>
+<a href="#rfc.section.6.3.1">6.3.1.</a> <a href="#push" id="push">PUSH Message</a>
+</h1>
 <p id="rfc.section.6.3.1.p.1">A PUSH message begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the PUSH TLV.  A PUSH message is illustrated in <a href="#push_msg" class="xref">Figure 2</a>.</p>
 <p id="rfc.section.6.3.1.p.2">The MESSAGE ID field MUST be zero. There is no client response to a PUSH message.</p>
-<p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.3.1.p.4">The DSO-TYPE is PUSH (tentatively 0x41).  The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the changes being communicated.</p>
 <p id="rfc.section.6.3.1.p.5">The DSO-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains no Update records, this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136" class="xref">DNS Update</a> messages, namely: </p>
 
@@ -757,7 +759,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|      DSO-TYPE = PUSH (tentatively 0x41)       |
+|                DSO-TYPE = PUSH                |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -784,15 +786,16 @@
 <p id="rfc.section.6.3.1.p.9">A server SHOULD combine multiple change notifications in a single PUSH message when possible, even if those change notifications apply to different subscriptions. Conceptually, a PUSH message is a session-level mechanism, not a subscription-level mechanism.</p>
 <p id="rfc.section.6.3.1.p.10">The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the DSO session being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</p>
 <h1 id="rfc.section.6.4">
-<a href="#rfc.section.6.4">6.4.</a> DNS Push Notification UNSUBSCRIBE</h1>
+<a href="#rfc.section.6.4">6.4.</a> <a href="#unsubscribe" id="unsubscribe">DNS Push Notification UNSUBSCRIBE</a>
+</h1>
 <p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded in a <a href="#DSO" class="xref">DSO</a> message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</p>
 <p id="rfc.section.6.4.p.2">A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.4.1">
 <a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Request</h1>
 <p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the UNSUBSCRIBE TLV.  An UNSUBSCRIBE request message is illustrated in <a href="#unsubscribe_req" class="xref">Figure 3</a>.</p>
 <p id="rfc.section.6.4.1.p.2">The MESSAGE ID field MUST be zero. There is no server response to a UNSUBSCRIBE message.</p>
-<p id="rfc.section.6.4.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
-<p id="rfc.section.6.4.1.p.4">In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).  The DSO-LENGTH is 2 octets.</p>
+<p id="rfc.section.6.4.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.4.1.p.4">In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE.  The DSO-LENGTH is 2 octets.</p>
 <p id="rfc.section.6.4.1.p.5">The DSO-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.</p>
 <p id="rfc.section.6.4.1.p.6">It is allowable for the client to issue an UNSUBSCRIBE request for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE request.</p>
 <div id="rfc.figure.3"></div>
@@ -813,7 +816,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+|             DSO-TYPE = UNSUBSCRIBE            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |              DSO-LENGTH (2 octets)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -825,10 +828,11 @@
 <p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believe may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM request to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS requests to ascertain whether the target device is still present. For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur. Frequent RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting, and remedying, such network problems.</p>
 <p id="rfc.section.6.5.p.2">If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
 <h1 id="rfc.section.6.5.1">
-<a href="#rfc.section.6.5.1">6.5.1.</a> RECONFIRM Request</h1>
+<a href="#rfc.section.6.5.1">6.5.1.</a> <a href="#reconfirm" id="reconfirm">RECONFIRM Request</a>
+</h1>
 <p id="rfc.section.6.5.1.p.1">A RECONFIRM request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM TLV.  A RECONFIRM request message is illustrated in <a href="#reconfirm_req" class="xref">Figure 4</a>.</p>
 <p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
-<p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode (tentatively 6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.5.1.p.4">The DSO-TYPE is RECONFIRM (tentatively 0x43).  The DSO-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
 <div id="rfc.figure.4"></div>
 <div id="reconfirm_req"></div>
@@ -848,7 +852,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
+|              DSO-TYPE = RECONFIRM             |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -973,8 +977,45 @@
 <h1 id="rfc.section.8">
 <a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a>
 </h1>
-<p id="rfc.section.8.p.1">This document defines the service name: <samp>_dns&#8209;push&#8209;tls._tcp</samp>.<br> It is only applicable for the TCP protocol.<br> This name is to be published in the IANA Registry Service Types <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#ST" class="xref">[ST]</a>.</p>
-<p id="rfc.section.8.p.2">This document defines four DNS Stateful Operations TLV types: SUBSCRIBE with (tentative) value 0x40 (64), PUSH with (tentative) value 0x41 (65), UNSUBSCRIBE with (tentative) value 0x42 (66), and RECONFIRM with (tentative) value 0x43 (67).</p>
+<p id="rfc.section.8.p.1">This document defines a new service name to be published in the IANA Registry Service Types <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#ST" class="xref">[ST]</a> that is only applicable for the TCP protocol.</p>
+<p id="rfc.section.8.p.2">This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</p>
+<div id="rfc.table.1"></div>
+<div id="iana_table"></div>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+<caption>IANA Assignments</caption>
+<thead><tr>
+<th class="left">Name</th>
+<th class="center">Value</th>
+<th class="left">Definition</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="left">DNS Push Notifcation Service Type</td>
+<td class="center"><samp>_dns&#8209;push&#8209;tls._tcp</samp></td>
+<td class="left"><a href="#discovery" class="xref">Section 6.1</a></td>
+</tr>
+<tr>
+<td class="left">SUBSCRIBE</td>
+<td class="center">TBA (tentatively 0x40)</td>
+<td class="left"><a href="#subscribe" class="xref">Section 6.2</a></td>
+</tr>
+<tr>
+<td class="left">PUSH</td>
+<td class="center">TBA (tentatively 0x41)</td>
+<td class="left"><a href="#push" class="xref">Section 6.3.1</a></td>
+</tr>
+<tr>
+<td class="left">UNSUBSCRIBE</td>
+<td class="center">TBA (tentatively 0x42)</td>
+<td class="left"><a href="#unsubscribe" class="xref">Section 6.4</a></td>
+</tr>
+<tr>
+<td class="left">RECONFIRM</td>
+<td class="center">TBA (tentatively 0x43)</td>
+<td class="left"><a href="#reconfirm" class="xref">Section 6.5.1</a></td>
+</tr>
+</tbody>
+</table>
 <h1 id="rfc.section.9">
 <a href="#rfc.section.9">9.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a>
 </h1>

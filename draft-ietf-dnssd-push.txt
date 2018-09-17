@@ -707,13 +707,13 @@ Internet-Draft           DNS Push Notifications               March 2018
    the server MUST echo back the MESSAGE ID value unchanged.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
-   6).  The four count fields MUST be zero, and the corresponding four
-   sections MUST be empty (i.e., absent).
+   specification [DSO].  The DNS Opcode is the DSO Opcode.  The four
+   count fields MUST be zero, and the corresponding four sections MUST
+   be empty (i.e., absent).
 
-   The DSO-TYPE is SUBSCRIBE (tentatively 0x40).  The DSO-LENGTH is the
-   length of the DSO-DATA that follows, which specifies the name, type,
-   and class of the record(s) being sought.
+   The DSO-TYPE is SUBSCRIBE.  The DSO-LENGTH is the length of the DSO-
+   DATA that follows, which specifies the name, type, and class of the
+   record(s) being sought.
 
 
 
@@ -745,7 +745,7 @@ Internet-Draft           DNS Push Notifications               March 2018
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |             ARCOUNT (MUST BE ZERO)            |   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-     |    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
+     |              DSO-TYPE = SUBSCRIBE             |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      |   DSO-LENGTH (number of octets in DSO-DATA)   |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -1028,9 +1028,9 @@ Internet-Draft           DNS Push Notifications               March 2018
    PUSH message.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
-   6).  The four count fields MUST be zero, and the corresponding four
-   sections MUST be empty (i.e., absent).
+   specification [DSO].  The DNS Opcode is the DSO Opcode.  The four
+   count fields MUST be zero, and the corresponding four sections MUST
+   be empty (i.e., absent).
 
    The DSO-TYPE is PUSH (tentatively 0x41).  The DSO-LENGTH is the
    length of the DSO-DATA that follows, which specifies the changes
@@ -1081,7 +1081,7 @@ Internet-Draft           DNS Push Notifications               March 2018
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |             ARCOUNT (MUST BE ZERO)            |   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-     |      DSO-TYPE = PUSH (tentatively 0x41)       |
+     |                DSO-TYPE = PUSH                |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      |   DSO-LENGTH (number of octets in DSO-DATA)   |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -1202,12 +1202,12 @@ Internet-Draft           DNS Push Notifications               March 2018
    UNSUBSCRIBE message.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
-   6).  The four count fields MUST be zero, and the corresponding four
-   sections MUST be empty (i.e., absent).
+   specification [DSO].  The DNS Opcode is the DSO Opcode.  The four
+   count fields MUST be zero, and the corresponding four sections MUST
+   be empty (i.e., absent).
 
-   In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively
-   0x42).  The DSO-LENGTH is 2 octets.
+   In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE.  The DSO-LENGTH
+   is 2 octets.
 
    The DSO-DATA contains the MESSAGE ID field of the value given in the
    ID field of an active SUBSCRIBE request.  This is how the server
@@ -1249,7 +1249,7 @@ Internet-Draft           DNS Push Notifications               March 2018
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
       |             ARCOUNT (MUST BE ZERO)            |   /
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-      |   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+      |             DSO-TYPE = UNSUBSCRIBE            |
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
       |              DSO-LENGTH (2 octets)            |
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -1330,9 +1330,9 @@ Internet-Draft           DNS Push Notifications               March 2018
    the server MUST echo back the MESSAGE ID value unchanged.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS Opcode is the DSO Opcode (tentatively
-   6).  The four count fields MUST be zero, and the corresponding four
-   sections MUST be empty (i.e., absent).
+   specification [DSO].  The DNS Opcode is the DSO Opcode.  The four
+   count fields MUST be zero, and the corresponding four sections MUST
+   be empty (i.e., absent).
 
    The DSO-TYPE is RECONFIRM (tentatively 0x43).  The DSO-LENGTH is the
    length of the data that follows, which specifies the name, type,
@@ -1361,7 +1361,7 @@ Internet-Draft           DNS Push Notifications               March 2018
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |             ARCOUNT (MUST BE ZERO)            |   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-     |    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
+     |              DSO-TYPE = RECONFIRM             |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
      |   DSO-LENGTH (number of octets in DSO-DATA)   |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -1664,15 +1664,15 @@ Internet-Draft           DNS Push Notifications               March 2018
 
 8.  IANA Considerations
 
-   This document defines the service name: "_dns-push-tls._tcp".
-   It is only applicable for the TCP protocol.
-   This name is to be published in the IANA Registry Service Types
-   [RFC6335][ST].
+   This document defines a new service name to be published in the IANA
+   Registry Service Types [RFC6335][ST] that is only applicable for the
+   TCP protocol.
 
-   This document defines four DNS Stateful Operations TLV types:
-   SUBSCRIBE with (tentative) value 0x40 (64), PUSH with (tentative)
-   value 0x41 (65), UNSUBSCRIBE with (tentative) value 0x42 (66), and
-   RECONFIRM with (tentative) value 0x43 (67).
+   This document also defines four new DNS Stateful Operation TLV types
+   to be recorded in the IANA DSO Type Code Registry.
+
+
+
 
 
 
@@ -1681,6 +1681,23 @@ Pusateri & Cheshire    Expires September 19, 2018              [Page 30]
 
 Internet-Draft           DNS Push Notifications               March 2018
 
+
+   +-----------------------------+----------------------+--------------+
+   | Name                        |        Value         | Definition   |
+   +-----------------------------+----------------------+--------------+
+   | DNS Push Notifcation        | "_dns-push-tls._tcp" | Section 6.1  |
+   | Service Type                |                      |              |
+   | SUBSCRIBE                   |   TBA (tentatively   | Section 6.2  |
+   |                             |        0x40)         |              |
+   | PUSH                        |   TBA (tentatively   | Section 6.3. |
+   |                             |        0x41)         | 1            |
+   | UNSUBSCRIBE                 |   TBA (tentatively   | Section 6.4  |
+   |                             |        0x42)         |              |
+   | RECONFIRM                   |   TBA (tentatively   | Section 6.5. |
+   |                             |        0x43)         | 1            |
+   +-----------------------------+----------------------+--------------+
+
+                         Table 1: IANA Assignments
 
 9.  Acknowledgements
 
@@ -1713,6 +1730,14 @@ Internet-Draft           DNS Push Notifications               March 2018
               STD 13, RFC 1034, DOI 10.17487/RFC1034, November 1987,
               <https://www.rfc-editor.org/info/rfc1034>.
 
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 31]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    [RFC1035]  Mockapetris, P., "Domain names - implementation and
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/info/rfc1035>.
@@ -1726,17 +1751,6 @@ Internet-Draft           DNS Push Notifications               March 2018
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-
-
-
-Pusateri & Cheshire    Expires September 19, 2018              [Page 31]
-
-Internet-Draft           DNS Push Notifications               March 2018
-
 
    [RFC2136]  Vixie, P., Ed., Thomson, S., Rekhter, Y., and J. Bound,
               "Dynamic Updates in the Domain Name System (DNS UPDATE)",
@@ -1769,6 +1783,17 @@ Internet-Draft           DNS Push Notifications               March 2018
               Considerations", BCP 42, RFC 6895, DOI 10.17487/RFC6895,
               April 2013, <https://www.rfc-editor.org/info/rfc6895>.
 
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 32]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    [RFC7673]  Finch, T., Miller, M., and P. Saint-Andre, "Using DNS-
               Based Authentication of Named Entities (DANE) TLSA Records
               with SRV Records", RFC 7673, DOI 10.17487/RFC7673, October
@@ -1786,13 +1811,6 @@ Internet-Draft           DNS Push Notifications               March 2018
    [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
               Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
               <https://www.rfc-editor.org/info/rfc8446>.
-
-
-
-Pusateri & Cheshire    Expires September 19, 2018              [Page 32]
-
-Internet-Draft           DNS Push Notifications               March 2018
-
 
    [ST]       "Service Name and Transport Protocol Port Number
               Registry", <http://www.iana.org/assignments/
@@ -1824,6 +1842,14 @@ Internet-Draft           DNS Push Notifications               March 2018
               Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
               December 2005, <https://www.rfc-editor.org/info/rfc4287>.
 
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 33]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    [RFC4953]  Touch, J., "Defending TCP Against Spoofing Attacks",
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
@@ -1841,14 +1867,6 @@ Internet-Draft           DNS Push Notifications               March 2018
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
               <https://www.rfc-editor.org/info/rfc6762>.
-
-
-
-
-Pusateri & Cheshire    Expires September 19, 2018              [Page 33]
-
-Internet-Draft           DNS Push Notifications               March 2018
-
 
    [RFC6763]  Cheshire, S. and M. Krochmal, "DNS-Based Service
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
@@ -1878,6 +1896,16 @@ Internet-Draft           DNS Push Notifications               March 2018
               Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
               2016, <https://www.rfc-editor.org/info/rfc7858>.
 
+
+
+
+
+
+Pusateri & Cheshire    Expires September 19, 2018              [Page 34]
+
+Internet-Draft           DNS Push Notifications               March 2018
+
+
    [RFC8010]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Encoding and Transport", STD 92, RFC 8010,
               DOI 10.17487/RFC8010, January 2017,
@@ -1896,15 +1924,6 @@ Internet-Draft           DNS Push Notifications               March 2018
    [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
               Internet Protocol Journal, Cisco Systems, Volume 9,
               Number 4, December 2006.
-
-
-
-
-
-Pusateri & Cheshire    Expires September 19, 2018              [Page 34]
-
-Internet-Draft           DNS Push Notifications               March 2018
-
 
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
@@ -1928,25 +1947,6 @@ Authors' Addresses
 
    Phone: +1 408 974 3207
    Email: cheshire@apple.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -361,7 +361,7 @@
 <?rfc needLines="48" ?>
      </section>
 
-     <section title="DNS Push Notification SUBSCRIBE">
+     <section title="DNS Push Notification SUBSCRIBE" anchor="subscribe">
        <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <xref target="DSO">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x40).</t>
 
        <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
@@ -375,10 +375,10 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (tentatively 6).
+         The DNS Opcode is the DSO Opcode.
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
-         <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
+         <t>The DSO-TYPE is SUBSCRIBE.
          The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
          the name, type, and class of the record(s) being sought.</t>
 
@@ -398,7 +398,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
+|              DSO-TYPE = SUBSCRIBE             |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -514,7 +514,7 @@
      <section title="DNS Push Notification Updates">
        <t>Once a subscription has been successfully established, the server generates PUSH messages to send to the client as appropriate. In the case that the answer set was non-empty at the moment the subscription was established, an initial PUSH message will be sent immediately following the SUBSCRIBE Response. Subsequent changes to the answer set are then communicated to the client in subsequent PUSH messages.</t>
 
-       <section title="PUSH Message">
+       <section title="PUSH Message" anchor="push">
 
          <t>A PUSH message begins with the standard
          <xref target="DSO">DSO 12-byte header</xref>, followed by the PUSH TLV.
@@ -524,7 +524,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (tentatively 6).
+         The DNS Opcode is the DSO Opcode.
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is PUSH (tentatively 0x41).
@@ -571,7 +571,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|      DSO-TYPE = PUSH (tentatively 0x41)       |
+|                DSO-TYPE = PUSH                |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -608,7 +608,7 @@
        </section>
      </section>
 
-     <section title="DNS Push Notification UNSUBSCRIBE">
+     <section title="DNS Push Notification UNSUBSCRIBE" anchor="unsubscribe">
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded in a
        <xref target="DSO">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</t>
 
@@ -624,10 +624,10 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (tentatively 6).
+         The DNS Opcode is the DSO Opcode.
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
-         <t>In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).
+         <t>In the UNSUBSCRIBE TLV the DSO-TYPE is UNSUBSCRIBE.
          The DSO-LENGTH is 2 octets.</t>
 
          <t>The DSO-DATA contains the MESSAGE ID field of the value given in the ID field of an active SUBSCRIBE request.
@@ -656,7 +656,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+|             DSO-TYPE = UNSUBSCRIBE            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |              DSO-LENGTH (2 octets)            |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -672,7 +672,7 @@
 
        <t>If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
 
-       <section title="RECONFIRM Request">
+       <section title="RECONFIRM Request" anchor="reconfirm">
 
          <t>A RECONFIRM request begins with the standard
          <xref target="DSO">DSO 12-byte header</xref>, followed by the RECONFIRM TLV.
@@ -682,7 +682,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (tentatively 6).
+         The DNS Opcode is the DSO Opcode.
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is RECONFIRM (tentatively 0x43).
@@ -705,7 +705,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             ARCOUNT (MUST BE ZERO)            |   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
+|              DSO-TYPE = RECONFIRM             |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |   DSO-LENGTH (number of octets in DSO-DATA)   |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -838,14 +838,28 @@
    </section>
 
    <section title="IANA Considerations" anchor="IANA">
-     <t>This document defines the service name: <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx>.<vspace />
-     It is only applicable for the TCP protocol.<vspace />
-     This name is to be published in the IANA Registry Service Types <xref target="RFC6335"/><xref target="ST"/>.</t>
-     <t>This document defines four DNS Stateful Operations TLV types:
-     SUBSCRIBE with (tentative) value 0x40 (64),
-     PUSH with (tentative) value 0x41 (65),
-     UNSUBSCRIBE with (tentative) value 0x42 (66), and
-     RECONFIRM with (tentative) value 0x43 (67).</t>
+     <t>This document defines a new service name to be published in the IANA Registry Service Types <xref target="RFC6335"/><xref target="ST"/> that is only applicable for the TCP protocol.</t>
+     <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>
+     <texttable title="IANA Assignments" anchor="iana_table">
+       <ttcol align="left">Name</ttcol>
+       <ttcol align="center">Value</ttcol>
+       <ttcol align="left">Definition</ttcol>
+       <c>DNS Push Notifcation Service Type</c>
+       <c><spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx></c>
+       <c><xref target="discovery"/></c>
+       <c>SUBSCRIBE</c>
+       <c>TBA (tentatively 0x40)</c>
+       <c><xref target="subscribe"/></c>
+       <c>PUSH</c>
+       <c>TBA (tentatively 0x41)</c>
+       <c><xref target="push"/></c>
+       <c>UNSUBSCRIBE</c>
+       <c>TBA (tentatively 0x42)</c>
+       <c><xref target="unsubscribe"/></c>
+       <c>RECONFIRM</c>
+       <c>TBA (tentatively 0x43)</c>
+       <c><xref target="reconfirm"/></c>
+     </texttable>
    </section>
 
    <section title="Acknowledgements" anchor="Acknowledgements">
