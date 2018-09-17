@@ -475,20 +475,20 @@ Internet-Draft           DNS Push Notifications               March 2018
 
    A typical DNS Push Notification client will immediately issue a DSO
    Keepalive operation to request a session timeout or keepalive
-   interval longer than the the 15-second defaults, but this is not
+   interval longer than the the 15-second default, but this is not
    required.  A DNS Push Notification client MAY issue other requests on
    the session first, and only issue a DSO Keepalive operation later if
-   it determines that to be necessary.
+   it determines that to be necessary.  However, Push Notification
+   subscriptions can also be used to establish the DSO session.
 
-   Once the session is made, the client may then add and remove Push
-   Notification subscriptions.  In accordance with the current set of
-   active subscriptions the server sends relevant asynchronous Push
-   Notifications to the client.  Note that a client MUST be prepared to
-   receive (and silently ignore) Push Notifications for subscriptions it
-   has previously removed, since there is no way to prevent the
-   situation where a Push Notification is in flight from server to
-   client while the client's UNSUBSCRIBE message cancelling that
-   subscription is simultaneously in flight from client to server.
+   In accordance with the current set of active subscriptions, the
+   server sends relevant asynchronous Push Notifications to the client.
+   Note that a client MUST be prepared to receive (and silently ignore)
+   Push Notifications for subscriptions it has previously removed, since
+   there is no way to prevent the situation where a Push Notification is
+   in flight from server to client while the client's UNSUBSCRIBE
+   message cancelling that subscription is simultaneously in flight from
+   client to server.
 
 
 
@@ -593,15 +593,7 @@ Internet-Draft           DNS Push Notifications               March 2018
        "_dns-push-tls._tcp.<zone>", where <zone> is the owner name of
        the discovered SOA record.
 
-   6.  If the zone in question does not offer DNS Push Notifications
-       then SRV record MUST NOT exist, and the SRV query will return a
-       negative answer.  (The "_dns-push-tls._tcp" service type is
-       allocated by IANA for this purpose, and, like any allocated IANA
-       service type, MUST NOT be used for other services.  Other
-       services that require an IANA service type should use a unique
-       service type allocated by IANA for that service [RFC6335][ST].)
-
-   7.  If the zone in question is set up to offer DNS Push Notifications
+   6.  If the zone in question is set up to offer DNS Push Notifications
        then this SRV record MUST exist.  (If this SRV record does not
        exist then the zone is not correctly configured for DNS Push
        Notifications as specified in this document.)  The SRV "target"
@@ -610,6 +602,14 @@ Internet-Draft           DNS Push Notifications               March 2018
        in the SRV record "port" field.  The address(es) of the target
        host MAY be included in the Additional Section, however, the
        address records SHOULD be authenticated before use as described
+       below in Section 7.2 and in the specification for using DANE TLSA
+       Records with SRV Records [RFC7673], if applicable.
+
+   7.  More than one SRV record may be returned.  In this case, the
+       "priority" and "weight" values in the returned SRV records are
+       used to determine the order in which to contact the servers for
+       subscription requests.  As described in the SRV specification
+       [RFC2782], the server with the lowest "priority" is first
 
 
 
@@ -618,14 +618,6 @@ Pusateri & Cheshire    Expires September 19, 2018              [Page 11]
 Internet-Draft           DNS Push Notifications               March 2018
 
 
-       below in Section 7.2 and in the specification for using DANE TLSA
-       Records with SRV Records [RFC7673].
-
-   8.  More than one SRV record may be returned.  In this case, the
-       "priority" and "weight" values in the returned SRV records are
-       used to determine the order in which to contact the servers for
-       subscription requests.  As described in the SRV specification
-       [RFC2782], the server with the lowest "priority" is first
        contacted.  If more than one server has the same "priority", the
        "weight" indicates the weighted probability that the client
        should contact that server.  Higher weights have higher
@@ -643,6 +635,14 @@ Internet-Draft           DNS Push Notifications               March 2018
    records were set to reasonable values, repeated application of this
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
+
+
+
+
+
+
+
+
 
 
 
@@ -760,10 +760,10 @@ Internet-Draft           DNS Push Notifications               March 2018
 
                         Figure 1: SUBSCRIBE Request
 
-   The DSO-DATA for a SUBSCRIBE request MUST contain exactly one
-   subscribe TLV.  Since SUBSCRIBE requests are sent over TCP, multiple
-   SUBSCRIBE request messages can be concatenated in a single TCP stream
-   and packed efficiently into TCP segments.
+   The DSO-DATA for a SUBSCRIBE request MUST contain exactly one NAME,
+   Type, and CLASS.  Since SUBSCRIBE requests are sent over TCP,
+   multiple SUBSCRIBE request messages can be concatenated in a single
+   TCP stream and packed efficiently into TCP segments.
 
    If accepted, the subscription will stay in effect until the client
    cancels the subscription using UNSUBSCRIBE or until the DSO session
@@ -964,11 +964,10 @@ Internet-Draft           DNS Push Notifications               March 2018
       repaired at any time, the retry delay should not be set too high.
       By default, a value of 5 minutes is RECOMMENDED.
 
-      For RCODE = 11 (DNS Push SUBSCRIBE operation not supported), which
-      occurs on a server that doesn't implement DNS Push Notifications,
-      it is unlikely that the server will begin supporting DNS Push
-      Notifications in the next few minutes, so the retry delay SHOULD
-      be one hour.
+      For RCODE = 11 (DSOTYPENI), which occurs on a server that doesn't
+      implement DNS Push Notifications, it is unlikely that the server
+      will begin supporting DNS Push Notifications in the next few
+      minutes, so the retry delay SHOULD be one hour.
 
       For other RCODE values, the retry delay should be set by the
       server as appropriate for that error condition.  By default, a
@@ -985,6 +984,7 @@ Internet-Draft           DNS Push Notifications               March 2018
    Operation TLV instructing the client to close the session, as
    described in the DSO specification [DSO].  Clients MUST correctly
    handle both cases.
+
 
 
 
