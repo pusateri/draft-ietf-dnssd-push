@@ -728,10 +728,10 @@
 <a href="#rfc.section.6.3.1">6.3.1.</a> <a href="#push" id="push">PUSH Message</a>
 </h1>
 <p id="rfc.section.6.3.1.p.1">A PUSH message begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the PUSH TLV.  A PUSH message is illustrated in <a href="#push_msg" class="xref">Figure 2</a>.</p>
-<p id="rfc.section.6.3.1.p.2">The MESSAGE ID field MUST be zero. There is no client response to a PUSH message.</p>
-<p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.3.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero. There is no client response to a PUSH message.</p>
+<p id="rfc.section.6.3.1.p.3">The other header fields MUST also be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.3.1.p.4">The DSO-TYPE is PUSH (tentatively 0x41).  The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the changes being communicated.</p>
-<p id="rfc.section.6.3.1.p.5">The DSO-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains no Update records, this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136" class="xref">DNS Update</a> messages, namely: </p>
+<p id="rfc.section.6.3.1.p.5">The DSO-DATA contains one or more Update records.  A PUSH Message MUST contain at least one Update record.  If a PUSH Message is received that contains zero Update records, this is a fatal error, and the receiver MUST immediately terminate the connection with a TCP RST (or equivalent for other protocols).  The Update records are formatted in the customary way for Resource Records in DNS messages.  Update records in a PUSH Message are interpreted according to the same rules as for <a href="#RFC2136" class="xref">DNS Update</a> messages, namely: </p>
 
 <ul class="empty">
 <li>Delete all RRsets from a name:<br> TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</li>
@@ -747,7 +747,7 @@
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
+|           MESSAGE ID (MUST BE ZERO)           |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |QR|  Opcode   |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -788,7 +788,7 @@
 <h1 id="rfc.section.6.4">
 <a href="#rfc.section.6.4">6.4.</a> <a href="#unsubscribe" id="unsubscribe">DNS Push Notification UNSUBSCRIBE</a>
 </h1>
-<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded in a <a href="#DSO" class="xref">DSO</a> message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</p>
+<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a <a href="#DSO" class="xref">DSO</a> unidirectional message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</p>
 <p id="rfc.section.6.4.p.2">A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.4.1">
 <a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Request</h1>
@@ -804,7 +804,7 @@
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
+|           MESSAGE ID (MUST BE ZERO)           |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |QR|  Opcode   |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |

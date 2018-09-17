@@ -1024,10 +1024,11 @@ Internet-Draft           DNS Push Notifications               March 2018
    A PUSH message begins with the standard DSO 12-byte header [DSO],
    followed by the PUSH TLV.  A PUSH message is illustrated in Figure 2.
 
-   The MESSAGE ID field MUST be zero.  There is no client response to a
-   PUSH message.
+   In accordance with the definition of DSO unidirectional messages, the
+   MESSAGE ID field MUST be zero.  There is no client response to a PUSH
+   message.
 
-   The other header fields MUST be set as described in the DSO
+   The other header fields MUST also be set as described in the DSO
    specification [DSO].  The DNS Opcode is the DSO Opcode.  The four
    count fields MUST be zero, and the corresponding four sections MUST
    be empty (i.e., absent).
@@ -1038,9 +1039,9 @@ Internet-Draft           DNS Push Notifications               March 2018
 
    The DSO-DATA contains one or more Update records.  A PUSH Message
    MUST contain at least one Update record.  If a PUSH Message is
-   received that contains no Update records, this is a fatal error, and
-   the receiver MUST immediately terminate the connection with a TCP RST
-   (or equivalent for other protocols).  The Update records are
+   received that contains zero Update records, this is a fatal error,
+   and the receiver MUST immediately terminate the connection with a TCP
+   RST (or equivalent for other protocols).  The Update records are
    formatted in the customary way for Resource Records in DNS messages.
    Update records in a PUSH Message are interpreted according to the
    same rules as for DNS Update [RFC2136] messages, namely:
@@ -1057,7 +1058,6 @@ Internet-Draft           DNS Push Notifications               March 2018
       TYPE, RDLENGTH and RDATA specifies the RR being deleted.
 
       Add to an RRset:
-      TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.
 
 
 
@@ -1066,10 +1066,12 @@ Pusateri & Cheshire    Expires September 19, 2018              [Page 19]
 Internet-Draft           DNS Push Notifications               March 2018
 
 
+      TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.
+
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     |                  MESSAGE ID                   |   \
+     |           MESSAGE ID (MUST BE ZERO)           |   \
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |QR|  Opcode   |         Z          |   RCODE   |    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -1112,8 +1114,6 @@ Internet-Draft           DNS Push Notifications               March 2018
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
    request was not ANY (255) then the TYPE of the record must match the
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
-   request was not ANY (255) then the CLASS of the record must match the
-   CLASS given in the SUBSCRIBE request.  If a matching active
 
 
 
@@ -1122,6 +1122,8 @@ Pusateri & Cheshire    Expires September 19, 2018              [Page 20]
 Internet-Draft           DNS Push Notifications               March 2018
 
 
+   request was not ANY (255) then the CLASS of the record must match the
+   CLASS given in the SUBSCRIBE request.  If a matching active
    subscription on that session is not found, then that individual
    record addition/deletion is silently ignored.  Processing of other
    additions and deletions in this message is not affected.  The DSO
@@ -1171,8 +1173,6 @@ Internet-Draft           DNS Push Notifications               March 2018
 
 
 
-
-
 Pusateri & Cheshire    Expires September 19, 2018              [Page 21]
 
 Internet-Draft           DNS Push Notifications               March 2018
@@ -1182,10 +1182,10 @@ Internet-Draft           DNS Push Notifications               March 2018
 
    To cancel an individual subscription without closing the entire DSO
    session, the client sends an UNSUBSCRIBE message over the established
-   DSO session to the server.  The UNSUBSCRIBE message is encoded in a
-   DSO [DSO] message.  This specification defines a DSO TLV for DNS Push
-   Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type
-   Code 0x42).
+   DSO session to the server.  The UNSUBSCRIBE message is encoded as a
+   DSO [DSO] unidirectional message.  This specification defines a DSO
+   TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses
+   (tentatively DSO Type Code 0x42).
 
    A server MUST NOT initiate an UNSUBSCRIBE request.  If a server does
    send an UNSUBSCRIBE request over a DSO session initiated by a client,
@@ -1237,7 +1237,7 @@ Internet-Draft           DNS Push Notifications               March 2018
                                       1  1  1  1  1  1
         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-      |                  MESSAGE ID                   |   \
+      |           MESSAGE ID (MUST BE ZERO)           |   \
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
       |QR|  Opcode   |         Z          |   RCODE   |    |
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |

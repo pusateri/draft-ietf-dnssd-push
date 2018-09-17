@@ -520,9 +520,11 @@
          <xref target="DSO">DSO 12-byte header</xref>, followed by the PUSH TLV.
          A PUSH message is illustrated in <xref target="push_msg"/>.</t>
 
-         <t>The MESSAGE ID field MUST be zero. There is no client response to a PUSH message.</t>
+         <t>In accordance with the definition of DSO unidirectional
+         messages, the MESSAGE ID field MUST be zero. There is no client
+         response to a PUSH message.</t>
 
-         <t>The other header fields MUST be set as described in the
+         <t>The other header fields MUST also be set as described in the
          <xref target="DSO">DSO specification</xref>.
          The DNS Opcode is the DSO Opcode.
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
@@ -533,7 +535,7 @@
 
          <t>The DSO-DATA contains one or more Update records.
          A PUSH Message MUST contain at least one Update record.
-         If a PUSH Message is received that contains no Update records,
+         If a PUSH Message is received that contains zero Update records,
          this is a fatal error, and the receiver MUST immediately terminate
          the connection with a TCP RST (or equivalent for other protocols).
          The Update records are formatted in the customary way for Resource
@@ -559,7 +561,7 @@
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
+|           MESSAGE ID (MUST BE ZERO)           |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |QR|  Opcode   |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -609,8 +611,8 @@
      </section>
 
      <section title="DNS Push Notification UNSUBSCRIBE" anchor="unsubscribe">
-       <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded in a
-       <xref target="DSO">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</t>
+       <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a
+       <xref target="DSO">DSO</xref> unidirectional message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</t>
 
        <t>A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
@@ -644,7 +646,7 @@
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
+|           MESSAGE ID (MUST BE ZERO)           |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |QR|  Opcode   |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
