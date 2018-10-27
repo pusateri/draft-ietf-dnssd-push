@@ -214,7 +214,15 @@
 
      <t>DNS Updates and DNS Push Notifications may be handled on different ports on the same target host, in which case they are not considered to be the "same server" for the purposes of this specification, and communications with these two ports are handled independently.</t>
 
-     <t>Standard DNS Queries MAY be sent over a DNS Push Notification connection, provided that these are queries for names falling within the server's zone (the &lt;zone&gt; in the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record). The RD (Recursion Desired) bit MUST be zero. If a query is received with the RD bit set, matching records for names falling within the server's zones should be returned with the RA (Recursion Available) bit clear. If the query is for a name not in the server's zone, an error with RCODE NOTAUTH (Not Authoritative) should be returned.</t>
+     <t>Standard DNS Queries MAY be sent over a DNS Push Notification
+   connection.   For any zone for which the server is authoritative, it
+   MUST respond authoritatively for queries on names falling within
+   that zone (e.g., the &lt;zone&gt; in the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV
+   record) both for DNS Push Notification queries and for normal DNS
+   queries.   For names for which the server is acting as a caching
+   resolver, e.g. when the server is the local resolver, for any query
+   for which it supports DNS Push Notifications, it MUST also support
+   standard queries.</t>
 
      <t>DNS Push Notification clients are NOT required to implement DNS Update Prerequisite processing. Prerequisites are used to perform tentative atomic test-and-set type operations when a client updates records on a server, and that concept has no applicability when it comes to an authoritative server unilaterally informing a client of changes to DNS records.</t>
 
@@ -222,7 +230,7 @@
 
      <t>DNS Push Notifications impose less load on the responding server than rapid polling would, but Push Notifications do still have a cost, so DNS Push Notification clients must not recklessly create an excessive number of Push Notification subscriptions. Specifically:</t>
 
-     <t>(a) A subscription should only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display). Implementations MAY want to implement idle timeouts, so that if the user ceases interacting with the device, the display showing the result of the DNS Push Notification subscription is automatically dismissed after a certain period of inactivity. For example, if a user presses the "Print" button on their smartphone, and then leaves the phone showing the printer discovery screen until the phone goes to sleep, then the printer discovery screen should be automatically dismissed as the device goes to sleep. If the user does still intend to print, this will require them to press the "Print" button again when they wake their phone up.</t>
+     <t>(a) A subscription should only be active when there is a valid reason to need live data (for example, an on-screen display is currently showing the results to the user) and the subscription SHOULD be cancelled as soon as the need for that data ends (for example, when the user dismisses that display). Implementations may want to implement idle timeouts, so that if the user ceases interacting with the device, the subscription is cancelled.</t>
 
      <t>(b) A DNS Push Notification client SHOULD NOT routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
@@ -252,7 +260,7 @@
    </section>
 
    <section title="State Considerations">
-     <t>Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a session to a DNS server, each subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous sessions to alternate DNS servers that support DNS Push Notifications for the zone and distribute subscriptions at the client's discretion. In this way, both clients and servers can react to resource constraints. Token bucket rate limiting schemes are also effective in providing fairness by a server across numerous client requests.</t>
+     <t>Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a session to a DNS server, each subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous sessions to alternate DNS servers that support DNS Push Notifications for the zone and distribute subscriptions at the client's discretion. In this way, both clients and servers can react to resource constraints.</t>
 <?rfc needLines="35" ?>
    </section>
 
@@ -264,17 +272,9 @@
      <xref target="DSO">DNS Stateful Operations specification</xref>.
      Those details are not repeated here.</t>
 
-     <t>DNS Push Notification clients and servers MUST support DSO,
-     but (as stated in the <xref target="DSO">DSO specification</xref>)
-     the server SHOULD NOT issue any DSO
-     messages until after the client has first initiated an acknowledged DSO message of its own.
+     <t>DNS Push Notification clients and servers MUST support DSO.
      A single server can support DNS Queries, DNS Updates, and DNS Push
-     Notifications (using DSO) on the same TCP port, and
-     until the client has sent at least one DSO message,
-     the server does not know what kind of client has connected to it.
-     Once the client has indicated willingness to use DSO
-     by sending one of its own, either side of the session may
-     then initiate further DSO messages at any time.</t>
+     Notifications (using DSO) on the same TCP port.</t>
 
      <t>A DNS Push Notification exchange begins with the client discovering the appropriate server,
      using the procedure described in <xref target="discovery"/>, and then making a TLS/TCP connection to it.</t>
@@ -809,7 +809,7 @@
    </section>
 
    <section title="Security Considerations" anchor="Security">
-     <t>The Strict Privacy Usage Profile for DNS over TLS is strongly recommended for DNS Push Notifications as defined in <xref target="RFC8310">"Usage Profiles for DNS over TLS and DNS over DTLS"</xref>. The Opportunistic Privacy Usage Profile is permissible as a way to support incremental deployment of security capabilities. Cleartext connections for DNS Push Notifications are not permissible.</t>
+     <t>The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS Push Notifications as defined in <xref target="RFC8310">"Usage Profiles for DNS over TLS and DNS over DTLS"</xref>. Cleartext connections for DNS Push Notifications are not permissible. Since this is a new protocol, transistion mechanisms from the Opportunistic Privacy profile are deemed unnecessary.</t>
 
      <t>DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
 

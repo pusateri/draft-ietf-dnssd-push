@@ -260,14 +260,14 @@ Internet-Draft           DNS Push Notifications           September 2018
    communications with these two ports are handled independently.
 
    Standard DNS Queries MAY be sent over a DNS Push Notification
-   connection, provided that these are queries for names falling within
-   the server's zone (the <zone> in the "_dns-push-tls._tcp.<zone>" SRV
-   record).  The RD (Recursion Desired) bit MUST be zero.  If a query is
-   received with the RD bit set, matching records for names falling
-   within the server's zones should be returned with the RA (Recursion
-   Available) bit clear.  If the query is for a name not in the server's
-   zone, an error with RCODE NOTAUTH (Not Authoritative) should be
-   returned.
+   connection.  For any zone for which the server is authoritative, it
+   MUST respond authoritatively for queries on names falling within that
+   zone (e.g., the <zone> in the "_dns-push-tls._tcp.<zone>" SRV record)
+   both for DNS Push Notification queries and for normal DNS queries.
+   For names for which the server is acting as a caching resolver, e.g.
+   when the server is the local resolver, for any query for which it
+   supports DNS Push Notifications, it MUST also support standard
+   queries.
 
    DNS Push Notification clients are NOT required to implement DNS
    Update Prerequisite processing.  Prerequisites are used to perform
@@ -303,17 +303,9 @@ Internet-Draft           DNS Push Notifications           September 2018
    to need live data (for example, an on-screen display is currently
    showing the results to the user) and the subscription SHOULD be
    cancelled as soon as the need for that data ends (for example, when
-   the user dismisses that display).  Implementations MAY want to
+   the user dismisses that display).  Implementations may want to
    implement idle timeouts, so that if the user ceases interacting with
-   the device, the display showing the result of the DNS Push
-   Notification subscription is automatically dismissed after a certain
-   period of inactivity.  For example, if a user presses the "Print"
-   button on their smartphone, and then leaves the phone showing the
-   printer discovery screen until the phone goes to sleep, then the
-   printer discovery screen should be automatically dismissed as the
-   device goes to sleep.  If the user does still intend to print, this
-   will require them to press the "Print" button again when they wake
-   their phone up.
+   the device, the subscription is cancelled.
 
    (b) A DNS Push Notification client SHOULD NOT routinely keep a DNS
    Push Notification subscription active 24 hours a day, 7 days a week,
@@ -330,6 +322,14 @@ Internet-Draft           DNS Push Notifications           September 2018
    and then if needed in the future, open a new session when required.
    Alternatively, a client MAY speculatively keep an idle session open
    for some time, subject to the constraint that it MUST NOT keep a
+   session open that has been idle for more than the session's idle
+   timeout (15 seconds by default).
+
+
+
+
+
+
 
 
 
@@ -337,9 +337,6 @@ Pusateri & Cheshire      Expires March 21, 2019                 [Page 6]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
-
-   session open that has been idle for more than the session's idle
-   timeout (15 seconds by default).
 
 4.  Transport
 
@@ -389,6 +386,9 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
+
+
+
 Pusateri & Cheshire      Expires March 21, 2019                 [Page 7]
 
 Internet-Draft           DNS Push Notifications           September 2018
@@ -407,8 +407,8 @@ Internet-Draft           DNS Push Notifications           September 2018
    sessions to alternate DNS servers that support DNS Push Notifications
    for the zone and distribute subscriptions at the client's discretion.
    In this way, both clients and servers can react to resource
-   constraints.  Token bucket rate limiting schemes are also effective
-   in providing fairness by a server across numerous client requests.
+   constraints.
+
 
 
 
@@ -458,16 +458,9 @@ Internet-Draft           DNS Push Notifications           September 2018
    For details of the DSO message format refer to the DNS Stateful
    Operations specification [DSO].  Those details are not repeated here.
 
-   DNS Push Notification clients and servers MUST support DSO, but (as
-   stated in the DSO specification [DSO]) the server SHOULD NOT issue
-   any DSO messages until after the client has first initiated an
-   acknowledged DSO message of its own.  A single server can support DNS
-   Queries, DNS Updates, and DNS Push Notifications (using DSO) on the
-   same TCP port, and until the client has sent at least one DSO
-   message, the server does not know what kind of client has connected
-   to it.  Once the client has indicated willingness to use DSO by
-   sending one of its own, either side of the session may then initiate
-   further DSO messages at any time.
+   DNS Push Notification clients and servers MUST support DSO.  A single
+   server can support DNS Queries, DNS Updates, and DNS Push
+   Notifications (using DSO) on the same TCP port.
 
    A DNS Push Notification exchange begins with the client discovering
    the appropriate server, using the procedure described in Section 6.1,
@@ -489,6 +482,13 @@ Internet-Draft           DNS Push Notifications           September 2018
    in flight from server to client while the client's UNSUBSCRIBE
    message cancelling that subscription is simultaneously in flight from
    client to server.
+
+
+
+
+
+
+
 
 
 
@@ -1572,12 +1572,12 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 7.  Security Considerations
 
-   The Strict Privacy Usage Profile for DNS over TLS is strongly
-   recommended for DNS Push Notifications as defined in "Usage Profiles
-   for DNS over TLS and DNS over DTLS" [RFC8310].  The Opportunistic
-   Privacy Usage Profile is permissible as a way to support incremental
-   deployment of security capabilities.  Cleartext connections for DNS
-   Push Notifications are not permissible.
+   The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS
+   Push Notifications as defined in "Usage Profiles for DNS over TLS and
+   DNS over DTLS" [RFC8310].  Cleartext connections for DNS Push
+   Notifications are not permissible.  Since this is a new protocol,
+   transistion mechanisms from the Opportunistic Privacy profile are
+   deemed unnecessary.
 
    DNSSEC is RECOMMENDED for the authentication of DNS Push Notification
    servers.  TLS alone does not provide complete security.  TLS
