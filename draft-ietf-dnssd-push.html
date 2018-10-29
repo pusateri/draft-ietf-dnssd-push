@@ -983,22 +983,34 @@
 <a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a>
 </h1>
 <p id="rfc.section.8.p.1">This document defines a new service name to be published in the IANA Registry Service Types <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#ST" class="xref">[ST]</a> that is only applicable for the TCP protocol.</p>
-<p id="rfc.section.8.p.2">This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</p>
 <div id="rfc.table.1"></div>
-<div id="iana_table"></div>
+<div id="iana_service_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
-<caption>IANA Assignments</caption>
+<caption>IANA Service Type Assignments</caption>
+<thead><tr>
+<th class="left">Name</th>
+<th class="center">Port</th>
+<th class="center">Value</th>
+<th class="left">Definition</th>
+</tr></thead>
+<tbody><tr>
+<td class="left">DNS Push Notification Service Type</td>
+<td class="center">None</td>
+<td class="center"><samp>_dns&#8209;push&#8209;tls._tcp</samp></td>
+<td class="left"><a href="#discovery" class="xref">Section 6.1</a></td>
+</tr></tbody>
+</table>
+<p id="rfc.section.8.p.2">This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</p>
+<div id="rfc.table.2"></div>
+<div id="iana_tlv_table"></div>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+<caption>IANA DSO TLV Type Code Assignments</caption>
 <thead><tr>
 <th class="left">Name</th>
 <th class="center">Value</th>
 <th class="left">Definition</th>
 </tr></thead>
 <tbody>
-<tr>
-<td class="left">DNS Push Notification Service Type</td>
-<td class="center"><samp>_dns&#8209;push&#8209;tls._tcp</samp></td>
-<td class="left"><a href="#discovery" class="xref">Section 6.1</a></td>
-</tr>
 <tr>
 <td class="left">SUBSCRIBE</td>
 <td class="center">TBA (tentatively 0x40)</td>
@@ -1025,7 +1037,7 @@
 <a href="#rfc.section.9">9.</a> <a href="#Acknowledgements" id="Acknowledgements">Acknowledgements</a>
 </h1>
 <p id="rfc.section.9.p.1">The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field.</p>
-<p id="rfc.section.9.p.2">This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan.</p>
+<p id="rfc.section.9.p.2">This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan. Ted Lemon provided additional text that was greatly appreciated.</p>
 <h1 id="rfc.references">
 <a href="#rfc.references">10.</a> References</h1>
 <h1 id="rfc.references.1">

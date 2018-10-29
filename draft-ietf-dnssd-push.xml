@@ -887,20 +887,27 @@
 
      <section title="TLS Session Resumption">
        <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
-<?rfc needLines="9" ?>
+<?rfc needLines="23" ?>
      </section>
    </section>
 
    <section title="IANA Considerations" anchor="IANA">
      <t>This document defines a new service name to be published in the IANA Registry Service Types <xref target="RFC6335"/><xref target="ST"/> that is only applicable for the TCP protocol.</t>
-     <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>
-     <texttable title="IANA Assignments" anchor="iana_table">
-       <ttcol align="left">Name</ttcol>
+     <texttable title="IANA Service Type Assignments" anchor="iana_service_table">
+       <ttcol width="25%" align="left">Name</ttcol>
+       <ttcol align="center">Port</ttcol>
        <ttcol align="center">Value</ttcol>
        <ttcol align="left">Definition</ttcol>
        <c>DNS Push Notification Service Type</c>
+       <c>None</c>
        <c><spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx></c>
        <c><xref target="discovery"/></c>
+     </texttable>
+     <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>
+     <texttable title="IANA DSO TLV Type Code Assignments" anchor="iana_tlv_table">
+       <ttcol align="left">Name</ttcol>
+       <ttcol align="center">Value</ttcol>
+       <ttcol align="left">Definition</ttcol>
        <c>SUBSCRIBE</c>
        <c>TBA (tentatively 0x40)</c>
        <c><xref target="subscribe"/></c>
@@ -919,7 +926,7 @@
    <section title="Acknowledgements" anchor="Acknowledgements">
      <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field.</t>
 
-     <t>This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan.</t>
+     <t>This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan. Ted Lemon provided additional text that was greatly appreciated.</t>
 <?rfc needLines="15" ?>
    </section>
  </middle>
