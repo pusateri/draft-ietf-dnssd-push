@@ -353,7 +353,7 @@
 
         <t>
           <list style="numbers">
-            <t>The client begins the discovery by sending a DNS query to its  local resolver, with record type <xref target="RFC1035">SOA</xref> for the record name to which it wishes to subscribe. As an example, suppose the client wishes to subscribe to PTR records with the name _ipp._tcp.foo.example.com (to discover Internet Printing Protocol (IPP) printers <xref target="RFC8010"/> <xref target="RFC8011"/> being advertised at "foo.example.com"). The client begins by sending an SOA query for _ipp._tcp.foo.example.com to the local recursive resolver. The goal is to determine the server authoritative for the name _ipp._tcp.foo.example.com. The DNS zone containing the name _ipp._tcp.foo.example.com could be example.com, or foo.example.com, or _tcp.foo.example.com, or even _ipp._tcp.foo.example.com. The client does not know in advance where the closest enclosing zone cut occurs, which is why it uses the procedure described here to discover this information.</t>
+            <t>The client begins the discovery by sending a DNS query to its local resolver, with record type <xref target="RFC1035">SOA</xref> for the record name to which it wishes to subscribe. As an example, suppose the client wishes to subscribe to PTR records with the name _ipp._tcp.foo.example.com (to discover Internet Printing Protocol (IPP) printers <xref target="RFC8010"/> <xref target="RFC8011"/> being advertised at "foo.example.com"). The client begins by sending an SOA query for _ipp._tcp.foo.example.com to the local recursive resolver. The goal is to determine the server authoritative for the name _ipp._tcp.foo.example.com. The DNS zone containing the name _ipp._tcp.foo.example.com could be example.com, or foo.example.com, or _tcp.foo.example.com, or even _ipp._tcp.foo.example.com. The client does not know in advance where the closest enclosing zone cut occurs, which is why it uses the procedure described here to discover this information.</t>
 
             <t>If the requested SOA record exists, it will be returned in the Answer section with a NOERROR response code, and
             the client has succeeded in discovering the information it needs.
@@ -381,7 +381,7 @@
             The SRV <spanx style="verb">target</spanx> contains the name of the server providing DNS Push Notifications for the zone. The port number on which to contact the server is in the SRV record <spanx style="verb">port</spanx> field. The address(es) of the target host MAY be included in the Additional Section, however, the address records SHOULD be authenticated before use as described below in <xref target="tls_name_auth"/> and in
             <xref target="RFC7673">the specification for using DANE TLSA Records with SRV Records</xref>, if applicable.</t>
 
-            <t>More than one SRV record may be returned. In this case, the <spanx style="verb">priority</spanx> and <spanx style="verb">weight</spanx> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <xref target="RFC2782">the SRV specification</xref>, the server with the lowest <spanx style="verb">priority</spanx> is first contacted. If more than one server has the same <spanx style="verb">priority</spanx>, the <spanx style="verb">weight</spanx> indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected.
+            <t anchor="SRV">More than one SRV record may be returned. In this case, the <spanx style="verb">priority</spanx> and <spanx style="verb">weight</spanx> values in the returned SRV records are used to determine the order in which to contact the servers for subscription requests. As described in <xref target="RFC2782">the SRV specification</xref>, the server with the lowest <spanx style="verb">priority</spanx> is first contacted. If more than one server has the same <spanx style="verb">priority</spanx>, the <spanx style="verb">weight</spanx> indicates the weighted probability that the client should contact that server. Higher weights have higher probabilities of being selected.
             If a server is not willing to accept a subscription request,
             or is not reachable within a reasonable time, as determined by the client,
             then a subsequent server is to be contacted.</t>
@@ -491,21 +491,24 @@
          <c>NOERROR</c><c>0</c><c>SUBSCRIBE successful.</c>
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
-         <c>NXDOMAIN</c><c>3</c><c>NOT APPLICABLE. DNS Push Notification servers MUST NOT return NXDOMAIN errors in response to SUBSCRIBE requests.</c>
          <c>NOTIMP</c><c>4</c><c>Server does not implement DSO.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
          <c>DSOTYPENI</c><c>11</c><c>SUBSCRIBE operation not supported.</c>
          </texttable>
 
-         <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE value.</t>
+         <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a SUBSCRIBE Request. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any other RCODE value.</t>
 
 <?rfc needLines="30" ?>
          <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, that means
-         (a) the client is (at least partially) misconfigured,
-         (b) the server resources are exhausted, or
-         (c) there is some other unknown failure on the server.
-         In any case, the client shouldn't retry the subscription right away. Either end can terminate the session, but the client may want to try this subscription again, or it may have other successful subscriptions that it doesn't want to abandon. If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="DSO"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
+           <list style="letters">
+             <t>the client is (at least partially) misconfigured,</t>
+             <t>the server resources are exhausted, or</t>
+             <t>there is some other unknown failure on the server.</t>
+           </list>
+         In any case, the client shouldn't retry the subscription to this server right away. If multiple SRV records were returned as described in discovery <xref target="discovery"/>, <xref target="SRV"/>, a subsequent server can be tried immediately.</t>
+         <t>If the client has other successful subscriptions to this server, these subscriptions can remain even though additional subscriptions may be refused. Neither the client, nor the server are required to close the connection, although, either end may choose to do so.</t>
+         <t>If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="DSO"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</t>
 
@@ -520,7 +523,15 @@
              recommended value in particular applies to what a client should assume by default.</t>
 
              <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
-             <t>This is a misconfiguration, since this server is listed in a <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record, but the server itself is not currently configured to support DNS Push Notifications. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</t>
+
+             <t>If the server being queried is not the local resolver, this is a
+             misconfiguration, since this server is listed in a
+             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>
+             SRV record, but the server itself is
+             not currently configured to support DNS Push Notifications for that
+             zone.  Since it is possible that the misconfiguration may be repaired
+             at any time, the retry delay should not be set too high.  By default,
+             a value of 5 minutes is RECOMMENDED.</t>
 
              <t>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
              <t>This is a misconfiguration, since this server is listed in a <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record, but the server itself is not currently configured to support DNS Push Notifications for that zone. Since it is possible that the misconfiguration may be repaired at any time, the retry delay should not be set too high. By default, a value of 5 minutes is RECOMMENDED.</t>
@@ -638,7 +649,16 @@
   
          <t>A server SHOULD combine multiple change notifications in a single PUSH message when possible, even if those change notifications apply to different subscriptions. Conceptually, a PUSH message is a session-level mechanism, not a subscription-level mechanism.</t>
   
-         <t>The TTL of an added record is stored by the client and decremented as time passes, with the caveat that for as long as a relevant subscription is active, the TTL does not decrement below 1 second. For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact. Consequently, a client does not have to poll to verify that the record is still there. Once a subscription is cancelled (individually, or as a result of the DSO session being closed) record aging resumes and records are removed from the local cache when their TTL reaches zero.</t>
+         <t>The TTL of an added record is stored by the client.  While the subscription
+           is active, the TTL is not decremented, because a change to the TTL would
+           produce a new update.
+           For as long as a relevant subscription remains active, the client
+           SHOULD assume that when a record goes away the server will notify it
+           of that fact.  Consequently, a client does not have to poll to verify
+           that the record is still there.  Once a subscription is cancelled
+           (individually, or as a result of the DSO session being closed) record
+           aging for records covered by the subscription resumes and records are
+           removed from the local cache when their  TTL reaches zero.</t>
 <?rfc needLines="48" ?>
        </section>
      </section>
@@ -791,14 +811,13 @@
          <c>NOERROR</c><c>0</c><c>RECONFIRM accepted.</c>
          <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
          <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
-         <c>NXDOMAIN</c><c>3</c><c>NOT APPLICABLE. DNS Push Notification servers MUST NOT return NXDOMAIN errors in response to RECONFIRM requests.</c>
          <c>NOTIMP</c><c>4</c><c>Server does not implement DSO.</c>
          <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
          <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
          <c>DSOTYPENI</c><c>11</c><c>RECONFIRM operation not supported.</c>
          </texttable>
 
-         <t>This document specifies only these RCODE values for RECONFIRM Responses. Servers sending RECONFIRM Responses SHOULD use one of these values. However, future circumstances may create situations where other RCODE values are appropriate in RECONFIRM Responses, so clients MUST be prepared to accept RECONFIRM Responses with any RCODE value.</t>
+         <t>This document specifies only these RCODE values for RECONFIRM Responses. Servers sending RECONFIRM Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a RECONFIRM Request. However, future circumstances may create situations where other RCODE values are appropriate in RECONFIRM Responses, so clients MUST be prepared to accept RECONFIRM Responses with any other RCODE value.</t>
 
          <t>Nonzero RCODE values signal some kind of error.</t>
 
@@ -867,7 +886,7 @@
      </section>
 
      <section title="TLS Session Resumption">
-       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, once the DSO session is closed, any existing subscriptions will be dropped. When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption allows a new TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
+       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
 <?rfc needLines="9" ?>
      </section>
    </section>
@@ -948,7 +967,7 @@
      <author initials='S' surname='Dickinson' fullname='Sara Dickinson'><organization /></author>
      <author initials='T' surname='Lemon' fullname='Ted Lemon'><organization /></author>
      <author initials='T' surname='Pusateri' fullname='Tom Pusateri'><organization /></author>
-     <date month='August' day='2' year='2018' />
+     <date month='October' day='23' year='2018' />
      <abstract><t>TThis document defines a new DNS OPCODE for DNS Stateful Operations
    (DSO).  DSO messages communicate operations within persistent
    stateful sessions, using type-length-value (TLV) syntax.  Three TLVs
@@ -956,12 +975,12 @@
    padding, and a framework is defined for extensions to enable new
    stateful operations.  This document updates RFC 1035 by adding a new
    DNS header opcode and result code which has different message
-   semantics.  This document updates RFC 7766 by redefining a session,
+   semantics and a new result code.  This document updates RFC 7766 by redefining a session,
    providing new guidance on connection re-use, and providing a new
    mechanism for handling session idle timeouts.</t></abstract>
      </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-14' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-14.txt' />
+     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-18' />
+     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-18.txt' />
      </reference>
 
      <reference anchor="ST"

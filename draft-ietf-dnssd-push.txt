@@ -871,9 +871,6 @@ Internet-Draft           DNS Push Notifications           September 2018
    |           |       | malformed request.                            |
    | SERVFAIL  |   2   | Server failed to process request due to a     |
    |           |       | problem with the server.                      |
-   | NXDOMAIN  |   3   | NOT APPLICABLE. DNS Push Notification servers |
-   |           |       | MUST NOT return NXDOMAIN errors in response   |
-   |           |       | to SUBSCRIBE requests.                        |
    | NOTIMP    |   4   | Server does not implement DSO.                |
    | REFUSED   |   5   | Server refuses to process request for policy  |
    |           |       | or security reasons.                          |
@@ -886,10 +883,13 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    This document specifies only these RCODE values for SUBSCRIBE
    Responses.  Servers sending SUBSCRIBE Responses SHOULD use one of
-   these values.  However, future circumstances may create situations
-   where other RCODE values are appropriate in SUBSCRIBE Responses, so
-   clients MUST be prepared to accept SUBSCRIBE Responses with any RCODE
-   value.
+   these values.  Note that NXDOMAIN is not a valid RCODE in response to
+   a SUBSCRIBE Request.  However, future circumstances may create
+   situations where other RCODE values are appropriate in SUBSCRIBE
+   Responses, so clients MUST be prepared to accept SUBSCRIBE Responses
+   with any other RCODE value.
+
+
 
 
 
@@ -899,14 +899,26 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
    If the server sends a nonzero RCODE in the SUBSCRIBE response, that
-   means (a) the client is (at least partially) misconfigured, (b) the
-   server resources are exhausted, or (c) there is some other unknown
-   failure on the server.  In any case, the client shouldn't retry the
-   subscription right away.  Either end can terminate the session, but
-   the client may want to try this subscription again, or it may have
-   other successful subscriptions that it doesn't want to abandon.  If
-   the server sends a nonzero RCODE then it SHOULD append a Retry Delay
-   TLV [DSO] to the response specifying a delay before the client
+   means
+
+   a.  the client is (at least partially) misconfigured,
+
+   b.  the server resources are exhausted, or
+
+   c.  there is some other unknown failure on the server.
+
+   In any case, the client shouldn't retry the subscription to this
+   server right away.  If multiple SRV records were returned as
+   described in discovery Section 6.1, Paragraph 7, a subsequent server
+   can be tried immediately.
+
+   If the client has other successful subscriptions to this server,
+   these subscriptions can remain even though additional subscriptions
+   may be refused.  Neither the client, nor the server are required to
+   close the connection, although, either end may choose to do so.
+
+   If the server sends a nonzero RCODE then it SHOULD append a Retry
+   Delay TLV [DSO] to the response specifying a delay before the client
    attempts this operation again.  Recommended values for the delay for
    different RCODE values are given below.  These recommended values
    apply both to the default values a server should place in the Retry
@@ -933,18 +945,6 @@ Internet-Draft           DNS Push Notifications           September 2018
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
-      DNS Push Notifications, the retry delay may be any value selected
-      by the implementer and/or configured by the operator.
-
-      This is a misconfiguration, since this server is listed in a
-      "_dns-push-tls._tcp.<zone>" SRV record, but the server itself is
-      not currently configured to support DNS Push Notifications.  Since
-      it is possible that the misconfiguration may be repaired at any
-      time, the retry delay should not be set too high.  By default, a
-      value of 5 minutes is RECOMMENDED.
-
-      For RCODE = 9 (NOTAUTH), which occurs on a server that implements
-      DNS Push Notifications, but is not configured to be authoritative
 
 
 
@@ -954,6 +954,19 @@ Pusateri & Cheshire      Expires March 21, 2019                [Page 17]
 Internet-Draft           DNS Push Notifications           September 2018
 
 
+      DNS Push Notifications, the retry delay may be any value selected
+      by the implementer and/or configured by the operator.
+
+      If the server being queried is not the local resolver, this is a
+      misconfiguration, since this server is listed in a
+      "_dns-push-tls._tcp.<zone>" SRV record, but the server itself is
+      not currently configured to support DNS Push Notifications for
+      that zone.  Since it is possible that the misconfiguration may be
+      repaired at any time, the retry delay should not be set too high.
+      By default, a value of 5 minutes is RECOMMENDED.
+
+      For RCODE = 9 (NOTAUTH), which occurs on a server that implements
+      DNS Push Notifications, but is not configured to be authoritative
       for the requested name, the retry delay may be any value selected
       by the implementer and/or configured by the operator.
 
@@ -984,19 +997,6 @@ Internet-Draft           DNS Push Notifications           September 2018
    Operation TLV instructing the client to close the session, as
    described in the DSO specification [DSO].  Clients MUST correctly
    handle both cases.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1154,16 +1154,16 @@ Internet-Draft           DNS Push Notifications           September 2018
    to different subscriptions.  Conceptually, a PUSH message is a
    session-level mechanism, not a subscription-level mechanism.
 
-   The TTL of an added record is stored by the client and decremented as
-   time passes, with the caveat that for as long as a relevant
-   subscription is active, the TTL does not decrement below 1 second.
-   For as long as a relevant subscription remains active, the client
-   SHOULD assume that when a record goes away the server will notify it
-   of that fact.  Consequently, a client does not have to poll to verify
-   that the record is still there.  Once a subscription is cancelled
+   The TTL of an added record is stored by the client.  While the
+   subscription is active, the TTL is not decremented, because a change
+   to the TTL would produce a new update.  For as long as a relevant
+   subscription remains active, the client SHOULD assume that when a
+   record goes away the server will notify it of that fact.
+   Consequently, a client does not have to poll to verify that the
+   record is still there.  Once a subscription is cancelled
    (individually, or as a result of the DSO session being closed) record
-   aging resumes and records are removed from the local cache when their
-   TTL reaches zero.
+   aging for records covered by the subscription resumes and records are
+   removed from the local cache when their TTL reaches zero.
 
 
 
@@ -1432,9 +1432,6 @@ Internet-Draft           DNS Push Notifications           September 2018
    |           |       | malformed request.                            |
    | SERVFAIL  |   2   | Server failed to process request due to a     |
    |           |       | problem with the server.                      |
-   | NXDOMAIN  |   3   | NOT APPLICABLE. DNS Push Notification servers |
-   |           |       | MUST NOT return NXDOMAIN errors in response   |
-   |           |       | to RECONFIRM requests.                        |
    | NOTIMP    |   4   | Server does not implement DSO.                |
    | REFUSED   |   5   | Server refuses to process request for policy  |
    |           |       | or security reasons.                          |
@@ -1447,8 +1444,11 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    This document specifies only these RCODE values for RECONFIRM
    Responses.  Servers sending RECONFIRM Responses SHOULD use one of
-   these values.  However, future circumstances may create situations
-   where other RCODE values are appropriate in RECONFIRM Responses, so
+   these values.  Note that NXDOMAIN is not a valid RCODE in response to
+   a RECONFIRM Request.  However, future circumstances may create
+   situations where other RCODE values are appropriate in RECONFIRM
+   Responses, so clients MUST be prepared to accept RECONFIRM Responses
+   with any other RCODE value.
 
 
 
@@ -1457,9 +1457,6 @@ Pusateri & Cheshire      Expires March 21, 2019                [Page 26]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
-
-   clients MUST be prepared to accept RECONFIRM Responses with any RCODE
-   value.
 
    Nonzero RCODE values signal some kind of error.
 
@@ -1493,6 +1490,9 @@ Internet-Draft           DNS Push Notifications           September 2018
    problem with the client.  After sending an error response other than
    one of these three, the server SHOULD send a DSO Retry Delay TLV to
    end the DSO session, as described in the DSO specification [DSO].
+
+
+
 
 
 
@@ -1654,13 +1654,12 @@ Internet-Draft           DNS Push Notifications           September 2018
    TLS Session Resumption is permissible on DNS Push Notification
    servers.  The server may keep TLS state with Session IDs [RFC5246] or
    operate in stateless mode by sending a Session Ticket [RFC5077] to
-   the client for it to store.  However, once the DSO session is closed,
-   any existing subscriptions will be dropped.  When the TLS session is
-   resumed, the DNS Push Notification server will not have any
-   subscription state and will proceed as with any other new DSO
-   session.  Use of TLS Session Resumption allows a new TLS connection
-   to be set up more quickly, but the client will still have to recreate
-   any desired subscriptions.
+   the client for it to store.  However, closing the TLS connection
+   terminates the DSO session.  When the TLS session is resumed, the DNS
+   Push Notification server will not have any subscription state and
+   will proceed as with any other new DSO session.  Use of TLS Session
+   Resumption may allow a TLS connection to be set up more quickly, but
+   the client will still have to recreate any desired subscriptions.
 
 8.  IANA Considerations
 
@@ -1670,6 +1669,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    This document also defines four new DNS Stateful Operation TLV types
    to be recorded in the IANA DSO Type Code Registry.
+
 
 
 
@@ -1715,8 +1715,8 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    [DSO]      Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
               Lemon, T., and T. Pusateri, "DNS Stateful Operations",
-              draft-ietf-dnsop-session-signal-14 (work in progress),
-              August 2018.
+              draft-ietf-dnsop-session-signal-18 (work in progress),
+              October 2018.
 
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               DOI 10.17487/RFC0768, August 1980,
