@@ -514,24 +514,57 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    The client begins by opening a DSO Session to its normal configured
    DNS recursive resolver and requesting a Push Notification
-   subscription.  If this is successful, then the recursive resolver
-   will make appropriate Push Notification subscriptions on the client's
-   behalf, and the client will receive appropriate results.  If the
-   recursive resolver does not support Push Notification subscriptions,
-   then it will return an error code, and the client should proceed to
-   discover the appropriate server for direct communication.  The client
-   MUST also determine which TCP port on the server is listening for
-   connections, which need not be (and often is not) the typical TCP
-   port 53 used for conventional DNS, or TCP port 853 used for DNS over
-   TLS [RFC7858].
+   subscription.  This connection is made to the default DNS-over-TLS
+   port as defined in DNS over TLS [RFC7858].  If this connection is
+   successful, then the recursive resolver will make appropriate Push
+   Notification subscriptions on the client's behalf, and the client
+   will receive appropriate results.
 
-   The algorithm described here is an iterative algorithm, which starts
-   with the full name of the record to which the client wishes to
-   subscribe.  Successive SOA queries are then issued, trimming one
-   label each time, until the closest enclosing authoritative server is
-   discovered.  There is also an optimization to enable the client to
-   take a "short cut" directly to the SOA record of the closest
-   enclosing authoritative server in many cases.
+   In many contexts, the local recursive resolver will be able to handle
+   push notifications for all zones that the client may need to follow.
+   In other cases, the client may require Push Notifications from more
+   than one zone, and those zones may be served by different servers.
+   Therefore, it is assumed that the client may need to maintain
+   connections to more than one DNS Push server.
+
+   In some cases, the recursive resolver may not be able to get answers
+   for a particular zone.  In this case, rather than returning SERVFAIL,
+   the resolver returns NOTAUTH.  This signals the client that queries
+   for this zone can't be handled by the local caching resolver.  For
+   that zone, the client SHOULD contact the zone's DNS Push server
+   itself, even if all other DNS Push queries can be handled by the
+   local resolver.  This may be necessary in cases where the client is
+   connected to a VPN, for example, or where the client has a pre-
+   established trust relationship with the owner of the zone that allows
+   the client, but not the local resolver, to successfully get answers
+   for queries in that zone.
+
+   If the recursive resolver does not support Push Notification
+   subscriptions, then it will return an error code, DSONOTIMPL.  This
+   occurs when the local resolver follows the procedure below and does
+   not find an SRV record indicating support for DNS Push Notifications.
+
+   In case of either failure, the client should proceed to discover the
+   appropriate server for direct communication.  The client MUST also
+   determine which TCP port on the server is listening for connections,
+   which need not be (and often is not) the typical TCP port 53 used for
+   conventional DNS, or TCP port 853 used for DNS over TLS.
+
+   The discovery algorithm described here is an iterative algorithm,
+   which starts with the full name of the record to which the client
+   wishes to subscribe.  Successive SOA queries are then issued,
+   trimming one label each time, until the closest enclosing
+
+
+
+Pusateri & Cheshire      Expires March 21, 2019                [Page 10]
+
+Internet-Draft           DNS Push Notifications           September 2018
+
+
+   authoritative server is discovered.  There is also an optimization to
+   enable the client to take a "short cut" directly to the SOA record of
+   the closest enclosing authoritative server in many cases.
 
    1.  The client begins the discovery by sending a DNS query to its
        local resolver, with record type SOA [RFC1035] for the record
@@ -553,28 +586,19 @@ Internet-Draft           DNS Push Notifications           September 2018
        Answer section with a NOERROR response code, and the client has
        succeeded in discovering the information it needs.  (This text is
        not placing any new requirements on DNS recursive resolvers.  It
-
-
-
-
-Pusateri & Cheshire      Expires March 21, 2019                [Page 10]
-
-Internet-Draft           DNS Push Notifications           September 2018
-
-
        is merely describing the existing operation of the DNS protocol
        [RFC1034] [RFC1035].)
 
    3.  If the requested SOA record does not exist, the client will get
        back a NOERROR/NODATA response or an NXDOMAIN/Name Error
-       response.  In either case, the local resolver SHOULD include the
-       SOA record for the zone of the requested name in the Authority
-       Section.  If the SOA record is received in the Authority Section,
-       then the client has succeeded in discovering the information it
-       needs.  (This text is not placing any new requirements on DNS
-       recursive resolvers.  It is merely describing the existing
-       operation of the DNS protocol regarding negative responses
-       [RFC2308].)
+       response.  In either case, the local resolver would normally
+       include the SOA record for the zone of the requested name in the
+       Authority Section.  If the SOA record is received in the
+       Authority Section, then the client has succeeded in discovering
+       the information it needs.  (This text is not placing any new
+       requirements on DNS recursive resolvers.  It is merely describing
+       the existing operation of the DNS protocol regarding negative
+       responses [RFC2308].)
 
    4.  If the client receives a response containing no SOA record, then
        it proceeds with the iterative approach.  The client strips the
@@ -586,6 +610,13 @@ Internet-Draft           DNS Push Notifications           September 2018
        configuration error which should not happen and the client gives
        up.  The client may retry the operation at a later time, of the
        client's choosing, such after a change in network attachment.
+
+
+
+Pusateri & Cheshire      Expires March 21, 2019                [Page 11]
+
+Internet-Draft           DNS Push Notifications           September 2018
+
 
    5.  Once the SOA is known (either by virtue of being seen in the
        Answer Section, or in the Authority Section), the client sends a
@@ -610,14 +641,6 @@ Internet-Draft           DNS Push Notifications           September 2018
        used to determine the order in which to contact the servers for
        subscription requests.  As described in the SRV specification
        [RFC2782], the server with the lowest "priority" is first
-
-
-
-Pusateri & Cheshire      Expires March 21, 2019                [Page 11]
-
-Internet-Draft           DNS Push Notifications           September 2018
-
-
        contacted.  If more than one server has the same "priority", the
        "weight" indicates the weighted probability that the client
        should contact that server.  Higher weights have higher
@@ -635,29 +658,6 @@ Internet-Draft           DNS Push Notifications           September 2018
    records were set to reasonable values, repeated application of this
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1576,7 +1576,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    Push Notifications as defined in "Usage Profiles for DNS over TLS and
    DNS over DTLS" [RFC8310].  Cleartext connections for DNS Push
    Notifications are not permissible.  Since this is a new protocol,
-   transistion mechanisms from the Opportunistic Privacy profile are
+   transition mechanisms from the Opportunistic Privacy profile are
    deemed unnecessary.
 
    DNSSEC is RECOMMENDED for the authentication of DNS Push Notification
@@ -1685,7 +1685,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    +-----------------------------+----------------------+--------------+
    | Name                        |        Value         | Definition   |
    +-----------------------------+----------------------+--------------+
-   | DNS Push Notifcation        | "_dns-push-tls._tcp" | Section 6.1  |
+   | DNS Push Notification       | "_dns-push-tls._tcp" | Section 6.1  |
    | Service Type                |                      |              |
    | SUBSCRIBE                   |   TBA (tentatively   | Section 6.2  |
    |                             |        0x40)         |              |

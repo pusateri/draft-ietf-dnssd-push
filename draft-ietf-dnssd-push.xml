@@ -302,14 +302,47 @@
       <section title="Discovery" anchor="discovery">
         <t>The first step in DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone.</t>
 
-        <t>The client begins by opening a DSO Session to its normal configured DNS recursive resolver and requesting a Push
-        Notification subscription. If this is successful, then the recursive resolver will make appropriate
-        Push Notification subscriptions on the client's behalf, and the client will receive appropriate results.
-        If the recursive resolver does not support Push Notification subscriptions, then it will return an error code,
-        and the client should proceed to discover the appropriate server for direct communication.
-        The client MUST also determine which TCP port on the server is listening for connections, which need not be (and often is not) the typical TCP port 53 used for conventional DNS, or TCP port 853 used for <xref target="RFC7858">DNS over TLS</xref>.</t>
+        <t>The client begins by opening a DSO Session to its normal configured
+        DNS recursive resolver and requesting a Push Notification
+        subscription.  This connection is made to the default DNS-over-TLS
+        port as defined in <xref target="RFC7858">DNS over TLS</xref>.  If this connection
+        is successful, then the recursive resolver will make appropriate
+        Push Notification subscriptions on the client's behalf,
+        and the client will receive appropriate results.</t>
 
-        <t>The algorithm described here is an iterative algorithm,
+        <t>In many contexts, the local recursive resolver will be able to handle
+        push notifications for all zones that the client may need to follow.
+        In other cases, the client may require Push Notifications from more
+        than one zone, and those zones may be served by different servers.
+        Therefore, it is assumed that the client may need to maintain
+        connections to more than one DNS Push server.</t>
+
+        <t>In some cases, the recursive resolver may not be able to get
+        answers for a particular zone.   In this case, rather than
+        returning SERVFAIL, the resolver returns NOTAUTH.   This signals
+        the client that queries for this zone can't be handled by the
+        local caching resolver.   For that zone, the client SHOULD contact
+        the zone's DNS Push server itself, even if all other DNS Push
+        queries can be handled by the local resolver.  This may be 
+        necessary in cases where the client is connected to a VPN, for
+        example, or where the client has a pre-established trust
+        relationship with the owner of the zone that allows the client,
+        but not the local resolver, to successfully get answers for
+        queries in that zone.</t>
+
+        <t>If the recursive resolver does not support Push Notification
+        subscriptions, then it will return an error code, DSONOTIMPL.   This
+        occurs when the local resolver follows the procedure below and does
+        not find an SRV record indicating support for DNS Push Notifications.</t>
+
+        <t>In case of either failure, the client should proceed to discover
+        the appropriate server for direct communication.  The client MUST
+        also determine which TCP port on the server is listening for
+        connections, which need not be (and often is not) the typical TCP
+        port 53 used for conventional DNS, or TCP port 853 used for DNS 
+        over TLS.</t>
+
+        <t>The discovery algorithm described here is an iterative algorithm,
         which starts with the full name of the record to which the
         client wishes to subscribe. Successive SOA queries are then
         issued, trimming one label each time, until
@@ -329,7 +362,7 @@
             <xref target="RFC1034"/> <xref target="RFC1035"/>.)</t>
 
             <t>If the requested SOA record does not exist, the client will get back a NOERROR/NODATA response or an NXDOMAIN/Name Error response.
-            In either case, the local resolver SHOULD include the SOA record for the zone of the requested name in the Authority Section.
+            In either case, the local resolver would normally include the SOA record for the zone of the requested name in the Authority Section.
             If the SOA record is received in the Authority Section, then
             the client has succeeded in discovering the information it needs.
             (This text is not placing any new requirements on DNS recursive resolvers.
@@ -809,7 +842,7 @@
    </section>
 
    <section title="Security Considerations" anchor="Security">
-     <t>The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS Push Notifications as defined in <xref target="RFC8310">"Usage Profiles for DNS over TLS and DNS over DTLS"</xref>. Cleartext connections for DNS Push Notifications are not permissible. Since this is a new protocol, transistion mechanisms from the Opportunistic Privacy profile are deemed unnecessary.</t>
+     <t>The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS Push Notifications as defined in <xref target="RFC8310">"Usage Profiles for DNS over TLS and DNS over DTLS"</xref>. Cleartext connections for DNS Push Notifications are not permissible. Since this is a new protocol, transition mechanisms from the Opportunistic Privacy profile are deemed unnecessary.</t>
 
      <t>DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
 
@@ -846,7 +879,7 @@
        <ttcol align="left">Name</ttcol>
        <ttcol align="center">Value</ttcol>
        <ttcol align="left">Definition</ttcol>
-       <c>DNS Push Notifcation Service Type</c>
+       <c>DNS Push Notification Service Type</c>
        <c><spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx></c>
        <c><xref target="discovery"/></c>
        <c>SUBSCRIBE</c>
