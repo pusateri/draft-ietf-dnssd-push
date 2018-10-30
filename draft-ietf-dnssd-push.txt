@@ -1533,7 +1533,7 @@ Internet-Draft           DNS Push Notifications           September 2018
                +-------------+-----+-----+-----+-----+-----+
                |  SUBSCRIBE  |  X  |     |     |     |     |
                |     PUSH    |     |     |     |     |     |
-               | UNSUBSCRIBE |  X  |     |     |     |     |
+               | UNSUBSCRIBE |     |  X  |     |     |     |
                |  RECONFIRM  |  X  |     |     |     |     |
                +-------------+-----+-----+-----+-----+-----+
 
@@ -1775,7 +1775,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    This draft has been improved due to comments from Ran Atkinson, Tim
    Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju
    Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara
-   Dickinson, and Andrew Sullivan.  Ted Lemon provided additional text
+   Dickinson, and Andrew Sullivan.  Ted Lemon provided clarifying text
    that was greatly appreciated.
 
 

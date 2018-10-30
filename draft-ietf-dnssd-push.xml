@@ -864,7 +864,7 @@
        <ttcol align="center">CRA</ttcol>
        <c>SUBSCRIBE</c><c>X</c><c></c><c></c><c></c><c></c>
        <c>PUSH</c><c></c><c></c><c></c><c></c><c></c>
-       <c>UNSUBSCRIBE</c><c>X</c><c></c><c></c><c></c><c></c>
+       <c>UNSUBSCRIBE</c><c></c><c>X</c><c></c><c></c><c></c>
        <c>RECONFIRM</c><c>X</c><c></c><c></c><c></c><c></c>
      </texttable>
      <t>The server TLV contexts are:
@@ -976,7 +976,7 @@
    <section title="Acknowledgements" anchor="Acknowledgements">
      <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field.</t>
 
-     <t>This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan. Ted Lemon provided additional text that was greatly appreciated.</t>
+     <t>This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan. Ted Lemon provided clarifying text that was greatly appreciated.</t>
 <?rfc needLines="15" ?>
    </section>
  </middle>
