@@ -83,19 +83,19 @@ Table of Contents
      6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  24
        6.5.1.  RECONFIRM Request . . . . . . . . . . . . . . . . . .  24
        6.5.2.  RECONFIRM Response  . . . . . . . . . . . . . . . . .  26
-     6.6.  Client-Initiated Termination  . . . . . . . . . . . . . .  28
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  29
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  29
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  29
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  30
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  30
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  31
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  31
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  32
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  32
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  33
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
-
+     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  28
+     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  29
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  30
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  30
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  30
+     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  31
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  31
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  32
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  32
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  33
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  33
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  34
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  37
 
 
 
@@ -681,9 +681,8 @@ Internet-Draft           DNS Push Notifications           September 2018
    indicates its desire to receive DNS Push Notifications for a given
    domain name by sending a SUBSCRIBE request over the established DSO
    session to the server.  A SUBSCRIBE request is encoded in a DSO [DSO]
-   message.  This specification defines a DSO TLV for DNS Push
-   Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code
-   0x40).
+   message.  This specification defines a primary DSO TLV for DNS Push
+   Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).
 
    The entity that initiates a SUBSCRIBE request is by definition the
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
@@ -714,6 +713,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    The DSO-TYPE is SUBSCRIBE.  The DSO-LENGTH is the length of the DSO-
    DATA that follows, which specifies the name, type, and class of the
    record(s) being sought.
+
 
 
 
@@ -879,7 +879,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    | DSOTYPENI |   11  | SUBSCRIBE operation not supported.            |
    +-----------+-------+-----------------------------------------------+
 
-                         SUBSCRIBE Response codes
+                     Table 1: SUBSCRIBE Response codes
 
    This document specifies only these RCODE values for SUBSCRIBE
    Responses.  Servers sending SUBSCRIBE Responses SHOULD use one of
@@ -902,9 +902,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    means
 
    a.  the client is (at least partially) misconfigured,
-
    b.  the server resources are exhausted, or
-
    c.  there is some other unknown failure on the server.
 
    In any case, the client shouldn't retry the subscription to this
@@ -945,6 +943,8 @@ Internet-Draft           DNS Push Notifications           September 2018
 
       For RCODE = 5 (REFUSED), which occurs on a server that implements
       DNS Push Notifications, but is currently configured to disallow
+      DNS Push Notifications, the retry delay may be any value selected
+      by the implementer and/or configured by the operator.
 
 
 
@@ -953,9 +953,6 @@ Pusateri & Cheshire      Expires March 21, 2019                [Page 17]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
-
-      DNS Push Notifications, the retry delay may be any value selected
-      by the implementer and/or configured by the operator.
 
       If the server being queried is not the local resolver, this is a
       misconfiguration, since this server is listed in a
@@ -997,6 +994,9 @@ Internet-Draft           DNS Push Notifications           September 2018
    Operation TLV instructing the client to close the session, as
    described in the DSO specification [DSO].  Clients MUST correctly
    handle both cases.
+
+
+
 
 
 
@@ -1183,9 +1183,9 @@ Internet-Draft           DNS Push Notifications           September 2018
    To cancel an individual subscription without closing the entire DSO
    session, the client sends an UNSUBSCRIBE message over the established
    DSO session to the server.  The UNSUBSCRIBE message is encoded as a
-   DSO [DSO] unidirectional message.  This specification defines a DSO
-   TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses
-   (tentatively DSO Type Code 0x42).
+   DSO [DSO] unidirectional message.  This specification defines a
+   primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE
+   Requests (tentatively DSO Type Code 0x42).
 
    A server MUST NOT initiate an UNSUBSCRIBE request.  If a server does
    send an UNSUBSCRIBE request over a DSO session initiated by a client,
@@ -1318,8 +1318,8 @@ Internet-Draft           DNS Push Notifications           September 2018
 6.5.1.  RECONFIRM Request
 
    A RECONFIRM request begins with the standard DSO 12-byte header
-   [DSO], followed by the RECONFIRM TLV.  A RECONFIRM request message is
-   illustrated in Figure 4.
+   [DSO], followed by the primary DSO RECONFIRM TLV.  A RECONFIRM
+   request message is illustrated in Figure 4.
 
    The MESSAGE ID field MUST be set to a unique value, that the client
    is not using for any other active operation on this DSO session.  For
@@ -1440,7 +1440,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    | DSOTYPENI |   11  | RECONFIRM operation not supported.            |
    +-----------+-------+-----------------------------------------------+
 
-                         RECONFIRM Response codes
+                     Table 2: RECONFIRM Response codes
 
    This document specifies only these RCODE values for RECONFIRM
    Responses.  Servers sending RECONFIRM Responses SHOULD use one of
@@ -1514,7 +1514,63 @@ Pusateri & Cheshire      Expires March 21, 2019                [Page 27]
 Internet-Draft           DNS Push Notifications           September 2018
 
 
-6.6.  Client-Initiated Termination
+6.6.  DNS Stateful Operations TLV Context Summary
+
+   This document defines four new DSO TLVs.  As suggested in [DSO],
+   Section 8.2, the valid contexts of these new TLV types are summarized
+   below.
+
+   The client TLV contexts are:
+
+   C-P:  Client primary bidirectional TLV
+   C-U:  Client primary unidirectional TLV
+   C-A:  Client additional TLV
+   CRP:  Client response primary TLV
+   CRA:  Client response additional TLV
+
+               +-------------+-----+-----+-----+-----+-----+
+               |     Type    | C-P | C-U | C-A | CRP | CRA |
+               +-------------+-----+-----+-----+-----+-----+
+               |  SUBSCRIBE  |  X  |     |     |     |     |
+               |     PUSH    |     |     |     |     |     |
+               | UNSUBSCRIBE |  X  |     |     |     |     |
+               |  RECONFIRM  |  X  |     |     |     |     |
+               +-------------+-----+-----+-----+-----+-----+
+
+                  Table 3: DSO TLV Client Context Summary
+
+   The server TLV contexts are:
+
+   S-P:  Server primary bidirectional TLV
+   S-U:  Server primary unidirectional TLV
+   S-A:  Server additional TLV
+   SRP:  Server response primary TLV
+   SRA:  Server response additional TLV
+
+               +-------------+-----+-----+-----+-----+-----+
+               |     Type    | S-P | S-U | S-A | SRP | SRA |
+               +-------------+-----+-----+-----+-----+-----+
+               |  SUBSCRIBE  |     |     |     |     |     |
+               |     PUSH    |     |  X  |     |     |     |
+               | UNSUBSCRIBE |     |     |     |     |     |
+               |  RECONFIRM  |     |     |     |     |     |
+               +-------------+-----+-----+-----+-----+-----+
+
+                  Table 4: DSO TLV Server Context Summary
+
+
+
+
+
+
+
+
+Pusateri & Cheshire      Expires March 21, 2019                [Page 28]
+
+Internet-Draft           DNS Push Notifications           September 2018
+
+
+6.7.  Client-Initiated Termination
 
    An individual subscription is terminated by sending an UNSUBSCRIBE
    TLV for that specific subscription, or all subscriptions can be
@@ -1565,7 +1621,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 28]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 29]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1621,7 +1677,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 29]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 30]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1677,7 +1733,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 30]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 31]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1695,7 +1751,7 @@ Internet-Draft           DNS Push Notifications           September 2018
    | Service Type          |      |                      |             |
    +-----------------------+------+----------------------+-------------+
 
-                  Table 1: IANA Service Type Assignments
+                  Table 5: IANA Service Type Assignments
 
    This document also defines four new DNS Stateful Operation TLV types
    to be recorded in the IANA DSO Type Code Registry.
@@ -1709,7 +1765,7 @@ Internet-Draft           DNS Push Notifications           September 2018
          | RECONFIRM   | TBA (tentatively 0x43) | Section 6.5.1 |
          +-------------+------------------------+---------------+
 
-                Table 2: IANA DSO TLV Type Code Assignments
+                Table 6: IANA DSO TLV Type Code Assignments
 
 9.  Acknowledgements
 
@@ -1733,7 +1789,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 31]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 32]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1789,7 +1845,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 32]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 33]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1845,7 +1901,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 33]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 34]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1901,7 +1957,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 34]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 35]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -1957,7 +2013,7 @@ Internet-Draft           DNS Push Notifications           September 2018
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 35]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 36]
 
 Internet-Draft           DNS Push Notifications           September 2018
 
@@ -2013,4 +2069,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire      Expires March 21, 2019                [Page 36]
+Pusateri & Cheshire      Expires March 21, 2019                [Page 37]

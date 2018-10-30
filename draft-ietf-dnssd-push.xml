@@ -395,7 +395,7 @@
      </section>
 
      <section title="DNS Push Notification SUBSCRIBE" anchor="subscribe">
-       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <xref target="DSO">DSO</xref> message. This specification defines a DSO TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x40).</t>
+       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <xref target="DSO">DSO</xref> message. This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</t>
 
        <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
@@ -484,7 +484,7 @@
 
 <?rfc needLines="20" ?>
          <t>In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</t>
-         <texttable title="SUBSCRIBE Response codes">
+         <texttable title="SUBSCRIBE Response codes" anchor="subscribe_rcodes">
          <ttcol align="left">Mnemonic</ttcol>
          <ttcol align="center">Value</ttcol>
          <ttcol align="left">Description</ttcol>
@@ -501,11 +501,13 @@
 
 <?rfc needLines="30" ?>
          <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, that means
+           <?rfc subcompact="yes" ?>
            <list style="letters">
              <t>the client is (at least partially) misconfigured,</t>
              <t>the server resources are exhausted, or</t>
              <t>there is some other unknown failure on the server.</t>
            </list>
+           <?rfc subcompact="no" ?>
          In any case, the client shouldn't retry the subscription to this server right away. If multiple SRV records were returned as described in discovery <xref target="discovery"/>, <xref target="SRV"/>, a subsequent server can be tried immediately.</t>
          <t>If the client has other successful subscriptions to this server, these subscriptions can remain even though additional subscriptions may be refused. Neither the client, nor the server are required to close the connection, although, either end may choose to do so.</t>
          <t>If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="DSO"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
@@ -665,7 +667,7 @@
 
      <section title="DNS Push Notification UNSUBSCRIBE" anchor="unsubscribe">
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a
-       <xref target="DSO">DSO</xref> unidirectional message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</t>
+       <xref target="DSO">DSO</xref> unidirectional message. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Requests (tentatively DSO Type Code 0x42).</t>
 
        <t>A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
@@ -730,7 +732,7 @@
        <section title="RECONFIRM Request" anchor="reconfirm">
 
          <t>A RECONFIRM request begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>, followed by the RECONFIRM TLV.
+         <xref target="DSO">DSO 12-byte header</xref>, followed by the primary DSO RECONFIRM TLV.
          A RECONFIRM request message is illustrated in <xref target="reconfirm_req"/>.</t>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
@@ -804,7 +806,7 @@
          then the response message is processed but the RECONFIRM TLV MUST be silently ignored.</t>
 
          <t>In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</t>
-         <texttable title="RECONFIRM Response codes">
+         <texttable title="RECONFIRM Response codes" anchor="reconfirm_rcodes">
          <ttcol align="left">Mnemonic</ttcol>
          <ttcol align="center">Value</ttcol>
          <ttcol align="left">Description</ttcol>
@@ -840,7 +842,55 @@
 <?rfc needLines="48" ?>
        </section>
      </section>
-
+     <section title="DNS Stateful Operations TLV Context Summary">
+       <t>This document defines four new DSO TLVs. As suggested in <xref target="DSO"/>, Section 8.2, the valid contexts of these new TLV types are summarized below.</t>
+       <t>The client TLV contexts are:
+         <?rfc subcompact="yes" ?>
+         <list style="hanging">
+           <t hangText="C-P:">Client primary bidirectional TLV</t>
+           <t hangText="C-U:">Client primary unidirectional TLV</t>
+           <t hangText="C-A:">Client additional TLV</t>
+           <t hangText="CRP:">Client response primary TLV</t>
+           <t hangText="CRA:">Client response additional TLV</t>
+         </list>
+         <?rfc subcompact="no" ?>
+       </t>
+       <texttable title="DSO TLV Client Context Summary" anchor="tlv_client_contexts">
+       <ttcol align="center">Type</ttcol>
+       <ttcol align="center">C-P</ttcol>
+       <ttcol align="center">C-U</ttcol>
+       <ttcol align="center">C-A</ttcol>
+       <ttcol align="center">CRP</ttcol>
+       <ttcol align="center">CRA</ttcol>
+       <c>SUBSCRIBE</c><c>X</c><c></c><c></c><c></c><c></c>
+       <c>PUSH</c><c></c><c></c><c></c><c></c><c></c>
+       <c>UNSUBSCRIBE</c><c>X</c><c></c><c></c><c></c><c></c>
+       <c>RECONFIRM</c><c>X</c><c></c><c></c><c></c><c></c>
+     </texttable>
+     <t>The server TLV contexts are:
+       <?rfc subcompact="yes" ?>
+       <list style="hanging">
+         <t hangText="S-P:">Server primary bidirectional TLV</t>
+         <t hangText="S-U:">Server primary unidirectional TLV</t>
+         <t hangText="S-A:">Server additional TLV</t>
+         <t hangText="SRP:">Server response primary TLV</t>
+         <t hangText="SRA:">Server response additional TLV</t>
+       </list>
+       <?rfc subcompact="no" ?>
+     </t>
+     <texttable title="DSO TLV Server Context Summary" anchor="tlv_server_contexts">
+     <ttcol align="center">Type</ttcol>
+     <ttcol align="center">S-P</ttcol>
+     <ttcol align="center">S-U</ttcol>
+     <ttcol align="center">S-A</ttcol>
+     <ttcol align="center">SRP</ttcol>
+     <ttcol align="center">SRA</ttcol>
+     <c>SUBSCRIBE</c><c></c><c></c><c></c><c></c><c></c>
+     <c>PUSH</c><c></c><c>X</c><c></c><c></c><c></c>
+     <c>UNSUBSCRIBE</c><c></c><c></c><c></c><c></c><c></c>
+     <c>RECONFIRM</c><c></c><c></c><c></c><c></c><c></c>
+   </texttable>
+     </section>
      <section title="Client-Initiated Termination">
 
        <t>An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the DSO session. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that DSO session (by ending the session) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>

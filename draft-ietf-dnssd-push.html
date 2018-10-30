@@ -392,7 +392,8 @@
 <link href="#rfc.section.6.5" rel="Chapter" title="6.5 DNS Push Notification RECONFIRM">
 <link href="#rfc.section.6.5.1" rel="Chapter" title="6.5.1 RECONFIRM Request">
 <link href="#rfc.section.6.5.2" rel="Chapter" title="6.5.2 RECONFIRM Response">
-<link href="#rfc.section.6.6" rel="Chapter" title="6.6 Client-Initiated Termination">
+<link href="#rfc.section.6.6" rel="Chapter" title="6.6 DNS Stateful Operations TLV Context Summary">
+<link href="#rfc.section.6.7" rel="Chapter" title="6.7 Client-Initiated Termination">
 <link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
 <link href="#rfc.section.7.1" rel="Chapter" title="7.1 Security Services">
 <link href="#rfc.section.7.2" rel="Chapter" title="7.2 TLS Name Authentication">
@@ -502,7 +503,9 @@
 </li>
 <li>6.5.2.   <a href="#rfc.section.6.5.2">RECONFIRM Response</a>
 </li>
-</ul><li>6.6.   <a href="#rfc.section.6.6">Client-Initiated Termination</a>
+</ul><li>6.6.   <a href="#rfc.section.6.6">DNS Stateful Operations TLV Context Summary</a>
+</li>
+<li>6.7.   <a href="#rfc.section.6.7">Client-Initiated Termination</a>
 </li>
 </ul><li>7.   <a href="#rfc.section.7">Security Considerations</a>
 </li>
@@ -602,7 +605,7 @@
 <h1 id="rfc.section.6.2">
 <a href="#rfc.section.6.2">6.2.</a> <a href="#subscribe" id="subscribe">DNS Push Notification SUBSCRIBE</a>
 </h1>
-<p id="rfc.section.6.2.p.1">After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <a href="#DSO" class="xref">DSO</a> message. This specification defines a DSO TLV for DNS Push Notification SUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x40).</p>
+<p id="rfc.section.6.2.p.1">After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request over the established DSO session to the server. A SUBSCRIBE request is encoded in a <a href="#DSO" class="xref">DSO</a> message. This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</p>
 <p id="rfc.section.6.2.p.2">The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.2.1">
 <a href="#rfc.section.6.2.1">6.2.1.</a> SUBSCRIBE Request</h1>
@@ -658,6 +661,8 @@
 <p id="rfc.section.6.2.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.  This is how the client knows which request is being responded to.</p>
 <p id="rfc.section.6.2.2.p.4">A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV then the response message is processed but the SUBSCRIBE TLV MUST be silently ignored.</p>
 <p id="rfc.section.6.2.2.p.5">In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</p>
+<div id="rfc.table.1"></div>
+<div id="subscribe_rcodes"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>SUBSCRIBE Response codes</caption>
 <thead><tr>
@@ -712,7 +717,7 @@
 <li>there is some other unknown failure on the server.</li>
 </ol>
 
-<p> In any case, the client shouldn't retry the subscription to this server right away. If multiple SRV records were returned as described in discovery </p>
+<p> </p>
 <p id="rfc.section.6.2.2.p.8">If the client has other successful subscriptions to this server, these subscriptions can remain even though additional subscriptions may be refused. Neither the client, nor the server are required to close the connection, although, either end may choose to do so.</p>
 <p id="rfc.section.6.2.2.p.9">If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <a href="#DSO" class="xref">[DSO]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.  </p>
 
@@ -798,7 +803,7 @@
 <h1 id="rfc.section.6.4">
 <a href="#rfc.section.6.4">6.4.</a> <a href="#unsubscribe" id="unsubscribe">DNS Push Notification UNSUBSCRIBE</a>
 </h1>
-<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a <a href="#DSO" class="xref">DSO</a> unidirectional message. This specification defines a DSO TLV for DNS Push Notification UNSUBSCRIBE Requests/Responses (tentatively DSO Type Code 0x42).</p>
+<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a <a href="#DSO" class="xref">DSO</a> unidirectional message. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Requests (tentatively DSO Type Code 0x42).</p>
 <p id="rfc.section.6.4.p.2">A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.4.1">
 <a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Request</h1>
@@ -840,7 +845,7 @@
 <h1 id="rfc.section.6.5.1">
 <a href="#rfc.section.6.5.1">6.5.1.</a> <a href="#reconfirm" id="reconfirm">RECONFIRM Request</a>
 </h1>
-<p id="rfc.section.6.5.1.p.1">A RECONFIRM request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM TLV.  A RECONFIRM request message is illustrated in <a href="#reconfirm_req" class="xref">Figure 4</a>.</p>
+<p id="rfc.section.6.5.1.p.1">A RECONFIRM request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the primary DSO RECONFIRM TLV.  A RECONFIRM request message is illustrated in <a href="#reconfirm_req" class="xref">Figure 4</a>.</p>
 <p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
 <p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS Opcode is the DSO Opcode.  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.5.1.p.4">The DSO-TYPE is RECONFIRM (tentatively 0x43).  The DSO-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
@@ -886,6 +891,8 @@
 <p id="rfc.section.6.5.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.  This is how the client knows which request is being responded to.</p>
 <p id="rfc.section.6.5.2.p.4">A RECONFIRM response message MUST NOT include a DSO RECONFIRM TLV.  If a client receives a RECONFIRM response message containing a RECONFIRM TLV then the response message is processed but the RECONFIRM TLV MUST be silently ignored.</p>
 <p id="rfc.section.6.5.2.p.5">In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</p>
+<div id="rfc.table.2"></div>
+<div id="reconfirm_rcodes"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>RECONFIRM Response codes</caption>
 <thead><tr>
@@ -942,12 +949,141 @@
 <p id="rfc.section.6.5.2.p.14">Nonzero RCODE values SERVFAIL, REFUSED and DSOTYPENI are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</p>
 <p id="rfc.section.6.5.2.p.15">Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DSO Retry Delay TLV to end the DSO session, as described in the <a href="#DSO" class="xref">DSO specification</a>.</p>
 <h1 id="rfc.section.6.6">
-<a href="#rfc.section.6.6">6.6.</a> Client-Initiated Termination</h1>
-<p id="rfc.section.6.6.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the DSO session. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that DSO session (by ending the session) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
-<p id="rfc.section.6.6.p.2">After terminating its last subscription on a session via UNSUBSCRIBE, a client MAY close the session immediately, or it may keep it open if it anticipates performing further operations on that session in the future. If a client wishes to keep an idle session open, it MUST respect the maximum idle time required by the server <a href="#DSO" class="xref">[DSO]</a>.</p>
-<p id="rfc.section.6.6.p.3">If a client plans to terminate one or more subscriptions on a session and doesn't intend to keep that session open, then as an efficiency optimization it MAY instead choose to simply close the session, which implicitly terminates all subscriptions on that session. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that session has been cancelled.</p>
-<p id="rfc.section.6.6.p.4">When closing a session, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD Sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</p>
-<p id="rfc.section.6.6.p.5">If a client has performed operations on this session that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TLS close_notify followed by a TCP FIN.  (In the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.)</p>
+<a href="#rfc.section.6.6">6.6.</a> DNS Stateful Operations TLV Context Summary</h1>
+<p id="rfc.section.6.6.p.1">This document defines four new DSO TLVs. As suggested in <a href="#DSO" class="xref">[DSO]</a>, Section 8.2, the valid contexts of these new TLV types are summarized below.</p>
+<p id="rfc.section.6.6.p.2">The client TLV contexts are: </p>
+
+<dl>
+<dt>C-P:</dt>
+<dd style="margin-left: 8">Client primary bidirectional TLV</dd>
+<dt>C-U:</dt>
+<dd style="margin-left: 8">Client primary unidirectional TLV</dd>
+<dt>C-A:</dt>
+<dd style="margin-left: 8">Client additional TLV</dd>
+<dt>CRP:</dt>
+<dd style="margin-left: 8">Client response primary TLV</dd>
+<dt>CRA:</dt>
+<dd style="margin-left: 8">Client response additional TLV</dd>
+</dl>
+
+<p> </p>
+<div id="rfc.table.3"></div>
+<div id="tlv_client_contexts"></div>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+<caption>DSO TLV Client Context Summary</caption>
+<thead><tr>
+<th class="center">Type</th>
+<th class="center">C-P</th>
+<th class="center">C-U</th>
+<th class="center">C-A</th>
+<th class="center">CRP</th>
+<th class="center">CRA</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="center">SUBSCRIBE</td>
+<td class="center">X</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+<tr>
+<td class="center">PUSH</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+<tr>
+<td class="center">UNSUBSCRIBE</td>
+<td class="center">X</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+<tr>
+<td class="center">RECONFIRM</td>
+<td class="center">X</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+</tbody>
+</table>
+<p id="rfc.section.6.6.p.3">The server TLV contexts are: </p>
+
+<dl>
+<dt>S-P:</dt>
+<dd style="margin-left: 8">Server primary bidirectional TLV</dd>
+<dt>S-U:</dt>
+<dd style="margin-left: 8">Server primary unidirectional TLV</dd>
+<dt>S-A:</dt>
+<dd style="margin-left: 8">Server additional TLV</dd>
+<dt>SRP:</dt>
+<dd style="margin-left: 8">Server response primary TLV</dd>
+<dt>SRA:</dt>
+<dd style="margin-left: 8">Server response additional TLV</dd>
+</dl>
+
+<p> </p>
+<div id="rfc.table.4"></div>
+<div id="tlv_server_contexts"></div>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+<caption>DSO TLV Server Context Summary</caption>
+<thead><tr>
+<th class="center">Type</th>
+<th class="center">S-P</th>
+<th class="center">S-U</th>
+<th class="center">S-A</th>
+<th class="center">SRP</th>
+<th class="center">SRA</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="center">SUBSCRIBE</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+<tr>
+<td class="center">PUSH</td>
+<td class="center"></td>
+<td class="center">X</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+<tr>
+<td class="center">UNSUBSCRIBE</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+<tr>
+<td class="center">RECONFIRM</td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+<td class="center"></td>
+</tr>
+</tbody>
+</table>
+<h1 id="rfc.section.6.7">
+<a href="#rfc.section.6.7">6.7.</a> Client-Initiated Termination</h1>
+<p id="rfc.section.6.7.p.1">An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the DSO session. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that DSO session (by ending the session) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</p>
+<p id="rfc.section.6.7.p.2">After terminating its last subscription on a session via UNSUBSCRIBE, a client MAY close the session immediately, or it may keep it open if it anticipates performing further operations on that session in the future. If a client wishes to keep an idle session open, it MUST respect the maximum idle time required by the server <a href="#DSO" class="xref">[DSO]</a>.</p>
+<p id="rfc.section.6.7.p.3">If a client plans to terminate one or more subscriptions on a session and doesn't intend to keep that session open, then as an efficiency optimization it MAY instead choose to simply close the session, which implicitly terminates all subscriptions on that session. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that session has been cancelled.</p>
+<p id="rfc.section.6.7.p.4">When closing a session, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD Sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</p>
+<p id="rfc.section.6.7.p.5">If a client has performed operations on this session that it would not want lost (like DNS updates) then the client SHOULD do an orderly disconnect, sending a TLS close_notify followed by a TCP FIN.  (In the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining data has been read from it.)</p>
 <h1 id="rfc.section.7">
 <a href="#rfc.section.7">7.</a> <a href="#Security" id="Security">Security Considerations</a>
 </h1>
@@ -983,7 +1119,7 @@
 <a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a>
 </h1>
 <p id="rfc.section.8.p.1">This document defines a new service name to be published in the IANA Registry Service Types <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#ST" class="xref">[ST]</a> that is only applicable for the TCP protocol.</p>
-<div id="rfc.table.1"></div>
+<div id="rfc.table.5"></div>
 <div id="iana_service_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>IANA Service Type Assignments</caption>
@@ -1001,7 +1137,7 @@
 </tr></tbody>
 </table>
 <p id="rfc.section.8.p.2">This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</p>
-<div id="rfc.table.2"></div>
+<div id="rfc.table.6"></div>
 <div id="iana_tlv_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>IANA DSO TLV Type Code Assignments</caption>
