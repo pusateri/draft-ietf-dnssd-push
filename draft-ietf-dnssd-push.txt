@@ -1522,14 +1522,14 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    The client TLV contexts are:
 
-   C-P:  Client primary bidirectional TLV
+   C-P:  Client primary TLV
    C-U:  Client primary unidirectional TLV
    C-A:  Client additional TLV
    CRP:  Client response primary TLV
    CRA:  Client response additional TLV
 
                +-------------+-----+-----+-----+-----+-----+
-               |     Type    | C-P | C-U | C-A | CRP | CRA |
+               |   TLV Type  | C-P | C-U | C-A | CRP | CRA |
                +-------------+-----+-----+-----+-----+-----+
                |  SUBSCRIBE  |  X  |     |     |     |     |
                |     PUSH    |     |     |     |     |     |
@@ -1541,14 +1541,14 @@ Internet-Draft           DNS Push Notifications           September 2018
 
    The server TLV contexts are:
 
-   S-P:  Server primary bidirectional TLV
+   S-P:  Server primary TLV
    S-U:  Server primary unidirectional TLV
    S-A:  Server additional TLV
    SRP:  Server response primary TLV
    SRA:  Server response additional TLV
 
                +-------------+-----+-----+-----+-----+-----+
-               |     Type    | S-P | S-U | S-A | SRP | SRA |
+               |   TLV Type  | S-P | S-U | S-A | SRP | SRA |
                +-------------+-----+-----+-----+-----+-----+
                |  SUBSCRIBE  |     |     |     |     |     |
                |     PUSH    |     |  X  |     |     |     |
