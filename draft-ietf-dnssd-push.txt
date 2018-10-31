@@ -1529,12 +1529,12 @@ Internet-Draft           DNS Push Notifications           September 2018
    CRA:  Client response additional TLV
 
                +-------------+-----+-----+-----+-----+-----+
-               |   TLV Type  | C-P | C-U | C-A | CRP | CRA |
+               |    TLV Type | C-P | C-U | C-A | CRP | CRA |
                +-------------+-----+-----+-----+-----+-----+
-               |  SUBSCRIBE  |  X  |     |     |     |     |
-               |     PUSH    |     |     |     |     |     |
+               |   SUBSCRIBE |  X  |     |     |     |     |
+               |        PUSH |     |     |     |     |     |
                | UNSUBSCRIBE |     |  X  |     |     |     |
-               |  RECONFIRM  |  X  |     |     |     |     |
+               |   RECONFIRM |  X  |     |     |     |     |
                +-------------+-----+-----+-----+-----+-----+
 
                   Table 3: DSO TLV Client Context Summary
@@ -1548,12 +1548,12 @@ Internet-Draft           DNS Push Notifications           September 2018
    SRA:  Server response additional TLV
 
                +-------------+-----+-----+-----+-----+-----+
-               |   TLV Type  | S-P | S-U | S-A | SRP | SRA |
+               |    TLV Type | S-P | S-U | S-A | SRP | SRA |
                +-------------+-----+-----+-----+-----+-----+
-               |  SUBSCRIBE  |     |     |     |     |     |
-               |     PUSH    |     |  X  |     |     |     |
+               |   SUBSCRIBE |     |     |     |     |     |
+               |        PUSH |     |  X  |     |     |     |
                | UNSUBSCRIBE |     |     |     |     |     |
-               |  RECONFIRM  |     |     |     |     |     |
+               |   RECONFIRM |     |     |     |     |     |
                +-------------+-----+-----+-----+-----+-----+
 
                   Table 4: DSO TLV Server Context Summary

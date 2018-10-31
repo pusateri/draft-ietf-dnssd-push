@@ -856,7 +856,7 @@
          <?rfc subcompact="no" ?>
        </t>
        <texttable title="DSO TLV Client Context Summary" anchor="tlv_client_contexts">
-       <ttcol align="center">TLV Type</ttcol>
+       <ttcol align="right">TLV Type</ttcol>
        <ttcol align="center">C-P</ttcol>
        <ttcol align="center">C-U</ttcol>
        <ttcol align="center">C-A</ttcol>
@@ -879,7 +879,7 @@
        <?rfc subcompact="no" ?>
      </t>
      <texttable title="DSO TLV Server Context Summary" anchor="tlv_server_contexts">
-     <ttcol align="center">TLV Type</ttcol>
+     <ttcol align="right">TLV Type</ttcol>
      <ttcol align="center">S-P</ttcol>
      <ttcol align="center">S-U</ttcol>
      <ttcol align="center">S-A</ttcol>
