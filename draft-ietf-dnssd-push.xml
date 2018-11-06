@@ -104,14 +104,14 @@
 
      <address>
        <postal>
-         <street>1 Infinite Loop</street>
+         <street>One Apple Park Way</street>
          <!-- Reorder these if your country does things differently -->
          <city>Cupertino</city>
          <region>CA</region>
          <code>95014</code>
          <country>USA</country>
        </postal>
-       <phone>+1 408 974 3207</phone>
+       <phone>+1 (408) 996-1010</phone>
        <email>cheshire@apple.com</email>
        <!-- uri and facsimile elements may also be added -->
      </address>
