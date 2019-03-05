@@ -65,7 +65,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 Table of Contents
 
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
    2.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
@@ -88,31 +88,12 @@ Table of Contents
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  32
      7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  32
      7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  32
-     7.3.  TLS Compression . . . . . . . . . . . . . . . . . . . . .  33
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  33
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  34
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  35
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  35
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  36
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 6, 2019               [Page 2]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  33
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  33
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  34
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  34
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  35
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  38
 
 1.  Introduction
 
@@ -126,6 +107,13 @@ Internet-Draft           DNS Push Notifications               March 2019
    DNS record change notifications.  Familiarity with the DNS protocol
    and DNS packet formats is assumed [RFC1034] [RFC1035] [RFC6895].
 
+
+
+Pusateri & Cheshire     Expires September 6, 2019               [Page 2]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
 1.1.  Requirements Language
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -135,6 +123,18 @@ Internet-Draft           DNS Push Notifications               March 2019
    capitals, as shown here.  These words may also appear in this
    document in lower case as plain English words, absent their normative
    meanings.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1800,55 +1800,11 @@ Internet-Draft           DNS Push Notifications               March 2019
    used for the target name to ensure the client is connecting to the
    server it has authenticated.  If the target name does not have a
    usable TLSA record, then the use of the SNI extension is optional.
-
    See Usage Profiles for DNS over TLS and DNS over DTLS [RFC8310] for
-   more information on authenticating domain names.  Also note that a
-   DNS Push server is an authoritative server and a DNS Push client is a
-   standard DNS client.  While the terminology in Usage Profiles for DNS
-   over TLS and DNS over DTLS [RFC8310] explicitly states it does not
-   apply to authoritative servers, it does in this case apply to DNS
-   Push Notification clients and servers.
+   more information on authenticating domain names.
 
-7.3.  TLS Compression
-
-   In order to reduce the chances of compression-related attacks, TLS-
-   level compression SHOULD be disabled when using TLS versions 1.2 and
-   earlier.  In TLS 1.3 [RFC8446], TLS-level compression has been
-   removed completely.
-
-7.4.  TLS Session Resumption
-
-   TLS Session Resumption is permissible on DNS Push Notification
-   servers.  The server may keep TLS state with Session IDs [RFC5246] or
-   operate in stateless mode by sending a Session Ticket [RFC5077] to
-   the client for it to store.  However, closing the TLS connection
-   terminates the DSO session.  When the TLS session is resumed, the DNS
-   Push Notification server will not have any subscription state and
-   will proceed as with any other new DSO session.  Use of TLS Session
-   Resumption may allow a TLS connection to be set up more quickly, but
-   the client will still have to recreate any desired subscriptions.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 6, 2019              [Page 33]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
+   Also, see Section 9 of [RFC8310] for additional recommendations for
+   various versions of TLS usage.
 
 8.  IANA Considerations
 
@@ -1886,25 +1842,17 @@ Internet-Draft           DNS Push Notifications               March 2019
 
    This draft has been improved due to comments from Ran Atkinson, Tim
    Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju
-   Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara
-   Dickinson, and Andrew Sullivan.  Ted Lemon provided clarifying text
-   that was greatly appreciated.
 
 
 
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires September 6, 2019              [Page 34]
+Pusateri & Cheshire     Expires September 6, 2019              [Page 33]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
+
+   Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara
+   Dickinson, and Andrew Sullivan.  Ted Lemon provided clarifying text
+   that was greatly appreciated.
 
 10.  References
 
@@ -1953,11 +1901,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-
-
-
-
-Pusateri & Cheshire     Expires September 6, 2019              [Page 35]
+Pusateri & Cheshire     Expires September 6, 2019              [Page 34]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1997,10 +1941,6 @@ Internet-Draft           DNS Push Notifications               March 2019
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
-              <https://www.rfc-editor.org/info/rfc8446>.
-
    [ST]       "Service Name and Transport Protocol Port Number
               Registry", <http://www.iana.org/assignments/
               service-names-port-numbers/>.
@@ -2013,7 +1953,11 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire     Expires September 6, 2019              [Page 36]
+
+
+
+
+Pusateri & Cheshire     Expires September 6, 2019              [Page 35]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -2042,11 +1986,6 @@ Internet-Draft           DNS Push Notifications               March 2019
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
-   [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
-              "Transport Layer Security (TLS) Session Resumption without
-              Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
-              January 2008, <https://www.rfc-editor.org/info/rfc5077>.
-
    [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
               "Understanding Apple's Back to My Mac (BTMM) Service",
               RFC 6281, DOI 10.17487/RFC6281, June 2011,
@@ -2065,18 +2004,19 @@ Internet-Draft           DNS Push Notifications               March 2019
               Addresses", RFC 6824, DOI 10.17487/RFC6824, January 2013,
               <https://www.rfc-editor.org/info/rfc6824>.
 
-
-
-
-
-Pusateri & Cheshire     Expires September 6, 2019              [Page 37]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
-
    [RFC6886]  Cheshire, S. and M. Krochmal, "NAT Port Mapping Protocol
               (NAT-PMP)", RFC 6886, DOI 10.17487/RFC6886, April 2013,
               <https://www.rfc-editor.org/info/rfc6886>.
+
+
+
+
+
+
+Pusateri & Cheshire     Expires September 6, 2019              [Page 36]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
 
    [RFC6887]  Wing, D., Ed., Cheshire, S., Boucadair, M., Penno, R., and
               P. Selkirk, "Port Control Protocol (PCP)", RFC 6887,
@@ -2121,17 +2061,18 @@ Internet-Draft           DNS Push Notifications               March 2019
               Internet Protocol Journal, Cisco Systems, Volume 9,
               Number 4, December 2006.
 
+   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
+              Subscribe", XSF XEP 0060, July 2010.
 
 
 
 
-Pusateri & Cheshire     Expires September 6, 2019              [Page 38]
+
+
+Pusateri & Cheshire     Expires September 6, 2019              [Page 37]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
-
-   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
-              Subscribe", XSF XEP 0060, July 2010.
 
 Authors' Addresses
 
@@ -2181,4 +2122,7 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires September 6, 2019              [Page 39]
+
+
+
+Pusateri & Cheshire     Expires September 6, 2019              [Page 38]
