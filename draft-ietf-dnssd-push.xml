@@ -17,6 +17,7 @@
 <!ENTITY RFC2782 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2782.xml">
 <!ENTITY RFC4287 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4287.xml">
 <!ENTITY RFC4953 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4953.xml">
+<!ENTITY RFC5077 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5077.xml">
 <!ENTITY RFC5246 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml">
 <!ENTITY RFC6066 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6066.xml">
 <!ENTITY RFC6281 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6281.xml">
@@ -962,6 +963,8 @@
    <section title="Security Considerations" anchor="Security">
      <t>The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS Push Notifications <xref target="RFC8310"/>. Cleartext connections for DNS Push Notifications are not permissible. Since this is a new protocol, transition mechanisms from the Opportunistic Privacy profile are unnecessary.</t>
 
+     <t>Also, see Section 9 of the DNS over (D)TLS Usage Profiles document <xref target="RFC8310"/> for additional recommendations for various versions of TLS usage.</t>
+
      <t>DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
 
      <section title="Security Services">
@@ -977,7 +980,11 @@
 
      <section title="TLS Name Authentication" anchor="tls_name_auth">
        <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
-       <t>Also, see Section 9 of <xref target="RFC8310"/> for additional recommendations for various versions of TLS usage.</t>
+     </section>
+
+     <section title="TLS Session Resumption">
+       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
+<?rfc needLines="23" ?>
      </section>
    </section>
 
@@ -1097,6 +1104,7 @@
      &RFC2308;
      &RFC4287;
      &RFC4953;
+     &RFC5077;
      &RFC6281;
      &RFC6762;
      &RFC6763;
