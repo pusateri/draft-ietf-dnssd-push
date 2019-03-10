@@ -18,7 +18,6 @@
 <!ENTITY RFC4287 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4287.xml">
 <!ENTITY RFC4953 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4953.xml">
 <!ENTITY RFC5077 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5077.xml">
-<!ENTITY RFC5246 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml">
 <!ENTITY RFC6066 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6066.xml">
 <!ENTITY RFC6281 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6281.xml">
 <!ENTITY RFC6762 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6762.xml">
@@ -37,6 +36,7 @@
 <!ENTITY RFC8011 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8011.xml">
 <!ENTITY RFC8174 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8310 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8310.xml">
+<!ENTITY RFC8446 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml">
 <!ENTITY I-D.dukkipati-tcpm-tcp-loss-probe SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.dukkipati-tcpm-tcp-loss-probe.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -118,7 +118,7 @@
      </address>
    </author>
 
-   <date year='2019' month='March' day='5'/>
+   <date year='2019' month='March' day='9'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -259,7 +259,7 @@
      <xref target="RFC7413">TCP Fast Open (TFO)</xref>,
      <xref target="I-D.dukkipati-tcpm-tcp-loss-probe">Tail Loss Probe (TLP)</xref>, and so on.</t>
 
-     <t>Transport Layer Security <xref target="RFC5246">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, and message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
+     <t>Transport Layer Security <xref target="RFC8446">(TLS)</xref> is well understood and deployed across many protocols running over TCP. It is designed to prevent eavesdropping, tampering, and message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
 
 <?rfc needLines="25" ?>
    </section>
@@ -329,10 +329,13 @@
         the techniques to handle VPN tunnels and split-view DNS for DNS Push Notifications are the
         same as those already used to handle this for normal DNS queries.</t>
 
-        <t>If the recursive resolver does not support DSO at all,
+        <t>If the recursive resolver
+        does not support DNS over TLS, or
+        does support DNS over TLS but is not listening on TCP port 853, or
+        does support DNS over TLS on TCP port 853 but does not support DSO on that port,
         then the DSO Session session establishment will fail <xref target="DSO"/>.</t>
 
-        <t>If the recursive resolver supports DSO but not Push Notification
+        <t>If the recursive resolver does support DSO but not Push Notification
         subscriptions, then it will return the DSO error code, DSOTYPENI (11).</t>
 
         <t>In some cases, the recursive resolver may support DSO and Push Notification
@@ -355,7 +358,7 @@
         via the usual mechanisms for VPN software) the client may
         handle these failures by contacting the zone's DNS Push server directly.</t>
 
-        <t>In any of the three cases described above where the client
+        <t>In any of the cases described above where the client
         fails to establish a DNS Push Notification subscription via its
         configured recursive resolver, the client should proceed to discover
         the appropriate server for direct communication.  The client MUST
@@ -433,7 +436,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (6).
+         The DNS OPCODE is the DSO OPCODE (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).</t>
@@ -447,7 +450,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |                  MESSAGE ID                   |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| Opcode(6) |         Z          |   RCODE   |    |
+|QR| OPCODE(6) |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             QDCOUNT (MUST BE ZERO)            |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
@@ -604,7 +607,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (6).
+         The DNS OPCODE is the DSO OPCODE (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is PUSH (tentatively 0x41).</t>
@@ -642,7 +645,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |           MESSAGE ID (MUST BE ZERO)           |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| Opcode(6) |         Z          |   RCODE   |    |
+|QR| OPCODE(6) |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             QDCOUNT (MUST BE ZERO)            |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
@@ -716,7 +719,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (6).
+         The DNS OPCODE is the DSO OPCODE (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).</t>
@@ -748,7 +751,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |           MESSAGE ID (MUST BE ZERO)           |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| Opcode(6) |         Z          |   RCODE   |    |
+|QR| OPCODE(6) |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             QDCOUNT (MUST BE ZERO)            |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
@@ -788,7 +791,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS Opcode is the DSO Opcode (6).
+         The DNS OPCODE is the DSO OPCODE (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is RECONFIRM (tentatively 0x43).</t>
@@ -802,7 +805,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |                  MESSAGE ID                   |   \
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| Opcode(6) |         Z          |   RCODE   |    |
+|QR| OPCODE(6) |         Z          |   RCODE   |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |             QDCOUNT (MUST BE ZERO)            |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
@@ -983,7 +986,7 @@
      </section>
 
      <section title="TLS Session Resumption">
-       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC5246"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
+       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC8446"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
 <?rfc needLines="23" ?>
      </section>
    </section>
@@ -1053,13 +1056,13 @@
      &RFC2119;
      &RFC2136;
      &RFC2782;
-     &RFC5246;
      &RFC6066;
      <?rfc include="reference.RFC.6335" ?>
      &RFC6895;
      &RFC7673;
      &RFC7766;
      &RFC8174;
+     &RFC8446;
 
      <reference anchor='DSO'>
      <front>
