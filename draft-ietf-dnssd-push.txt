@@ -762,9 +762,9 @@ Internet-Draft           DNS Push Notifications               March 2019
    the server MUST echo back the MESSAGE ID value unchanged.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE is the DSO OPCODE (6).  The four
-   count fields MUST be zero, and the corresponding four sections MUST
-   be empty (i.e., absent).
+   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   for DNS Stateful Operations (6).  The four count fields MUST be zero,
+   and the corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
 
@@ -1087,9 +1087,9 @@ Internet-Draft           DNS Push Notifications               March 2019
    message.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE is the DSO OPCODE (6).  The four
-   count fields MUST be zero, and the corresponding four sections MUST
-   be empty (i.e., absent).
+   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   for DNS Stateful Operations (6).  The four count fields MUST be zero,
+   and the corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is PUSH (tentatively 0x41).
 
@@ -1259,9 +1259,9 @@ Internet-Draft           DNS Push Notifications               March 2019
    UNSUBSCRIBE message.
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE is the DSO OPCODE (6).  The four
-   count fields MUST be zero, and the corresponding four sections MUST
-   be empty (i.e., absent).
+   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   for DNS Stateful Operations (6).  The four count fields MUST be zero,
+   and the corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).
 
@@ -1403,9 +1403,9 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
    The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE is the DSO OPCODE (6).  The four
-   count fields MUST be zero, and the corresponding four sections MUST
-   be empty (i.e., absent).
+   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   for DNS Stateful Operations (6).  The four count fields MUST be zero,
+   and the corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is RECONFIRM (tentatively 0x43).
 

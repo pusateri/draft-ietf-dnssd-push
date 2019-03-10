@@ -436,7 +436,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS OPCODE is the DSO OPCODE (6).
+         The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).</t>
@@ -607,7 +607,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS OPCODE is the DSO OPCODE (6).
+         The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is PUSH (tentatively 0x41).</t>
@@ -719,7 +719,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS OPCODE is the DSO OPCODE (6).
+         The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).</t>
@@ -791,7 +791,7 @@
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
-         The DNS OPCODE is the DSO OPCODE (6).
+         The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is RECONFIRM (tentatively 0x43).</t>
