@@ -773,21 +773,23 @@
      </section>
 
      <section title="DNS Push Notification RECONFIRM" anchor="reconfirm">
-       <t>Sometimes, particularly when used with a <xref target="DisProx">Discovery Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM request to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS requests to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS requests to be issued depends on the details of the underlying Multicast DNS being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</t>
+       <t>Sometimes, particularly when used with a <xref target="DisProx">Discovery Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</t>
        
        <t>For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</t>
 
        <t>Frequent use of RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting, and remedying, such network problems.</t>
 
-       <t>If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
+       <t>If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
 
-       <section title="RECONFIRM Request">
+       <section title="RECONFIRM Message">
 
-         <t>A RECONFIRM request begins with the standard
+         <t>A RECONFIRM unidirectional message begins with the standard
          <xref target="DSO">DSO 12-byte header</xref>, followed by the RECONFIRM primary TLV.
-         A RECONFIRM request message is illustrated in <xref target="reconfirm_req"/>.</t>
+         A RECONFIRM message is illustrated in <xref target="reconfirm_req"/>.</t>
 
-         <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</t>
+         <t>In accordance with the definition of DSO unidirectional messages,
+         the MESSAGE ID field MUST be zero.
+         There is no server response to a RECONFIRM message.</t>
 
          <t>The other header fields MUST be set as described in the
          <xref target="DSO">DSO specification</xref>.
@@ -799,7 +801,7 @@
          <t>The DSO-LENGTH is the length of the data that follows, which specifies
          the name, type, class, and content of the record being disputed.</t>
 
-         <figure align="center" anchor="reconfirm_req" title="RECONFIRM Request"><artwork align="center"><![CDATA[
+         <figure align="center" anchor="reconfirm_req" title="RECONFIRM Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -828,9 +830,9 @@
 \                     RDATA                     \   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
-         <t>The DSO-DATA for a RECONFIRM request MUST contain exactly one record.
-         The DSO-DATA for a RECONFIRM request has no count field to specify more than one record.
-         Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages
+         <t>The DSO-DATA for a RECONFIRM message MUST contain exactly one record.
+         The DSO-DATA for a RECONFIRM message has no count field to specify more than one record.
+         Since RECONFIRM messages are sent over TCP, multiple RECONFIRM messages
          can be concatenated in a single TCP stream and packed efficiently into TCP segments.</t>
 
          <t>TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value ANY (255).</t>
@@ -842,58 +844,6 @@
 <?rfc needLines="48" ?>
        </section>
 
-       <section title="RECONFIRM Response">
-
-         <t>Each RECONFIRM request generates exactly one RECONFIRM response from the server.</t>
-
-         <t>A RECONFIRM response begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>,
-         possibly followed by one or more optional TLVs, such as a Retry Delay TLV.
-         For suggested values for the Retry Delay TLV, see <xref target="subresp"/>.</t>
-
-         <t>The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.
-         This is how the client knows which request is being responded to.</t>
-
-         <t>A RECONFIRM response message MUST NOT include a DSO RECONFIRM TLV.
-         If a client receives a RECONFIRM response message containing a RECONFIRM TLV
-         then the response message is processed but the RECONFIRM TLV MUST be silently ignored.</t>
-
-         <t>In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</t>
-         <texttable title="RECONFIRM Response codes" anchor="reconfirm_rcodes">
-         <ttcol align="left">Mnemonic</ttcol>
-         <ttcol align="center">Value</ttcol>
-         <ttcol align="left">Description</ttcol>
-         <c>NOERROR</c><c>0</c><c>RECONFIRM accepted.</c>
-         <c>FORMERR</c><c>1</c><c>Server failed to process request due to a malformed request.</c>
-         <c>SERVFAIL</c><c>2</c><c>Server failed to process request due to a problem with the server.</c>
-         <c>NOTIMP</c><c>4</c><c>Server does not implement DSO.</c>
-         <c>REFUSED</c><c>5</c><c>Server refuses to process request for policy or security reasons.</c>
-         <c>NOTAUTH</c><c>9</c><c>Server is not authoritative for the requested name.</c>
-         <c>DSOTYPENI</c><c>11</c><c>RECONFIRM operation not supported.</c>
-         </texttable>
-
-         <t>This document specifies only these RCODE values for RECONFIRM Responses. Servers sending RECONFIRM Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a RECONFIRM Request. However, future circumstances may create situations where other RCODE values are appropriate in RECONFIRM Responses, so clients MUST be prepared to accept RECONFIRM Responses with any other RCODE value.</t>
-
-         <t>Nonzero RCODE values signal some kind of error.</t>
-
-         <t>RCODE value FORMERR indicates a message format error, for example TYPE or CLASS being ANY (255).</t>
-
-         <t>RCODE value SERVFAIL indicates that the server has exhausted its resources or other serious problem occurred.</t>
-
-         <t>RCODE values NOTIMP indicates that the server does not support DSO, and DSO is required for RECONFIRM requests.</t>
-
-         <t>RCODE value REFUSED indicates that the server supports RECONFIRM requests but is currently not configured to accept them from this client.</t>
-
-         <t>RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</t>
-
-         <t>RCODE value DSOTYPENI indicates that the server does not support RECONFIRM requests.</t>
-
-         <t>Nonzero RCODE values SERVFAIL, REFUSED and DSOTYPENI are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</t>
-         
-         <t>Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DSO Retry Delay TLV to end the DSO session, as described in the <xref target="DSO">DSO specification</xref>.</t>
-
-<?rfc needLines="48" ?>
-       </section>
      </section>
      <section title="DNS Stateful Operations TLV Context Summary">
        <t>This document defines four new DSO TLVs. As suggested in Section 8.2 of the <xref target="DSO">DNS Stateful Operations specification</xref>, the valid contexts of these new TLV types are summarized below.</t>

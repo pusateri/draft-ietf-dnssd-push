@@ -390,8 +390,7 @@
 <link href="#rfc.section.6.4" rel="Chapter" title="6.4 DNS Push Notification UNSUBSCRIBE">
 <link href="#rfc.section.6.4.1" rel="Chapter" title="6.4.1 UNSUBSCRIBE Message">
 <link href="#rfc.section.6.5" rel="Chapter" title="6.5 DNS Push Notification RECONFIRM">
-<link href="#rfc.section.6.5.1" rel="Chapter" title="6.5.1 RECONFIRM Request">
-<link href="#rfc.section.6.5.2" rel="Chapter" title="6.5.2 RECONFIRM Response">
+<link href="#rfc.section.6.5.1" rel="Chapter" title="6.5.1 RECONFIRM Message">
 <link href="#rfc.section.6.6" rel="Chapter" title="6.6 DNS Stateful Operations TLV Context Summary">
 <link href="#rfc.section.6.7" rel="Chapter" title="6.7 Client-Initiated Termination">
 <link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
@@ -498,9 +497,7 @@
 </li>
 </ul><li>6.5.   <a href="#rfc.section.6.5">DNS Push Notification RECONFIRM</a>
 </li>
-<ul><li>6.5.1.   <a href="#rfc.section.6.5.1">RECONFIRM Request</a>
-</li>
-<li>6.5.2.   <a href="#rfc.section.6.5.2">RECONFIRM Response</a>
+<ul><li>6.5.1.   <a href="#rfc.section.6.5.1">RECONFIRM Message</a>
 </li>
 </ul><li>6.6.   <a href="#rfc.section.6.6">DNS Stateful Operations TLV Context Summary</a>
 </li>
@@ -843,14 +840,14 @@
 <h1 id="rfc.section.6.5">
 <a href="#rfc.section.6.5">6.5.</a> <a href="#reconfirm" id="reconfirm">DNS Push Notification RECONFIRM</a>
 </h1>
-<p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM request to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS requests to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS requests to be issued depends on the details of the underlying Multicast DNS being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</p>
+<p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</p>
 <p id="rfc.section.6.5.p.2">For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</p>
 <p id="rfc.section.6.5.p.3">Frequent use of RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting, and remedying, such network problems.</p>
-<p id="rfc.section.6.5.p.4">If, after receiving a valid RECONFIRM request, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
+<p id="rfc.section.6.5.p.4">If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
 <h1 id="rfc.section.6.5.1">
-<a href="#rfc.section.6.5.1">6.5.1.</a> RECONFIRM Request</h1>
-<p id="rfc.section.6.5.1.p.1">A RECONFIRM request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM primary TLV.  A RECONFIRM request message is illustrated in <a href="#reconfirm_req" class="xref">Figure 4</a>.</p>
-<p id="rfc.section.6.5.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the RECONFIRM response the server MUST echo back the MESSAGE ID value unchanged.</p>
+<a href="#rfc.section.6.5.1">6.5.1.</a> RECONFIRM Message</h1>
+<p id="rfc.section.6.5.1.p.1">A RECONFIRM unidirectional message begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM primary TLV.  A RECONFIRM message is illustrated in <a href="#reconfirm_req" class="xref">Figure 4</a>.</p>
+<p id="rfc.section.6.5.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no server response to a RECONFIRM message.</p>
 <p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.5.1.p.4">The DSO-TYPE is RECONFIRM (tentatively 0x43).</p>
 <p id="rfc.section.6.5.1.p.5">The DSO-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
@@ -884,75 +881,11 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 \                     RDATA                     \   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
-<p class="figure">Figure 4: RECONFIRM Request</p>
-<p id="rfc.section.6.5.1.p.6">The DSO-DATA for a RECONFIRM request MUST contain exactly one record.  The DSO-DATA for a RECONFIRM request has no count field to specify more than one record.  Since RECONFIRM requests are sent over TCP, multiple RECONFIRM request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
+<p class="figure">Figure 4: RECONFIRM Message</p>
+<p id="rfc.section.6.5.1.p.6">The DSO-DATA for a RECONFIRM message MUST contain exactly one record.  The DSO-DATA for a RECONFIRM message has no count field to specify more than one record.  Since RECONFIRM messages are sent over TCP, multiple RECONFIRM messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.5.1.p.7">TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value ANY (255).</p>
 <p id="rfc.section.6.5.1.p.8">DNS wildcarding is not supported. That is, a wildcard ("*") in a RECONFIRM message matches only a literal wildcard character ("*") in the zone, and nothing else.</p>
 <p id="rfc.section.6.5.1.p.9">Aliasing is not supported. That is, a CNAME in a RECONFIRM message matches only a literal CNAME record in the zone, and nothing else.</p>
-<h1 id="rfc.section.6.5.2">
-<a href="#rfc.section.6.5.2">6.5.2.</a> RECONFIRM Response</h1>
-<p id="rfc.section.6.5.2.p.1">Each RECONFIRM request generates exactly one RECONFIRM response from the server.</p>
-<p id="rfc.section.6.5.2.p.2">A RECONFIRM response begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, possibly followed by one or more optional TLVs, such as a Retry Delay TLV.  For suggested values for the Retry Delay TLV, see <a href="#subresp" class="xref">Section 6.2.2</a>.</p>
-<p id="rfc.section.6.5.2.p.3">The MESSAGE ID field MUST echo the value given in the ID field of the RECONFIRM request.  This is how the client knows which request is being responded to.</p>
-<p id="rfc.section.6.5.2.p.4">A RECONFIRM response message MUST NOT include a DSO RECONFIRM TLV.  If a client receives a RECONFIRM response message containing a RECONFIRM TLV then the response message is processed but the RECONFIRM TLV MUST be silently ignored.</p>
-<p id="rfc.section.6.5.2.p.5">In the RECONFIRM response the RCODE confirms receipt of the reconfirmation request. Supported RCODEs are as follows:</p>
-<div id="rfc.table.2"></div>
-<div id="reconfirm_rcodes"></div>
-<table cellpadding="3" cellspacing="0" class="tt full center">
-<caption>RECONFIRM Response codes</caption>
-<thead><tr>
-<th class="left">Mnemonic</th>
-<th class="center">Value</th>
-<th class="left">Description</th>
-</tr></thead>
-<tbody>
-<tr>
-<td class="left">NOERROR</td>
-<td class="center">0</td>
-<td class="left">RECONFIRM accepted.</td>
-</tr>
-<tr>
-<td class="left">FORMERR</td>
-<td class="center">1</td>
-<td class="left">Server failed to process request due to a malformed request.</td>
-</tr>
-<tr>
-<td class="left">SERVFAIL</td>
-<td class="center">2</td>
-<td class="left">Server failed to process request due to a problem with the server.</td>
-</tr>
-<tr>
-<td class="left">NOTIMP</td>
-<td class="center">4</td>
-<td class="left">Server does not implement DSO.</td>
-</tr>
-<tr>
-<td class="left">REFUSED</td>
-<td class="center">5</td>
-<td class="left">Server refuses to process request for policy or security reasons.</td>
-</tr>
-<tr>
-<td class="left">NOTAUTH</td>
-<td class="center">9</td>
-<td class="left">Server is not authoritative for the requested name.</td>
-</tr>
-<tr>
-<td class="left">DSOTYPENI</td>
-<td class="center">11</td>
-<td class="left">RECONFIRM operation not supported.</td>
-</tr>
-</tbody>
-</table>
-<p id="rfc.section.6.5.2.p.6">This document specifies only these RCODE values for RECONFIRM Responses. Servers sending RECONFIRM Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a RECONFIRM Request. However, future circumstances may create situations where other RCODE values are appropriate in RECONFIRM Responses, so clients MUST be prepared to accept RECONFIRM Responses with any other RCODE value.</p>
-<p id="rfc.section.6.5.2.p.7">Nonzero RCODE values signal some kind of error.</p>
-<p id="rfc.section.6.5.2.p.8">RCODE value FORMERR indicates a message format error, for example TYPE or CLASS being ANY (255).</p>
-<p id="rfc.section.6.5.2.p.9">RCODE value SERVFAIL indicates that the server has exhausted its resources or other serious problem occurred.</p>
-<p id="rfc.section.6.5.2.p.10">RCODE values NOTIMP indicates that the server does not support DSO, and DSO is required for RECONFIRM requests.</p>
-<p id="rfc.section.6.5.2.p.11">RCODE value REFUSED indicates that the server supports RECONFIRM requests but is currently not configured to accept them from this client.</p>
-<p id="rfc.section.6.5.2.p.12">RCODE value NOTAUTH indicates that the server is not authoritative for the requested name, and can do nothing to remedy the apparent error. Note that there may be future cases in which a server is able to pass on the RECONFIRM request to the ultimate source of the information, and in these cases the server should return NOERROR.</p>
-<p id="rfc.section.6.5.2.p.13">RCODE value DSOTYPENI indicates that the server does not support RECONFIRM requests.</p>
-<p id="rfc.section.6.5.2.p.14">Nonzero RCODE values SERVFAIL, REFUSED and DSOTYPENI are benign from the client's point of view. The client may log them to aid in debugging, but otherwise they require no special action.</p>
-<p id="rfc.section.6.5.2.p.15">Nonzero RCODE values other than these three indicate a serious problem with the client. After sending an error response other than one of these three, the server SHOULD send a DSO Retry Delay TLV to end the DSO session, as described in the <a href="#DSO" class="xref">DSO specification</a>.</p>
 <h1 id="rfc.section.6.6">
 <a href="#rfc.section.6.6">6.6.</a> DNS Stateful Operations TLV Context Summary</h1>
 <p id="rfc.section.6.6.p.1">This document defines four new DSO TLVs. As suggested in Section 8.2 of the <a href="#DSO" class="xref">DNS Stateful Operations specification</a>, the valid contexts of these new TLV types are summarized below.</p>
@@ -972,7 +905,7 @@
 </dl>
 
 <p> </p>
-<div id="rfc.table.3"></div>
+<div id="rfc.table.2"></div>
 <div id="tlv_client_contexts"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>DSO TLV Client Context Summary</caption>
@@ -1035,7 +968,7 @@
 </dl>
 
 <p> </p>
-<div id="rfc.table.4"></div>
+<div id="rfc.table.3"></div>
 <div id="tlv_server_contexts"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>DSO TLV Server Context Summary</caption>
@@ -1121,7 +1054,7 @@
 <a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a>
 </h1>
 <p id="rfc.section.8.p.1">This document defines a new service name to be published in the IANA Registry Service Types <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#ST" class="xref">[ST]</a> that is only applicable for the TCP protocol.</p>
-<div id="rfc.table.5"></div>
+<div id="rfc.table.4"></div>
 <div id="iana_service_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>IANA Service Type Assignments</caption>
@@ -1139,7 +1072,7 @@
 </tr></tbody>
 </table>
 <p id="rfc.section.8.p.2">This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</p>
-<div id="rfc.table.6"></div>
+<div id="rfc.table.5"></div>
 <div id="iana_tlv_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
 <caption>IANA DSO TLV Type Code Assignments</caption>
