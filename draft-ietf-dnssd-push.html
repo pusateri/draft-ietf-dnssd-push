@@ -388,7 +388,7 @@
 <link href="#rfc.section.6.3" rel="Chapter" title="6.3 DNS Push Notification Updates">
 <link href="#rfc.section.6.3.1" rel="Chapter" title="6.3.1 PUSH Message">
 <link href="#rfc.section.6.4" rel="Chapter" title="6.4 DNS Push Notification UNSUBSCRIBE">
-<link href="#rfc.section.6.4.1" rel="Chapter" title="6.4.1 UNSUBSCRIBE Request">
+<link href="#rfc.section.6.4.1" rel="Chapter" title="6.4.1 UNSUBSCRIBE Message">
 <link href="#rfc.section.6.5" rel="Chapter" title="6.5 DNS Push Notification RECONFIRM">
 <link href="#rfc.section.6.5.1" rel="Chapter" title="6.5.1 RECONFIRM Request">
 <link href="#rfc.section.6.5.2" rel="Chapter" title="6.5.2 RECONFIRM Response">
@@ -494,7 +494,7 @@
 </li>
 </ul><li>6.4.   <a href="#rfc.section.6.4">DNS Push Notification UNSUBSCRIBE</a>
 </li>
-<ul><li>6.4.1.   <a href="#rfc.section.6.4.1">UNSUBSCRIBE Request</a>
+<ul><li>6.4.1.   <a href="#rfc.section.6.4.1">UNSUBSCRIBE Message</a>
 </li>
 </ul><li>6.5.   <a href="#rfc.section.6.5">DNS Push Notification RECONFIRM</a>
 </li>
@@ -803,18 +803,18 @@
 <h1 id="rfc.section.6.4">
 <a href="#rfc.section.6.4">6.4.</a> <a href="#unsubscribe" id="unsubscribe">DNS Push Notification UNSUBSCRIBE</a>
 </h1>
-<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a DSO unidirectional message <a href="#DSO" class="xref">[DSO]</a>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Requests (tentatively DSO Type Code 0x42).</p>
-<p id="rfc.section.6.4.p.2">A server MUST NOT initiate an UNSUBSCRIBE request. If a server does send an UNSUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
+<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a DSO unidirectional message <a href="#DSO" class="xref">[DSO]</a>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</p>
+<p id="rfc.section.6.4.p.2">A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</p>
 <h1 id="rfc.section.6.4.1">
-<a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Request</h1>
-<p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE request begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the UNSUBSCRIBE primary TLV.  An UNSUBSCRIBE request message is illustrated in <a href="#unsubscribe_req" class="xref">Figure 3</a>.</p>
-<p id="rfc.section.6.4.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no server response to a UNSUBSCRIBE message.</p>
+<a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Message</h1>
+<p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE unidirectional message begins with the standard <a href="#DSO" class="xref">DSO 12-byte header</a>, followed by the UNSUBSCRIBE primary TLV.  An UNSUBSCRIBE message is illustrated in <a href="#unsubscribe_req" class="xref">Figure 3</a>.</p>
+<p id="rfc.section.6.4.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no server response to an UNSUBSCRIBE message.</p>
 <p id="rfc.section.6.4.1.p.3">The other header fields MUST be set as described in the <a href="#DSO" class="xref">DSO specification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.4.1.p.4">The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).</p>
 <p id="rfc.section.6.4.1.p.5">The DSO-LENGTH field contains the value 2, the length of the 2-octet MESSAGE ID contained in the DSO-DATA.</p>
-<p id="rfc.section.6.4.1.p.6">The DSO-DATA contains the value given in the MESSAGE ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE request, the SUBSCRIBE request is no longer active.</p>
-<p id="rfc.section.6.4.1.p.7">It is allowable for the client to issue an UNSUBSCRIBE request for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE request.</p>
-<p id="rfc.section.6.4.1.p.8">Consequently, it is possible for a server to receive an UNSUBSCRIBE request that does not match any currently active subscription.  This can occur when a client sends a SUBSCRIBE request, which subsequently fails and returns an error code, but the client sent an UNSUBSCRIBE request before it became aware that the SUBSCRIBE request had failed.  Because of this, servers MUST silently ignore UNSUBSCRIBE requests that do not match any currently active subscription.</p>
+<p id="rfc.section.6.4.1.p.6">The DSO-DATA contains the value given in the MESSAGE ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE message, the SUBSCRIBE request is no longer active.</p>
+<p id="rfc.section.6.4.1.p.7">It is allowable for the client to issue an UNSUBSCRIBE message for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE message.</p>
+<p id="rfc.section.6.4.1.p.8">Consequently, it is possible for a server to receive an UNSUBSCRIBE message that does not match any currently active subscription.  This can occur when a client sends a SUBSCRIBE request, which subsequently fails and returns an error code, but the client sent an UNSUBSCRIBE message before it became aware that the SUBSCRIBE request had failed.  Because of this, servers MUST silently ignore UNSUBSCRIBE messages that do not match any currently active subscription.</p>
 <div id="rfc.figure.3"></div>
 <div id="unsubscribe_req"></div>
 <pre>
@@ -839,7 +839,7 @@
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
 |              SUBSCRIBE MESSAGE ID             |   &gt; DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
-<p class="figure">Figure 3: UNSUBSCRIBE Request</p>
+<p class="figure">Figure 3: UNSUBSCRIBE Message</p>
 <h1 id="rfc.section.6.5">
 <a href="#rfc.section.6.5">6.5.</a> <a href="#reconfirm" id="reconfirm">DNS Push Notification RECONFIRM</a>
 </h1>
