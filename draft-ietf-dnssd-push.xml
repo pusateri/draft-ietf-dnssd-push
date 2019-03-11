@@ -14,6 +14,7 @@
 <!ENTITY RFC2119 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC2136 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2136.xml">
 <!ENTITY RFC2308 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2308.xml">
+<!ENTITY RFC3123 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3123.xml">
 <!ENTITY RFC2782 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2782.xml">
 <!ENTITY RFC4287 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4287.xml">
 <!ENTITY RFC4953 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4953.xml">
@@ -197,18 +198,15 @@
      without depending on the gateway to support
      <xref target="RFC6886">NAT Port Mapping Protocol (NAT-PMP)</xref> or
      <xref target="RFC6887">Port Control Protocol (PCP)</xref>, or
-     resorting to excessive keepalive traffic.
-     Instead of inventing a new vocabulary of messages to communicate DNS zone changes as LLQ did, this specification borrows the established syntax and semantics of <xref target="RFC2136">DNS Update messages</xref>.</t>
+     resorting to excessive keepalive traffic.</t>
 
 <?rfc needLines="9" ?>
    </section>
 
    <section title="Overview">
-     <t>The existing <xref target="RFC2136">DNS Update protocol</xref> provides a mechanism for clients to add or delete individual resource records (RRs) or entire resource record sets (RRSets) on the zone's server.</t>
+     <t>A DNS Push Notification client subscribes for Push Notifications for a particular RRSet by connecting to the appropriate Push Notification server for that RRSet, and sending DSO message(s) indicating the RRSet(s) of interest. When the client loses interest in receiving further updates to these records, it unsubscribes.</t>
 
-     <t>This specification adopts a simplified subset of these existing syntax and semantics, and uses them for DNS Push Notification messages going in the opposite direction, from server to client, to communicate changes to a name's records. The client subscribes for Push Notifications by connecting to the server and sending DNS message(s) indicating the RRSet(s) of interest. When the client loses interest in receiving further updates to these records, it unsubscribes.</t>
-
-     <t>The DNS Push Notification server for a zone is any server capable
+     <t>The DNS Push Notification server for a DNS zone is any server capable
      of generating the correct change notifications for a name.
      It may be a primary, secondary, or stealth name server <xref target="RFC7719"/>.
      Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a
@@ -229,8 +227,6 @@
    for which it supports DNS Push Notification subscriptions, it MUST also support
    standard queries.</t>
 
-     <t>DNS Push Notification clients are NOT required to implement DNS Update Prerequisite processing. Prerequisites are used to perform tentative atomic test-and-set type operations when a client updates records on a server, and that concept has no applicability when it comes to an authoritative server unilaterally informing a client of changes to DNS records.</t>
-
      <t>This DNS Push Notification specification includes support for DNS classes, for completeness. However, in practice, it is anticipated that for the foreseeable future the only DNS class in use will be DNS class "IN", as is the reality today with existing DNS servers and clients. A DNS Push Notification server MAY choose to implement only DNS class "IN". If messages are received for a class other than "IN", and that class is not supported, an error with RCODE NOTIMPL (Not Implemented) should be returned.</t>
 
      <t>DNS Push Notifications impose less load on the responding server than rapid polling would, but Push Notifications do still have a cost, so DNS Push Notification clients MUST NOT recklessly create an excessive number of Push Notification subscriptions. Specifically:</t>
@@ -240,7 +236,7 @@
      <t>(b) A DNS Push Notification client SHOULD NOT routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
      <t>Generally, as described in the <xref target="DSO">DNS Stateful Operations specification</xref>, a client must not keep a session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a session as soon as it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle session open for some time, subject to the constraint that it MUST NOT keep a session open that has been idle for more than the session's idle timeout (15 seconds by default) <xref target="DSO"/>.</t>
-<?rfc needLines="9" ?>
+<?rfc needLines="20" ?>
    </section>
 
    <section title="Transport">
@@ -615,30 +611,114 @@
          <t>The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies
          the changes being communicated.</t>
 
-         <t>The DSO-DATA contains one or more Update records.
-         A PUSH Message MUST contain at least one Update record.
-         If a PUSH Message is received that contains zero Update records,
+         <t>The DSO-DATA contains one or more change notifications.
+         A PUSH Message MUST contain at least one change notification.
+         If a PUSH Message is received that contains no change notifications,
          this is a fatal error, and the receiver MUST immediately terminate
          the connection with a TCP RST (or equivalent for other protocols).
-         The Update records are formatted in the customary way for Resource
-         Records in DNS messages.
-         Update records in a PUSH Message are interpreted according to the same
-         rules as for <xref target="RFC2136">DNS Update</xref> messages, namely:
+         The change notifications are formatted similarly to how
+         DNS Resource Records are conventionally expressed in DNS messages,
+         and are interpreted as described below.</t>
 
+         <t>If the signed 32-bit TTL is in the range 0 to 604,800 seconds (one week), then a new
+         DNS Resource Record with the given name, type, class and RDATA is added.
+         The maximum record lifetime supported in a PUSH Message is one week.
+         In the event that the DNS record in question has an actual TTL greater than one week,
+         the TTL is reported in the PUSH Message as being one week.
+         A TTL of 0 means that this record should be retained for as long as the subscription is active,
+         and should be discarded immediately the moment the subscription is cancelled.</t>
+
+         <t>If the signed 32-bit TTL has the value -1, then the
+         DNS Resource Record with the given name, type, class and RDATA is removed.</t>
+
+         <t>If the signed 32-bit TTL has the value -2, then this is a 'collective' remove notification.
+         For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.
+         If a change notification is received where TTL = -2 and RDLEN is not zero,
+         this is a fatal error, and the receiver MUST immediately terminate
+         the connection with a TCP RST (or equivalent for other protocols).
+         There are three types of collective remove notification:</t>
+
+         <t>For collective remove notifications,
+         if CLASS is ANY,
+         then for the given name this deletes all records of all types in all classes.
+         In this case TYPE MUST be set to ANY on tranmission, and MUST be silently ignored on reception.</t>
+
+         <t>For collective remove notifications,
+         if CLASS is not ANY and TYPE is is ANY
+         then for the given name this deletes all records of all types in the specified class.</t>
+
+         <t>For collective remove notifications,
+         if CLASS is not ANY and TYPE is is not ANY
+         then for the given name this deletes all records of the specified type in the specified class.</t>
+
+         <t>Summary of change notification types:
            <list style="bullets">
-             <t>Delete all RRsets from a name:<vspace />
-             TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.</t>
-             <t>Delete an RRset from a name:<vspace />
-             TTL=0, CLASS=ANY, RDLENGTH=0;<vspace />
-             TYPE specifies the RRset being deleted.</t>
+             <t>Delete all RRsets from a name, in all classes<vspace />
+             TTL=-2, RDLENGTH=0, TYPE=ANY, CLASS=ANY</t>
+
+             <t>Delete all RRsets from a name, in given class:<vspace />
+             TTL=-2, RDLENGTH=0, TYPE=ANY<vspace />
+             CLASS specifies class (usually class "IN")</t>
+
+             <t>Delete specified RRset from a name, in given class:<vspace />
+             TTL=-2, RDLENGTH=0<vspace />
+             CLASS and TYPE specify the RRset being deleted</t>
+
              <t>Delete an individual RR from a name:<vspace />
-             TTL=0, CLASS=NONE;<vspace />
-             TYPE, RDLENGTH and RDATA specifies the RR being deleted.</t>
-             <t>Add to an RRset:<vspace />
-             TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.</t>
+             TTL=-1<vspace />
+             CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.</t>
+
+             <t>Add individual RR to a name<vspace />
+             TTL>=0<vspace />
+             CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.</t>
            </list>
          </t>
-  
+
+         <t>Note that it is valid for the RDATA of an added or removed DNS Resource Record to be empty (zero length).
+         For example, an <xref target="RFC3123">Address Prefix List Resource Record</xref> may have empty RDATA.
+         Therefore, a change notification with RDLEN=0 does not automatically indicate a remove notification.
+         If RDLEN=0 and TTL >= 0, this change notification signals the addition of a
+         record with the given name, type, class, and empty RDATA.
+         If RDLEN=0 and TTL = -1, this change notification signals the removal specifically of that single
+         record with the given name, type, class, and empty RDATA.</t>
+
+         <t>For efficiency, when generating a PUSH message, a server SHOULD
+         include as many change notifications as it has immediately available to send,
+         rather than sending each change notification as a separate DSO message.
+         Once it has exhausted the list of change notifications immediately available to send,
+         a server SHOULD then send the PUSH message immediately,
+         rather than waiting to see if additional change notifications become available.</t>
+
+         <t>For efficiency, when generating a PUSH message, a server SHOULD
+         use standard DNS name compression,
+         with offsets relative to the beginning of the DNS message <xref target="RFC1035"/>.
+         When multiple change notifications in a single PUSH message have the same owner name,
+         this name compression can yield significant savings.
+         Name compression should be performed as specified in Section 18.14 of the
+         <xref target="RFC6762">Multicast DNS specification</xref>, namely,
+         owner names should always be compressed,
+         and names appearing within only the RDATA of the following DNS types should be compressed:
+         <list style="hanging">
+           <t>NS, CNAME, PTR, DNAME, SOA, MX, AFSDB, RT, KX, RP, PX, SRV, NSEC</t>
+         </list></t>
+
+         <t>Servers MAY generate PUSH messages up to a DNS message length of 16,382 bytes,
+         counting from the start of the DSO 12-byte header.
+         Including the two-byte length prefix that is used to frame DNS over a byte stream
+         like TLS, this makes a total of 16,384 bytes.
+         Servers SHOULD NOT generate PUSH messages larger than this.
+         Where the immediately available change notifications
+         are sufficient to exceed a DNS message length of 16,382 bytes,
+         the change notifications SHOULD be communicated in separate PUSH messages
+         of up to 16,382 bytes each.
+         DNS name compression becomes less effective for messages larger than 16,384 bytes,
+         so little efficiency benefit is gained by sending messages larger than this.</t>
+
+         <t>If a client receives a PUSH message with
+         a DNS message length larger than 16,382 bytes, the
+         this is a fatal error, and the receiver MUST immediately terminate
+         the connection with a TCP RST (or equivalent for other protocols).</t>
+
          <figure align="center" anchor="push_msg" title="PUSH Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -666,11 +746,11 @@
 |                     CLASS                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                      TTL                      |    |
-|                   (32 bits)                   |     > DSO-DATA
+|      (32-bit signed big-endian integer)       |     > DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     RDLEN                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-\                     RDATA                     \    |
+\           RDATA (sized as necessary)          \    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 :     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
 :             Repeated As Necessary             :   /
@@ -781,6 +861,7 @@
 
        <t>If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
 
+<?rfc needLines="20" ?>
        <section title="RECONFIRM Message">
 
          <t>A RECONFIRM unidirectional message begins with the standard
@@ -1055,6 +1136,7 @@
 
    <references title="Informative References">
      &RFC2308;
+     &RFC3123;
      &RFC4287;
      &RFC4953;
      &RFC5077;

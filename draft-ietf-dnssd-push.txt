@@ -78,22 +78,22 @@ Table of Contents
        6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  17
      6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  20
        6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  23
-       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  23
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  25
-       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  25
-     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  28
-     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  29
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  30
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  30
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  30
-     7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  31
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  31
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  32
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  32
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  32
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  34
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  25
+       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  25
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  27
+       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
+     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
+     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  32
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  32
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  32
+     7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  33
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  33
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  34
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  34
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  34
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  36
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  38
 
 
 
@@ -212,9 +212,9 @@ Internet-Draft           DNS Push Notifications               March 2019
    through NAT gateways without depending on the gateway to support NAT
    Port Mapping Protocol (NAT-PMP) [RFC6886] or Port Control Protocol
    (PCP) [RFC6887], or resorting to excessive keepalive traffic.
-   Instead of inventing a new vocabulary of messages to communicate DNS
-   zone changes as LLQ did, this specification borrows the established
-   syntax and semantics of DNS Update messages [RFC2136].
+
+
+
 
 
 
@@ -228,24 +228,17 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 3.  Overview
 
-   The existing DNS Update protocol [RFC2136] provides a mechanism for
-   clients to add or delete individual resource records (RRs) or entire
-   resource record sets (RRSets) on the zone's server.
+   A DNS Push Notification client subscribes for Push Notifications for
+   a particular RRSet by connecting to the appropriate Push Notification
+   server for that RRSet, and sending DSO message(s) indicating the
+   RRSet(s) of interest.  When the client loses interest in receiving
+   further updates to these records, it unsubscribes.
 
-   This specification adopts a simplified subset of these existing
-   syntax and semantics, and uses them for DNS Push Notification
-   messages going in the opposite direction, from server to client, to
-   communicate changes to a name's records.  The client subscribes for
-   Push Notifications by connecting to the server and sending DNS
-   message(s) indicating the RRSet(s) of interest.  When the client
-   loses interest in receiving further updates to these records, it
-   unsubscribes.
-
-   The DNS Push Notification server for a zone is any server capable of
-   generating the correct change notifications for a name.  It may be a
-   primary, secondary, or stealth name server [RFC7719].  Consequently,
-   the "_dns-push-tls._tcp.<zone>" SRV record for a zone MAY reference
-   the same target host and port as that zone's
+   The DNS Push Notification server for a DNS zone is any server capable
+   of generating the correct change notifications for a name.  It may be
+   a primary, secondary, or stealth name server [RFC7719].
+   Consequently, the "_dns-push-tls._tcp.<zone>" SRV record for a zone
+   MAY reference the same target host and port as that zone's
    "_dns-update-tls._tcp.<zone>" SRV record.  When the same target host
    and port is offered for both DNS Updates and DNS Push Notifications,
    a client MAY use a single TCP connection to that server for both DNS
@@ -270,21 +263,6 @@ Internet-Draft           DNS Push Notifications               March 2019
    resolver, for any query for which it supports DNS Push Notification
    subscriptions, it MUST also support standard queries.
 
-   DNS Push Notification clients are NOT required to implement DNS
-   Update Prerequisite processing.  Prerequisites are used to perform
-   tentative atomic test-and-set type operations when a client updates
-   records on a server, and that concept has no applicability when it
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019               [Page 5]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
-
-   comes to an authoritative server unilaterally informing a client of
-   changes to DNS records.
-
    This DNS Push Notification specification includes support for DNS
    classes, for completeness.  However, in practice, it is anticipated
    that for the foreseeable future the only DNS class in use will be DNS
@@ -296,6 +274,14 @@ Internet-Draft           DNS Push Notifications               March 2019
 
    DNS Push Notifications impose less load on the responding server than
    rapid polling would, but Push Notifications do still have a cost, so
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019               [Page 5]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
    DNS Push Notification clients MUST NOT recklessly create an excessive
    number of Push Notification subscriptions.  Specifically:
 
@@ -327,6 +313,20 @@ Internet-Draft           DNS Push Notifications               March 2019
    for some time, subject to the constraint that it MUST NOT keep a
    session open that has been idle for more than the session's idle
    timeout (15 seconds by default) [DSO].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1096,24 +1096,24 @@ Internet-Draft           DNS Push Notifications               March 2019
    The DSO-LENGTH is the length of the DSO-DATA that follows, which
    specifies the changes being communicated.
 
-   The DSO-DATA contains one or more Update records.  A PUSH Message
-   MUST contain at least one Update record.  If a PUSH Message is
-   received that contains zero Update records, this is a fatal error,
-   and the receiver MUST immediately terminate the connection with a TCP
-   RST (or equivalent for other protocols).  The Update records are
-   formatted in the customary way for Resource Records in DNS messages.
-   Update records in a PUSH Message are interpreted according to the
-   same rules as for DNS Update [RFC2136] messages, namely:
+   The DSO-DATA contains one or more change notifications.  A PUSH
+   Message MUST contain at least one change notification.  If a PUSH
+   Message is received that contains no change notifications, this is a
+   fatal error, and the receiver MUST immediately terminate the
+   connection with a TCP RST (or equivalent for other protocols).  The
+   change notifications are formatted similarly to how DNS Resource
+   Records are conventionally expressed in DNS messages, and are
+   interpreted as described below.
 
-      Delete all RRsets from a name:
-      TTL=0, CLASS=ANY, RDLENGTH=0, TYPE=ANY.
-
-      Delete an RRset from a name:
-      TTL=0, CLASS=ANY, RDLENGTH=0;
-      TYPE specifies the RRset being deleted.
-
-      Delete an individual RR from a name:
-      TTL=0, CLASS=NONE;
+   If the signed 32-bit TTL is in the range 0 to 604,800 seconds (one
+   week), then a new DNS Resource Record with the given name, type,
+   class and RDATA is added.  The maximum record lifetime supported in a
+   PUSH Message is one week.  In the event that the DNS record in
+   question has an actual TTL greater than one week, the TTL is reported
+   in the PUSH Message as being one week.  A TTL of 0 means that this
+   record should be retained for as long as the subscription is active,
+   and should be discarded immediately the moment the subscription is
+   cancelled.
 
 
 
@@ -1122,10 +1122,117 @@ Pusateri & Cheshire    Expires September 12, 2019              [Page 20]
 Internet-Draft           DNS Push Notifications               March 2019
 
 
-      TYPE, RDLENGTH and RDATA specifies the RR being deleted.
+   If the signed 32-bit TTL has the value -1, then the DNS Resource
+   Record with the given name, type, class and RDATA is removed.
 
-      Add to an RRset:
-      TTL, CLASS, TYPE, RDLENGTH and RDATA specifies the RR being added.
+   If the signed 32-bit TTL has the value -2, then this is a
+   'collective' remove notification.  For collective remove
+   notifications RDLEN MUST be zero and consequently the RDATA MUST be
+   empty.  If a change notification is received where TTL = -2 and RDLEN
+   is not zero, this is a fatal error, and the receiver MUST immediately
+   terminate the connection with a TCP RST (or equivalent for other
+   protocols).  There are three types of collective remove notification:
+
+   For collective remove notifications, if CLASS is ANY, then for the
+   given name this deletes all records of all types in all classes.  In
+   this case TYPE MUST be set to ANY on tranmission, and MUST be
+   silently ignored on reception.
+
+   For collective remove notifications, if CLASS is not ANY and TYPE is
+   is ANY then for the given name this deletes all records of all types
+   in the specified class.
+
+   For collective remove notifications, if CLASS is not ANY and TYPE is
+   is not ANY then for the given name this deletes all records of the
+   specified type in the specified class.
+
+   Summary of change notification types:
+
+      Delete all RRsets from a name, in all classes
+      TTL=-2, RDLENGTH=0, TYPE=ANY, CLASS=ANY
+
+      Delete all RRsets from a name, in given class:
+      TTL=-2, RDLENGTH=0, TYPE=ANY
+      CLASS specifies class (usually class "IN")
+
+      Delete specified RRset from a name, in given class:
+      TTL=-2, RDLENGTH=0
+      CLASS and TYPE specify the RRset being deleted
+
+      Delete an individual RR from a name:
+      TTL=-1
+      CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.
+
+      Add individual RR to a name
+      TTL>=0
+      CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.
+
+   Note that it is valid for the RDATA of an added or removed DNS
+   Resource Record to be empty (zero length).  For example, an Address
+   Prefix List Resource Record [RFC3123] may have empty RDATA.
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 21]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
+   Therefore, a change notification with RDLEN=0 does not automatically
+   indicate a remove notification.  If RDLEN=0 and TTL >= 0, this change
+   notification signals the addition of a record with the given name,
+   type, class, and empty RDATA.  If RDLEN=0 and TTL = -1, this change
+   notification signals the removal specifically of that single record
+   with the given name, type, class, and empty RDATA.
+
+   For efficiency, when generating a PUSH message, a server SHOULD
+   include as many change notifications as it has immediately available
+   to send, rather than sending each change notification as a separate
+   DSO message.  Once it has exhausted the list of change notifications
+   immediately available to send, a server SHOULD then send the PUSH
+   message immediately, rather than waiting to see if additional change
+   notifications become available.
+
+   For efficiency, when generating a PUSH message, a server SHOULD use
+   standard DNS name compression, with offsets relative to the beginning
+   of the DNS message [RFC1035].  When multiple change notifications in
+   a single PUSH message have the same owner name, this name compression
+   can yield significant savings.  Name compression should be performed
+   as specified in Section 18.14 of the Multicast DNS specification
+   [RFC6762], namely, owner names should always be compressed, and names
+   appearing within only the RDATA of the following DNS types should be
+   compressed:
+
+      NS, CNAME, PTR, DNAME, SOA, MX, AFSDB, RT, KX, RP, PX, SRV, NSEC
+
+   Servers MAY generate PUSH messages up to a DNS message length of
+   16,382 bytes, counting from the start of the DSO 12-byte header.
+   Including the two-byte length prefix that is used to frame DNS over a
+   byte stream like TLS, this makes a total of 16,384 bytes.  Servers
+   SHOULD NOT generate PUSH messages larger than this.  Where the
+   immediately available change notifications are sufficient to exceed a
+   DNS message length of 16,382 bytes, the change notifications SHOULD
+   be communicated in separate PUSH messages of up to 16,382 bytes each.
+   DNS name compression becomes less effective for messages larger than
+   16,384 bytes, so little efficiency benefit is gained by sending
+   messages larger than this.
+
+   If a client receives a PUSH message with a DNS message length larger
+   than 16,382 bytes, the this is a fatal error, and the receiver MUST
+   immediately terminate the connection with a TCP RST (or equivalent
+   for other protocols).
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 22]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1153,11 +1260,11 @@ Internet-Draft           DNS Push Notifications               March 2019
      |                     CLASS                     |    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |                      TTL                      |    |
-     |                   (32 bits)                   |     > DSO-DATA
+     |      (32-bit signed big-endian integer)       |     > DSO-DATA
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |                     RDLEN                     |    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     \                     RDATA                     \    |
+     \           RDATA (sized as necessary)          \    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      :     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
      :             Repeated As Necessary             :   /
@@ -1170,19 +1277,19 @@ Internet-Draft           DNS Push Notifications               March 2019
    correspond with at least one currently active subscription on that
    session.  Specifically, the record name MUST match the name given in
    a SUBSCRIBE request, subject to the usual established DNS case-
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 21]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
-
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
    request was not ANY (255) then the TYPE of the record must match the
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
    request was not ANY (255) then the CLASS of the record must match the
    CLASS given in the SUBSCRIBE request.  If a matching active
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 23]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
    subscription on that session is not found, then that individual
    record addition/deletion is silently ignored.  Processing of other
    additions and deletions in this message is not affected.  The DSO
@@ -1229,7 +1336,12 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 22]
+
+
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 24]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1285,7 +1397,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 23]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 25]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1341,7 +1453,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 24]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 26]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1380,6 +1492,28 @@ Internet-Draft           DNS Push Notifications               March 2019
    effect of informing all other interested clients that the device in
    question is now gone.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 27]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
 6.5.1.  RECONFIRM Message
 
    A RECONFIRM unidirectional message begins with the standard DSO
@@ -1395,18 +1529,46 @@ Internet-Draft           DNS Push Notifications               March 2019
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
 
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 25]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
-
    The DSO-TYPE is RECONFIRM (tentatively 0x43).
 
    The DSO-LENGTH is the length of the data that follows, which
    specifies the name, type, class, and content of the record being
    disputed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 28]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1451,13 +1613,6 @@ Internet-Draft           DNS Push Notifications               March 2019
    RECONFIRM message matches only a literal wildcard character ("*") in
    the zone, and nothing else.
 
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 26]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
-
    Aliasing is not supported.  That is, a CNAME in a RECONFIRM message
    matches only a literal CNAME record in the zone, and nothing else.
 
@@ -1466,50 +1621,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 27]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 29]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1565,7 +1677,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 28]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 30]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1621,7 +1733,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 29]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 31]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1677,7 +1789,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 30]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 32]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1733,7 +1845,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 31]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 33]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1789,7 +1901,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 32]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 34]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1845,7 +1957,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 33]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 35]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1884,6 +1996,10 @@ Internet-Draft           DNS Push Notifications               March 2019
               NCACHE)", RFC 2308, DOI 10.17487/RFC2308, March 1998,
               <https://www.rfc-editor.org/info/rfc2308>.
 
+   [RFC3123]  Koch, P., "A DNS RR Type for Lists of Address Prefixes
+              (APL RR)", RFC 3123, DOI 10.17487/RFC3123, June 2001,
+              <https://www.rfc-editor.org/info/rfc3123>.
+
    [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
               Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
               December 2005, <https://www.rfc-editor.org/info/rfc4287>.
@@ -1892,19 +2008,20 @@ Internet-Draft           DNS Push Notifications               March 2019
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
+
+
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 36]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
    [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
               "Transport Layer Security (TLS) Session Resumption without
               Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
               January 2008, <https://www.rfc-editor.org/info/rfc5077>.
-
-
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 34]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
 
    [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
               "Understanding Apple's Back to My Mac (BTMM) Service",
@@ -1947,20 +2064,20 @@ Internet-Draft           DNS Push Notifications               March 2019
               Terminology", RFC 7719, DOI 10.17487/RFC7719, December
               2015, <https://www.rfc-editor.org/info/rfc7719>.
 
+
+
+
+
+
+Pusateri & Cheshire    Expires September 12, 2019              [Page 37]
+
+Internet-Draft           DNS Push Notifications               March 2019
+
+
    [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
               and P. Hoffman, "Specification for DNS over Transport
               Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
               2016, <https://www.rfc-editor.org/info/rfc7858>.
-
-
-
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 35]
-
-Internet-Draft           DNS Push Notifications               March 2019
-
 
    [RFC8010]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Encoding and Transport", STD 92, RFC 8010,
@@ -2008,9 +2125,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 36]
+Pusateri & Cheshire    Expires September 12, 2019              [Page 38]
