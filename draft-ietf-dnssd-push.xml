@@ -64,7 +64,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-17" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-18" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -118,7 +118,7 @@
      </address>
    </author>
 
-   <date year='2019' month='March' day='9'/>
+   <date year='2019' month='March' day='11'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
