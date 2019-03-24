@@ -38,6 +38,7 @@
 <!ENTITY RFC8174 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml">
 <!ENTITY RFC8310 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8310.xml">
 <!ENTITY RFC8446 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml">
+<!ENTITY RFC8490 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8490.xml">
 <!ENTITY I-D.dukkipati-tcpm-tcp-loss-probe SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.dukkipati-tcpm-tcp-loss-probe.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -191,7 +192,7 @@
 
      <t>This document builds on experience gained with the LLQ protocol, with an improved design.
      Instead of using UDP, this specification uses
-     <xref target="DSO">DNS Stateful Operations (DSO)</xref>
+     <xref target="RFC8490">DNS Stateful Operations (DSO)</xref>
      running over TLS over TCP,
      and therefore doesn't need to reinvent existing TCP functionality.
      Using TCP also gives long-lived low-traffic connections better longevity through NAT gateways
@@ -235,7 +236,7 @@
 
      <t>(b) A DNS Push Notification client SHOULD NOT routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
-     <t>Generally, as described in the <xref target="DSO">DNS Stateful Operations specification</xref>, a client must not keep a session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a session as soon as it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle session open for some time, subject to the constraint that it MUST NOT keep a session open that has been idle for more than the session's idle timeout (15 seconds by default) <xref target="DSO"/>.</t>
+     <t>Generally, as described in the <xref target="RFC8490">DNS Stateful Operations specification</xref>, a client must not keep a session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a session as soon as it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle session open for some time, subject to the constraint that it MUST NOT keep a session open that has been idle for more than the session's idle timeout (15 seconds by default) <xref target="RFC8490"/>.</t>
 <?rfc needLines="20" ?>
    </section>
 
@@ -244,7 +245,7 @@
 
      <t>In keeping with the more recent precedent, DNS Push Notification is defined only for TCP.
      DNS Push Notification clients MUST use
-     <xref target="DSO">DNS Stateful Operations (DSO)</xref>
+     <xref target="RFC8490">DNS Stateful Operations</xref>
      running over TLS over TCP <xref target="RFC7858"/>.</t>
 
      <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server through anonymous subscriptions. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
@@ -267,10 +268,10 @@
 
    <section title="Protocol Operation">
      <t>The DNS Push Notification protocol is a session-oriented protocol, and makes use of
-     <xref target="DSO">DNS Stateful Operations (DSO)</xref>.</t>
+     <xref target="RFC8490">DNS Stateful Operations (DSO)</xref>.</t>
 
      <t>For details of the DSO message format refer to the
-     <xref target="DSO">DNS Stateful Operations specification</xref>.
+     <xref target="RFC8490">DNS Stateful Oper-ations specification</xref>.
      Those details are not repeated here.</t>
 
      <t>DNS Push Notification clients and servers MUST support DSO.
@@ -329,7 +330,7 @@
         does not support DNS over TLS, or
         does support DNS over TLS but is not listening on TCP port 853, or
         does support DNS over TLS on TCP port 853 but does not support DSO on that port,
-        then the DSO Session session establishment will fail <xref target="DSO"/>.</t>
+        then the DSO Session session establishment will fail <xref target="RFC8490"/>.</t>
 
         <t>If the recursive resolver does support DSO but not Push Notification
         subscriptions, then it will return the DSO error code, DSOTYPENI (11).</t>
@@ -419,19 +420,24 @@
      </section>
 
      <section title="DNS Push Notification SUBSCRIBE" anchor="subscribe">
-       <t>After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client then indicates its desire to receive DNS Push Notifications for a given domain name by sending a SUBSCRIBE request to the server. A SUBSCRIBE request is encoded in a DSO message <xref target="DSO"/>. This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</t>
+       <t>After connecting, and requesting a longer idle timeout and/or
+       keepalive interval if necessary, a DNS Push Notification client<vspace />
+       then indicates its desire to receive DNS Push Notifications for<vspace />
+       a given domain name by sending a SUBSCRIBE request to the server.<vspace />
+       A SUBSCRIBE request is encoded in a DSO message <xref target="RFC8490"/>.<vspace />
+       This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</t>
 
        <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
        <section title="SUBSCRIBE Request">
          <t>A SUBSCRIBE request begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>, followed by the SUBSCRIBE primary TLV.
+         <xref target="RFC8490">DSO 12-byte header</xref>, followed by the SUBSCRIBE primary TLV.
          A SUBSCRIBE request message is illustrated in <xref target="subscribe_req"/>.</t>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="DSO">DSO specification</xref>.
+         <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
@@ -497,7 +503,7 @@
          <t>Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</t>
 
          <t>A SUBSCRIBE response begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>,
+         <xref target="RFC8490">DSO 12-byte header</xref>,
          possibly followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.
@@ -535,14 +541,14 @@
            <?rfc subcompact="no" ?>
          In any case, the client shouldn't retry the subscription to this server right away. If multiple SRV records were returned as described in <xref target="discovery"/>, <xref target="SRV"/>, a subsequent server can be tried immediately.</t>
          <t>If the client has other successful subscriptions to this server, these subscriptions remain even though additional subscriptions may be refused. Neither the client nor the server are required to close the connection, although, either end may choose to do so.</t>
-         <t>If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="DSO"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
+         <t>If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="RFC8490"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
            <list style="bullets">
              <t>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</t>
 
              <t>For RCODE = 2 (SERVFAIL) the delay should be chosen according to the level of server overload and the anticipated duration of that overload. By default, a value of one minute is RECOMMENDED. If a more serious server failure occurs, the delay may be longer in accordance with the specific problem encountered.</t>
 
              <t>For RCODE = 4 (NOTIMP), which occurs on a server that doesn't implement
-             <xref target="DSO">DNS Stateful Operations</xref>,
+             <xref target="RFC8490">DNS Stateful Operations</xref>,
              it is unlikely that the server will begin supporting DSO
              in the next few minutes, so the retry delay SHOULD be one hour.
              Note that in such a case, a server that doesn't implement DSO
@@ -581,7 +587,7 @@
 
          <t>After sending an error response the server MAY allow the session to remain open,
          or MAY send a DNS Push Notification Retry Delay Operation TLV instructing the client to close the session,
-         as described in the <xref target="DSO">DSO specification</xref>.
+         as described in the <xref target="RFC8490">DSO specification</xref>.
          Clients MUST correctly handle both cases.</t>
 
 <?rfc needLines="48" ?>
@@ -594,7 +600,7 @@
        <section title="PUSH Message">
 
          <t>A PUSH unidirectional message begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>, followed by the PUSH primary TLV.
+         <xref target="RFC8490">DSO 12-byte header</xref>, followed by the PUSH primary TLV.
          A PUSH message is illustrated in <xref target="push_msg"/>.</t>
 
          <t>In accordance with the definition of DSO unidirectional messages,
@@ -602,7 +608,7 @@
          There is no client response to a PUSH message.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="DSO">DSO specification</xref>.
+         <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
@@ -783,14 +789,14 @@
 
      <section title="DNS Push Notification UNSUBSCRIBE" anchor="unsubscribe">
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a
-       DSO unidirectional message <xref target="DSO"/>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</t>
+       DSO unidirectional message <xref target="RFC8490"/>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</t>
 
        <t>A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST (or equivalent for other protocols).</t>
 
        <section title="UNSUBSCRIBE Message">
 
          <t>An UNSUBSCRIBE unidirectional message begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>, followed by the UNSUBSCRIBE primary TLV.
+         <xref target="RFC8490">DSO 12-byte header</xref>, followed by the UNSUBSCRIBE primary TLV.
          An UNSUBSCRIBE message is illustrated in <xref target="unsubscribe_req"/>.</t>         
 
          <t>In accordance with the definition of DSO unidirectional messages,
@@ -798,7 +804,7 @@
          There is no server response to an UNSUBSCRIBE message.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="DSO">DSO specification</xref>.
+         <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
@@ -865,7 +871,7 @@
        <section title="RECONFIRM Message">
 
          <t>A RECONFIRM unidirectional message begins with the standard
-         <xref target="DSO">DSO 12-byte header</xref>, followed by the RECONFIRM primary TLV.
+         <xref target="RFC8490">DSO 12-byte header</xref>, followed by the RECONFIRM primary TLV.<vspace />
          A RECONFIRM message is illustrated in <xref target="reconfirm_req"/>.</t>
 
          <t>In accordance with the definition of DSO unidirectional messages,
@@ -873,7 +879,7 @@
          There is no server response to a RECONFIRM message.</t>
 
          <t>The other header fields MUST be set as described in the
-         <xref target="DSO">DSO specification</xref>.
+         <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
 
@@ -927,7 +933,7 @@
 
      </section>
      <section title="DNS Stateful Operations TLV Context Summary">
-       <t>This document defines four new DSO TLVs. As suggested in Section 8.2 of the <xref target="DSO">DNS Stateful Operations specification</xref>, the valid contexts of these new TLV types are summarized below.</t>
+       <t>This document defines four new DSO TLVs. As suggested in Section 8.2 of the <xref target="RFC8490">DNS Stateful Operations specification</xref>, the valid contexts of these new TLV types are summarized below.</t>
        <t>The client TLV contexts are:
          <?rfc subcompact="yes" ?>
          <list style="hanging">
@@ -979,7 +985,7 @@
 
        <t>An individual subscription is terminated by sending an UNSUBSCRIBE TLV for that specific subscription, or all subscriptions can be cancelled at once by the client closing the DSO session. When a client terminates an individual subscription (via UNSUBSCRIBE) or all subscriptions on that DSO session (by ending the session) it is signaling to the server that it is longer interested in receiving those particular updates. It is informing the server that the server may release any state information it has been keeping with regards to these particular subscriptions.</t>
 
-       <t>After terminating its last subscription on a session via UNSUBSCRIBE, a client MAY close the session immediately, or it may keep it open if it anticipates performing further operations on that session in the future. If a client wishes to keep an idle session open, it MUST respect the maximum idle time required by the server <xref target="DSO"/>.</t>
+       <t>After terminating its last subscription on a session via UNSUBSCRIBE, a client MAY close the session immediately, or it may keep it open if it anticipates performing further operations on that session in the future. If a client wishes to keep an idle session open, it MUST respect the maximum idle time required by the server <xref target="RFC8490"/>.</t>
 
        <t>If a client plans to terminate one or more subscriptions on a session and doesn't intend to keep that session open, then as an efficiency optimization it MAY instead choose to simply close the session, which implicitly terminates all subscriptions on that session. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that session has been cancelled.</t>
 
@@ -1013,7 +1019,7 @@
      </section>
 
      <section title="TLS Name Authentication" anchor="tls_name_auth">
-       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Sever Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
+       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Server Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
      </section>
 
      <section title="TLS Session Resumption">
@@ -1094,31 +1100,7 @@
      &RFC7766;
      &RFC8174;
      &RFC8446;
-
-     <reference anchor='DSO'>
-     <front>
-     <title>DNS Stateful Operations</title>
-     <author initials='R' surname='Bellis' fullname='Ray Bellis'><organization /></author>
-     <author initials='S' surname='Cheshire' fullname='Stuart Cheshire'><organization /></author>
-     <author initials='J' surname='Dickinson' fullname='John Dickinson'><organization /></author>
-     <author initials='S' surname='Dickinson' fullname='Sara Dickinson'><organization /></author>
-     <author initials='T' surname='Lemon' fullname='Ted Lemon'><organization /></author>
-     <author initials='T' surname='Pusateri' fullname='Tom Pusateri'><organization /></author>
-     <date month='October' day='23' year='2018' />
-     <abstract><t>TThis document defines a new DNS OPCODE for DNS Stateful Operations
-   (DSO).  DSO messages communicate operations within persistent
-   stateful sessions, using type-length-value (TLV) syntax.  Three TLVs
-   are defined that manage session timeouts, termination, and encryption
-   padding, and a framework is defined for extensions to enable new
-   stateful operations.  This document updates RFC 1035 by adding a new
-   DNS header opcode and result code which has different message
-   semantics and a new result code.  This document updates RFC 7766 by redefining a session,
-   providing new guidance on connection re-use, and providing a new
-   mechanism for handling session idle timeouts.</t></abstract>
-     </front>
-     <seriesInfo name='Internet-Draft' value='draft-ietf-dnsop-session-signal-18' />
-     <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-dnsop-session-signal-18.txt' />
-     </reference>
+     &RFC8490;
 
      <reference anchor="ST"
      target="http://www.iana.org/assignments/service-names-port-numbers/">

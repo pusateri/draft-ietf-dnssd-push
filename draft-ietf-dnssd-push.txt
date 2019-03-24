@@ -206,13 +206,13 @@ Internet-Draft           DNS Push Notifications               March 2019
 
    This document builds on experience gained with the LLQ protocol, with
    an improved design.  Instead of using UDP, this specification uses
-   DNS Stateful Operations (DSO) [DSO] running over TLS over TCP, and
-   therefore doesn't need to reinvent existing TCP functionality.  Using
-   TCP also gives long-lived low-traffic connections better longevity
-   through NAT gateways without depending on the gateway to support NAT
-   Port Mapping Protocol (NAT-PMP) [RFC6886] or Port Control Protocol
-   (PCP) [RFC6887], or resorting to excessive keepalive traffic.
-
+   DNS Stateful Operations (DSO) [RFC8490] running over TLS over TCP,
+   and therefore doesn't need to reinvent existing TCP functionality.
+   Using TCP also gives long-lived low-traffic connections better
+   longevity through NAT gateways without depending on the gateway to
+   support NAT Port Mapping Protocol (NAT-PMP) [RFC6886] or Port Control
+   Protocol (PCP) [RFC6887], or resorting to excessive keepalive
+   traffic.
 
 
 
@@ -305,14 +305,14 @@ Internet-Draft           DNS Push Notifications               March 2019
    just in case it might be needed later.
 
    Generally, as described in the DNS Stateful Operations specification
-   [DSO], a client must not keep a session to a server open indefinitely
-   if it has no subscriptions (or other operations) active on that
-   session.  A client MAY close a session as soon as it becomes idle,
-   and then if needed in the future, open a new session when required.
-   Alternatively, a client MAY speculatively keep an idle session open
-   for some time, subject to the constraint that it MUST NOT keep a
-   session open that has been idle for more than the session's idle
-   timeout (15 seconds by default) [DSO].
+   [RFC8490], a client must not keep a session to a server open
+   indefinitely if it has no subscriptions (or other operations) active
+   on that session.  A client MAY close a session as soon as it becomes
+   idle, and then if needed in the future, open a new session when
+   required.  Alternatively, a client MAY speculatively keep an idle
+   session open for some time, subject to the constraint that it MUST
+   NOT keep a session open that has been idle for more than the
+   session's idle timeout (15 seconds by default) [RFC8490].
 
 
 
@@ -349,7 +349,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
    In keeping with the more recent precedent, DNS Push Notification is
    defined only for TCP.  DNS Push Notification clients MUST use DNS
-   Stateful Operations (DSO) [DSO] running over TLS over TCP [RFC7858].
+   Stateful Operations [RFC8490] running over TLS over TCP [RFC7858].
 
    Connection setup over TCP ensures return reachability and alleviates
    concerns of state overload at the server through anonymous
@@ -453,10 +453,10 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.  Protocol Operation
 
    The DNS Push Notification protocol is a session-oriented protocol,
-   and makes use of DNS Stateful Operations (DSO) [DSO].
+   and makes use of DNS Stateful Operations (DSO) [RFC8490].
 
-   For details of the DSO message format refer to the DNS Stateful
-   Operations specification [DSO].  Those details are not repeated here.
+   For details of the DSO message format refer to the DNS Stateful Oper-
+   ations specification [RFC8490].  Those details are not repeated here.
 
    DNS Push Notification clients and servers MUST support DSO.  A single
    server can support DNS Queries, DNS Updates, and DNS Push
@@ -537,7 +537,7 @@ Internet-Draft           DNS Push Notifications               March 2019
    If the recursive resolver does not support DNS over TLS, or does
    support DNS over TLS but is not listening on TCP port 853, or does
    support DNS over TLS on TCP port 853 but does not support DSO on that
-   port, then the DSO Session session establishment will fail [DSO].
+   port, then the DSO Session session establishment will fail [RFC8490].
 
    If the recursive resolver does support DSO but not Push Notification
    subscriptions, then it will return the DSO error code, DSOTYPENI
@@ -733,12 +733,12 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.2.  DNS Push Notification SUBSCRIBE
 
    After connecting, and requesting a longer idle timeout and/or
-   keepalive interval if necessary, a DNS Push Notification client then
-   indicates its desire to receive DNS Push Notifications for a given
-   domain name by sending a SUBSCRIBE request to the server.  A
-   SUBSCRIBE request is encoded in a DSO message [DSO].  This
-   specification defines a primary DSO TLV for DNS Push Notification
-   SUBSCRIBE Requests (tentatively DSO Type Code 0x40).
+   keepalive interval if necessary, a DNS Push Notification client
+   then indicates its desire to receive DNS Push Notifications for
+   a given domain name by sending a SUBSCRIBE request to the server.
+   A SUBSCRIBE request is encoded in a DSO message [RFC8490].
+   This specification defines a primary DSO TLV for DNS Push
+   Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).
 
    The entity that initiates a SUBSCRIBE request is by definition the
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
@@ -750,8 +750,8 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.2.1.  SUBSCRIBE Request
 
    A SUBSCRIBE request begins with the standard DSO 12-byte header
-   [DSO], followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE request
-   message is illustrated in Figure 1.
+   [RFC8490], followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE
+   request message is illustrated in Figure 1.
 
    The MESSAGE ID field MUST be set to a unique value, that the client
    is not using for any other active operation on this DSO session.  For
@@ -761,8 +761,8 @@ Internet-Draft           DNS Push Notifications               March 2019
    has not yet cancelled using UNSUBSCRIBE.  In the SUBSCRIBE response
    the server MUST echo back the MESSAGE ID value unchanged.
 
-   The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   The other header fields MUST be set as described in the DSO spec-
+   ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
 
@@ -904,7 +904,7 @@ Internet-Draft           DNS Push Notifications               March 2019
    the server.
 
    A SUBSCRIBE response begins with the standard DSO 12-byte header
-   [DSO], possibly followed by one or more optional TLVs, such as a
+   [RFC8490], possibly followed by one or more optional TLVs, such as a
    Retry Delay TLV.
 
    The MESSAGE ID field MUST echo the value given in the ID field of the
@@ -972,11 +972,11 @@ Internet-Draft           DNS Push Notifications               March 2019
    the connection, although, either end may choose to do so.
 
    If the server sends a nonzero RCODE then it SHOULD append a Retry
-   Delay TLV [DSO] to the response specifying a delay before the client
-   attempts this operation again.  Recommended values for the delay for
-   different RCODE values are given below.  These recommended values
-   apply both to the default values a server should place in the Retry
-   Delay TLV, and the default values a client should assume if the
+   Delay TLV [RFC8490] to the response specifying a delay before the
+   client attempts this operation again.  Recommended values for the
+   delay for different RCODE values are given below.  These recommended
+   values apply both to the default values a server should place in the
+   Retry Delay TLV, and the default values a client should assume if the
    server provides no Retry Delay TLV.
 
       For RCODE = 1 (FORMERR) the delay may be any value selected by the
@@ -990,9 +990,9 @@ Internet-Draft           DNS Push Notifications               March 2019
       accordance with the specific problem encountered.
 
       For RCODE = 4 (NOTIMP), which occurs on a server that doesn't
-      implement DNS Stateful Operations [DSO], it is unlikely that the
-      server will begin supporting DSO in the next few minutes, so the
-      retry delay SHOULD be one hour.  Note that in such a case, a
+      implement DNS Stateful Operations [RFC8490], it is unlikely that
+      the server will begin supporting DSO in the next few minutes, so
+      the retry delay SHOULD be one hour.  Note that in such a case, a
       server that doesn't implement DSO is unlikely to place a Retry
       Delay TLV in its response, so this recommended value in particular
       applies to what a client should assume by default.
@@ -1052,7 +1052,7 @@ Internet-Draft           DNS Push Notifications               March 2019
    After sending an error response the server MAY allow the session to
    remain open, or MAY send a DNS Push Notification Retry Delay
    Operation TLV instructing the client to close the session, as
-   described in the DSO specification [DSO].  Clients MUST correctly
+   described in the DSO specification [RFC8490].  Clients MUST correctly
    handle both cases.
 
 
@@ -1079,15 +1079,15 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.3.1.  PUSH Message
 
    A PUSH unidirectional message begins with the standard DSO 12-byte
-   header [DSO], followed by the PUSH primary TLV.  A PUSH message is
-   illustrated in Figure 2.
+   header [RFC8490], followed by the PUSH primary TLV.  A PUSH message
+   is illustrated in Figure 2.
 
    In accordance with the definition of DSO unidirectional messages, the
    MESSAGE ID field MUST be zero.  There is no client response to a PUSH
    message.
 
-   The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   The other header fields MUST be set as described in the DSO spec-
+   ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
 
@@ -1351,7 +1351,7 @@ Internet-Draft           DNS Push Notifications               March 2019
    To cancel an individual subscription without closing the entire DSO
    session, the client sends an UNSUBSCRIBE message over the established
    DSO session to the server.  The UNSUBSCRIBE message is encoded as a
-   DSO unidirectional message [DSO].  This specification defines a
+   DSO unidirectional message [RFC8490].  This specification defines a
    primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE
    Messages (tentatively DSO Type Code 0x42).
 
@@ -1363,15 +1363,15 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.4.1.  UNSUBSCRIBE Message
 
    An UNSUBSCRIBE unidirectional message begins with the standard DSO
-   12-byte header [DSO], followed by the UNSUBSCRIBE primary TLV.  An
-   UNSUBSCRIBE message is illustrated in Figure 3.
+   12-byte header [RFC8490], followed by the UNSUBSCRIBE primary TLV.
+   An UNSUBSCRIBE message is illustrated in Figure 3.
 
    In accordance with the definition of DSO unidirectional messages, the
    MESSAGE ID field MUST be zero.  There is no server response to an
    UNSUBSCRIBE message.
 
-   The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   The other header fields MUST be set as described in the DSO spec-
+   ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
 
@@ -1517,15 +1517,15 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.5.1.  RECONFIRM Message
 
    A RECONFIRM unidirectional message begins with the standard DSO
-   12-byte header [DSO], followed by the RECONFIRM primary TLV.  A
-   RECONFIRM message is illustrated in Figure 4.
+   12-byte header [RFC8490], followed by the RECONFIRM primary TLV.
+   A RECONFIRM message is illustrated in Figure 4.
 
    In accordance with the definition of DSO unidirectional messages, the
    MESSAGE ID field MUST be zero.  There is no server response to a
    RECONFIRM message.
 
-   The other header fields MUST be set as described in the DSO
-   specification [DSO].  The DNS OPCODE field contains the OPCODE value
+   The other header fields MUST be set as described in the DSO spec-
+   ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
 
@@ -1629,7 +1629,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 6.6.  DNS Stateful Operations TLV Context Summary
 
    This document defines four new DSO TLVs.  As suggested in Section 8.2
-   of the DNS Stateful Operations specification [DSO], the valid
+   of the DNS Stateful Operations specification [RFC8490], the valid
    contexts of these new TLV types are summarized below.
 
    The client TLV contexts are:
@@ -1698,7 +1698,7 @@ Internet-Draft           DNS Push Notifications               March 2019
    a client MAY close the session immediately, or it may keep it open if
    it anticipates performing further operations on that session in the
    future.  If a client wishes to keep an idle session open, it MUST
-   respect the maximum idle time required by the server [DSO].
+   respect the maximum idle time required by the server [RFC8490].
 
    If a client plans to terminate one or more subscriptions on a session
    and doesn't intend to keep that session open, then as an efficiency
@@ -1796,14 +1796,14 @@ Internet-Draft           DNS Push Notifications               March 2019
 
    then be authenticated using DANE TLSA records for the associated SRV
    record.  This associates the target's name and port number with a
-   trusted TLS certificate [RFC7673].  This procedure uses the TLS Sever
-   Name Indication (SNI) extension [RFC6066] to inform the server of the
-   name the client has authenticated through the use of TLSA records.
-   Therefore, if the SRV record passes DNSSEC validation and a TLSA
-   record matching the target name is useable, an SNI extension must be
-   used for the target name to ensure the client is connecting to the
-   server it has authenticated.  If the target name does not have a
-   usable TLSA record, then the use of the SNI extension is optional.
+   trusted TLS certificate [RFC7673].  This procedure uses the TLS
+   Server Name Indication (SNI) extension [RFC6066] to inform the server
+   of the name the client has authenticated through the use of TLSA
+   records.  Therefore, if the SRV record passes DNSSEC validation and a
+   TLSA record matching the target name is useable, an SNI extension
+   must be used for the target name to ensure the client is connecting
+   to the server it has authenticated.  If the target name does not have
+   a usable TLSA record, then the use of the SNI extension is optional.
    See Usage Profiles for DNS over TLS and DNS over DTLS [RFC8310] for
    more information on authenticating domain names.
 
@@ -1876,11 +1876,6 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 10.1.  Normative References
 
-   [DSO]      Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
-              Lemon, T., and T. Pusateri, "DNS Stateful Operations",
-              draft-ietf-dnsop-session-signal-18 (work in progress),
-              October 2018.
-
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               DOI 10.17487/RFC0768, August 1980,
               <https://www.rfc-editor.org/info/rfc768>.
@@ -1897,6 +1892,11 @@ Internet-Draft           DNS Push Notifications               March 2019
               specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
               November 1987, <https://www.rfc-editor.org/info/rfc1035>.
 
+   [RFC1123]  Braden, R., Ed., "Requirements for Internet Hosts -
+              Application and Support", STD 3, RFC 1123,
+              DOI 10.17487/RFC1123, October 1989,
+              <https://www.rfc-editor.org/info/rfc1123>.
+
 
 
 
@@ -1905,11 +1905,6 @@ Pusateri & Cheshire    Expires September 12, 2019              [Page 34]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
-
-   [RFC1123]  Braden, R., Ed., "Requirements for Internet Hosts -
-              Application and Support", STD 3, RFC 1123,
-              DOI 10.17487/RFC1123, October 1989,
-              <https://www.rfc-editor.org/info/rfc1123>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1952,8 +1947,13 @@ Internet-Draft           DNS Push Notifications               March 2019
               Requirements", RFC 7766, DOI 10.17487/RFC7766, March 2016,
               <https://www.rfc-editor.org/info/rfc7766>.
 
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
 
 
 
@@ -1962,13 +1962,10 @@ Pusateri & Cheshire    Expires September 12, 2019              [Page 35]
 Internet-Draft           DNS Push Notifications               March 2019
 
 
-   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
-              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
-              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
-
-   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
-              <https://www.rfc-editor.org/info/rfc8446>.
+   [RFC8490]  Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
+              Lemon, T., and T. Pusateri, "DNS Stateful Operations",
+              RFC 8490, DOI 10.17487/RFC8490, March 2019,
+              <https://www.rfc-editor.org/info/rfc8490>.
 
    [ST]       "Service Name and Transport Protocol Port Number
               Registry", <http://www.iana.org/assignments/
@@ -2008,7 +2005,10 @@ Internet-Draft           DNS Push Notifications               March 2019
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
-
+   [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
+              "Transport Layer Security (TLS) Session Resumption without
+              Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
+              January 2008, <https://www.rfc-editor.org/info/rfc5077>.
 
 
 
@@ -2017,11 +2017,6 @@ Pusateri & Cheshire    Expires September 12, 2019              [Page 36]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
-
-   [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
-              "Transport Layer Security (TLS) Session Resumption without
-              Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
-              January 2008, <https://www.rfc-editor.org/info/rfc5077>.
 
    [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
               "Understanding Apple's Back to My Mac (BTMM) Service",
@@ -2064,6 +2059,11 @@ Internet-Draft           DNS Push Notifications               March 2019
               Terminology", RFC 7719, DOI 10.17487/RFC7719, December
               2015, <https://www.rfc-editor.org/info/rfc7719>.
 
+   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
+              and P. Hoffman, "Specification for DNS over Transport
+              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
+              2016, <https://www.rfc-editor.org/info/rfc7858>.
+
 
 
 
@@ -2073,11 +2073,6 @@ Pusateri & Cheshire    Expires September 12, 2019              [Page 37]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
-
-   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
-              and P. Hoffman, "Specification for DNS over Transport
-              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
-              2016, <https://www.rfc-editor.org/info/rfc7858>.
 
    [RFC8010]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Encoding and Transport", STD 92, RFC 8010,
@@ -2120,6 +2115,11 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
+
+
+
+
+
 
 
 
