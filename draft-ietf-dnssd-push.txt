@@ -5,12 +5,12 @@
 Internet Engineering Task Force                              T. Pusateri
 Internet-Draft                                              Unaffiliated
 Intended status: Standards Track                             S. Cheshire
-Expires: September 12, 2019                                   Apple Inc.
-                                                          March 11, 2019
+Expires: September 25, 2019                                   Apple Inc.
+                                                          March 24, 2019
 
 
                          DNS Push Notifications
-                        draft-ietf-dnssd-push-18
+                        draft-ietf-dnssd-push-19
 
 Abstract
 
@@ -38,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 12, 2019.
+   This Internet-Draft will expire on September 25, 2019.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 1]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 1]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 2]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 2]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -165,7 +165,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 3]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 3]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -221,7 +221,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 4]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 4]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -277,7 +277,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 5]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 5]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -333,7 +333,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 6]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 6]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -389,7 +389,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 7]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 7]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -445,7 +445,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 8]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 8]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -501,7 +501,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019               [Page 9]
+Pusateri & Cheshire    Expires September 25, 2019               [Page 9]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -557,7 +557,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 10]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 10]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -613,7 +613,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 11]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 11]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -669,7 +669,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 12]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 12]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -725,7 +725,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 13]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 13]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -781,7 +781,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 14]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 14]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -837,7 +837,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 15]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 15]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -893,7 +893,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 16]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 16]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -949,7 +949,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 17]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 17]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1005,7 +1005,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 18]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 18]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1061,7 +1061,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 19]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 19]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1102,22 +1102,22 @@ Internet-Draft           DNS Push Notifications               March 2019
    fatal error, and the receiver MUST immediately terminate the
    connection with a TCP RST (or equivalent for other protocols).  The
    change notifications are formatted similarly to how DNS Resource
-   Records are conventionally expressed in DNS messages, and are
-   interpreted as described below.
+   Records are conventionally expressed in DNS messages, as illustrated
+   in Figure 2, and are interpreted as described below.
 
    If the signed 32-bit TTL is in the range 0 to 604,800 seconds (one
    week), then a new DNS Resource Record with the given name, type,
-   class and RDATA is added.  The maximum record lifetime supported in a
-   PUSH Message is one week.  In the event that the DNS record in
-   question has an actual TTL greater than one week, the TTL is reported
-   in the PUSH Message as being one week.  A TTL of 0 means that this
-   record should be retained for as long as the subscription is active,
-   and should be discarded immediately the moment the subscription is
-   cancelled.
+   class and RDATA is added.  A TTL of 0 means that this record should
+   be retained for as long as the subscription is active, and should be
+   discarded immediately the moment the subscription is cancelled.  The
+   maximum record lifetime supported in a PUSH Message is one week.  In
+   the event that the DNS record in question has an actual TTL greater
+   than one week, the server MUST report the TTL in the PUSH Message
+   change notification record as being one week.
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 20]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 20]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1133,27 +1133,26 @@ Internet-Draft           DNS Push Notifications               March 2019
    terminate the connection with a TCP RST (or equivalent for other
    protocols).  There are three types of collective remove notification:
 
-   For collective remove notifications, if CLASS is ANY, then for the
-   given name this deletes all records of all types in all classes.  In
-   this case TYPE MUST be set to ANY on tranmission, and MUST be
+   For collective remove notifications, if CLASS is 255 (ANY), then for
+   the given name this deletes all records of all types in all classes.
+   In this case TYPE MUST be set to zero on transmission, and MUST be
    silently ignored on reception.
 
-   For collective remove notifications, if CLASS is not ANY and TYPE is
-   is ANY then for the given name this deletes all records of all types
-   in the specified class.
+   For collective remove notifications, if CLASS is not 255 (ANY) and
+   TYPE is 255 (ANY) then for the given name this deletes all records of
+   all types in the specified class.
 
-   For collective remove notifications, if CLASS is not ANY and TYPE is
-   is not ANY then for the given name this deletes all records of the
-   specified type in the specified class.
+   For collective remove notifications, if CLASS is not 255 (ANY) and
+   TYPE is not 255 (ANY) then for the given name this deletes all
+   records of the specified type in the specified class.
 
    Summary of change notification types:
 
       Delete all RRsets from a name, in all classes
-      TTL=-2, RDLENGTH=0, TYPE=ANY, CLASS=ANY
+      TTL=-2, RDLENGTH=0, CLASS=255 (ANY)
 
       Delete all RRsets from a name, in given class:
-      TTL=-2, RDLENGTH=0, TYPE=ANY
-      CLASS specifies class (usually class "IN")
+      TTL=-2, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)
 
       Delete specified RRset from a name, in given class:
       TTL=-2, RDLENGTH=0
@@ -1170,20 +1169,26 @@ Internet-Draft           DNS Push Notifications               March 2019
    Note that it is valid for the RDATA of an added or removed DNS
    Resource Record to be empty (zero length).  For example, an Address
    Prefix List Resource Record [RFC3123] may have empty RDATA.
+   Therefore, a change notification with RDLEN=0 does not automatically
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 21]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 21]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
 
-   Therefore, a change notification with RDLEN=0 does not automatically
    indicate a remove notification.  If RDLEN=0 and TTL >= 0, this change
    notification signals the addition of a record with the given name,
    type, class, and empty RDATA.  If RDLEN=0 and TTL = -1, this change
    notification signals the removal specifically of that single record
    with the given name, type, class, and empty RDATA.
+
+   If the signed 32-bit TTL is a negative value less than -2, or a
+   positive value greater than 604,800, then the receiver SHOULD
+   silently ignore this particular change notification record.  The
+   connection is not terminated and other valid change notification
+   records within this PUSH message are processed as usual.
 
    For efficiency, when generating a PUSH message, a server SHOULD
    include as many change notifications as it has immediately available
@@ -1200,19 +1205,19 @@ Internet-Draft           DNS Push Notifications               March 2019
    can yield significant savings.  Name compression should be performed
    as specified in Section 18.14 of the Multicast DNS specification
    [RFC6762], namely, owner names should always be compressed, and names
-   appearing within only the RDATA of the following DNS types should be
-   compressed:
+   appearing within RDATA should be compressed for only the RR types
+   listed below:
 
       NS, CNAME, PTR, DNAME, SOA, MX, AFSDB, RT, KX, RP, PX, SRV, NSEC
 
-   Servers MAY generate PUSH messages up to a DNS message length of
-   16,382 bytes, counting from the start of the DSO 12-byte header.
+   Servers may generate PUSH messages up to a maximum DNS message length
+   of 16,382 bytes, counting from the start of the DSO 12-byte header.
    Including the two-byte length prefix that is used to frame DNS over a
    byte stream like TLS, this makes a total of 16,384 bytes.  Servers
-   SHOULD NOT generate PUSH messages larger than this.  Where the
+   MUST NOT generate PUSH messages larger than this.  Where the
    immediately available change notifications are sufficient to exceed a
-   DNS message length of 16,382 bytes, the change notifications SHOULD
-   be communicated in separate PUSH messages of up to 16,382 bytes each.
+   DNS message length of 16,382 bytes, the change notifications MUST be
+   communicated in separate PUSH messages of up to 16,382 bytes each.
    DNS name compression becomes less effective for messages larger than
    16,384 bytes, so little efficiency benefit is gained by sending
    messages larger than this.
@@ -1224,12 +1229,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-
-
-
-
-
-Pusateri & Cheshire    Expires September 12, 2019              [Page 22]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 22]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1285,7 +1285,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 23]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 23]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1301,9 +1301,9 @@ Internet-Draft           DNS Push Notifications               March 2019
    In the case where a single change affects more than one active
    subscription, only one PUSH message is sent.  For example, a PUSH
    message adding a given record may match both a SUBSCRIBE request with
-   the same TYPE and a different SUBSCRIBE request with TYPE=ANY.  It is
-   not the case that two PUSH messages are sent because the new record
-   matches two active subscriptions.
+   the same TYPE and a different SUBSCRIBE request with TYPE=ANY (255).
+   It is not the case that two PUSH messages are sent because the new
+   record matches two active subscriptions.
 
    The server SHOULD encode change notifications in the most efficient
    manner possible.  For example, when three AAAA records are deleted
@@ -1341,7 +1341,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 24]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 24]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1397,7 +1397,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 25]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 25]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1453,7 +1453,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 26]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 26]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1509,7 +1509,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 27]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 27]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1565,7 +1565,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 28]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 28]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1621,7 +1621,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 29]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 29]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1677,7 +1677,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 30]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 30]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1733,7 +1733,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 31]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 31]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1789,7 +1789,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 32]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 32]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1845,7 +1845,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 33]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 33]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1901,7 +1901,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 34]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 34]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -1957,7 +1957,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 35]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 35]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -2013,7 +2013,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 36]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 36]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -2069,7 +2069,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 37]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 37]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
@@ -2125,4 +2125,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire    Expires September 12, 2019              [Page 38]
+Pusateri & Cheshire    Expires September 25, 2019              [Page 38]

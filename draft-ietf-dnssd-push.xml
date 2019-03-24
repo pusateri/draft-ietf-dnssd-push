@@ -66,7 +66,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-18" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-19" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -120,7 +120,7 @@
      </address>
    </author>
 
-   <date year='2019' month='March' day='11'/>
+   <date year='2019' month='March' day='24'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -624,15 +624,16 @@
          the connection with a TCP RST (or equivalent for other protocols).
          The change notifications are formatted similarly to how
          DNS Resource Records are conventionally expressed in DNS messages,
+         as illustrated in <xref target="push_msg"/>,
          and are interpreted as described below.</t>
 
          <t>If the signed 32-bit TTL is in the range 0 to 604,800 seconds (one week), then a new
          DNS Resource Record with the given name, type, class and RDATA is added.
+         A TTL of 0 means that this record should be retained for as long as the subscription is active,
+         and should be discarded immediately the moment the subscription is cancelled.
          The maximum record lifetime supported in a PUSH Message is one week.
          In the event that the DNS record in question has an actual TTL greater than one week,
-         the TTL is reported in the PUSH Message as being one week.
-         A TTL of 0 means that this record should be retained for as long as the subscription is active,
-         and should be discarded immediately the moment the subscription is cancelled.</t>
+         the server MUST report the TTL in the PUSH Message change notification record as being one week.</t>
 
          <t>If the signed 32-bit TTL has the value -1, then the
          DNS Resource Record with the given name, type, class and RDATA is removed.</t>
@@ -645,26 +646,25 @@
          There are three types of collective remove notification:</t>
 
          <t>For collective remove notifications,
-         if CLASS is ANY,
+         if CLASS is 255 (ANY),
          then for the given name this deletes all records of all types in all classes.
-         In this case TYPE MUST be set to ANY on tranmission, and MUST be silently ignored on reception.</t>
+         In this case TYPE MUST be set to zero on transmission, and MUST be silently ignored on reception.</t>
 
          <t>For collective remove notifications,
-         if CLASS is not ANY and TYPE is is ANY
+         if CLASS is not 255 (ANY) and TYPE is 255 (ANY)
          then for the given name this deletes all records of all types in the specified class.</t>
 
          <t>For collective remove notifications,
-         if CLASS is not ANY and TYPE is is not ANY
+         if CLASS is not 255 (ANY) and TYPE is not 255 (ANY)
          then for the given name this deletes all records of the specified type in the specified class.</t>
 
          <t>Summary of change notification types:
            <list style="bullets">
              <t>Delete all RRsets from a name, in all classes<vspace />
-             TTL=-2, RDLENGTH=0, TYPE=ANY, CLASS=ANY</t>
+             TTL=-2, RDLENGTH=0, CLASS=255 (ANY)</t>
 
              <t>Delete all RRsets from a name, in given class:<vspace />
-             TTL=-2, RDLENGTH=0, TYPE=ANY<vspace />
-             CLASS specifies class (usually class "IN")</t>
+             TTL=-2, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)</t>
 
              <t>Delete specified RRset from a name, in given class:<vspace />
              TTL=-2, RDLENGTH=0<vspace />
@@ -688,6 +688,12 @@
          If RDLEN=0 and TTL = -1, this change notification signals the removal specifically of that single
          record with the given name, type, class, and empty RDATA.</t>
 
+         <t>If the signed 32-bit TTL is a negative value less than -2,
+         or a positive value greater than 604,800,
+         then the receiver SHOULD silently ignore this particular change notification record.
+         The connection is not terminated and other valid change notification records
+         within this PUSH message are processed as usual.</t>
+
          <t>For efficiency, when generating a PUSH message, a server SHOULD
          include as many change notifications as it has immediately available to send,
          rather than sending each change notification as a separate DSO message.
@@ -703,19 +709,19 @@
          Name compression should be performed as specified in Section 18.14 of the
          <xref target="RFC6762">Multicast DNS specification</xref>, namely,
          owner names should always be compressed,
-         and names appearing within only the RDATA of the following DNS types should be compressed:
+         and names appearing within RDATA should be compressed for only the RR types listed below:
          <list style="hanging">
            <t>NS, CNAME, PTR, DNAME, SOA, MX, AFSDB, RT, KX, RP, PX, SRV, NSEC</t>
          </list></t>
 
-         <t>Servers MAY generate PUSH messages up to a DNS message length of 16,382 bytes,
+         <t>Servers may generate PUSH messages up to a maximum DNS message length of 16,382 bytes,
          counting from the start of the DSO 12-byte header.
          Including the two-byte length prefix that is used to frame DNS over a byte stream
          like TLS, this makes a total of 16,384 bytes.
-         Servers SHOULD NOT generate PUSH messages larger than this.
+         Servers MUST NOT generate PUSH messages larger than this.
          Where the immediately available change notifications
          are sufficient to exceed a DNS message length of 16,382 bytes,
-         the change notifications SHOULD be communicated in separate PUSH messages
+         the change notifications MUST be communicated in separate PUSH messages
          of up to 16,382 bytes each.
          DNS name compression becomes less effective for messages larger than 16,384 bytes,
          so little efficiency benefit is gained by sending messages larger than this.</t>
@@ -767,7 +773,7 @@
          If the CLASS in the SUBSCRIBE request was not ANY (255) then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.
          If a matching active subscription on that session is not found, then that individual record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The DSO session is not closed. This is to allow for the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while inbound PUSH messages for that subscription from the server are still in flight.</t>
   
-         <t>In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE=ANY. It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</t>
+         <t>In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE=ANY (255). It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</t>
   
          <t>The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" PUSH message, not three separate "delete an individual RR from a name" PUSH messages. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" PUSH message, not two separate "delete an RRset from a name" PUSH messages.</t>
   
