@@ -1100,20 +1100,20 @@ Internet-Draft           DNS Push Notifications               March 2019
    Message MUST contain at least one change notification.  If a PUSH
    Message is received that contains no change notifications, this is a
    fatal error, and the receiver MUST immediately terminate the
-   connection with a TCP RST (or equivalent for other protocols).  The
-   change notifications are formatted similarly to how DNS Resource
-   Records are conventionally expressed in DNS messages, as illustrated
-   in Figure 2, and are interpreted as described below.
+   connection with a TCP RST (or equivalent for other protocols).
 
-   If the signed 32-bit TTL is in the range 0 to 604,800 seconds (one
-   week), then a new DNS Resource Record with the given name, type,
-   class and RDATA is added.  A TTL of 0 means that this record should
-   be retained for as long as the subscription is active, and should be
-   discarded immediately the moment the subscription is cancelled.  The
-   maximum record lifetime supported in a PUSH Message is one week.  In
-   the event that the DNS record in question has an actual TTL greater
-   than one week, the server MUST report the TTL in the PUSH Message
-   change notification record as being one week.
+   The change notification records are formatted similarly to how DNS
+   Resource Records are conventionally expressed in DNS messages, as
+   illustrated in Figure 2, and are interpreted as described below.
+
+   The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
+   is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
+   then a new DNS Resource Record with the given name, type, class and
+   RDATA is added.  A TTL of 0 means that this record should be retained
+   for as long as the subscription is active, and should be discarded
+   immediately the moment the subscription is cancelled.
+
+
 
 
 
@@ -1122,14 +1122,14 @@ Pusateri & Cheshire    Expires September 25, 2019              [Page 20]
 Internet-Draft           DNS Push Notifications               March 2019
 
 
-   If the signed 32-bit TTL has the value -1, then the DNS Resource
-   Record with the given name, type, class and RDATA is removed.
+   If the TTL has the value 0xFFFFFFFF, then the DNS Resource Record
+   with the given name, type, class and RDATA is removed.
 
-   If the signed 32-bit TTL has the value -2, then this is a
-   'collective' remove notification.  For collective remove
-   notifications RDLEN MUST be zero and consequently the RDATA MUST be
-   empty.  If a change notification is received where TTL = -2 and RDLEN
-   is not zero, this is a fatal error, and the receiver MUST immediately
+   If the TTL has the value 0xFFFFFFFE, then this is a 'collective'
+   remove notification.  For collective remove notifications RDLEN MUST
+   be zero and consequently the RDATA MUST be empty.  If a change
+   notification is received where TTL = 0xFFFFFFFE and RDLEN is not
+   zero, this is a fatal error, and the receiver MUST immediately
    terminate the connection with a TCP RST (or equivalent for other
    protocols).  There are three types of collective remove notification:
 
@@ -1149,17 +1149,17 @@ Internet-Draft           DNS Push Notifications               March 2019
    Summary of change notification types:
 
       Delete all RRsets from a name, in all classes
-      TTL=-2, RDLENGTH=0, CLASS=255 (ANY)
+      TTL=0xFFFFFFFE, RDLENGTH=0, CLASS=255 (ANY)
 
       Delete all RRsets from a name, in given class:
-      TTL=-2, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)
+      TTL=0xFFFFFFFE, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)
 
       Delete specified RRset from a name, in given class:
-      TTL=-2, RDLENGTH=0
+      TTL=0xFFFFFFFE, RDLENGTH=0
       CLASS and TYPE specify the RRset being deleted
 
       Delete an individual RR from a name:
-      TTL=-1
+      TTL=0xFFFFFFFF
       CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.
 
       Add individual RR to a name
@@ -1178,17 +1178,18 @@ Pusateri & Cheshire    Expires September 25, 2019              [Page 21]
 Internet-Draft           DNS Push Notifications               March 2019
 
 
-   indicate a remove notification.  If RDLEN=0 and TTL >= 0, this change
-   notification signals the addition of a record with the given name,
-   type, class, and empty RDATA.  If RDLEN=0 and TTL = -1, this change
-   notification signals the removal specifically of that single record
-   with the given name, type, class, and empty RDATA.
+   indicate a remove notification.  If RDLEN=0 and TTL is the in the
+   range 0 - 0x7FFFFFFF, this change notification signals the addition
+   of a record with the given name, type, class, and empty RDATA.  If
+   RDLEN=0 and TTL = 0xFFFFFFFF, this change notification signals the
+   removal specifically of that single record with the given name, type,
+   class, and empty RDATA.
 
-   If the signed 32-bit TTL is a negative value less than -2, or a
-   positive value greater than 604,800, then the receiver SHOULD
-   silently ignore this particular change notification record.  The
-   connection is not terminated and other valid change notification
-   records within this PUSH message are processed as usual.
+   If the TTL is any value other than 0xFFFFFFFF, 0xFFFFFFFE, or a value
+   in the range 0 - 0x7FFFFFFF, then the receiver SHOULD silently ignore
+   this particular change notification record.  The connection is not
+   terminated and other valid change notification records within this
+   PUSH message are processed as usual.
 
    For efficiency, when generating a PUSH message, a server SHOULD
    include as many change notifications as it has immediately available
@@ -1224,8 +1225,7 @@ Internet-Draft           DNS Push Notifications               March 2019
 
    If a client receives a PUSH message with a DNS message length larger
    than 16,382 bytes, the this is a fatal error, and the receiver MUST
-   immediately terminate the connection with a TCP RST (or equivalent
-   for other protocols).
+
 
 
 
@@ -1233,6 +1233,9 @@ Pusateri & Cheshire    Expires September 25, 2019              [Page 22]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
+
+   immediately terminate the connection with a TCP RST (or equivalent
+   for other protocols).
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1260,7 +1263,7 @@ Internet-Draft           DNS Push Notifications               March 2019
      |                     CLASS                     |    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |                      TTL                      |    |
-     |      (32-bit signed big-endian integer)       |     > DSO-DATA
+     |     (32-bit unsigned big-endian integer)      |     > DSO-DATA
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      |                     RDLEN                     |    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -1279,9 +1282,6 @@ Internet-Draft           DNS Push Notifications               March 2019
    a SUBSCRIBE request, subject to the usual established DNS case-
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
    request was not ANY (255) then the TYPE of the record must match the
-   TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
-   request was not ANY (255) then the CLASS of the record must match the
-   CLASS given in the SUBSCRIBE request.  If a matching active
 
 
 
@@ -1290,6 +1290,9 @@ Pusateri & Cheshire    Expires September 25, 2019              [Page 23]
 Internet-Draft           DNS Push Notifications               March 2019
 
 
+   TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
+   request was not ANY (255) then the CLASS of the record must match the
+   CLASS given in the SUBSCRIBE request.  If a matching active
    subscription on that session is not found, then that individual
    record addition/deletion is silently ignored.  Processing of other
    additions and deletions in this message is not affected.  The DSO
@@ -1330,9 +1333,6 @@ Internet-Draft           DNS Push Notifications               March 2019
    (individually, or as a result of the DSO session being closed) record
    aging for records covered by the subscription resumes and records are
    removed from the local cache when their TTL reaches zero.
-
-
-
 
 
 
@@ -1916,6 +1916,10 @@ Internet-Draft           DNS Push Notifications               March 2019
               RFC 2136, DOI 10.17487/RFC2136, April 1997,
               <https://www.rfc-editor.org/info/rfc2136>.
 
+   [RFC2181]  Elz, R. and R. Bush, "Clarifications to the DNS
+              Specification", RFC 2181, DOI 10.17487/RFC2181, July 1997,
+              <https://www.rfc-editor.org/info/rfc2181>.
+
    [RFC2782]  Gulbrandsen, A., Vixie, P., and L. Esibov, "A DNS RR for
               specifying the location of services (DNS SRV)", RFC 2782,
               DOI 10.17487/RFC2782, February 2000,
@@ -1951,16 +1955,16 @@ Internet-Draft           DNS Push Notifications               March 2019
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
-              <https://www.rfc-editor.org/info/rfc8446>.
-
 
 
 Pusateri & Cheshire    Expires September 25, 2019              [Page 35]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
+
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
 
    [RFC8490]  Bellis, R., Cheshire, S., Dickinson, J., Dickinson, S.,
               Lemon, T., and T. Pusateri, "DNS Stateful Operations",
@@ -2005,10 +2009,6 @@ Internet-Draft           DNS Push Notifications               March 2019
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
-   [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
-              "Transport Layer Security (TLS) Session Resumption without
-              Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
-              January 2008, <https://www.rfc-editor.org/info/rfc5077>.
 
 
 
@@ -2017,6 +2017,11 @@ Pusateri & Cheshire    Expires September 25, 2019              [Page 36]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
+
+   [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
+              "Transport Layer Security (TLS) Session Resumption without
+              Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
+              January 2008, <https://www.rfc-editor.org/info/rfc5077>.
 
    [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
               "Understanding Apple's Back to My Mac (BTMM) Service",
@@ -2059,11 +2064,6 @@ Internet-Draft           DNS Push Notifications               March 2019
               Terminology", RFC 7719, DOI 10.17487/RFC7719, December
               2015, <https://www.rfc-editor.org/info/rfc7719>.
 
-   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
-              and P. Hoffman, "Specification for DNS over Transport
-              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
-              2016, <https://www.rfc-editor.org/info/rfc7858>.
-
 
 
 
@@ -2073,6 +2073,11 @@ Pusateri & Cheshire    Expires September 25, 2019              [Page 37]
 
 Internet-Draft           DNS Push Notifications               March 2019
 
+
+   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
+              and P. Hoffman, "Specification for DNS over Transport
+              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
+              2016, <https://www.rfc-editor.org/info/rfc7858>.
 
    [RFC8010]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Encoding and Transport", STD 92, RFC 8010,
@@ -2115,11 +2120,6 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
-
-
-
-
-
 
 
 

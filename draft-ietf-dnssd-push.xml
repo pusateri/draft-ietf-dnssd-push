@@ -13,6 +13,7 @@
 <!ENTITY RFC1123 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.1123.xml">
 <!ENTITY RFC2119 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
 <!ENTITY RFC2136 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2136.xml">
+<!ENTITY RFC2181 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2181.xml">
 <!ENTITY RFC2308 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2308.xml">
 <!ENTITY RFC3123 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3123.xml">
 <!ENTITY RFC2782 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2782.xml">
@@ -621,26 +622,25 @@
          A PUSH Message MUST contain at least one change notification.
          If a PUSH Message is received that contains no change notifications,
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TCP RST (or equivalent for other protocols).
-         The change notifications are formatted similarly to how
+         the connection with a TCP RST (or equivalent for other protocols).</t>
+
+         <t>The change notification records are formatted similarly to how
          DNS Resource Records are conventionally expressed in DNS messages,
          as illustrated in <xref target="push_msg"/>,
          and are interpreted as described below.</t>
 
-         <t>If the signed 32-bit TTL is in the range 0 to 604,800 seconds (one week), then a new
-         DNS Resource Record with the given name, type, class and RDATA is added.
+         <t>The TTL field holds an unsigned 32-bit integer <xref target="RFC2181"/>.
+         If the TTL is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
+         then a new DNS Resource Record with the given name, type, class and RDATA is added.
          A TTL of 0 means that this record should be retained for as long as the subscription is active,
-         and should be discarded immediately the moment the subscription is cancelled.
-         The maximum record lifetime supported in a PUSH Message is one week.
-         In the event that the DNS record in question has an actual TTL greater than one week,
-         the server MUST report the TTL in the PUSH Message change notification record as being one week.</t>
+         and should be discarded immediately the moment the subscription is cancelled.</t>
 
-         <t>If the signed 32-bit TTL has the value -1, then the
+         <t>If the TTL has the value 0xFFFFFFFF, then the
          DNS Resource Record with the given name, type, class and RDATA is removed.</t>
 
-         <t>If the signed 32-bit TTL has the value -2, then this is a 'collective' remove notification.
+         <t>If the TTL has the value 0xFFFFFFFE, then this is a 'collective' remove notification.
          For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.
-         If a change notification is received where TTL = -2 and RDLEN is not zero,
+         If a change notification is received where TTL = 0xFFFFFFFE and RDLEN is not zero,
          this is a fatal error, and the receiver MUST immediately terminate
          the connection with a TCP RST (or equivalent for other protocols).
          There are three types of collective remove notification:</t>
@@ -661,17 +661,17 @@
          <t>Summary of change notification types:
            <list style="bullets">
              <t>Delete all RRsets from a name, in all classes<vspace />
-             TTL=-2, RDLENGTH=0, CLASS=255 (ANY)</t>
+             TTL=0xFFFFFFFE, RDLENGTH=0, CLASS=255 (ANY)</t>
 
              <t>Delete all RRsets from a name, in given class:<vspace />
-             TTL=-2, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)</t>
+             TTL=0xFFFFFFFE, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)</t>
 
              <t>Delete specified RRset from a name, in given class:<vspace />
-             TTL=-2, RDLENGTH=0<vspace />
+             TTL=0xFFFFFFFE, RDLENGTH=0<vspace />
              CLASS and TYPE specify the RRset being deleted</t>
 
              <t>Delete an individual RR from a name:<vspace />
-             TTL=-1<vspace />
+             TTL=0xFFFFFFFF<vspace />
              CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.</t>
 
              <t>Add individual RR to a name<vspace />
@@ -683,13 +683,12 @@
          <t>Note that it is valid for the RDATA of an added or removed DNS Resource Record to be empty (zero length).
          For example, an <xref target="RFC3123">Address Prefix List Resource Record</xref> may have empty RDATA.
          Therefore, a change notification with RDLEN=0 does not automatically indicate a remove notification.
-         If RDLEN=0 and TTL >= 0, this change notification signals the addition of a
+         If RDLEN=0 and TTL is the in the range 0 - 0x7FFFFFFF, this change notification signals the addition of a
          record with the given name, type, class, and empty RDATA.
-         If RDLEN=0 and TTL = -1, this change notification signals the removal specifically of that single
+         If RDLEN=0 and TTL = 0xFFFFFFFF, this change notification signals the removal specifically of that single
          record with the given name, type, class, and empty RDATA.</t>
 
-         <t>If the signed 32-bit TTL is a negative value less than -2,
-         or a positive value greater than 604,800,
+         <t>If the TTL is any value other than 0xFFFFFFFF, 0xFFFFFFFE, or a value in the range 0 - 0x7FFFFFFF,
          then the receiver SHOULD silently ignore this particular change notification record.
          The connection is not terminated and other valid change notification records
          within this PUSH message are processed as usual.</t>
@@ -758,7 +757,7 @@
 |                     CLASS                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                      TTL                      |    |
-|      (32-bit signed big-endian integer)       |     > DSO-DATA
+|     (32-bit unsigned big-endian integer)      |     > DSO-DATA
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
 |                     RDLEN                     |    |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -1098,6 +1097,7 @@
      &RFC1123;
      &RFC2119;
      &RFC2136;
+     &RFC2181;
      &RFC2782;
      &RFC6066;
      <?rfc include="reference.RFC.6335" ?>
