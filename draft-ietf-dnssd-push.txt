@@ -1974,8 +1974,8 @@ Internet-Draft           DNS Push Notifications               March 2019
 10.2.  Informative References
 
    [DisProx]  Cheshire, S., "Discovery Proxy for Multicast DNS-Based
-              Service Discovery", draft-ietf-dnssd-hybrid-08 (work in
-              progress), March 2018.
+              Service Discovery", draft-ietf-dnssd-hybrid-10 (work in
+              progress), March 2019.
 
    [I-D.dukkipati-tcpm-tcp-loss-probe]
               Dukkipati, N., Cardwell, N., Cheng, Y., and M. Mathis,
@@ -1983,8 +1983,8 @@ Internet-Draft           DNS Push Notifications               March 2019
               Tail Losses", draft-dukkipati-tcpm-tcp-loss-probe-01 (work
               in progress), February 2013.
 
-   [LLQ]      Sekar, K., "DNS Long-Lived Queries", draft-sekar-dns-
-              llq-01 (work in progress), August 2006.
+   [LLQ]      Cheshire, S. and M. Krochmal, "DNS Long-Lived Queries",
+              draft-sekar-dns-llq-03 (work in progress), March 2019.
 
    [obs]      "Observer Pattern",
               <https://en.wikipedia.org/wiki/Observer_pattern>.
