@@ -308,8 +308,8 @@
 
         <t>The client begins by opening a DSO Session to its normal configured
         DNS recursive resolver and requesting a Push Notification subscription.
-        This connection is made to TCP port 853, the default port for DNS-over-TLS
-        <xref target="RFC7858">DNS over TLS</xref>.
+        This connection is made to TCP port 853, the default port for
+        <xref target="RFC7858">DNS-over-TLS</xref>.
         If the request for a Push Notification subscription
         is successful, then the recursive resolver will make a corresponding
         Push Notification subscription on the client's behalf
@@ -960,7 +960,7 @@
        <c>SUBSCRIBE</c><c>X</c><c></c><c></c><c></c><c></c>
        <c>PUSH</c><c></c><c></c><c></c><c></c><c></c>
        <c>UNSUBSCRIBE</c><c></c><c>X</c><c></c><c></c><c></c>
-       <c>RECONFIRM</c><c>X</c><c></c><c></c><c></c><c></c>
+       <c>RECONFIRM</c><c></c><c>X</c><c></c><c></c><c></c>
      </texttable>
      <t>The server TLV contexts are:
        <?rfc subcompact="yes" ?>
