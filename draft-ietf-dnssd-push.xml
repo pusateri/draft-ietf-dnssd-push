@@ -1010,6 +1010,8 @@
 
      <t>Also, see Section 9 of the DNS over (D)TLS Usage Profiles document <xref target="RFC8310"/> for additional recommendations for various versions of TLS usage.</t>
 
+     <t>As a consequence of requiring TLS, client certificate authentication and verification may also be enforced by the server for stronger client-server security or end-to-end security. However, recommendations for security in particular deployment scenarios are outside the scope of this document.</t>
+
      <t>DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</t>
 
      <section title="Security Services">
@@ -1018,6 +1020,7 @@
            <t hangText="Confidentiality:">All application-layer communication is encrypted with the goal that no party should be able to decrypt it except the intended receiver.</t>
            <t hangText="Data integrity protection:">Any changes made to the communication in transit are detectable by the receiver.</t>
            <t hangText="Authentication:">An end-point of the TLS communication is authenticated as the intended entity to communicate with.</t>
+           <t hangText="Anti-replay protection:">TLS provides for the detection of and prevention against messages sent previously over a TLS connection (such as DNS Push Notifications). Prior messages cannot be re-sent at a later time as a form of a man-in-the-middle attack.</t>
          </list>
        </t>
        <t>Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <xref target="RFC7525">TLS Recommendations</xref> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</t>

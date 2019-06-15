@@ -1045,7 +1045,8 @@
 </h1>
 <p id="rfc.section.7.p.1">The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS Push Notifications <a href="#RFC8310" class="xref">[RFC8310]</a>. Cleartext connections for DNS Push Notifications are not permissible. Since this is a new protocol, transition mechanisms from the Opportunistic Privacy profile are unnecessary.</p>
 <p id="rfc.section.7.p.2">Also, see Section 9 of the DNS over (D)TLS Usage Profiles document <a href="#RFC8310" class="xref">[RFC8310]</a> for additional recommendations for various versions of TLS usage.</p>
-<p id="rfc.section.7.p.3">DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
+<p id="rfc.section.7.p.3">As a consequence of requiring TLS, client certificate authentication and verification may also be enforced by the server for stronger client-server security or end-to-end security. However, recommendations for security in particular deployment scenarios are outside the scope of this document.</p>
+<p id="rfc.section.7.p.4">DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
 <h1 id="rfc.section.7.1">
 <a href="#rfc.section.7.1">7.1.</a> Security Services</h1>
 <p id="rfc.section.7.1.p.1">It is the goal of using TLS to provide the following security services: </p>
@@ -1057,6 +1058,8 @@
 <dd style="margin-left: 8">Any changes made to the communication in transit are detectable by the receiver.</dd>
 <dt>Authentication:</dt>
 <dd style="margin-left: 8">An end-point of the TLS communication is authenticated as the intended entity to communicate with.</dd>
+<dt>Anti-replay protection:</dt>
+<dd style="margin-left: 8">TLS provides for the detection of and prevention against messages sent previously over a TLS connection (such as DNS Push Notifications). Prior messages cannot be re-sent at a later time as a form of a man-in-the-middle attack.</dd>
 </dl>
 
 <p> </p>
