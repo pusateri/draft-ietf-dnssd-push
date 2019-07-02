@@ -744,7 +744,8 @@ Internet-Draft           DNS Push Notifications                June 2019
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
    session from a client.  If a server does send a SUBSCRIBE request
    over a DSO session initiated by a client, this is a fatal error and
-   the client should immediately abort the connection with a TCP RST.
+   the client should immediately abort the connection with a TLS
+   close_notify alert.  See Section 6.1 of [RFC8446].
 
 6.2.1.  SUBSCRIBE Request
 
@@ -769,7 +770,6 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    The DSO-LENGTH is the length of the DSO-DATA that follows, which
    specifies the name, type, and class of the record(s) being sought.
-
 
 
 
@@ -832,7 +832,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    US-ASCII letters applies (e.g., "example.com" and "Example.com" are
    the same).  If a server receives such a duplicate SUBSCRIBE message
    this is an error and the server MUST immediately terminate the
-   connection with a TCP RST.
+   connection with a TLS close_notify alert.
 
 
 
@@ -1100,7 +1100,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    Message MUST contain at least one change notification.  If a PUSH
    Message is received that contains no change notifications, this is a
    fatal error, and the receiver MUST immediately terminate the
-   connection with a TCP RST.
+   connection with a TLS close_notify alert.
 
    The change notification records are formatted similarly to how DNS
    Resource Records are conventionally expressed in DNS messages, as
@@ -1130,8 +1130,8 @@ Internet-Draft           DNS Push Notifications                June 2019
    be zero and consequently the RDATA MUST be empty.  If a change
    notification is received where TTL = 0xFFFFFFFE and RDLEN is not
    zero, this is a fatal error, and the receiver MUST immediately
-   terminate the connection with a TCP RST.  There are three types of
-   collective remove notification:
+   terminate the connection with a TLS close_notify alert.  There are
+   three types of collective remove notification:
 
    For collective remove notifications, if CLASS is 255 (ANY), then for
    the given name this deletes all records of all types in all classes.
@@ -1225,7 +1225,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    If a client receives a PUSH message with a DNS message length larger
    than 16,382 bytes, the this is a fatal error, and the receiver MUST
-   immediately terminate the connection with a TCP RST.
+   immediately terminate the connection with a TLS close_notify alert.
 
 
 
@@ -1358,7 +1358,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    A server MUST NOT initiate an UNSUBSCRIBE message.  If a server does
    send an UNSUBSCRIBE message over a DSO session initiated by a client,
    this is a fatal error and the client should immediately abort the
-   connection with a TCP RST.
+   connection with a TLS close_notify alert.
 
 6.4.1.  UNSUBSCRIBE Message
 
@@ -1718,8 +1718,8 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    If a client has performed operations on this session that it would
    not want lost (like DNS updates) then the client SHOULD do an orderly
-   disconnect, sending a TLS close_notify followed by a TCP FIN.  (In
-   the BSD Sockets API, sending a TCP FIN is achieved by calling
+   disconnect, sending a TCP RST followed by a TCP FIN.  (In the BSD
+   Sockets API, sending a TCP FIN is achieved by calling
    "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining
    data has been read from it.)
 

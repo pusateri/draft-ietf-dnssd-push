@@ -428,7 +428,7 @@
        A SUBSCRIBE request is encoded in a DSO message <xref target="RFC8490"/>.<vspace />
        This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</t>
 
-       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST.</t>
+       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert. See Section 6.1 of <xref target="RFC8446"/>.</t>
 
        <section title="SUBSCRIBE Request">
          <t>A SUBSCRIBE request begins with the standard
@@ -482,7 +482,7 @@
 
          <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the DSO session between the client and the server is closed.</t>
 
-         <t>SUBSCRIBE requests on a given session MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TCP RST.</t>
+         <t>SUBSCRIBE requests on a given session MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TLS close_notify alert.</t>
 
          <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</t>
 
@@ -622,7 +622,7 @@
          A PUSH Message MUST contain at least one change notification.
          If a PUSH Message is received that contains no change notifications,
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TCP RST.</t>
+         the connection with a TLS close_notify alert.</t>
 
          <t>The change notification records are formatted similarly to how
          DNS Resource Records are conventionally expressed in DNS messages,
@@ -642,7 +642,7 @@
          For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.
          If a change notification is received where TTL = 0xFFFFFFFE and RDLEN is not zero,
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TCP RST.
+         the connection with a TLS close_notify alert.
          There are three types of collective remove notification:</t>
 
          <t>For collective remove notifications,
@@ -728,7 +728,7 @@
          <t>If a client receives a PUSH message with
          a DNS message length larger than 16,382 bytes, the
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TCP RST.</t>
+         the connection with a TLS close_notify alert.</t>
 
          <figure align="center" anchor="push_msg" title="PUSH Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
@@ -796,7 +796,7 @@
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a
        DSO unidirectional message <xref target="RFC8490"/>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</t>
 
-       <t>A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TCP RST.</t>
+       <t>A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert.</t>
 
        <section title="UNSUBSCRIBE Message">
 
@@ -998,7 +998,7 @@
 
        <t>If a client has performed operations on this session that it
        would not want lost (like DNS updates) then the client SHOULD do an
-       orderly disconnect, sending a TLS close_notify followed by a TCP FIN.
+       orderly disconnect, sending a TCP RST followed by a TCP FIN.
        (In the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)"
        and keeping the socket open until all remaining data has been read from it.)</t>
 <?rfc needLines="9" ?>
