@@ -245,7 +245,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    Updates and DNS Push Notification Subscriptions.
 
    Supporting DNS Updates and DNS Push Notifications on the same server
-   is OPTIONAL.  A DNS Push Notification server is NOT REQUIRED also to
+   is OPTIONAL.  A DNS Push Notification server is not required to
    support DNS Update.
 
    DNS Updates and DNS Push Notifications may be handled on different
@@ -352,12 +352,13 @@ Internet-Draft           DNS Push Notifications                June 2019
    Stateful Operations [RFC8490] running over TLS over TCP [RFC7858].
 
    Connection setup over TCP ensures return reachability and alleviates
-   concerns of state overload at the server through anonymous
-   subscriptions.  All subscribers are guaranteed to be reachable by the
-   server by virtue of the TCP three-way handshake.  Flooding attacks
-   are possible with any protocol, and a benefit of TCP is that there
-   are already established industry best practices to guard against SYN
-   flooding and similar attacks [SYN] [RFC4953].
+   concerns of state overload at the server which is a potential problem
+   with connection-less protocols using spoofed source addresses.  All
+   subscribers are guaranteed to be reachable by the server by virtue of
+   the TCP three-way handshake.  Flooding attacks are possible with any
+   protocol, and a benefit of TCP is that there are already established
+   industry best practices to guard against SYN flooding and similar
+   attacks [SYN] [RFC4953].
 
    Use of TCP also allows DNS Push Notifications to take advantage of
    current and future developments in TCP, such as Multipath TCP (MPTCP)
@@ -371,7 +372,6 @@ Internet-Draft           DNS Push Notifications                June 2019
    in this protocol specification.  Additional security measures such as
    client authentication during TLS negotiation MAY also be employed to
    increase the trust relationship between client and server.
-
 
 
 
@@ -508,7 +508,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 6.1.  Discovery
 
-   The first step in DNS Push Notification subscription is to discover
+   The first step in a DNS Push Notification subscription is to discover
    an appropriate DNS server that supports DNS Push Notifications for
    the desired zone.
 
@@ -744,8 +744,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
    session from a client.  If a server does send a SUBSCRIBE request
    over a DSO session initiated by a client, this is a fatal error and
-   the client should immediately abort the connection with a TCP RST (or
-   equivalent for other protocols).
+   the client should immediately abort the connection with a TCP RST.
 
 6.2.1.  SUBSCRIBE Request
 
@@ -770,6 +769,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    The DSO-LENGTH is the length of the DSO-DATA that follows, which
    specifies the name, type, and class of the record(s) being sought.
+
 
 
 
@@ -832,7 +832,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    US-ASCII letters applies (e.g., "example.com" and "Example.com" are
    the same).  If a server receives such a duplicate SUBSCRIBE message
    this is an error and the server MUST immediately terminate the
-   connection with a TCP RST (or equivalent for other protocols).
+   connection with a TCP RST.
 
 
 
@@ -847,7 +847,8 @@ Internet-Draft           DNS Push Notifications                June 2019
    the zone, and nothing else.
 
    Aliasing is not supported.  That is, a CNAME in a SUBSCRIBE message
-   matches only a literal CNAME record in the zone, and nothing else.
+   matches only a literal CNAME record in the zone, and not to any
+   records referenced by the owner name.
 
    A client may SUBSCRIBE to records that are unknown to the server at
    the time of the request (providing that the name falls within one of
@@ -874,7 +875,6 @@ Internet-Draft           DNS Push Notifications                June 2019
    where one or both of TYPE or CLASS are 255, the server MUST send Push
    Notification Updates for ALL record changes that match the
    subscription, not just some of them.
-
 
 
 
@@ -1100,7 +1100,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    Message MUST contain at least one change notification.  If a PUSH
    Message is received that contains no change notifications, this is a
    fatal error, and the receiver MUST immediately terminate the
-   connection with a TCP RST (or equivalent for other protocols).
+   connection with a TCP RST.
 
    The change notification records are formatted similarly to how DNS
    Resource Records are conventionally expressed in DNS messages, as
@@ -1130,8 +1130,8 @@ Internet-Draft           DNS Push Notifications                June 2019
    be zero and consequently the RDATA MUST be empty.  If a change
    notification is received where TTL = 0xFFFFFFFE and RDLEN is not
    zero, this is a fatal error, and the receiver MUST immediately
-   terminate the connection with a TCP RST (or equivalent for other
-   protocols).  There are three types of collective remove notification:
+   terminate the connection with a TCP RST.  There are three types of
+   collective remove notification:
 
    For collective remove notifications, if CLASS is 255 (ANY), then for
    the given name this deletes all records of all types in all classes.
@@ -1225,7 +1225,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    If a client receives a PUSH message with a DNS message length larger
    than 16,382 bytes, the this is a fatal error, and the receiver MUST
-
+   immediately terminate the connection with a TCP RST.
 
 
 
@@ -1233,9 +1233,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 22]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
-
-   immediately terminate the connection with a TCP RST (or equivalent
-   for other protocols).
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1282,6 +1279,9 @@ Internet-Draft           DNS Push Notifications                June 2019
    a SUBSCRIBE request, subject to the usual established DNS case-
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
    request was not ANY (255) then the TYPE of the record must match the
+   TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
+   request was not ANY (255) then the CLASS of the record must match the
+   CLASS given in the SUBSCRIBE request.  If a matching active
 
 
 
@@ -1290,9 +1290,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 23]
 Internet-Draft           DNS Push Notifications                June 2019
 
 
-   TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
-   request was not ANY (255) then the CLASS of the record must match the
-   CLASS given in the SUBSCRIBE request.  If a matching active
    subscription on that session is not found, then that individual
    record addition/deletion is silently ignored.  Processing of other
    additions and deletions in this message is not affected.  The DSO
@@ -1341,6 +1338,9 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
+
+
+
 Pusateri & Cheshire     Expires December 20, 2019              [Page 24]
 
 Internet-Draft           DNS Push Notifications                June 2019
@@ -1358,7 +1358,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    A server MUST NOT initiate an UNSUBSCRIBE message.  If a server does
    send an UNSUBSCRIBE message over a DSO session initiated by a client,
    this is a fatal error and the client should immediately abort the
-   connection with a TCP RST (or equivalent for other protocols).
+   connection with a TCP RST.
 
 6.4.1.  UNSUBSCRIBE Message
 
