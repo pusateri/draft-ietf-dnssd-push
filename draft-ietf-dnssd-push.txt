@@ -740,6 +740,9 @@ Internet-Draft           DNS Push Notifications                June 2019
    This specification defines a primary DSO TLV for DNS Push
    Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).
 
+   DSO messages with the SUBSCRIBE TLV as the Primary TLV are not
+   permitted in early data.
+
    The entity that initiates a SUBSCRIBE request is by definition the
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
    session from a client.  If a server does send a SUBSCRIBE request
@@ -770,9 +773,6 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    The DSO-LENGTH is the length of the DSO-DATA that follows, which
    specifies the name, type, and class of the record(s) being sought.
-
-
-
 
 
 
@@ -1868,14 +1868,19 @@ Internet-Draft           DNS Push Notifications                June 2019
    This document also defines four new DNS Stateful Operation TLV types
    to be recorded in the IANA DSO Type Code Registry.
 
-          +-------------+------------------------+-------------+
-          | Name        |         Value          | Definition  |
-          +-------------+------------------------+-------------+
-          | SUBSCRIBE   | TBA (tentatively 0x40) | Section 6.2 |
-          | PUSH        | TBA (tentatively 0x41) | Section 6.3 |
-          | UNSUBSCRIBE | TBA (tentatively 0x42) | Section 6.4 |
-          | RECONFIRM   | TBA (tentatively 0x43) | Section 6.5 |
-          +-------------+------------------------+-------------+
+   +-------------+------------+---------+-----------------+------------+
+   | Name        |   Value    |  Early  |      Status     | Definition |
+   |             |            |   Data  |                 |            |
+   +-------------+------------+---------+-----------------+------------+
+   | SUBSCRIBE   | TBA (0x40) |    NO   | Standards Track | Section 6. |
+   |             |            |         |                 | 2          |
+   | PUSH        | TBA (0x41) |    NA   | Standards Track | Section 6. |
+   |             |            |         |                 | 3          |
+   | UNSUBSCRIBE | TBA (0x42) |    NA   | Standards Track | Section 6. |
+   |             |            |         |                 | 4          |
+   | RECONFIRM   | TBA (0x43) |    NA   | Standards Track | Section 6. |
+   |             |            |         |                 | 5          |
+   +-------------+------------+---------+-----------------+------------+
 
                 Table 5: IANA DSO TLV Type Code Assignments
 
@@ -1889,11 +1894,6 @@ Internet-Draft           DNS Push Notifications                June 2019
    Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara
    Dickinson, and Andrew Sullivan.  Ted Lemon provided clarifying text
    that was greatly appreciated.
-
-
-
-
-
 
 
 

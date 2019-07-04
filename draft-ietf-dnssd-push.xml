@@ -428,6 +428,7 @@
        A SUBSCRIBE request is encoded in a DSO message <xref target="RFC8490"/>.<vspace />
        This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</t>
 
+       <t>DSO messages with the SUBSCRIBE TLV as the Primary TLV are not permitted in early data.</t>
        <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert. See Section 6.1 of <xref target="RFC8446"/>.</t>
 
        <section title="SUBSCRIBE Request">
@@ -1052,18 +1053,28 @@
      <texttable title="IANA DSO TLV Type Code Assignments" anchor="iana_tlv_table">
        <ttcol align="left">Name</ttcol>
        <ttcol align="center">Value</ttcol>
-       <ttcol align="left">Definition</ttcol>
+       <ttcol width="5%" align="center">Early Data</ttcol>
+       <ttcol align="center">Status</ttcol>
+       <ttcol width="5%" align="left">Definition</ttcol>
        <c>SUBSCRIBE</c>
-       <c>TBA (tentatively 0x40)</c>
+       <c>TBA (0x40)</c>
+       <c>NO</c>
+       <c>Standards Track</c>
        <c><xref target="subscribe"/></c>
        <c>PUSH</c>
-       <c>TBA (tentatively 0x41)</c>
+       <c>TBA (0x41)</c>
+       <c>NA</c>
+       <c>Standards Track</c>
        <c><xref target="push"/></c>
        <c>UNSUBSCRIBE</c>
-       <c>TBA (tentatively 0x42)</c>
+       <c>TBA (0x42)</c>
+       <c>NA</c>
+       <c>Standards Track</c>
        <c><xref target="unsubscribe"/></c>
        <c>RECONFIRM</c>
-       <c>TBA (tentatively 0x43)</c>
+       <c>TBA (0x43)</c>
+       <c>NA</c>
+       <c>Standards Track</c>
        <c><xref target="reconfirm"/></c>
      </texttable>
    </section>

@@ -599,7 +599,8 @@
 <a href="#rfc.section.6.2">6.2.</a> <a href="#subscribe" id="subscribe">DNS Push Notification SUBSCRIBE</a>
 </h1>
 <p id="rfc.section.6.2.p.1">After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client<br> then indicates its desire to receive DNS Push Notifications for<br> a given domain name by sending a SUBSCRIBE request to the server.<br> A SUBSCRIBE request is encoded in a DSO message <a href="#RFC8490" class="xref">[RFC8490]</a>.<br> This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</p>
-<p id="rfc.section.6.2.p.2">The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert. See Section 6.1 of <a href="#RFC8446" class="xref">[RFC8446]</a>.</p>
+<p id="rfc.section.6.2.p.2">DSO messages with the SUBSCRIBE TLV as the Primary TLV are not permitted in early data.</p>
+<p id="rfc.section.6.2.p.3">The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert. See Section 6.1 of <a href="#RFC8446" class="xref">[RFC8446]</a>.</p>
 <h1 id="rfc.section.6.2.1">
 <a href="#rfc.section.6.2.1">6.2.1.</a> SUBSCRIBE Request</h1>
 <p id="rfc.section.6.2.1.p.1">A SUBSCRIBE request begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE request message is illustrated in <a href="#subscribe_req" class="xref">Figure 1</a>.</p>
@@ -1100,27 +1101,37 @@
 <thead><tr>
 <th class="left">Name</th>
 <th class="center">Value</th>
+<th class="center">Early Data</th>
+<th class="center">Status</th>
 <th class="left">Definition</th>
 </tr></thead>
 <tbody>
 <tr>
 <td class="left">SUBSCRIBE</td>
-<td class="center">TBA (tentatively 0x40)</td>
+<td class="center">TBA (0x40)</td>
+<td class="center">NO</td>
+<td class="center">Standards Track</td>
 <td class="left"><a href="#subscribe" class="xref">Section 6.2</a></td>
 </tr>
 <tr>
 <td class="left">PUSH</td>
-<td class="center">TBA (tentatively 0x41)</td>
+<td class="center">TBA (0x41)</td>
+<td class="center">NA</td>
+<td class="center">Standards Track</td>
 <td class="left"><a href="#push" class="xref">Section 6.3</a></td>
 </tr>
 <tr>
 <td class="left">UNSUBSCRIBE</td>
-<td class="center">TBA (tentatively 0x42)</td>
+<td class="center">TBA (0x42)</td>
+<td class="center">NA</td>
+<td class="center">Standards Track</td>
 <td class="left"><a href="#unsubscribe" class="xref">Section 6.4</a></td>
 </tr>
 <tr>
 <td class="left">RECONFIRM</td>
-<td class="center">TBA (tentatively 0x43)</td>
+<td class="center">TBA (0x43)</td>
+<td class="center">NA</td>
+<td class="center">Standards Track</td>
 <td class="left"><a href="#reconfirm" class="xref">Section 6.5</a></td>
 </tr>
 </tbody>
