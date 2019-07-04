@@ -211,9 +211,9 @@
      <t>The DNS Push Notification server for a DNS zone is any server capable
      of generating the correct change notifications for a name.
      It may be a primary, secondary, or stealth name server <xref target="RFC7719"/>.
-     Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a
+     Consequently, the <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx> SRV record for a
      zone MAY reference the same target host and port as that zone's
-     <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Subscriptions.</t>
+     <spanx style="verb">_dns&nbhy;update._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Subscriptions.</t>
 
      <t>Supporting DNS Updates and DNS Push Notifications on the same server is OPTIONAL. A DNS Push Notification server is not required to support DNS Update.</t>
 
@@ -222,7 +222,7 @@
      <t>Standard DNS Queries MAY be sent over a DNS Push Notification (i.e., DSO)
    session.   For any zone for which the server is authoritative, it
    MUST respond authoritatively for queries on names falling within
-   that zone (e.g., the &lt;zone&gt; in the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV
+   that zone (e.g., the &lt;zone&gt; in the <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx> SRV
    record) both for normal DNS queries and for DNS Push Notification subscriptions.
    For names for which the server is acting as a recursive
    resolver, e.g. when the server is the local recursive resolver, for any query
@@ -399,7 +399,7 @@
             The client strips the leading label from the current query name and if the resulting name has at least one label in it, the client sends an SOA query for that new name, and processing continues at step 2 above, repeating the iterative search until either an SOA is received, or the query name consists of a single label, i.e., a Top Level Domain (TLD). In the case of a single-label TLD, this is a network configuration error which should not happen and the client gives up. The client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
 
             <t>Once the SOA is known (either by virtue of being seen in the Answer Section, or in the Authority Section), the client sends a DNS query with type <xref target="RFC2782">SRV</xref> for the record name
-            <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
+            <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
 
             <t>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.
             (If this SRV record does not exist then the zone is not correctly
@@ -558,7 +558,7 @@
 
              <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
              <t>If the server being queried is listed in a
-             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>
+             <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>
              SRV record for the zone, then this is a misconfiguration,
              since this server is being advertised as supporting DNS Push Notifications for this zone,
              but the server itself is not currently configured to perform that task.
@@ -568,7 +568,7 @@
 
              <t>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
              <t>If the server being queried is listed in a
-             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>
+             <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>
              SRV record for the zone, then this is a misconfiguration,
              since this server is being advertised as supporting DNS Push Notifications for this zone,
              but the server itself is not currently configured to perform that task.
@@ -1027,7 +1027,7 @@
      </section>
 
      <section title="TLS Name Authentication" anchor="tls_name_auth">
-       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Server Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
+       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Server Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
      </section>
 
      <section title="TLS Session Resumption">
@@ -1045,7 +1045,7 @@
        <ttcol align="left">Definition</ttcol>
        <c>DNS Push Notification Service Type</c>
        <c>None</c>
-       <c><spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx></c>
+       <c><spanx style="verb">_dns&nbhy;push._tcp</spanx></c>
        <c><xref target="discovery"/></c>
      </texttable>
      <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>

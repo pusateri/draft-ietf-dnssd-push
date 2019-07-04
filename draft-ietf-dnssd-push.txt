@@ -237,11 +237,11 @@ Internet-Draft           DNS Push Notifications                June 2019
    The DNS Push Notification server for a DNS zone is any server capable
    of generating the correct change notifications for a name.  It may be
    a primary, secondary, or stealth name server [RFC7719].
-   Consequently, the "_dns-push-tls._tcp.<zone>" SRV record for a zone
-   MAY reference the same target host and port as that zone's
-   "_dns-update-tls._tcp.<zone>" SRV record.  When the same target host
-   and port is offered for both DNS Updates and DNS Push Notifications,
-   a client MAY use a single TCP connection to that server for both DNS
+   Consequently, the "_dns-push._tcp.<zone>" SRV record for a zone MAY
+   reference the same target host and port as that zone's
+   "_dns-update._tcp.<zone>" SRV record.  When the same target host and
+   port is offered for both DNS Updates and DNS Push Notifications, a
+   client MAY use a single TCP connection to that server for both DNS
    Updates and DNS Push Notification Subscriptions.
 
    Supporting DNS Updates and DNS Push Notifications on the same server
@@ -256,7 +256,7 @@ Internet-Draft           DNS Push Notifications                June 2019
    Standard DNS Queries MAY be sent over a DNS Push Notification (i.e.,
    DSO) session.  For any zone for which the server is authoritative, it
    MUST respond authoritatively for queries on names falling within that
-   zone (e.g., the <zone> in the "_dns-push-tls._tcp.<zone>" SRV record)
+   zone (e.g., the <zone> in the "_dns-push._tcp.<zone>" SRV record)
    both for normal DNS queries and for DNS Push Notification
    subscriptions.  For names for which the server is acting as a
    recursive resolver, e.g. when the server is the local recursive
@@ -643,8 +643,8 @@ Internet-Draft           DNS Push Notifications                June 2019
    5.  Once the SOA is known (either by virtue of being seen in the
        Answer Section, or in the Authority Section), the client sends a
        DNS query with type SRV [RFC2782] for the record name
-       "_dns-push-tls._tcp.<zone>", where <zone> is the owner name of
-       the discovered SOA record.
+       "_dns-push._tcp.<zone>", where <zone> is the owner name of the
+       discovered SOA record.
 
    6.  If the zone in question is set up to offer DNS Push Notifications
        then this SRV record MUST exist.  (If this SRV record does not
@@ -1010,28 +1010,28 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 18]
 Internet-Draft           DNS Push Notifications                June 2019
 
 
-      If the server being queried is listed in a
-      "_dns-push-tls._tcp.<zone>" SRV record for the zone, then this is
-      a misconfiguration, since this server is being advertised as
-      supporting DNS Push Notifications for this zone, but the server
-      itself is not currently configured to perform that task.  Since it
-      is possible that the misconfiguration may be repaired at any time,
-      the retry delay should not be set too high.  By default, a value
-      of 5 minutes is RECOMMENDED.
+      If the server being queried is listed in a "_dns-push._tcp.<zone>"
+      SRV record for the zone, then this is a misconfiguration, since
+      this server is being advertised as supporting DNS Push
+      Notifications for this zone, but the server itself is not
+      currently configured to perform that task.  Since it is possible
+      that the misconfiguration may be repaired at any time, the retry
+      delay should not be set too high.  By default, a value of 5
+      minutes is RECOMMENDED.
 
       For RCODE = 9 (NOTAUTH), which occurs on a server that implements
       DNS Push Notifications, but is not configured to be authoritative
       for the requested name, the retry delay may be any value selected
       by the implementer and/or configured by the operator.
 
-      If the server being queried is listed in a
-      "_dns-push-tls._tcp.<zone>" SRV record for the zone, then this is
-      a misconfiguration, since this server is being advertised as
-      supporting DNS Push Notifications for this zone, but the server
-      itself is not currently configured to perform that task.  Since it
-      is possible that the misconfiguration may be repaired at any time,
-      the retry delay should not be set too high.  By default, a value
-      of 5 minutes is RECOMMENDED.
+      If the server being queried is listed in a "_dns-push._tcp.<zone>"
+      SRV record for the zone, then this is a misconfiguration, since
+      this server is being advertised as supporting DNS Push
+      Notifications for this zone, but the server itself is not
+      currently configured to perform that task.  Since it is possible
+      that the misconfiguration may be repaired at any time, the retry
+      delay should not be set too high.  By default, a value of 5
+      minutes is RECOMMENDED.
 
       For RCODE = 11 (DSOTYPENI), which occurs on a server that
       implements DSO but doesn't implement DNS Push Notifications, it is
@@ -1805,8 +1805,8 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    As described in Section 6.1, the client discovers the DNS Push
    Notification server using an SRV lookup for the record name
-   "_dns-push-tls._tcp.<zone>".  The server connection endpoint SHOULD
-   then be authenticated using DANE TLSA records for the associated SRV
+   "_dns-push._tcp.<zone>".  The server connection endpoint SHOULD then
+   be authenticated using DANE TLSA records for the associated SRV
    record.  This associates the target's name and port number with a
    trusted TLS certificate [RFC7673].  This procedure uses the TLS
    Server Name Indication (SNI) extension [RFC6066] to inform the server
@@ -1856,12 +1856,12 @@ Internet-Draft           DNS Push Notifications                June 2019
    Registry Service Types [RFC6335][ST] that is only applicable for the
    TCP protocol.
 
-   +-----------------------+------+----------------------+-------------+
-   | Name                  | Port |        Value         | Definition  |
-   +-----------------------+------+----------------------+-------------+
-   | DNS Push Notification | None | "_dns-push-tls._tcp" | Section 6.1 |
-   | Service Type          |      |                      |             |
-   +-----------------------+------+----------------------+-------------+
+   +---------------------------+------+------------------+-------------+
+   | Name                      | Port |      Value       | Definition  |
+   +---------------------------+------+------------------+-------------+
+   | DNS Push Notification     | None | "_dns-push._tcp" | Section 6.1 |
+   | Service Type              |      |                  |             |
+   +---------------------------+------+------------------+-------------+
 
                   Table 4: IANA Service Type Assignments
 
