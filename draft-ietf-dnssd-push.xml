@@ -505,16 +505,35 @@
          <t>Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</t>
 
          <t>A SUBSCRIBE response begins with the standard
-         <xref target="RFC8490">DSO 12-byte header</xref>,
-         possibly followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
+         <xref target="RFC8490">DSO 12-byte header</xref>.
+         The QR bit in the header is set indicating it is a response.
+         The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
 
-         <t>The MESSAGE ID field MUST echo the value given in the ID field of the SUBSCRIBE request.
+         <t>The MESSAGE ID field MUST echo the value given in the Message ID field of the SUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
          <t>A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.
          If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV
          then the response message is processed but the SUBSCRIBE TLV MUST be silently ignored.</t>
 
+         <figure align="center" anchor="subscribe_resp" title="SUBSCRIBE Response Message"><artwork align="center"><![CDATA[
+                                1  1  1  1  1  1
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+|                  MESSAGE ID                   |   \
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|QR| OPCODE(6) |         Z          |   RCODE   |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             QDCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+|             ANCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             NSCOUNT (MUST BE ZERO)            |    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+|             ARCOUNT (MUST BE ZERO)            |   /
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+]]>
+</artwork></figure>
 <?rfc needLines="20" ?>
          <t>In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</t>
          <texttable title="SUBSCRIBE Response codes" anchor="subscribe_rcodes">
@@ -532,7 +551,6 @@
 
          <t>This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a SUBSCRIBE Request. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any other RCODE value.</t>
 
-<?rfc needLines="30" ?>
          <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, that means:
            <?rfc subcompact="yes" ?>
            <list style="letters">

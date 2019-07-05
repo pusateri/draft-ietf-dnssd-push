@@ -76,24 +76,24 @@ Table of Contents
      6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  14
        6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  14
        6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  17
-     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  20
-       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  25
-       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  25
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  27
-       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
-     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
-     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  32
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  32
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  33
-     7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  33
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  34
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  35
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  35
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  36
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
+     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  21
+       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  21
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  26
+       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  26
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
+       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  29
+     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  31
+     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  32
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  33
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
+     7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  34
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  35
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  37
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
 
 
 
@@ -904,17 +904,55 @@ Internet-Draft           DNS Push Notifications                June 2019
    the server.
 
    A SUBSCRIBE response begins with the standard DSO 12-byte header
-   [RFC8490], possibly followed by one or more optional TLVs, such as a
-   Retry Delay TLV.
+   [RFC8490].  The QR bit in the header is set indicating it is a
+   response.  The header MAY be followed by one or more optional TLVs,
+   such as a Retry Delay TLV.
 
-   The MESSAGE ID field MUST echo the value given in the ID field of the
-   SUBSCRIBE request.  This is how the client knows which request is
-   being responded to.
+   The MESSAGE ID field MUST echo the value given in the Message ID
+   field of the SUBSCRIBE request.  This is how the client knows which
+   request is being responded to.
 
    A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a
    client receives a SUBSCRIBE response message containing a SUBSCRIBE
    TLV then the response message is processed but the SUBSCRIBE TLV MUST
    be silently ignored.
+
+                                      1  1  1  1  1  1
+        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      |                  MESSAGE ID                   |   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |QR| OPCODE(6) |         Z          |   RCODE   |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             QDCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+      |             ANCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             NSCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             ARCOUNT (MUST BE ZERO)            |   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+
+
+                   Figure 2: SUBSCRIBE Response Message
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires December 20, 2019              [Page 17]
+
+Internet-Draft           DNS Push Notifications                June 2019
+
 
    In the SUBSCRIBE response the RCODE indicates whether or not the
    subscription was accepted.  Supported RCODEs are as follows:
@@ -945,15 +983,6 @@ Internet-Draft           DNS Push Notifications                June 2019
    Responses, so clients MUST be prepared to accept SUBSCRIBE Responses
    with any other RCODE value.
 
-
-
-
-
-Pusateri & Cheshire     Expires December 20, 2019              [Page 17]
-
-Internet-Draft           DNS Push Notifications                June 2019
-
-
    If the server sends a nonzero RCODE in the SUBSCRIBE response, that
    means:
 
@@ -973,6 +1002,14 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    If the server sends a nonzero RCODE then it SHOULD append a Retry
    Delay TLV [RFC8490] to the response specifying a delay before the
+
+
+
+Pusateri & Cheshire     Expires December 20, 2019              [Page 18]
+
+Internet-Draft           DNS Push Notifications                June 2019
+
+
    client attempts this operation again.  Recommended values for the
    delay for different RCODE values are given below.  These recommended
    values apply both to the default values a server should place in the
@@ -1002,14 +1039,6 @@ Internet-Draft           DNS Push Notifications                June 2019
       DNS Push Notifications, the retry delay may be any value selected
       by the implementer and/or configured by the operator.
 
-
-
-
-Pusateri & Cheshire     Expires December 20, 2019              [Page 18]
-
-Internet-Draft           DNS Push Notifications                June 2019
-
-
       If the server being queried is listed in a "_dns-push._tcp.<zone>"
       SRV record for the zone, then this is a misconfiguration, since
       this server is being advertised as supporting DNS Push
@@ -1029,6 +1058,14 @@ Internet-Draft           DNS Push Notifications                June 2019
       this server is being advertised as supporting DNS Push
       Notifications for this zone, but the server itself is not
       currently configured to perform that task.  Since it is possible
+
+
+
+Pusateri & Cheshire     Expires December 20, 2019              [Page 19]
+
+Internet-Draft           DNS Push Notifications                June 2019
+
+
       that the misconfiguration may be repaired at any time, the retry
       delay should not be set too high.  By default, a value of 5
       minutes is RECOMMENDED.
@@ -1061,7 +1098,26 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 19]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires December 20, 2019              [Page 20]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1080,7 +1136,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    A PUSH unidirectional message begins with the standard DSO 12-byte
    header [RFC8490], followed by the PUSH primary TLV.  A PUSH message
-   is illustrated in Figure 2.
+   is illustrated in Figure 3.
 
    In accordance with the definition of DSO unidirectional messages, the
    MESSAGE ID field MUST be zero.  There is no client response to a PUSH
@@ -1104,7 +1160,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    The change notification records are formatted similarly to how DNS
    Resource Records are conventionally expressed in DNS messages, as
-   illustrated in Figure 2, and are interpreted as described below.
+   illustrated in Figure 3, and are interpreted as described below.
 
    The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
    is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
@@ -1117,7 +1173,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 20]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 21]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1173,7 +1229,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 21]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 22]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1229,7 +1285,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 22]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 23]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1270,7 +1326,7 @@ Internet-Draft           DNS Push Notifications                June 2019
      :             Repeated As Necessary             :   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
-                          Figure 2: PUSH Message
+                          Figure 3: PUSH Message
 
    When processing the records received in a PUSH Message, the receiving
    client MUST validate that the records being added or deleted
@@ -1285,7 +1341,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 23]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 24]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1341,7 +1397,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 24]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 25]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1364,7 +1420,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    An UNSUBSCRIBE unidirectional message begins with the standard DSO
    12-byte header [RFC8490], followed by the UNSUBSCRIBE primary TLV.
-   An UNSUBSCRIBE message is illustrated in Figure 3.
+   An UNSUBSCRIBE message is illustrated in Figure 4.
 
    In accordance with the definition of DSO unidirectional messages, the
    MESSAGE ID field MUST be zero.  There is no server response to an
@@ -1397,7 +1453,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 25]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 26]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1430,7 +1486,7 @@ Internet-Draft           DNS Push Notifications                June 2019
       |              SUBSCRIBE MESSAGE ID             |   > DSO-DATA
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
-                       Figure 3: UNSUBSCRIBE Message
+                       Figure 4: UNSUBSCRIBE Message
 
 
 
@@ -1453,7 +1509,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 26]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 27]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1509,7 +1565,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 27]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 28]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1518,7 +1574,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    A RECONFIRM unidirectional message begins with the standard DSO
    12-byte header [RFC8490], followed by the RECONFIRM primary TLV.
-   A RECONFIRM message is illustrated in Figure 4.
+   A RECONFIRM message is illustrated in Figure 5.
 
    In accordance with the definition of DSO unidirectional messages, the
    MESSAGE ID field MUST be zero.  There is no server response to a
@@ -1565,7 +1621,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 28]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 29]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1598,7 +1654,7 @@ Internet-Draft           DNS Push Notifications                June 2019
      \                     RDATA                     \   /
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
-                        Figure 4: RECONFIRM Message
+                        Figure 5: RECONFIRM Message
 
    The DSO-DATA for a RECONFIRM message MUST contain exactly one record.
    The DSO-DATA for a RECONFIRM message has no count field to specify
@@ -1621,7 +1677,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 29]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 30]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1677,7 +1733,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 30]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 31]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1733,7 +1789,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 31]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 32]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1789,7 +1845,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 32]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 33]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1845,7 +1901,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 33]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 34]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1901,7 +1957,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 34]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 35]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1957,7 +2013,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 35]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 36]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2013,7 +2069,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 36]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 37]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2069,7 +2125,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 37]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 38]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2125,7 +2181,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 38]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 39]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2181,4 +2237,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 39]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 40]
