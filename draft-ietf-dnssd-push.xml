@@ -313,13 +313,11 @@
         If the request for a Push Notification subscription
         is successful, then the recursive resolver will make a corresponding
         Push Notification subscription on the client's behalf
-        (if the recursive resolver doesn't already have an active subscription for that name, type, and class),
-        and pass on any results it receives back to the client.
+        (if the recursive resolver doesn't already have an active subscription for that name, type, and class).
         This is closely analogous to how a client sends normal DNS
         queries to its configured DNS recursive resolver,
         which issues queries on the client's behalf
-        (if the recursive resolver doesn't already have appropriate answer(s) in its cache),
-        and passes on any results it receives back to the client.</t>
+        (if the recursive resolver doesn't already have appropriate answer(s) in its cache).</t>
 
         <t>In many contexts, the recursive resolver will be able to handle
         Push Notifications for all names that the client may need to follow.
@@ -336,25 +334,19 @@
         <t>If the recursive resolver does support DSO but not Push Notification
         subscriptions, then it will return the DSO error code, DSOTYPENI (11).</t>
 
-        <t>In some cases, the recursive resolver may support DSO and Push Notification
-        subscriptions, but may not be able
+        <t>In some cases, the recursive resolver may support DSO and Push
+        Notification subscriptions, but may not be able
         to subscribe for Push Notifications for a particular name.
         In this case, the recursive resolver should return
-        an informative error code to the client so that the client
-        can make an informed decision how to handle the error.
-        If the recursive resolver is unable to establish a connection
-        to the zone's DNS Push Notification server
-        (perhaps because the required SRV record does not exist)
-        the recursive resolver should return SERVFAIL.
-        If the recursive resolver is able to establish a connection
-        to the zone's DNS Push Notification server
-        and some other error code is then received,
-        the recursive resolver should pass on this
-        received error code back to the client.
+        SERVFAIL to the client. This includes being unable
+        to establish a connection
+        to the zone's DNS Push Notification server or establishing
+        a connection but receiving a non success response code.
         In some cases, where the client has a pre-established trust
         relationship with the owner of the zone (that is not handled
         via the usual mechanisms for VPN software) the client may
-        handle these failures by contacting the zone's DNS Push server directly.</t>
+        handle these failures by contacting the zone's DNS Push server
+        directly.</t>
 
         <t>In any of the cases described above where the client
         fails to establish a DNS Push Notification subscription via its

@@ -519,12 +519,11 @@ Internet-Draft           DNS Push Notifications                June 2019
    Notification subscription is successful, then the recursive resolver
    will make a corresponding Push Notification subscription on the
    client's behalf (if the recursive resolver doesn't already have an
-   active subscription for that name, type, and class), and pass on any
-   results it receives back to the client.  This is closely analogous to
-   how a client sends normal DNS queries to its configured DNS recursive
-   resolver, which issues queries on the client's behalf (if the
-   recursive resolver doesn't already have appropriate answer(s) in its
-   cache), and passes on any results it receives back to the client.
+   active subscription for that name, type, and class).  This is closely
+   analogous to how a client sends normal DNS queries to its configured
+   DNS recursive resolver, which issues queries on the client's behalf
+   (if the recursive resolver doesn't already have appropriate answer(s)
+   in its cache).
 
    In many contexts, the recursive resolver will be able to handle Push
    Notifications for all names that the client may need to follow.  Use
@@ -545,15 +544,16 @@ Internet-Draft           DNS Push Notifications                June 2019
    In some cases, the recursive resolver may support DSO and Push
    Notification subscriptions, but may not be able to subscribe for Push
    Notifications for a particular name.  In this case, the recursive
-   resolver should return an informative error code to the client so
-   that the client can make an informed decision how to handle the
-   error.  If the recursive resolver is unable to establish a connection
-   to the zone's DNS Push Notification server (perhaps because the
-   required SRV record does not exist) the recursive resolver should
-   return SERVFAIL.  If the recursive resolver is able to establish a
-   connection to the zone's DNS Push Notification server and some other
-   error code is then received, the recursive resolver should pass on
-   this received error code back to the client.  In some cases, where
+   resolver should return SERVFAIL to the client.  This includes being
+   unable to establish a connection to the zone's DNS Push Notification
+   server or establishing a connection but receiving a non success
+   response code.  In some cases, where the client has a pre-established
+   trust relationship with the owner of the zone (that is not handled
+   via the usual mechanisms for VPN software) the client may handle
+   these failures by contacting the zone's DNS Push server directly.
+
+   In any of the cases described above where the client fails to
+   establish a DNS Push Notification subscription via its configured
 
 
 
@@ -562,13 +562,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 10]
 Internet-Draft           DNS Push Notifications                June 2019
 
 
-   the client has a pre-established trust relationship with the owner of
-   the zone (that is not handled via the usual mechanisms for VPN
-   software) the client may handle these failures by contacting the
-   zone's DNS Push server directly.
-
-   In any of the cases described above where the client fails to
-   establish a DNS Push Notification subscription via its configured
    recursive resolver, the client should proceed to discover the
    appropriate server for direct communication.  The client MUST also
    determine which TCP port on the server is listening for connections,
@@ -610,6 +603,13 @@ Internet-Draft           DNS Push Notifications                June 2019
    3.  If the requested SOA record does not exist, the client will get
        back a NOERROR/NODATA response or an NXDOMAIN/Name Error
        response.  In either case, the local resolver would normally
+       include the SOA record for the closest enclosing zone of the
+       requested name in the Authority Section.  If the SOA record is
+       received in the Authority Section, then the client has succeeded
+       in discovering the information it needs.
+       (This language is not placing any new requirements on DNS
+       recursive resolvers.  This text merely describes the existing
+
 
 
 
@@ -618,12 +618,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 11]
 Internet-Draft           DNS Push Notifications                June 2019
 
 
-       include the SOA record for the closest enclosing zone of the
-       requested name in the Authority Section.  If the SOA record is
-       received in the Authority Section, then the client has succeeded
-       in discovering the information it needs.
-       (This language is not placing any new requirements on DNS
-       recursive resolvers.  This text merely describes the existing
        operation of the DNS protocol regarding negative responses
        [RFC2308].)
 
@@ -666,6 +660,12 @@ Internet-Draft           DNS Push Notifications                June 2019
        contacted.  If more than one server has the same "priority", the
        "weight" indicates the weighted probability that the client
        should contact that server.  Higher weights have higher
+       probabilities of being selected.  If a server is not willing to
+       accept a subscription request, or is not reachable within a
+       reasonable time, as determined by the client, then a subsequent
+       server is to be contacted.
+
+
 
 
 
@@ -673,11 +673,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 12]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
-
-       probabilities of being selected.  If a server is not willing to
-       accept a subscription request, or is not reachable within a
-       reasonable time, as determined by the client, then a subsequent
-       server is to be contacted.
 
    Each time a client makes a new DNS Push Notification subscription
    session, it SHOULD repeat the discovery process in order to determine
@@ -688,6 +683,11 @@ Internet-Draft           DNS Push Notifications                June 2019
    records were set to reasonable values, repeated application of this
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
+
+
+
+
+
 
 
 
