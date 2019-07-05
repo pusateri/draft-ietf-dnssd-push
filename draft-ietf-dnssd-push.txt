@@ -69,31 +69,31 @@ Table of Contents
      1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
    2.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   7
-   5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   8
-   6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   9
-     6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .  10
-     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  14
-       6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  14
-       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  17
-     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  21
-       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  21
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  26
-       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  26
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
-       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  29
-     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  31
-     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  32
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  33
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
-     7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  34
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  35
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  37
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
+   4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   7
+   6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   8
+     6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   9
+     6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  13
+       6.2.1.  SUBSCRIBE Request . . . . . . . . . . . . . . . . . .  13
+       6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  16
+     6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  20
+       6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  25
+       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  25
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  27
+       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
+     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
+     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  32
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  32
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  33
+     7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  33
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  34
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  35
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  35
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  36
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
 
 
 
@@ -263,25 +263,8 @@ Internet-Draft           DNS Push Notifications                June 2019
    resolver, for any query for which it supports DNS Push Notification
    subscriptions, it MUST also support standard queries.
 
-   This DNS Push Notification specification includes support for DNS
-   classes, for completeness.  However, in practice, it is anticipated
-   that for the foreseeable future the only DNS class in use will be DNS
-   class "IN", as is the reality today with existing DNS servers and
-   clients.  A DNS Push Notification server MAY choose to implement only
-   DNS class "IN".  If messages are received for a class other than
-   "IN", and that class is not supported, an error with RCODE NOTIMP
-   (Not Implemented) should be returned.
-
    DNS Push Notifications impose less load on the responding server than
    rapid polling would, but Push Notifications do still have a cost, so
-
-
-
-Pusateri & Cheshire     Expires December 20, 2019               [Page 5]
-
-Internet-Draft           DNS Push Notifications                June 2019
-
-
    DNS Push Notification clients MUST NOT recklessly create an excessive
    number of Push Notification subscriptions.  Specifically:
 
@@ -291,6 +274,14 @@ Internet-Draft           DNS Push Notifications                June 2019
    cancelled as soon as the need for that data ends (for example, when
    the user dismisses that display).  In the case of a device like a
    smartphone which, after some period of inactivity, goes to sleep or
+
+
+
+Pusateri & Cheshire     Expires December 20, 2019               [Page 5]
+
+Internet-Draft           DNS Push Notifications                June 2019
+
+
    otherwise darkens its screen, it should cancel its subscriptions when
    darkening the screen (since the user cannot see any changes in the
    display anyway) and reinstate its subscriptions when re-awakening
@@ -313,30 +304,6 @@ Internet-Draft           DNS Push Notifications                June 2019
    session open for some time, subject to the constraint that it MUST
    NOT keep a session open that has been idle for more than the
    session's idle timeout (15 seconds by default) [RFC8490].
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires December 20, 2019               [Page 6]
-
-Internet-Draft           DNS Push Notifications                June 2019
-
 
 4.  Transport
 
@@ -362,6 +329,15 @@ Internet-Draft           DNS Push Notifications                June 2019
 
    Use of TCP also allows DNS Push Notifications to take advantage of
    current and future developments in TCP, such as Multipath TCP (MPTCP)
+
+
+
+
+Pusateri & Cheshire     Expires December 20, 2019               [Page 6]
+
+Internet-Draft           DNS Push Notifications                June 2019
+
+
    [RFC6824], TCP Fast Open (TFO) [RFC7413], Tail Loss Probe (TLP)
    [I-D.dukkipati-tcpm-tcp-loss-probe], and so on.
 
@@ -372,27 +348,6 @@ Internet-Draft           DNS Push Notifications                June 2019
    in this protocol specification.  Additional security measures such as
    client authentication during TLS negotiation MAY also be employed to
    increase the trust relationship between client and server.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires December 20, 2019               [Page 7]
-
-Internet-Draft           DNS Push Notifications                June 2019
-
 
 5.  State Considerations
 
@@ -434,18 +389,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-Pusateri & Cheshire     Expires December 20, 2019               [Page 8]
+Pusateri & Cheshire     Expires December 20, 2019               [Page 7]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -501,7 +445,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019               [Page 9]
+Pusateri & Cheshire     Expires December 20, 2019               [Page 8]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -557,7 +501,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 10]
+Pusateri & Cheshire     Expires December 20, 2019               [Page 9]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -613,7 +557,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 11]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 10]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -669,7 +613,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 12]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 11]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -725,7 +669,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 13]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 12]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -781,7 +725,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 14]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 13]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -837,7 +781,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 15]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 14]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -893,7 +837,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 16]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 15]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -949,7 +893,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 17]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 16]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1005,7 +949,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 18]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 17]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1061,7 +1005,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 19]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 18]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1117,7 +1061,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 20]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 19]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1173,7 +1117,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 21]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 20]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1229,7 +1173,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 22]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 21]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1285,7 +1229,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 23]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 22]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1341,7 +1285,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 24]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 23]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1397,7 +1341,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 25]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 24]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1453,7 +1397,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 26]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 25]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1509,7 +1453,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 27]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 26]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1565,7 +1509,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 28]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 27]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1621,7 +1565,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 29]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 28]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1677,7 +1621,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 30]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 29]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1733,7 +1677,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 31]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 30]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1789,7 +1733,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 32]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 31]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1845,7 +1789,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 33]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 32]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1901,7 +1845,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 34]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 33]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -1957,7 +1901,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 35]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 34]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2013,7 +1957,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 36]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 35]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2069,7 +2013,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 37]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 36]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2125,7 +2069,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 38]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 37]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2181,7 +2125,7 @@ Internet-Draft           DNS Push Notifications                June 2019
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 39]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 38]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
@@ -2237,4 +2181,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires December 20, 2019              [Page 40]
+Pusateri & Cheshire     Expires December 20, 2019              [Page 39]
