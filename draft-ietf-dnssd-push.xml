@@ -1003,13 +1003,17 @@
 
        <t>If a client plans to terminate one or more subscriptions on a session and doesn't intend to keep that session open, then as an efficiency optimization it MAY instead choose to simply close the session, which implicitly terminates all subscriptions on that session. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that session has been cancelled.</t>
 
-       <t>When closing a session, a client will generally do an abortive disconnect, sending a TCP RST. This immediately discards all remaining inbound and outbound data, which is appropriate if the client no longer has any interest in this data. In the BSD Sockets API, sending a TCP RST is achieved by setting the SO_LINGER option with a time of 0 seconds and then closing the socket.</t>
-
-       <t>If a client has performed operations on this session that it
-       would not want lost (like DNS updates) then the client SHOULD do an
-       orderly disconnect, sending a TCP RST followed by a TCP FIN.
-       (In the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)"
-       and keeping the socket open until all remaining data has been read from it.)</t>
+       <t>When closing a session, a client should perform an orderly close of
+       the TLS session in order to allow for future TLS session resumption
+       with the server (if available). See <xref target="resumption"/> below.
+       Typical APIs will provide a session
+       close method that will send a TLS close_notify alert. This instructs
+       the recipient that the sender will not send any more data over the
+       session. Any pending writes on the server will be discarded when
+       a close_notify is received.</t>
+       <t>If the session is forcibly closed at the TCP level by sending a
+       RST from either end of the connection, data may be lost and TLS
+       session resumption of this session will not be possible.</t>
 <?rfc needLines="9" ?>
      </section>
    </section>
@@ -1039,7 +1043,7 @@
        <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Server Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
      </section>
 
-     <section title="TLS Session Resumption">
+     <section title="TLS Session Resumption" anchor="resumption">
        <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC8446"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
 <?rfc needLines="23" ?>
      </section>

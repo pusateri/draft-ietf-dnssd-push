@@ -84,7 +84,7 @@ Table of Contents
        6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
      6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
      6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  32
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  31
      7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  32
      7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  33
      7.3.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  33
@@ -1709,25 +1709,25 @@ Internet-Draft           DNS Push Notifications                June 2019
    simply because the last active subscription on that session has been
    cancelled.
 
-   When closing a session, a client will generally do an abortive
-   disconnect, sending a TCP RST.  This immediately discards all
-   remaining inbound and outbound data, which is appropriate if the
-   client no longer has any interest in this data.  In the BSD Sockets
-   API, sending a TCP RST is achieved by setting the SO_LINGER option
-   with a time of 0 seconds and then closing the socket.
+   When closing a session, a client should perform an orderly close of
+   the TLS session in order to allow for future TLS session resumption
+   with the server (if available).  See Section 7.3 below.  Typical APIs
+   will provide a session close method that will send a TLS close_notify
+   alert.  This instructs the recipient that the sender will not send
+   any more data over the session.  Any pending writes on the server
+   will be discarded when a close_notify is received.
 
-   If a client has performed operations on this session that it would
-   not want lost (like DNS updates) then the client SHOULD do an orderly
-   disconnect, sending a TCP RST followed by a TCP FIN.  (In the BSD
-   Sockets API, sending a TCP FIN is achieved by calling
-   "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining
-   data has been read from it.)
+   If the session is forcibly closed at the TCP level by sending a RST
+   from either end of the connection, data may be lost and TLS session
+   resumption of this session will not be possible.
 
+7.  Security Considerations
 
-
-
-
-
+   The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS
+   Push Notifications [RFC8310].  Cleartext connections for DNS Push
+   Notifications are not permissible.  Since this is a new protocol,
+   transition mechanisms from the Opportunistic Privacy profile are
+   unnecessary.
 
 
 
@@ -1737,14 +1737,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 31]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
-
-7.  Security Considerations
-
-   The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS
-   Push Notifications [RFC8310].  Cleartext connections for DNS Push
-   Notifications are not permissible.  Since this is a new protocol,
-   transition mechanisms from the Opportunistic Privacy profile are
-   unnecessary.
 
    Also, see Section 9 of the DNS over (D)TLS Usage Profiles document
    [RFC8310] for additional recommendations for various versions of TLS
@@ -1785,6 +1777,14 @@ Internet-Draft           DNS Push Notifications                June 2019
       (such as DNS Push Notifications).  Prior messages cannot be re-
       sent at a later time as a form of a man-in-the-middle attack.
 
+   Deployment recommendations on the appropriate key lengths and cypher
+   suites are beyond the scope of this document.  Please refer to TLS
+   Recommendations [RFC7525] for the best current practices.  Keep in
+   mind that best practices only exist for a snapshot in time and
+   recommendations will continue to change.  Updated versions or errata
+   may exist for these recommendations.
+
+
 
 
 
@@ -1793,13 +1793,6 @@ Pusateri & Cheshire     Expires December 20, 2019              [Page 32]
 
 Internet-Draft           DNS Push Notifications                June 2019
 
-
-   Deployment recommendations on the appropriate key lengths and cypher
-   suites are beyond the scope of this document.  Please refer to TLS
-   Recommendations [RFC7525] for the best current practices.  Keep in
-   mind that best practices only exist for a snapshot in time and
-   recommendations will continue to change.  Updated versions or errata
-   may exist for these recommendations.
 
 7.2.  TLS Name Authentication
 
@@ -1830,6 +1823,13 @@ Internet-Draft           DNS Push Notifications                June 2019
    will proceed as with any other new DSO session.  Use of TLS Session
    Resumption may allow a TLS connection to be set up more quickly, but
    the client will still have to recreate any desired subscriptions.
+
+
+
+
+
+
+
 
 
 
