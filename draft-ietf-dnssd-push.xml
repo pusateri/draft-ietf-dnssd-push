@@ -67,7 +67,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-dnssd-push-21" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-dnssd-push-22" ipr="trust200902">
  <!-- category values: std, bcp, info, exp, and historic
     ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
        or pre5378Trust200902
@@ -121,7 +121,7 @@
      </address>
    </author>
 
-   <date year='2019' month='July' day='5'/>
+   <date year='2019' month='July' day='8'/>
 
    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
         in the current day for you. If only the current year is specified, xml2rfc will fill
@@ -211,9 +211,9 @@
      <t>The DNS Push Notification server for a DNS zone is any server capable
      of generating the correct change notifications for a name.
      It may be a primary, secondary, or stealth name server <xref target="RFC7719"/>.
-     Consequently, the <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx> SRV record for a
+     Consequently, the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record for a
      zone MAY reference the same target host and port as that zone's
-     <spanx style="verb">_dns&nbhy;update._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Subscriptions.</t>
+     <spanx style="verb">_dns&nbhy;update&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record. When the same target host and port is offered for both DNS Updates and DNS Push Notifications, a client MAY use a single TCP connection to that server for both DNS Updates and DNS Push Notification Subscriptions.</t>
 
      <t>Supporting DNS Updates and DNS Push Notifications on the same server is OPTIONAL. A DNS Push Notification server is not required to support DNS Update.</t>
 
@@ -222,7 +222,7 @@
      <t>Standard DNS Queries MAY be sent over a DNS Push Notification (i.e., DSO)
    session.   For any zone for which the server is authoritative, it
    MUST respond authoritatively for queries on names falling within
-   that zone (e.g., the &lt;zone&gt; in the <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx> SRV
+   that zone (e.g., the &lt;zone&gt; in the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV
    record) both for normal DNS queries and for DNS Push Notification subscriptions.
    For names for which the server is acting as a recursive
    resolver, e.g. when the server is the local recursive resolver, for any query
@@ -247,7 +247,7 @@
      <xref target="RFC8490">DNS Stateful Operations</xref>
      running over TLS over TCP <xref target="RFC7858"/>.</t>
 
-     <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server which is a potential problem with connection-less protocols using spoofed source addresses. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
+     <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server which is a potential problem with connectionless protocols using spoofed source addresses. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
      Flooding attacks are possible with any protocol, and a benefit of TCP is that there are already established industry best practices to guard against SYN flooding and similar attacks <xref target="SYN"/> <xref target="RFC4953"/>.</t>
 
      <t>Use of TCP also allows DNS Push Notifications to take advantage of current and future developments in TCP, such as
@@ -302,20 +302,21 @@
 
 <?rfc needLines="30" ?>
       <section title="Discovery" anchor="discovery">
-        <t>The first step in a DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone.</t>
+        <t>The first step in establishing a DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone.</t>
 
         <t>The client begins by opening a DSO Session to its normal configured
         DNS recursive resolver and requesting a Push Notification subscription.
         This connection is made to TCP port 853, the default port for
         <xref target="RFC7858">DNS-over-TLS</xref>.
-        If the request for a Push Notification subscription
-        is successful, then the recursive resolver will make a corresponding
-        Push Notification subscription on the client's behalf
-        (if the recursive resolver doesn't already have an active subscription for that name, type, and class).
-        This is closely analogous to how a client sends normal DNS
-        queries to its configured DNS recursive resolver,
-        which issues queries on the client's behalf
-        (if the recursive resolver doesn't already have appropriate answer(s) in its cache).</t>
+        If the request for a Push Notification subscription is successful,
+        and the recursive resolver doesn't already have an active subscription for that name, type, and class,
+        then the recursive resolver will make a corresponding
+        Push Notification subscription on the client's behalf.
+        Results received are relayed to the client.
+        This is closely analogous to how a client sends a normal DNS
+        query to its configured DNS recursive resolver which,
+        if it doesn't already have appropriate answer(s) in its cache,
+        issues an upstream query to satisfy the request.</t>
 
         <t>In many contexts, the recursive resolver will be able to handle
         Push Notifications for all names that the client may need to follow.
@@ -389,7 +390,7 @@
             The client strips the leading label from the current query name and if the resulting name has at least one label in it, the client sends an SOA query for that new name, and processing continues at step 2 above, repeating the iterative search until either an SOA is received, or the query name consists of a single label, i.e., a Top Level Domain (TLD). In the case of a single-label TLD, this is a network configuration error which should not happen and the client gives up. The client may retry the operation at a later time, of the client's choosing, such after a change in network attachment.</t>
 
             <t>Once the SOA is known (either by virtue of being seen in the Answer Section, or in the Authority Section), the client sends a DNS query with type <xref target="RFC2782">SRV</xref> for the record name
-            <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
+            <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>, where &lt;zone&gt; is the owner name of the discovered SOA record.</t>
 
             <t>If the zone in question is set up to offer DNS Push Notifications then this SRV record MUST exist.
             (If this SRV record does not exist then the zone is not correctly
@@ -418,8 +419,17 @@
        A SUBSCRIBE request is encoded in a DSO message <xref target="RFC8490"/>.<vspace />
        This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</t>
 
-       <t>DSO messages with the SUBSCRIBE TLV as the Primary TLV are not permitted in early data.</t>
-       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert. See Section 6.1 of <xref target="RFC8446"/>.</t>
+       <t>DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted in early data,
+       provided that the precautions described in <xref target="early_data"/> are followed.</t>
+
+       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert
+       (see Section 6.1 of the TLS 1.3 specification <xref target="RFC8446"/>).
+       After sending the TLS close_notify alert
+       the client MUST gracefully close the underlying connection using a TCP FIN,
+       so that the TLS close_notify is reliably delivered.
+       The mechanisms for gracefully closing a TCP connection with a TCP FIN vary depending on the networking API.
+       For example, in the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)"
+       and keeping the socket open until all remaining data has been read from it.</t>
 
        <section title="SUBSCRIBE Request">
          <t>A SUBSCRIBE request begins with the standard
@@ -473,7 +483,7 @@
 
          <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the DSO session between the client and the server is closed.</t>
 
-         <t>SUBSCRIBE requests on a given session MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is an error and the server MUST immediately terminate the connection with a TLS close_notify alert.</t>
+         <t>SUBSCRIBE requests on a given session MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is a fatal error and the server MUST immediately terminate the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
          <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</t>
 
@@ -499,7 +509,7 @@
          The QR bit in the header is set indicating it is a response.
          The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
 
-         <t>The MESSAGE ID field MUST echo the value given in the Message ID field of the SUBSCRIBE request.
+         <t>The MESSAGE ID field MUST echo the value given in the MESSAGE ID field of the SUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
 
          <t>A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.
@@ -567,7 +577,7 @@
 
              <t>For RCODE = 5 (REFUSED), which occurs on a server that implements DNS Push Notifications, but is currently configured to disallow DNS Push Notifications, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
              <t>If the server being queried is listed in a
-             <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>
+             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>
              SRV record for the zone, then this is a misconfiguration,
              since this server is being advertised as supporting DNS Push Notifications for this zone,
              but the server itself is not currently configured to perform that task.
@@ -577,7 +587,7 @@
 
              <t>For RCODE = 9 (NOTAUTH), which occurs on a server that implements DNS Push Notifications, but is not configured to be authoritative for the requested name, the retry delay may be any value selected by the implementer and/or configured by the operator.</t>
              <t>If the server being queried is listed in a
-             <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>
+             <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>
              SRV record for the zone, then this is a misconfiguration,
              since this server is being advertised as supporting DNS Push Notifications for this zone,
              but the server itself is not currently configured to perform that task.
@@ -631,7 +641,7 @@
          A PUSH Message MUST contain at least one change notification.
          If a PUSH Message is received that contains no change notifications,
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TLS close_notify alert.</t>
+         the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
          <t>The change notification records are formatted similarly to how
          DNS Resource Records are conventionally expressed in DNS messages,
@@ -651,7 +661,7 @@
          For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.
          If a change notification is received where TTL = 0xFFFFFFFE and RDLEN is not zero,
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TLS close_notify alert.
+         the connection with a TLS close_notify alert followed by a TCP FIN.
          There are three types of collective remove notification:</t>
 
          <t>For collective remove notifications,
@@ -737,7 +747,7 @@
          <t>If a client receives a PUSH message with
          a DNS message length larger than 16,382 bytes, the
          this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TLS close_notify alert.</t>
+         the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
          <figure align="center" anchor="push_msg" title="PUSH Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
@@ -805,7 +815,7 @@
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a
        DSO unidirectional message <xref target="RFC8490"/>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</t>
 
-       <t>A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert.</t>
+       <t>A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
        <section title="UNSUBSCRIBE Message">
 
@@ -1009,12 +1019,12 @@
        Typical APIs will provide a session
        close method that will send a TLS close_notify alert. This instructs
        the recipient that the sender will not send any more data over the
-       session. Any pending writes on the server will be discarded when
-       a close_notify is received.</t>
+       session.</t>
+
        <t>If the session is forcibly closed at the TCP level by sending a
        RST from either end of the connection, data may be lost and TLS
        session resumption of this session will not be possible.</t>
-<?rfc needLines="9" ?>
+<?rfc needLines="20" ?>
      </section>
    </section>
 
@@ -1040,7 +1050,30 @@
      </section>
 
      <section title="TLS Name Authentication" anchor="tls_name_auth">
-       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Server Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
+       <t>As described in <xref target="discovery"/>, the client discovers the DNS Push Notification server using an SRV lookup for the record name <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx>. The server connection endpoint SHOULD then be authenticated using DANE TLSA records for the associated SRV record. This associates the target's name and port number with a trusted TLS certificate <xref target="RFC7673"/>. This procedure uses the TLS Server Name Indication (SNI) extension <xref target="RFC6066"/> to inform the server of the name the client has authenticated through the use of TLSA records. Therefore, if the SRV record passes DNSSEC validation and a TLSA record matching the target name is useable, an SNI extension must be used for the target name to ensure the client is connecting to the server it has authenticated. If the target name does not have a usable TLSA record, then the use of the SNI extension is optional. See <xref target="RFC8310">Usage Profiles for DNS over TLS and DNS over DTLS</xref> for more information on authenticating domain names.</t>
+     </section>
+
+     <section title="TLS Early Data" anchor="early_data">
+       <t>DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted in TLS early data.
+       Using TLS early data can save one network round trip, and can result in obtaining results faster.
+       However, there are some factors to consider before using TLS early data.</t>
+
+       <t>TLS Early Data is not forward secret.
+       In cases where forward secrecy of DNS Push Notification subscriptions is required,
+       the client should not use TLS Early Data.</t>
+
+       <t>With TLS early data there are no guarantees of non-replay between connections.
+       If packets are duplicated and delayed in the network,
+       the later arrivals could be mistaken for new subscription requests.
+       Generally this is not a major concern,
+       since the amount of state generated on the server for
+       these spurious subscriptions is small and short-lived,
+       since the TCP connection will not complete the three-way handshake.
+       Servers MAY choose to implement rate-limiting measures that are imposed when
+       the server detects excessive numbers of spurious subscription requests.</t>
+
+       <t>For further guidance please see Section 2.3, Section 8, and Appendix E.5
+       of the TLS 1.3 specification <xref target="RFC8446"/>.</t>
      </section>
 
      <section title="TLS Session Resumption" anchor="resumption">
@@ -1058,7 +1091,7 @@
        <ttcol align="left">Definition</ttcol>
        <c>DNS Push Notification Service Type</c>
        <c>None</c>
-       <c><spanx style="verb">_dns&nbhy;push._tcp</spanx></c>
+       <c><spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp</spanx></c>
        <c><xref target="discovery"/></c>
      </texttable>
      <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>
@@ -1070,25 +1103,26 @@
        <ttcol width="5%" align="left">Definition</ttcol>
        <c>SUBSCRIBE</c>
        <c>TBA (0x40)</c>
-       <c>NO</c>
+       <c>OK</c>
        <c>Standards Track</c>
        <c><xref target="subscribe"/></c>
        <c>PUSH</c>
        <c>TBA (0x41)</c>
-       <c>NA</c>
+       <c>NO</c>
        <c>Standards Track</c>
        <c><xref target="push"/></c>
        <c>UNSUBSCRIBE</c>
        <c>TBA (0x42)</c>
-       <c>NA</c>
+       <c>NO</c>
        <c>Standards Track</c>
        <c><xref target="unsubscribe"/></c>
        <c>RECONFIRM</c>
        <c>TBA (0x43)</c>
-       <c>NA</c>
+       <c>NO</c>
        <c>Standards Track</c>
        <c><xref target="reconfirm"/></c>
      </texttable>
+<?rfc needLines="20" ?>
    </section>
 
    <section title="Acknowledgements" anchor="Acknowledgements">
