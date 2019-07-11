@@ -861,6 +861,12 @@ Internet-Draft           DNS Push Notifications                July 2019
    TLV then the response message is processed but the SUBSCRIBE TLV MUST
    be silently ignored.
 
+   A client MUST NOT send a SUBSCRIBE response.  If a client does send a
+   SUBSCRIBE message, with the QR bit set indicating that it is a
+   response, this is a fatal error and the server should immediately
+   abort the connection with a TLS close_notify alert followed by a TCP
+   FIN.
+
                                       1  1  1  1  1  1
         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -879,12 +885,6 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
                    Figure 2: SUBSCRIBE Response Message
-
-
-
-
-
-
 
 
 
@@ -1091,6 +1091,12 @@ Internet-Draft           DNS Push Notifications                July 2019
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
 
+   A client MUST NOT send a PUSH message.  If a client does send a PUSH
+   message, or a PUSH message is sent with the QR bit set indicating
+   that it is a response, this is a fatal error and the receiver should
+   immediately abort the connection with a TLS close_notify alert
+   followed by a TCP FIN.
+
    The DSO-TYPE is PUSH (tentatively 0x41).
 
    The DSO-LENGTH is the length of the DSO-DATA that follows, which
@@ -1108,12 +1114,6 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
    is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
-   then a new DNS Resource Record with the given name, type, class and
-   RDATA is added.  A TTL of 0 means that this record should be retained
-   for as long as the subscription is active, and should be discarded
-   immediately the moment the subscription is cancelled.
-
-
 
 
 
@@ -1121,6 +1121,11 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 20]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
+
+   then a new DNS Resource Record with the given name, type, class and
+   RDATA is added.  A TTL of 0 means that this record should be retained
+   for as long as the subscription is active, and should be discarded
+   immediately the moment the subscription is cancelled.
 
    If the TTL has the value 0xFFFFFFFF, then the DNS Resource Record
    with the given name, type, class and RDATA is removed.
@@ -1166,11 +1171,6 @@ Internet-Draft           DNS Push Notifications                July 2019
       TTL>=0
       CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.
 
-   Note that it is valid for the RDATA of an added or removed DNS
-   Resource Record to be empty (zero length).  For example, an Address
-   Prefix List Resource Record [RFC3123] may have empty RDATA.
-   Therefore, a change notification with RDLEN=0 does not automatically
-
 
 
 Pusateri & Cheshire      Expires January 9, 2020               [Page 21]
@@ -1178,6 +1178,10 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 21]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
+   Note that it is valid for the RDATA of an added or removed DNS
+   Resource Record to be empty (zero length).  For example, an Address
+   Prefix List Resource Record [RFC3123] may have empty RDATA.
+   Therefore, a change notification with RDLEN=0 does not automatically
    indicate a remove notification.  If RDLEN=0 and TTL is the in the
    range 0 - 0x7FFFFFFF, this change notification signals the addition
    of a record with the given name, type, class, and empty RDATA.  If
@@ -1223,10 +1227,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    16,384 bytes, so little efficiency benefit is gained by sending
    messages larger than this.
 
-   If a client receives a PUSH message with a DNS message length larger
-   than 16,382 bytes, the this is a fatal error, and the receiver MUST
-
-
 
 
 Pusateri & Cheshire      Expires January 9, 2020               [Page 22]
@@ -1234,6 +1234,8 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 22]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
+   If a client receives a PUSH message with a DNS message length larger
+   than 16,382 bytes, the this is a fatal error, and the receiver MUST
    immediately terminate the connection with a TLS close_notify alert
    followed by a TCP FIN.
 
@@ -1280,8 +1282,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    correspond with at least one currently active subscription on that
    session.  Specifically, the record name MUST match the name given in
    a SUBSCRIBE request, subject to the usual established DNS case-
-   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
-   request was not ANY (255) then the TYPE of the record must match the
 
 
 
@@ -1290,6 +1290,8 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 23]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
+   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
+   request was not ANY (255) then the TYPE of the record must match the
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
    request was not ANY (255) then the CLASS of the record must match the
    CLASS given in the SUBSCRIBE request.  If a matching active
@@ -1339,8 +1341,6 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-
-
 Pusateri & Cheshire      Expires January 9, 2020               [Page 24]
 
 Internet-Draft           DNS Push Notifications                July 2019
@@ -1355,10 +1355,12 @@ Internet-Draft           DNS Push Notifications                July 2019
    primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE
    Messages (tentatively DSO Type Code 0x42).
 
-   A server MUST NOT initiate an UNSUBSCRIBE message.  If a server does
-   send an UNSUBSCRIBE message over a DSO session initiated by a client,
-   this is a fatal error and the client should immediately abort the
-   connection with a TLS close_notify alert followed by a TCP FIN.
+   A server MUST NOT send an UNSUBSCRIBE message.  If a server does send
+   an UNSUBSCRIBE message over a DSO session initiated by a client, or
+   an UNSUBSCRIBE message is sent with the QR bit set indicating that it
+   is a response, this is a fatal error and the receiver should
+   immediately abort the connection with a TLS close_notify alert
+   followed by a TCP FIN.
 
 6.4.1.  UNSUBSCRIBE Message
 
@@ -1392,8 +1394,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    the server.  The client is NOT required to wait for the SUBSCRIBE
    response before issuing the UNSUBSCRIBE message.
 
-   Consequently, it is possible for a server to receive an UNSUBSCRIBE
-   message that does not match any currently active subscription.  This
 
 
 
@@ -1402,6 +1402,8 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 25]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
+   Consequently, it is possible for a server to receive an UNSUBSCRIBE
+   message that does not match any currently active subscription.  This
    can occur when a client sends a SUBSCRIBE request, which subsequently
    fails and returns an error code, but the client sent an UNSUBSCRIBE
    message before it became aware that the SUBSCRIBE request had failed.
@@ -1431,8 +1433,6 @@ Internet-Draft           DNS Push Notifications                July 2019
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                        Figure 4: UNSUBSCRIBE Message
-
-
 
 
 
@@ -1492,12 +1492,12 @@ Internet-Draft           DNS Push Notifications                July 2019
    effect of informing all other interested clients that the device in
    question is now gone.
 
-
-
-
-
-
-
+   A server MUST NOT send a RECONFIRM message.  If a server does send a
+   RECONFIRM message over a DSO session initiated by a client, or a
+   RECONFIRM message is sent with the QR bit set indicating that it is a
+   response, this is a fatal error and the receiver should immediately
+   abort the connection with a TLS close_notify alert followed by a TCP
+   FIN.
 
 
 

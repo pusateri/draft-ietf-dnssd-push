@@ -516,6 +516,10 @@
          If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV
          then the response message is processed but the SUBSCRIBE TLV MUST be silently ignored.</t>
 
+         <t>A client MUST NOT send a SUBSCRIBE response.
+         If a client does send a SUBSCRIBE message, with the QR bit set indicating that it is a response,
+         this is a fatal error and the server should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+
          <figure align="center" anchor="subscribe_resp" title="SUBSCRIBE Response Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
   0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -631,6 +635,11 @@
          <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
          The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+
+         <t>A client MUST NOT send a PUSH message.
+         If a client does send a PUSH message,
+         or a PUSH message is sent with the QR bit set indicating that it is a response,
+         this is a fatal error and the receiver should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
          <t>The DSO-TYPE is PUSH (tentatively 0x41).</t>
 
@@ -815,7 +824,10 @@
        <t>To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a
        DSO unidirectional message <xref target="RFC8490"/>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</t>
 
-       <t>A server MUST NOT initiate an UNSUBSCRIBE message. If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+       <t>A server MUST NOT send an UNSUBSCRIBE message.
+       If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client,
+       or an UNSUBSCRIBE message is sent with the QR bit set indicating that it is a response,
+       this is a fatal error and the receiver should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
        <section title="UNSUBSCRIBE Message">
 
@@ -890,6 +902,11 @@
        <t>Frequent use of RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting, and remedying, such network problems.</t>
 
        <t>If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</t>
+
+       <t>A server MUST NOT send a RECONFIRM message.
+       If a server does send a RECONFIRM message over a DSO session initiated by a client,
+       or a RECONFIRM message is sent with the QR bit set indicating that it is a response,
+       this is a fatal error and the receiver should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
 
 <?rfc needLines="20" ?>
        <section title="RECONFIRM Message">
