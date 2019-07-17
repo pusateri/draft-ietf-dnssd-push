@@ -184,9 +184,9 @@ Internet-Draft           DNS Push Notifications                July 2019
    and lower network traffic.
 
    Multicast DNS [RFC6762] implementations always listen on a well known
-   link-local IP multicast group, and record changes are sent to that
-   multicast group address for all group members to receive.  Therefore,
-   Multicast DNS already has asynchronous change notification
+   link-local IP multicast group address, and record changes are sent to
+   that multicast group address for all group members to receive.
+   Therefore, Multicast DNS already has asynchronous change notification
    capability.  However, when DNS Service Discovery [RFC6763] is used
    across a wide area network using Unicast DNS (possibly facilitated
    via a Discovery Proxy [DisProx]) it would be beneficial to have an
@@ -237,31 +237,29 @@ Internet-Draft           DNS Push Notifications                July 2019
    The DNS Push Notification server for a DNS zone is any server capable
    of generating the correct change notifications for a name.  It may be
    a primary, secondary, or stealth name server [RFC7719].
-   Consequently, the "_dns-push-tls._tcp.<zone>" SRV record for a zone
-   MAY reference the same target host and port as that zone's
+
+   The "_dns-push-tls._tcp.<zone>" SRV record for a zone MAY reference
+   the same target host and port as that zone's
    "_dns-update-tls._tcp.<zone>" SRV record.  When the same target host
    and port is offered for both DNS Updates and DNS Push Notifications,
-   a client MAY use a single TCP connection to that server for both DNS
-   Updates and DNS Push Notification Subscriptions.
-
-   Supporting DNS Updates and DNS Push Notifications on the same server
-   is OPTIONAL.  A DNS Push Notification server is not required to
-   support DNS Update.
-
-   DNS Updates and DNS Push Notifications may be handled on different
-   ports on the same target host, in which case they are not considered
-   to be the "same server" for the purposes of this specification, and
-   communications with these two ports are handled independently.
+   a client MAY use a single DSO session to that server for both DNS
+   Updates and DNS Push Notification Subscriptions.  DNS Updates and DNS
+   Push Notifications may be handled on different ports on the same
+   target host, in which case they are not considered to be the "same
+   server" for the purposes of this specification, and communications
+   with these two ports are handled independently.  Supporting DNS
+   Updates and DNS Push Notifications on the same server is OPTIONAL.  A
+   DNS Push Notification server is not required to support DNS Update.
 
    Standard DNS Queries MAY be sent over a DNS Push Notification (i.e.,
    DSO) session.  For any zone for which the server is authoritative, it
-   MUST respond authoritatively for queries on names falling within that
-   zone (e.g., the <zone> in the "_dns-push-tls._tcp.<zone>" SRV record)
-   both for normal DNS queries and for DNS Push Notification
-   subscriptions.  For names for which the server is acting as a
-   recursive resolver, e.g. when the server is the local recursive
-   resolver, for any query for which it supports DNS Push Notification
-   subscriptions, it MUST also support standard queries.
+   MUST respond authoritatively for queries for names falling within
+   that zone (e.g., the "_dns-push-tls._tcp.<zone>" SRV record) both for
+   normal DNS queries and for DNS Push Notification subscriptions.  For
+   names for which the server is acting as a recursive resolver, e.g.,
+   when the server is the local recursive resolver, for any query for
+   which it supports DNS Push Notification subscriptions, it MUST also
+   support standard queries.
 
    DNS Push Notifications impose less load on the responding server than
    rapid polling would, but Push Notifications do still have a cost, so
@@ -274,6 +272,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    cancelled as soon as the need for that data ends (for example, when
    the user dismisses that display).  In the case of a device like a
    smartphone which, after some period of inactivity, goes to sleep or
+   otherwise darkens its screen, it should cancel its subscriptions when
+   darkening the screen (since the user cannot see any changes on the
 
 
 
@@ -282,8 +282,6 @@ Pusateri & Cheshire      Expires January 9, 2020                [Page 5]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
-   otherwise darkens its screen, it should cancel its subscriptions when
-   darkening the screen (since the user cannot see any changes in the
    display anyway) and reinstate its subscriptions when re-awakening
    from display sleep.
 
@@ -329,6 +327,8 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    Use of TCP also allows DNS Push Notifications to take advantage of
    current and future developments in TCP, such as Multipath TCP (MPTCP)
+   [RFC6824], TCP Fast Open (TFO) [RFC7413], Tail Loss Probe (TLP)
+   [I-D.dukkipati-tcpm-tcp-loss-probe], and so on.
 
 
 
@@ -338,16 +338,14 @@ Pusateri & Cheshire      Expires January 9, 2020                [Page 6]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
-   [RFC6824], TCP Fast Open (TFO) [RFC7413], Tail Loss Probe (TLP)
-   [I-D.dukkipati-tcpm-tcp-loss-probe], and so on.
-
-   Transport Layer Security (TLS) [RFC8446] is well understood and
-   deployed across many protocols running over TCP.  It is designed to
-   prevent eavesdropping, tampering, and message forgery.  TLS is
-   REQUIRED for every connection between a client subscriber and server
-   in this protocol specification.  Additional security measures such as
-   client authentication during TLS negotiation MAY also be employed to
-   increase the trust relationship between client and server.
+   Transport Layer Security (TLS) [RFC8446] is well understood, and used
+   by many application-layer protocols running over TCP.  TLS is
+   designed to prevent eavesdropping, tampering, and message forgery.
+   TLS is REQUIRED for every connection between a client subscriber and
+   server in this protocol specification.  Additional security measures
+   such as client authentication during TLS negotiation MAY also be
+   employed to increase the trust relationship between client and
+   server.
 
 5.  State Considerations
 
@@ -363,6 +361,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    for the zone and distribute subscriptions at the client's discretion.
    In this way, both clients and servers can react to resource
    constraints.
+
+
 
 
 
@@ -417,8 +417,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    requests on the session first, and only issue a DSO Keepalive
    operation later if it determines that to be necessary.  Sending
    either a DSO Keepalive operation or a Push Notification subscription
-   over the TLS/TCP connection to the server signals the client's
-   support of DSO and serves to establish a DSO session.
+   request over the TLS/TCP connection to the server signals the
+   client's support of DSO and serves to establish a DSO session.
 
    In accordance with the current set of active subscriptions, the
    server sends relevant asynchronous Push Notifications to the client.
@@ -524,17 +524,18 @@ Internet-Draft           DNS Push Notifications                July 2019
        local resolver, with record type SOA [RFC1035] for the record
        name to which it wishes to subscribe.  As an example, suppose the
        client wishes to subscribe to PTR records with the name
-       _ipp._tcp.foo.example.com (to discover Internet Printing Protocol
-       (IPP) printers [RFC8010] [RFC8011] being advertised at
-       "foo.example.com").  The client begins by sending an SOA query
-       for _ipp._tcp.foo.example.com to the local recursive resolver.
-       The goal is to determine the server authoritative for the name
-       _ipp._tcp.foo.example.com.  The closest enclosing DNS zone
-       containing the name _ipp._tcp.foo.example.com could be
-       example.com, or foo.example.com, or _tcp.foo.example.com, or even
-       _ipp._tcp.foo.example.com.  The client does not know in advance
-       where the closest enclosing zone cut occurs, which is why it uses
-       the iterative procedure described here to discover this
+       _ipp._tcp.headoffice.example.com (to discover Internet Printing
+       Protocol (IPP) printers [RFC8010] [RFC8011] being advertised in
+       the head office of Example Company.).  The client begins by
+       sending an SOA query for _ipp._tcp.headoffice.example.com to the
+       local recursive resolver.  The goal is to determine the server
+       authoritative for the name _ipp._tcp.headoffice.example.com.  The
+       closest enclosing DNS zone containing the name
+       _ipp._tcp.headoffice.example.com could be example.com, or
+       headoffice.example.com, or _tcp.headoffice.example.com, or even
+       _ipp._tcp.headoffice.example.com.  The client does not know in
+       advance where the closest enclosing zone cut occurs, which is why
+       it uses the iterative procedure described here to discover this
        information.
 
    2.  If the requested SOA record exists, it will be returned in the
@@ -556,7 +557,6 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-
 Pusateri & Cheshire      Expires January 9, 2020               [Page 10]
 
 Internet-Draft           DNS Push Notifications                July 2019
@@ -567,13 +567,13 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    4.  If the client receives a response containing no SOA record, then
        it proceeds with the iterative approach.  The client strips the
-       leading label from the current query name and if the resulting
-       name has at least one label in it, the client sends an SOA query
+       leading label from the current query name, and if the resulting
+       name has at least two labels in it, the client sends an SOA query
        for that new name, and processing continues at step 2 above,
        repeating the iterative search until either an SOA is received,
        or the query name consists of a single label, i.e., a Top Level
-       Domain (TLD).  In the case of a single-label TLD, this is a
-       network configuration error which should not happen and the
+       Domain (TLD).  In the case of a single-label (TLD), this is a
+       network configuration error, which should not happen, and the
        client gives up.  The client may retry the operation at a later
        time, of the client's choosing, such after a change in network
        attachment.
@@ -624,7 +624,7 @@ Internet-Draft           DNS Push Notifications                July 2019
    the client device MUST respect the DNS TTL values on records it
    receives, and store them in its local cache with this lifetime.  This
    means that, as long as the DNS TTL values on the authoritative
-   records were set to reasonable values, repeated application of this
+   records are set to reasonable values, repeated application of this
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
 
@@ -685,8 +685,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).
 
    DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted
-   in early data, provided that the precautions described in Section 7.3
-   are followed.
+   in TLS early data, provided that the precautions described in
+   Section 7.3 are followed.
 
    The entity that initiates a SUBSCRIBE request is by definition the
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
@@ -794,8 +794,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    the zone, and nothing else.
 
    Aliasing is not supported.  That is, a CNAME in a SUBSCRIBE message
-   matches only a literal CNAME record in the zone, and not to any
-   records referenced by the owner name.
+   matches only a literal CNAME record in the zone, and no other records
+   with the same owner name.
 
    A client may SUBSCRIBE to records that are unknown to the server at
    the time of the request (providing that the name falls within one of
@@ -1138,18 +1138,18 @@ Internet-Draft           DNS Push Notifications                July 2019
    terminate the connection with a TLS close_notify alert followed by a
    TCP FIN.  There are three types of collective remove notification:
 
-   For collective remove notifications, if CLASS is 255 (ANY), then for
-   the given name this deletes all records of all types in all classes.
-   In this case TYPE MUST be set to zero on transmission, and MUST be
-   silently ignored on reception.
+   For collective remove notifications, if CLASS is not 255 (ANY) and
+   TYPE is not 255 (ANY) then for the given name this deletes all
+   records of the specified type in the specified class.
 
    For collective remove notifications, if CLASS is not 255 (ANY) and
    TYPE is 255 (ANY) then for the given name this deletes all records of
    all types in the specified class.
 
-   For collective remove notifications, if CLASS is not 255 (ANY) and
-   TYPE is not 255 (ANY) then for the given name this deletes all
-   records of the specified type in the specified class.
+   For collective remove notifications, if CLASS is 255 (ANY), then for
+   the given name this deletes all records of all types in all classes.
+   In this case TYPE MUST be set to zero on transmission, and MUST be
+   silently ignored on reception.
 
    Summary of change notification types:
 
@@ -1168,7 +1168,7 @@ Internet-Draft           DNS Push Notifications                July 2019
       CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.
 
       Add individual RR to a name
-      TTL>=0
+      TTL&#10878;0
       CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.
 
 
@@ -1267,7 +1267,7 @@ Internet-Draft           DNS Push Notifications                July 2019
      |                      TTL                      |    |
      |     (32-bit unsigned big-endian integer)      |     > DSO-DATA
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     RDLEN                     |    |
+     |  RDLEN (16-bit unsigned big-endian integer)   |    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
      \           RDATA (sized as necessary)          \    |
      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
@@ -1481,7 +1481,7 @@ Internet-Draft           DNS Push Notifications                July 2019
    Frequent use of RECONFIRM operations may be a sign of network
    unreliability, or some kind of misconfiguration, so RECONFIRM
    operations MAY be logged or otherwise communicated to a human
-   administrator to assist in detecting, and remedying, such network
+   administrator to assist in detecting and remedying such network
    problems.
 
    If, after receiving a valid RECONFIRM message, the server determines
@@ -1535,26 +1535,26 @@ Internet-Draft           DNS Push Notifications                July 2019
    specifies the name, type, class, and content of the record being
    disputed.
 
+   The DSO-DATA for a RECONFIRM message MUST contain exactly one record.
+   The DSO-DATA for a RECONFIRM message has no count field to specify
+   more than one record.  Since RECONFIRM messages are sent over TCP,
+   multiple RECONFIRM messages can be concatenated in a single TCP
+   stream and packed efficiently into TCP segments.
 
+   TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value
+   ANY (255).
 
+   DNS wildcarding is not supported.  That is, a wildcard ("*") in a
+   RECONFIRM message matches only a literal wildcard character ("*") in
+   the zone, and nothing else.
 
+   Aliasing is not supported.  That is, a CNAME in a RECONFIRM message
+   matches only a literal CNAME record in the zone, and no other records
+   with the same owner name.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   Note that there is no RDLEN field, since the length of the RDATA can
+   be inferred from DSO-LENGTH, so an additional RDLEN field would be
+   redundant.
 
 
 
@@ -1600,21 +1600,21 @@ Internet-Draft           DNS Push Notifications                July 2019
 
                         Figure 5: RECONFIRM Message
 
-   The DSO-DATA for a RECONFIRM message MUST contain exactly one record.
-   The DSO-DATA for a RECONFIRM message has no count field to specify
-   more than one record.  Since RECONFIRM messages are sent over TCP,
-   multiple RECONFIRM messages can be concatenated in a single TCP
-   stream and packed efficiently into TCP segments.
 
-   TYPE MUST NOT be the value ANY (255) and CLASS MUST NOT be the value
-   ANY (255).
 
-   DNS wildcarding is not supported.  That is, a wildcard ("*") in a
-   RECONFIRM message matches only a literal wildcard character ("*") in
-   the zone, and nothing else.
 
-   Aliasing is not supported.  That is, a CNAME in a RECONFIRM message
-   matches only a literal CNAME record in the zone, and nothing else.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1823,8 +1823,10 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted
    in TLS early data.  Using TLS early data can save one network round
-   trip, and can result in obtaining results faster.  However, there are
-   some factors to consider before using TLS early data.
+   trip, and can result in the client obtaining results faster.
+
+   However, there are some factors to consider before using TLS early
+   data.
 
    TLS Early Data is not forward secret.  In cases where forward secrecy
    of DNS Push Notification subscriptions is required, the client should
@@ -1837,11 +1839,9 @@ Internet-Draft           DNS Push Notifications                July 2019
    generated on the server for these spurious subscriptions is small and
    short-lived, since the TCP connection will not complete the three-way
    handshake.  Servers MAY choose to implement rate-limiting measures
-   that are imposed when the server detects excessive numbers of
+   that are activated when the server detects an excessive number of
    spurious subscription requests.
 
-   For further guidance please see Section 2.3, Section 8, and
-   Appendix E.5 of the TLS 1.3 specification [RFC8446].
 
 
 
@@ -1849,6 +1849,9 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 33]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
+
+   For further guidance please see Section 2.3, Section 8, and
+   Appendix E.5 of the TLS 1.3 specification [RFC8446].
 
 7.4.  TLS Session Resumption
 
@@ -1892,10 +1895,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
                 Table 5: IANA DSO TLV Type Code Assignments
 
-
-
-
-
+   This document defines no new DNS OPCODEs or RCODEs.
 
 
 
