@@ -166,7 +166,7 @@
 
      <t>Domain Name System (DNS) records may be updated using <xref target="RFC2136">DNS Update</xref>.
      Other mechanisms such as a <xref target="DisProx">Discovery Proxy</xref> can also generate changes to a DNS zone.
-     This document specifies a protocol for DNS clients to subscribe to receive asynchronous notifications of changes to RRSets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6895"/>.</t>
+     This document specifies a protocol for DNS clients to subscribe to receive asynchronous notifications of changes to RRsets of interest. It is immediately relevant in the case of <xref target="RFC6763">DNS Service Discovery</xref> but is not limited to that use case, and provides a general DNS mechanism for DNS record change notifications. Familiarity with the DNS protocol and DNS packet formats is assumed <xref target="RFC1034"/> <xref target="RFC1035"/> <xref target="RFC6895"/>.</t>
 
 <?rfc needLines="7" ?>
      <section title="Requirements Language">
@@ -206,7 +206,7 @@
    </section>
 
    <section title="Overview">
-     <t>A DNS Push Notification client subscribes for Push Notifications for a particular RRSet by connecting to the appropriate Push Notification server for that RRSet, and sending DSO message(s) indicating the RRSet(s) of interest. When the client loses interest in receiving further updates to these records, it unsubscribes.</t>
+     <t>A DNS Push Notification client subscribes for Push Notifications for a particular RRset by connecting to the appropriate Push Notification server for that RRset, and sending DSO message(s) indicating the RRset(s) of interest. When the client loses interest in receiving further updates to these records, it unsubscribes.</t>
 
      <t>The DNS Push Notification server for a DNS zone is any server capable
      of generating the correct change notifications for a name.
@@ -326,8 +326,8 @@
 
         <t>If the recursive resolver
         does not support DNS over TLS, or
-        does support DNS over TLS but is not listening on TCP port 853, or
-        does support DNS over TLS on TCP port 853 but does not support DSO on that port,
+        supports DNS over TLS but is not listening on TCP port 853, or
+        supports DNS over TLS on TCP port 853 but does not support DSO on that port,
         then the DSO Session session establishment will fail <xref target="RFC8490"/>.</t>
 
         <t>If the recursive resolver does support DSO but not Push Notification
