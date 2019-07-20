@@ -393,6 +393,7 @@
 <link href="#rfc.section.6.5.1" rel="Chapter" title="6.5.1 RECONFIRM Message">
 <link href="#rfc.section.6.6" rel="Chapter" title="6.6 DNS Stateful Operations TLV Context Summary">
 <link href="#rfc.section.6.7" rel="Chapter" title="6.7 Client-Initiated Termination">
+<link href="#rfc.section.6.8" rel="Chapter" title="6.8 Client Fallback to Polling">
 <link href="#rfc.section.7" rel="Chapter" title="7 Security Considerations">
 <link href="#rfc.section.7.1" rel="Chapter" title="7.1 Security Services">
 <link href="#rfc.section.7.2" rel="Chapter" title="7.2 TLS Name Authentication">
@@ -503,6 +504,8 @@
 </ul><li>6.6.   <a href="#rfc.section.6.6">DNS Stateful Operations TLV Context Summary</a>
 </li>
 <li>6.7.   <a href="#rfc.section.6.7">Client-Initiated Termination</a>
+</li>
+<li>6.8.   <a href="#rfc.section.6.8">Client Fallback to Polling</a>
 </li>
 </ul><li>7.   <a href="#rfc.section.7">Security Considerations</a>
 </li>
@@ -1067,6 +1070,13 @@
 <p id="rfc.section.6.7.p.3">If a client plans to terminate one or more subscriptions on a session and doesn't intend to keep that session open, then as an efficiency optimization it MAY instead choose to simply close the session, which implicitly terminates all subscriptions on that session. This may occur because the client computer is being shut down, is going to sleep, the application requiring the subscriptions has terminated, or simply because the last active subscription on that session has been cancelled.</p>
 <p id="rfc.section.6.7.p.4">When closing a session, a client should perform an orderly close of the TLS session in order to allow for future TLS session resumption with the server (if available). See <a href="#resumption" class="xref">Section 7.4</a> below.  Typical APIs will provide a session close method that will send a TLS close_notify alert. This instructs the recipient that the sender will not send any more data over the session.</p>
 <p id="rfc.section.6.7.p.5">If the session is forcibly closed at the TCP level by sending a RST from either end of the connection, data may be lost and TLS session resumption of this session will not be possible.</p>
+<h1 id="rfc.section.6.8">
+<a href="#rfc.section.6.8">6.8.</a> <a href="#polling" id="polling">Client Fallback to Polling</a>
+</h1>
+<p id="rfc.section.6.8.p.1">There are cases where a client may exhaust all avenues for establishing a DNS Push Notification subscription without success.  This can happen if the client's configured recursive resolver does not support DNS over TLS, or supports DNS over TLS but is not listening on TCP port 853, or supports DNS over TLS on TCP port 853 but does not support DSO on that port, or for some other reason is unable to provide a DNS Push Notification subscription.  In this case the client will attempt to communicate directly with an appropriate server, and it may be that the zone apex discovery fails, or there is no <samp>_dns&#8209;push&#8209;tls._tcp.&lt;zone&gt;</samp> SRV record, or server indicated in the SRV record is misconfigured, or is unresponsive for some other reason.</p>
+<p id="rfc.section.6.8.p.2">Regardless of the reason for the failure, after being unable to establish the desired DNS Push Notification subscription, it is likely that the client will still wish to know the answer it seeks, even if that answer cannot be obtained with the timely change notifications provided by DNS Push Notifications.  In such cases it is likely that the client will obtain the answer it seeks via a conventional DNS query instead, repeated at some interval to detect when the answer set changes.</p>
+<p id="rfc.section.6.8.p.3">In the case where a client responds to its failure to establish a DNS Push Notification subscription by falling back to polling with conventional DNS queries instead, the polling rate should be controlled to avoid placing excessive burden on the server.  The interval between sucessive DNS queries for the same name, type and class SHOULD be at least the minimum of 900 seconds (15 minutes), or two seconds more than the TTL of the answer RRset.</p>
+<p id="rfc.section.6.8.p.4">The reason that for TTLs shorter than 898 seconds the query should not be reissued until two seconds *after* the answer RRset has expired is to ensure that the answer RRset has also expired from the cache on the client's configured recursive resolver.  Otherwise (particularly if the clocks on the client and the recursive resolver don't run at precisely the same rate) there's a risk of a race condition where the client queries its configured recursive resolver just as the answer RRset has one second remaining in the recursive resolver's cache.  The client then receives a reply telling it that the answer RRset has one second remaining, and then the client re-queries the recursive resolver again one second later when the RRset expires for the second time, and only then does the recursive resolver issue a new query to fetch new fresh data from the authoritative server.  Waiting until the answer RRset has definitely expired from the the cache on the client's configured recursive resolver avoids this race condition.  </p>
 <h1 id="rfc.section.7">
 <a href="#rfc.section.7">7.</a> <a href="#Security" id="Security">Security Considerations</a>
 </h1>

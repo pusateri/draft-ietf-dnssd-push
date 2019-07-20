@@ -1063,6 +1063,61 @@
        <t>If the session is forcibly closed at the TCP level by sending a
        RST from either end of the connection, data may be lost and TLS
        session resumption of this session will not be possible.</t>
+
+<?rfc needLines="20" ?>
+     </section>
+
+     <section title="Client Fallback to Polling" anchor="polling">
+        <t>There are cases where a client may exhaust all avenues for
+        establishing a DNS Push Notification subscription without success.
+        This can happen if the client's configured recursive resolver
+        does not support DNS over TLS, or
+        supports DNS over TLS but is not listening on TCP port 853, or
+        supports DNS over TLS on TCP port 853 but does not support DSO on that port,
+        or for some other reason is unable to provide a DNS Push Notification subscription.
+        In this case the client will attempt to communicate directly with an appropriate server,
+        and it may be that the zone apex discovery fails, or there is no
+        <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV record,
+        or server indicated in the SRV record is misconfigured,
+        or is unresponsive for some other reason.</t>
+
+        <t>Regardless of the reason for the failure,
+        after being unable to establish the desired DNS Push Notification subscription,
+        it is likely that the client will still wish to know the answer it seeks,
+        even if that answer cannot be obtained with the timely
+        change notifications provided by DNS Push Notifications.
+        In such cases it is likely that the client will obtain
+        the answer it seeks via a conventional DNS query instead,
+        repeated at some interval to detect when the answer set changes.</t>
+
+        <t>In the case where a client responds to its
+        failure to establish a DNS Push Notification subscription
+        by falling back to polling with conventional DNS queries instead,
+        the polling rate should be controlled to avoid placing excessive burden on the server.
+        The interval between sucessive DNS queries for the same name, type and class
+        SHOULD be at least the minimum of 900 seconds (15 minutes),
+        or two seconds more than the TTL of the answer RRset.</t>
+
+        <t>The reason that for TTLs shorter than 898 seconds the query should
+        not be reissued until two seconds *after* the answer RRset has expired is
+        to ensure that the answer RRset has also expired from
+        the cache on the client's configured recursive resolver.
+        Otherwise
+        (particularly if the clocks on the client and the
+        recursive resolver don't run at precisely the same rate)
+        there's a risk of a race condition where
+        the client queries its configured recursive resolver just as the answer RRset has
+        one second remaining in the recursive resolver's cache.
+        The client then receives a reply telling it that the answer RRset
+        has one second remaining, and then the client re-queries the
+        recursive resolver again one second later when the RRset
+        expires for the second time, and only then does the
+        recursive resolver issue a new query to fetch new fresh
+        data from the authoritative server.
+        Waiting until the answer RRset has definitely expired from the
+        the cache on the client's configured recursive resolver
+        avoids this race condition.
+        </t>
 <?rfc needLines="20" ?>
      </section>
    </section>

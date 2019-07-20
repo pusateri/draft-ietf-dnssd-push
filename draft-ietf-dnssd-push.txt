@@ -84,18 +84,18 @@ Table of Contents
        6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
      6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
      6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  32
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  32
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  33
-     7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  33
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  34
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  35
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  35
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  35
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  37
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
-
+     6.8.  Client Fallback to Polling  . . . . . . . . . . . . . . .  32
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  33
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
+     7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  34
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  38
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
 
 
 
@@ -1738,6 +1738,62 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 31]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
+6.8.  Client Fallback to Polling
+
+   There are cases where a client may exhaust all avenues for
+   establishing a DNS Push Notification subscription without success.
+   This can happen if the client's configured recursive resolver does
+   not support DNS over TLS, or supports DNS over TLS but is not
+   listening on TCP port 853, or supports DNS over TLS on TCP port 853
+   but does not support DSO on that port, or for some other reason is
+   unable to provide a DNS Push Notification subscription.  In this case
+   the client will attempt to communicate directly with an appropriate
+   server, and it may be that the zone apex discovery fails, or there is
+   no "_dns-push-tls._tcp.<zone>" SRV record, or server indicated in the
+   SRV record is misconfigured, or is unresponsive for some other
+   reason.
+
+   Regardless of the reason for the failure, after being unable to
+   establish the desired DNS Push Notification subscription, it is
+   likely that the client will still wish to know the answer it seeks,
+   even if that answer cannot be obtained with the timely change
+   notifications provided by DNS Push Notifications.  In such cases it
+   is likely that the client will obtain the answer it seeks via a
+   conventional DNS query instead, repeated at some interval to detect
+   when the answer set changes.
+
+   In the case where a client responds to its failure to establish a DNS
+   Push Notification subscription by falling back to polling with
+   conventional DNS queries instead, the polling rate should be
+   controlled to avoid placing excessive burden on the server.  The
+   interval between sucessive DNS queries for the same name, type and
+   class SHOULD be at least the minimum of 900 seconds (15 minutes), or
+   two seconds more than the TTL of the answer RRset.
+
+   The reason that for TTLs shorter than 898 seconds the query should
+   not be reissued until two seconds *after* the answer RRset has
+   expired is to ensure that the answer RRset has also expired from the
+   cache on the client's configured recursive resolver.  Otherwise
+   (particularly if the clocks on the client and the recursive resolver
+   don't run at precisely the same rate) there's a risk of a race
+   condition where the client queries its configured recursive resolver
+   just as the answer RRset has one second remaining in the recursive
+   resolver's cache.  The client then receives a reply telling it that
+   the answer RRset has one second remaining, and then the client re-
+   queries the recursive resolver again one second later when the RRset
+   expires for the second time, and only then does the recursive
+   resolver issue a new query to fetch new fresh data from the
+   authoritative server.  Waiting until the answer RRset has definitely
+   expired from the the cache on the client's configured recursive
+   resolver avoids this race condition.
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 32]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
+
 7.  Security Considerations
 
    The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS
@@ -1789,7 +1845,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 32]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 33]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -1845,7 +1901,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 33]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 34]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -1901,7 +1957,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 34]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 35]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -1957,7 +2013,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 35]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 36]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -2013,7 +2069,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 36]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 37]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -2069,7 +2125,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 37]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 38]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -2125,7 +2181,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 38]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 39]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
@@ -2181,4 +2237,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 39]
+Pusateri & Cheshire      Expires January 9, 2020               [Page 40]
