@@ -1233,7 +1233,30 @@
    <section title="Acknowledgements" anchor="Acknowledgements">
      <t>The authors would like to thank Kiren Sekar and Marc Krochmal for previous work completed in this field.</t>
 
-     <t>This draft has been improved due to comments from Ran Atkinson, Tim Chown, Mark Delany, Ralph Droms, Bernie Volz, Jan Komissar, Manju Shankar Rao, Markus Stenberg, Dave Thaler, Soraia Zlatkovic, Sara Dickinson, and Andrew Sullivan. Ted Lemon provided clarifying text that was greatly appreciated.</t>
+     <t>This draft has been improved due to comments from
+     Ran Atkinson,
+     Tim Chown,
+     Sara Dickinson,
+     Mark Delany,
+     Ralph Droms,
+     Jan Komissar,
+     Eric Rescorla,
+     Michael Richardson,
+     David Schinazi,
+     Manju Shankar Rao,
+     Robert Sparks,
+     Markus Stenberg,
+     Andrew Sullivan,
+     Michael Sweet,
+     Dave Thaler,
+     Brian Trammell,
+     Bernie Volz,
+     Eric Vyncke,
+     Christopher Wood,
+     Liang Xia,
+     and
+     Soraia Zlatkovic.
+     Ted Lemon provided clarifying text that was greatly appreciated.</t>
 <?rfc needLines="15" ?>
    </section>
  </middle>
