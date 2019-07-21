@@ -1063,8 +1063,6 @@
        <t>If the session is forcibly closed at the TCP level by sending a
        RST from either end of the connection, data may be lost and TLS
        session resumption of this session will not be possible.</t>
-
-<?rfc needLines="20" ?>
      </section>
 
      <section title="Client Fallback to Polling" anchor="polling">
@@ -1088,13 +1086,13 @@
         change notifications provided by DNS Push Notifications.
         In such cases it is likely that the client will obtain
         the answer it seeks via a conventional DNS query instead,
-        repeated at some interval to detect when the answer set changes.</t>
+        repeated at some interval to detect when the answer RRset changes.</t>
 
         <t>In the case where a client responds to its
         failure to establish a DNS Push Notification subscription
         by falling back to polling with conventional DNS queries instead,
         the polling rate should be controlled to avoid placing excessive burden on the server.
-        The interval between sucessive DNS queries for the same name, type and class
+        The interval between successive DNS queries for the same name, type and class
         SHOULD be at least the minimum of 900 seconds (15 minutes),
         or two seconds more than the TTL of the answer RRset.</t>
 
@@ -1104,20 +1102,27 @@
         the cache on the client's configured recursive resolver.
         Otherwise
         (particularly if the clocks on the client and the
-        recursive resolver don't run at precisely the same rate)
+        recursive resolver do not run at precisely the same rate)
         there's a risk of a race condition where
         the client queries its configured recursive resolver just as the answer RRset has
         one second remaining in the recursive resolver's cache.
-        The client then receives a reply telling it that the answer RRset
-        has one second remaining, and then the client re-queries the
-        recursive resolver again one second later when the RRset
-        expires for the second time, and only then does the
+        The client would then receive a reply telling it that the answer RRset
+        has one second remaining, and then the client would then re-query the
+        recursive resolver again one second later when the answer RRset
+        actually expires, and only then would the
         recursive resolver issue a new query to fetch new fresh
         data from the authoritative server.
         Waiting until the answer RRset has definitely expired from the
         the cache on the client's configured recursive resolver
-        avoids this race condition.
-        </t>
+        avoids this race condition and unnecessary additional queries it causes.</t>
+
+        <t>Each time a client is about to reissue its query to discover
+        changes to the answer RRset, it should first make a new attempt to
+        establish a DNS Push Notification subscription, using previously
+        cached DNS answers as appropriate.
+        After a temporary misconfiguration has been remedied,
+        this allows a client that is polling to return to using
+        DNS Push Notifications for asynchronous change notification.</t>
 <?rfc needLines="20" ?>
      </section>
    </section>
