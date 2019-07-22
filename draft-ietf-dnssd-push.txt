@@ -67,10 +67,11 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
+     1.2.  Fatal Errors  . . . . . . . . . . . . . . . . . . . . . .   3
    2.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   4.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   5.  State Considerations  . . . . . . . . . . . . . . . . . . . .   7
+   4.  State Considerations  . . . . . . . . . . . . . . . . . . . .   6
+   5.  Transport . . . . . . . . . . . . . . . . . . . . . . . . . .   7
    6.  Protocol Operation  . . . . . . . . . . . . . . . . . . . . .   8
      6.1.  Discovery . . . . . . . . . . . . . . . . . . . . . . . .   9
      6.2.  DNS Push Notification SUBSCRIBE . . . . . . . . . . . . .  13
@@ -84,19 +85,18 @@ Table of Contents
        6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
      6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
      6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
-     6.8.  Client Fallback to Polling  . . . . . . . . . . . . . . .  31
+     6.8.  Client Fallback to Polling  . . . . . . . . . . . . . . .  32
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
      7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  33
      7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
      7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  34
      7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  36
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  36
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
      10.2.  Informative References . . . . . . . . . . . . . . . . .  38
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
-
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
 
 
 
@@ -136,24 +136,24 @@ Internet-Draft           DNS Push Notifications                July 2019
    document in lower case as plain English words, absent their normative
    meanings.
 
+1.2.  Fatal Errors
 
+   Certain invalid situations are described in this specification, like
+   a server sending a Push Notification subscription request to a
+   client, or a client sending a Push Notification response to a server.
+   These should never occur with a correctly implemented client and
+   server, and if they do occur then they indicate a serious
+   implementation error.  In these extreme cases there is no reasonable
+   expectation of a graceful recovery, and the recipient detecting the
+   error should respond by unilaterally aborting the session without
+   regard for data loss.  Such cases are addressed by having an engineer
+   investigate the cause of the failure and fixing the problem in the
+   software.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   Where this specification says "forcibly abort", it means sending a
+   TCP RST to terminate the TCP connection, and the TLS session running
+   over that TCP connection.  In the BSD Sockets API, this is achieved
+   by setting the SO_LINGER option to zero before closing the socket.
 
 
 
@@ -303,7 +303,42 @@ Internet-Draft           DNS Push Notifications                July 2019
    NOT keep a session open that has been idle for more than the
    session's idle timeout (15 seconds by default) [RFC8490].
 
-4.  Transport
+4.  State Considerations
+
+   Each DNS Push Notification server is capable of handling some finite
+   number of Push Notification subscriptions.  This number will vary
+   from server to server and is based on physical machine
+   characteristics, network bandwidth, and operating system resource
+   allocation.  After a client establishes a session to a DNS server,
+   each subscription is individually accepted or rejected.  Servers may
+   employ various techniques to limit subscriptions to a manageable
+   level.  Correspondingly, the client is free to establish simultaneous
+   sessions to alternate DNS servers that support DNS Push Notifications
+   for the zone and distribute subscriptions at the client's discretion.
+   In this way, both clients and servers can react to resource
+   constraints.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020                [Page 6]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
+
+5.  Transport
 
    Other DNS operations like DNS Update [RFC2136] MAY use either User
    Datagram Protocol (UDP) [RFC0768] or Transmission Control Protocol
@@ -330,14 +365,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    [RFC6824], TCP Fast Open (TFO) [RFC7413], Tail Loss Probe (TLP)
    [I-D.dukkipati-tcpm-tcp-loss-probe], and so on.
 
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020                [Page 6]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
    Transport Layer Security (TLS) [RFC8446] is well understood, and used
    by many application-layer protocols running over TCP.  TLS is
    designed to prevent eavesdropping, tampering, and message forgery.
@@ -346,33 +373,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    such as client authentication during TLS negotiation MAY also be
    employed to increase the trust relationship between client and
    server.
-
-5.  State Considerations
-
-   Each DNS Push Notification server is capable of handling some finite
-   number of Push Notification subscriptions.  This number will vary
-   from server to server and is based on physical machine
-   characteristics, network bandwidth, and operating system resource
-   allocation.  After a client establishes a session to a DNS server,
-   each subscription is individually accepted or rejected.  Servers may
-   employ various techniques to limit subscriptions to a manageable
-   level.  Correspondingly, the client is free to establish simultaneous
-   sessions to alternate DNS servers that support DNS Push Notifications
-   for the zone and distribute subscriptions at the client's discretion.
-   In this way, both clients and servers can react to resource
-   constraints.
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -692,15 +692,7 @@ Internet-Draft           DNS Push Notifications                July 2019
    client.  A server MUST NOT send a SUBSCRIBE request over an existing
    session from a client.  If a server does send a SUBSCRIBE request
    over a DSO session initiated by a client, this is a fatal error and
-   the client should immediately abort the connection with a TLS
-   close_notify alert (see Section 6.1 of the TLS 1.3 specification
-   [RFC8446]).  After sending the TLS close_notify alert the client MUST
-   gracefully close the underlying connection using a TCP FIN, so that
-   the TLS close_notify is reliably delivered.  The mechanisms for
-   gracefully closing a TCP connection with a TCP FIN vary depending on
-   the networking API.  For example, in the BSD Sockets API, sending a
-   TCP FIN is achieved by calling "shutdown(s,SHUT_WR)" and keeping the
-   socket open until all remaining data has been read from it.
+   the client MUST forcibly abort the connection immediately.
 
 6.2.1.  SUBSCRIBE Request
 
@@ -723,15 +715,20 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
 
+   The DSO-LENGTH is the length of the DSO-DATA that follows, which
+   specifies the name, type, and class of the record(s) being sought.
+
+
+
+
+
+
 
 
 Pusateri & Cheshire      Expires January 9, 2020               [Page 13]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
-
-   The DSO-LENGTH is the length of the DSO-DATA that follows, which
-   specifies the name, type, and class of the record(s) being sought.
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -777,7 +774,10 @@ Internet-Draft           DNS Push Notifications                July 2019
    of an existing active subscription on that DSO session.  For the
    purpose of this matching, the established DNS case-insensitivity for
    US-ASCII letters applies (e.g., "example.com" and "Example.com" are
-   the same).  If a server receives such a duplicate SUBSCRIBE message
+   the same).  If a server receives such a duplicate SUBSCRIBE message,
+   this is a fatal error and the server MUST forcibly abort the
+   connection immediately.
+
 
 
 
@@ -785,9 +785,6 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 14]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
-
-   this is a fatal error and the server MUST immediately terminate the
-   connection with a TLS close_notify alert followed by a TCP FIN.
 
    DNS wildcarding is not supported.  That is, a wildcard ("*") in a
    SUBSCRIBE message matches only a literal wildcard character ("*") in
@@ -837,6 +834,9 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
+
+
+
 Pusateri & Cheshire      Expires January 9, 2020               [Page 15]
 
 Internet-Draft           DNS Push Notifications                July 2019
@@ -863,9 +863,8 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    A client MUST NOT send a SUBSCRIBE response.  If a client does send a
    SUBSCRIBE message, with the QR bit set indicating that it is a
-   response, this is a fatal error and the server should immediately
-   abort the connection with a TLS close_notify alert followed by a TCP
-   FIN.
+   response, this is a fatal error and the server MUST forcibly abort
+   the connection immediately.
 
                                       1  1  1  1  1  1
         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -885,6 +884,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
                    Figure 2: SUBSCRIBE Response Message
+
 
 
 
@@ -1093,9 +1093,8 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    A client MUST NOT send a PUSH message.  If a client does send a PUSH
    message, or a PUSH message is sent with the QR bit set indicating
-   that it is a response, this is a fatal error and the receiver should
-   immediately abort the connection with a TLS close_notify alert
-   followed by a TCP FIN.
+   that it is a response, this is a fatal error and the receiver MUST
+   forcibly abort the connection immediately.
 
    The DSO-TYPE is PUSH (tentatively 0x41).
 
@@ -1105,8 +1104,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    The DSO-DATA contains one or more change notifications.  A PUSH
    Message MUST contain at least one change notification.  If a PUSH
    Message is received that contains no change notifications, this is a
-   fatal error, and the receiver MUST immediately terminate the
-   connection with a TLS close_notify alert followed by a TCP FIN.
+   fatal error, and the client MUST forcibly abort the connection
+   immediately.
 
    The change notification records are formatted similarly to how DNS
    Resource Records are conventionally expressed in DNS messages, as
@@ -1114,6 +1113,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
    is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
+   then a new DNS Resource Record with the given name, type, class and
 
 
 
@@ -1122,7 +1122,6 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 20]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
-   then a new DNS Resource Record with the given name, type, class and
    RDATA is added.  A TTL of 0 means that this record should be retained
    for as long as the subscription is active, and should be discarded
    immediately the moment the subscription is cancelled.
@@ -1134,9 +1133,10 @@ Internet-Draft           DNS Push Notifications                July 2019
    remove notification.  For collective remove notifications RDLEN MUST
    be zero and consequently the RDATA MUST be empty.  If a change
    notification is received where TTL = 0xFFFFFFFE and RDLEN is not
-   zero, this is a fatal error, and the receiver MUST immediately
-   terminate the connection with a TLS close_notify alert followed by a
-   TCP FIN.  There are three types of collective remove notification:
+   zero, this is a fatal error, and the client MUST forcibly abort the
+   connection immediately.
+
+   There are three types of collective remove notification:
 
    For collective remove notifications, if CLASS is not 255 (ANY) and
    TYPE is not 255 (ANY) then for the given name this deletes all
@@ -1235,9 +1235,8 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
    If a client receives a PUSH message with a DNS message length larger
-   than 16,382 bytes, the this is a fatal error, and the receiver MUST
-   immediately terminate the connection with a TLS close_notify alert
-   followed by a TCP FIN.
+   than 16,382 bytes, this is a fatal error, and the client MUST
+   forcibly abort the connection immediately.
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1282,6 +1281,7 @@ Internet-Draft           DNS Push Notifications                July 2019
    correspond with at least one currently active subscription on that
    session.  Specifically, the record name MUST match the name given in
    a SUBSCRIBE request, subject to the usual established DNS case-
+   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
 
 
 
@@ -1290,7 +1290,6 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 23]
 Internet-Draft           DNS Push Notifications                July 2019
 
 
-   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
    request was not ANY (255) then the TYPE of the record must match the
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
    request was not ANY (255) then the CLASS of the record must match the
@@ -1341,6 +1340,7 @@ Internet-Draft           DNS Push Notifications                July 2019
 
 
 
+
 Pusateri & Cheshire      Expires January 9, 2020               [Page 24]
 
 Internet-Draft           DNS Push Notifications                July 2019
@@ -1358,9 +1358,8 @@ Internet-Draft           DNS Push Notifications                July 2019
    A server MUST NOT send an UNSUBSCRIBE message.  If a server does send
    an UNSUBSCRIBE message over a DSO session initiated by a client, or
    an UNSUBSCRIBE message is sent with the QR bit set indicating that it
-   is a response, this is a fatal error and the receiver should
-   immediately abort the connection with a TLS close_notify alert
-   followed by a TCP FIN.
+   is a response, this is a fatal error and the receiver MUST forcibly
+   abort the connection immediately.
 
 6.4.1.  UNSUBSCRIBE Message
 
@@ -1393,6 +1392,7 @@ Internet-Draft           DNS Push Notifications                July 2019
    starts and stops a subscription in less than the round-trip time to
    the server.  The client is NOT required to wait for the SUBSCRIBE
    response before issuing the UNSUBSCRIBE message.
+
 
 
 
@@ -1495,9 +1495,9 @@ Internet-Draft           DNS Push Notifications                July 2019
    A server MUST NOT send a RECONFIRM message.  If a server does send a
    RECONFIRM message over a DSO session initiated by a client, or a
    RECONFIRM message is sent with the QR bit set indicating that it is a
-   response, this is a fatal error and the receiver should immediately
-   abort the connection with a TLS close_notify alert followed by a TCP
-   FIN.
+   response, this is a fatal error and the receiver MUST forcibly abort
+   the connection immediately.
+
 
 
 
@@ -1713,12 +1713,30 @@ Internet-Draft           DNS Push Notifications                July 2019
    the TLS session in order to allow for future TLS session resumption
    with the server (if available).  See Section 7.4 below.  Typical APIs
    will provide a session close method that will send a TLS close_notify
-   alert.  This instructs the recipient that the sender will not send
-   any more data over the session.
+   alert (see Section 6.1 of the TLS 1.3 specification [RFC8446]).  This
+   instructs the recipient that the sender will not send any more data
+   over the session.  After sending the TLS close_notify alert the
+   client MUST gracefully close the underlying connection using a TCP
+   FIN, so that the TLS close_notify is reliably delivered.  The
+   mechanisms for gracefully closing a TCP connection with a TCP FIN
+   vary depending on the networking API.  For example, in the BSD
+   Sockets API, sending a TCP FIN is achieved by calling
+   "shutdown(s,SHUT_WR)" and keeping the socket open until all remaining
+   data has been read from it.
 
    If the session is forcibly closed at the TCP level by sending a RST
    from either end of the connection, data may be lost and TLS session
    resumption of this session will not be possible.
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 31]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
 6.8.  Client Fallback to Polling
 
@@ -1730,14 +1748,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    but does not support DSO on that port, or for some other reason is
    unable to provide a DNS Push Notification subscription.  In this case
    the client will attempt to communicate directly with an appropriate
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 31]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
    server, and it may be that the zone apex discovery fails, or there is
    no "_dns-push-tls._tcp.<zone>" SRV record, or server indicated in the
    SRV record is misconfigured, or is unresponsive for some other
@@ -1757,7 +1767,7 @@ Internet-Draft           DNS Push Notifications                July 2019
    conventional DNS queries instead, the polling rate should be
    controlled to avoid placing excessive burden on the server.  The
    interval between successive DNS queries for the same name, type and
-   class SHOULD be at least the minimum of 900 seconds (15 minutes), or
+   class SHOULD be at least the minimum of: 900 seconds (15 minutes), or
    two seconds more than the TTL of the answer RRset.
 
    The reason that for TTLs shorter than 898 seconds the query should
@@ -1775,16 +1785,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    recursive resolver issue a new query to fetch new fresh data from the
    authoritative server.  Waiting until the answer RRset has definitely
    expired from the the cache on the client's configured recursive
-   resolver avoids this race condition and unnecessary additional
-   queries it causes.
-
-   Each time a client is about to reissue its query to discover changes
-   to the answer RRset, it should first make a new attempt to establish
-   a DNS Push Notification subscription, using previously cached DNS
-   answers as appropriate.  After a temporary misconfiguration has been
-   remedied, this allows a client that is polling to return to using DNS
-   Push Notifications for asynchronous change notification.
-
 
 
 
@@ -1793,6 +1793,16 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 32]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
+
+   resolver avoids this race condition and unnecessary additional
+   queries it causes.
+
+   Each time a client is about to reissue its query to discover changes
+   to the answer RRset, it should first make a new attempt to establish
+   a DNS Push Notification subscription, using previously cached DNS
+   answers as appropriate.  After a temporary misconfiguration has been
+   remedied, this allows a client that is polling to return to using DNS
+   Push Notifications for asynchronous notification of changes.
 
 7.  Security Considerations
 
@@ -1833,6 +1843,13 @@ Internet-Draft           DNS Push Notifications                July 2019
    Data integrity protection:  Any changes made to the communication in
       transit are detectable by the receiver.
 
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 33]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
+
    Authentication:  An end-point of the TLS communication is
       authenticated as the intended entity to communicate with.
 
@@ -1840,15 +1857,6 @@ Internet-Draft           DNS Push Notifications                July 2019
       prevention against messages sent previously over a TLS connection
       (such as DNS Push Notifications).  Prior messages cannot be re-
       sent at a later time as a form of a man-in-the-middle attack.
-
-
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 33]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
 
    Deployment recommendations on the appropriate key lengths and cypher
    suites are beyond the scope of this document.  Please refer to TLS
@@ -1890,14 +1898,6 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    With TLS early data there are no guarantees of non-replay between
    connections.  If packets are duplicated and delayed in the network,
-   the later arrivals could be mistaken for new subscription requests.
-   Generally this is not a major concern, since the amount of state
-   generated on the server for these spurious subscriptions is small and
-   short-lived, since the TCP connection will not complete the three-way
-   handshake.  Servers MAY choose to implement rate-limiting measures
-   that are activated when the server detects an excessive number of
-   spurious subscription requests.
-
 
 
 
@@ -1905,6 +1905,14 @@ Pusateri & Cheshire      Expires January 9, 2020               [Page 34]
 
 Internet-Draft           DNS Push Notifications                July 2019
 
+
+   the later arrivals could be mistaken for new subscription requests.
+   Generally this is not a major concern, since the amount of state
+   generated on the server for these spurious subscriptions is small and
+   short-lived, since the TCP connection will not complete the three-way
+   handshake.  Servers MAY choose to implement rate-limiting measures
+   that are activated when the server detects an excessive number of
+   spurious subscription requests.
 
    For further guidance please see Section 2.3, Section 8, and
    Appendix E.5 of the TLS 1.3 specification [RFC8446].
@@ -1920,6 +1928,39 @@ Internet-Draft           DNS Push Notifications                July 2019
    will proceed as with any other new DSO session.  Use of TLS Session
    Resumption may allow a TLS connection to be set up more quickly, but
    the client will still have to recreate any desired subscriptions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 35]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
 8.  IANA Considerations
 
@@ -1953,15 +1994,6 @@ Internet-Draft           DNS Push Notifications                July 2019
 
    This document defines no new DNS OPCODEs or RCODEs.
 
-
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 35]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
 9.  Acknowledgements
 
    The authors would like to thank Kiren Sekar and Marc Krochmal for
@@ -1974,6 +2006,17 @@ Internet-Draft           DNS Push Notifications                July 2019
    Thaler, Brian Trammell, Bernie Volz, Eric Vyncke, Christopher Wood,
    Liang Xia, and Soraia Zlatkovic.  Ted Lemon provided clarifying text
    that was greatly appreciated.
+
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 36]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
 10.  References
 
@@ -2010,14 +2053,6 @@ Internet-Draft           DNS Push Notifications                July 2019
               RFC 2136, DOI 10.17487/RFC2136, April 1997,
               <https://www.rfc-editor.org/info/rfc2136>.
 
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 36]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
    [RFC2181]  Elz, R. and R. Bush, "Clarifications to the DNS
               Specification", RFC 2181, DOI 10.17487/RFC2181, July 1997,
               <https://www.rfc-editor.org/info/rfc2181>.
@@ -2031,6 +2066,13 @@ Internet-Draft           DNS Push Notifications                July 2019
               Extensions: Extension Definitions", RFC 6066,
               DOI 10.17487/RFC6066, January 2011,
               <https://www.rfc-editor.org/info/rfc6066>.
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 37]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
    [RFC6335]  Cotton, M., Eggert, L., Touch, J., Westerlund, M., and S.
               Cheshire, "Internet Assigned Numbers Authority (IANA)
@@ -2066,14 +2108,6 @@ Internet-Draft           DNS Push Notifications                July 2019
               RFC 8490, DOI 10.17487/RFC8490, March 2019,
               <https://www.rfc-editor.org/info/rfc8490>.
 
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 37]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
    [ST]       "Service Name and Transport Protocol Port Number
               Registry", <http://www.iana.org/assignments/
               service-names-port-numbers/>.
@@ -2083,6 +2117,18 @@ Internet-Draft           DNS Push Notifications                July 2019
    [DisProx]  Cheshire, S., "Discovery Proxy for Multicast DNS-Based
               Service Discovery", draft-ietf-dnssd-hybrid-10 (work in
               progress), March 2019.
+
+
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 38]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
    [I-D.dukkipati-tcpm-tcp-loss-probe]
               Dukkipati, N., Cardwell, N., Cheng, Y., and M. Mathis,
@@ -2122,14 +2168,6 @@ Internet-Draft           DNS Push Notifications                July 2019
               RFC 6281, DOI 10.17487/RFC6281, June 2011,
               <https://www.rfc-editor.org/info/rfc6281>.
 
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 38]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
               <https://www.rfc-editor.org/info/rfc6762>.
@@ -2137,6 +2175,16 @@ Internet-Draft           DNS Push Notifications                July 2019
    [RFC6763]  Cheshire, S. and M. Krochmal, "DNS-Based Service
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
               <https://www.rfc-editor.org/info/rfc6763>.
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 39]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
    [RFC6824]  Ford, A., Raiciu, C., Handley, M., and O. Bonaventure,
               "TCP Extensions for Multipath Operation with Multiple
@@ -2176,16 +2224,6 @@ Internet-Draft           DNS Push Notifications                July 2019
               DOI 10.17487/RFC8010, January 2017,
               <https://www.rfc-editor.org/info/rfc8010>.
 
-
-
-
-
-
-Pusateri & Cheshire      Expires January 9, 2020               [Page 39]
-
-Internet-Draft           DNS Push Notifications                July 2019
-
-
    [RFC8011]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Model and Semantics", STD 92, RFC 8011,
               DOI 10.17487/RFC8011, January 2017,
@@ -2195,6 +2233,14 @@ Internet-Draft           DNS Push Notifications                July 2019
               for DNS over TLS and DNS over DTLS", RFC 8310,
               DOI 10.17487/RFC8310, March 2018,
               <https://www.rfc-editor.org/info/rfc8310>.
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 40]
+
+Internet-Draft           DNS Push Notifications                July 2019
+
 
    [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
               Internet Protocol Journal, Cisco Systems, Volume 9,
@@ -2237,4 +2283,14 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire      Expires January 9, 2020               [Page 40]
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire      Expires January 9, 2020               [Page 41]

@@ -177,6 +177,26 @@
        when, and only when, they appear in all capitals, as shown here.
        These words may also appear in this document in lower case as
        plain English words, absent their normative meanings.</t>
+     </section>
+
+     <section title="Fatal Errors">
+       <t>Certain invalid situations are described in this specification,
+       like a server sending a Push Notification subscription request to a client,
+       or a client sending a Push Notification response to a server.
+       These should never occur with a correctly implemented client and server,
+       and if they do occur then they indicate a serious implementation error.
+       In these extreme cases there is no reasonable expectation of a graceful recovery,
+       and the recipient detecting the error should respond by unilaterally
+       aborting the session without regard for data loss.
+       Such cases are addressed by having an engineer investigate the
+       cause of the failure and fixing the problem in the software.</t>
+
+       <t>Where this specification says "forcibly abort", it means
+       sending a TCP RST to terminate the TCP connection,
+       and the TLS session running over that TCP connection.
+       In the BSD Sockets API, this is achieved by setting the
+       SO_LINGER option to zero before closing the socket.</t>
+
 <?rfc needLines="40" ?>
      </section>
    </section>
@@ -239,6 +259,21 @@
 <?rfc needLines="20" ?>
    </section>
 
+   <section title="State Considerations">
+     <t>Each DNS Push Notification server is capable of handling some finite
+     number of Push Notification subscriptions. This number will vary from
+     server to server and is based on physical machine characteristics,
+     network bandwidth, and operating system resource allocation. After a
+     client establishes a session to a DNS server, each subscription is
+     individually accepted or rejected. Servers may employ various techniques
+     to limit subscriptions to a manageable level. Correspondingly, the client
+     is free to establish simultaneous sessions to alternate DNS servers that
+     support DNS Push Notifications for the zone and distribute subscriptions
+     at the client's discretion. In this way, both clients and servers can
+     react to resource constraints.</t>
+<?rfc needLines="35" ?>
+   </section>
+
    <section title="Transport">
      <t>Other DNS operations like <xref target="RFC2136">DNS Update</xref> MAY use either User Datagram Protocol <xref target="RFC0768">(UDP)</xref> or Transmission Control Protocol <xref target="RFC0793">(TCP)</xref> as the transport protocol, in keeping with the historical precedent that DNS queries must first be sent over UDP <xref target="RFC1123"/>. This requirement to use UDP has subsequently been relaxed <xref target="RFC7766"/>.</t>
 
@@ -258,11 +293,6 @@
      <t>Transport Layer Security <xref target="RFC8446">(TLS)</xref> is well understood, and used by many application-layer protocols running over TCP. TLS is designed to prevent eavesdropping, tampering, and message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
 
 <?rfc needLines="25" ?>
-   </section>
-
-   <section title="State Considerations">
-     <t>Each DNS Push Notification server is capable of handling some finite number of Push Notification subscriptions. This number will vary from server to server and is based on physical machine characteristics, network bandwidth, and operating system resource allocation. After a client establishes a session to a DNS server, each subscription is individually accepted or rejected. Servers may employ various techniques to limit subscriptions to a manageable level. Correspondingly, the client is free to establish simultaneous sessions to alternate DNS servers that support DNS Push Notifications for the zone and distribute subscriptions at the client's discretion. In this way, both clients and servers can react to resource constraints.</t>
-<?rfc needLines="35" ?>
    </section>
 
    <section title="Protocol Operation">
@@ -442,14 +472,10 @@
        <t>DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted in TLS early data,
        provided that the precautions described in <xref target="early_data"/> are followed.</t>
 
-       <t>The entity that initiates a SUBSCRIBE request is by definition the client. A server MUST NOT send a SUBSCRIBE request over an existing session from a client. If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client should immediately abort the connection with a TLS close_notify alert
-       (see Section 6.1 of the TLS 1.3 specification <xref target="RFC8446"/>).
-       After sending the TLS close_notify alert
-       the client MUST gracefully close the underlying connection using a TCP FIN,
-       so that the TLS close_notify is reliably delivered.
-       The mechanisms for gracefully closing a TCP connection with a TCP FIN vary depending on the networking API.
-       For example, in the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)"
-       and keeping the socket open until all remaining data has been read from it.</t>
+       <t>The entity that initiates a SUBSCRIBE request is by definition the client.
+       A server MUST NOT send a SUBSCRIBE request over an existing session from a client.
+       If a server does send a SUBSCRIBE request over a DSO session initiated by a client,
+       this is a fatal error and the client MUST forcibly abort the connection immediately.</t>
 
        <section title="SUBSCRIBE Request">
          <t>A SUBSCRIBE request begins with the standard
@@ -503,7 +529,13 @@
 
          <t>If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the DSO session between the client and the server is closed.</t>
 
-         <t>SUBSCRIBE requests on a given session MUST be unique. A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session. For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same). If a server receives such a duplicate SUBSCRIBE message this is a fatal error and the server MUST immediately terminate the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+         <t>SUBSCRIBE requests on a given session MUST be unique.
+         A client MUST NOT send a SUBSCRIBE message that duplicates the
+         NAME, TYPE and CLASS of an existing active subscription on that DSO session.
+         For the purpose of this matching, the established DNS case-insensitivity
+         for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same).
+         If a server receives such a duplicate SUBSCRIBE message,
+         this is a fatal error and the server MUST forcibly abort the connection immediately.</t>
 
          <t>DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</t>
 
@@ -538,7 +570,7 @@
 
          <t>A client MUST NOT send a SUBSCRIBE response.
          If a client does send a SUBSCRIBE message, with the QR bit set indicating that it is a response,
-         this is a fatal error and the server should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+         this is a fatal error and the server MUST forcibly abort the connection immediately.</t>
 
          <figure align="center" anchor="subscribe_resp" title="SUBSCRIBE Response Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
@@ -659,7 +691,7 @@
          <t>A client MUST NOT send a PUSH message.
          If a client does send a PUSH message,
          or a PUSH message is sent with the QR bit set indicating that it is a response,
-         this is a fatal error and the receiver should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+         this is a fatal error and the receiver MUST forcibly abort the connection immediately.</t>
 
          <t>The DSO-TYPE is PUSH (tentatively 0x41).</t>
 
@@ -669,8 +701,7 @@
          <t>The DSO-DATA contains one or more change notifications.
          A PUSH Message MUST contain at least one change notification.
          If a PUSH Message is received that contains no change notifications,
-         this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+         this is a fatal error, and the client MUST forcibly abort the connection immediately.</t>
 
          <t>The change notification records are formatted similarly to how
          DNS Resource Records are conventionally expressed in DNS messages,
@@ -689,9 +720,9 @@
          <t>If the TTL has the value 0xFFFFFFFE, then this is a 'collective' remove notification.
          For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.
          If a change notification is received where TTL = 0xFFFFFFFE and RDLEN is not zero,
-         this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TLS close_notify alert followed by a TCP FIN.
-         There are three types of collective remove notification:</t>
+         this is a fatal error, and the client MUST forcibly abort the connection immediately.</t>
+
+         <t>There are three types of collective remove notification:</t>
 
          <t>For collective remove notifications,
          if CLASS is not 255 (ANY) and TYPE is not 255 (ANY)
@@ -773,10 +804,8 @@
          DNS name compression becomes less effective for messages larger than 16,384 bytes,
          so little efficiency benefit is gained by sending messages larger than this.</t>
 
-         <t>If a client receives a PUSH message with
-         a DNS message length larger than 16,382 bytes, the
-         this is a fatal error, and the receiver MUST immediately terminate
-         the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+         <t>If a client receives a PUSH message with a DNS message length larger than 16,382 bytes,
+         this is a fatal error, and the client MUST forcibly abort the connection immediately.</t>
 
          <figure align="center" anchor="push_msg" title="PUSH Message"><artwork align="center"><![CDATA[
                                 1  1  1  1  1  1
@@ -847,7 +876,7 @@
        <t>A server MUST NOT send an UNSUBSCRIBE message.
        If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client,
        or an UNSUBSCRIBE message is sent with the QR bit set indicating that it is a response,
-       this is a fatal error and the receiver should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+       this is a fatal error and the receiver MUST forcibly abort the connection immediately.</t>
 
        <section title="UNSUBSCRIBE Message">
 
@@ -926,7 +955,7 @@
        <t>A server MUST NOT send a RECONFIRM message.
        If a server does send a RECONFIRM message over a DSO session initiated by a client,
        or a RECONFIRM message is sent with the QR bit set indicating that it is a response,
-       this is a fatal error and the receiver should immediately abort the connection with a TLS close_notify alert followed by a TCP FIN.</t>
+       this is a fatal error and the receiver MUST forcibly abort the connection immediately.</t>
 
 <?rfc needLines="20" ?>
        <section title="RECONFIRM Message">
@@ -1056,9 +1085,15 @@
        the TLS session in order to allow for future TLS session resumption
        with the server (if available). See <xref target="resumption"/> below.
        Typical APIs will provide a session
-       close method that will send a TLS close_notify alert. This instructs
-       the recipient that the sender will not send any more data over the
-       session.</t>
+       close method that will send a TLS close_notify alert
+       (see Section 6.1 of the TLS 1.3 specification <xref target="RFC8446"/>).
+       This instructs the recipient that the sender will not send any more data over the session.
+       After sending the TLS close_notify alert
+       the client MUST gracefully close the underlying connection using a TCP FIN,
+       so that the TLS close_notify is reliably delivered.
+       The mechanisms for gracefully closing a TCP connection with a TCP FIN vary depending on the networking API.
+       For example, in the BSD Sockets API, sending a TCP FIN is achieved by calling "shutdown(s,SHUT_WR)"
+       and keeping the socket open until all remaining data has been read from it.</t>
 
        <t>If the session is forcibly closed at the TCP level by sending a
        RST from either end of the connection, data may be lost and TLS
@@ -1093,7 +1128,7 @@
         by falling back to polling with conventional DNS queries instead,
         the polling rate should be controlled to avoid placing excessive burden on the server.
         The interval between successive DNS queries for the same name, type and class
-        SHOULD be at least the minimum of 900 seconds (15 minutes),
+        SHOULD be at least the minimum of: 900 seconds (15 minutes),
         or two seconds more than the TTL of the answer RRset.</t>
 
         <t>The reason that for TTLs shorter than 898 seconds the query should
@@ -1122,8 +1157,7 @@
         cached DNS answers as appropriate.
         After a temporary misconfiguration has been remedied,
         this allows a client that is polling to return to using
-        DNS Push Notifications for asynchronous change notification.</t>
-<?rfc needLines="20" ?>
+        DNS Push Notifications for asynchronous notification of changes.</t>
      </section>
    </section>
 
@@ -1178,7 +1212,7 @@
 
      <section title="TLS Session Resumption" anchor="resumption">
        <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC8446"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
-<?rfc needLines="23" ?>
+<?rfc needLines="30" ?>
      </section>
    </section>
 
@@ -1227,7 +1261,7 @@
 
      <t>This document defines no new DNS OPCODEs or RCODEs.</t>
 
-<?rfc needLines="20" ?>
+<?rfc needLines="12" ?>
    </section>
 
    <section title="Acknowledgements" anchor="Acknowledgements">
