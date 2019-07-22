@@ -100,10 +100,10 @@ tag:
 	$(oxtradoc) -m outline-to-xml -n "$@" $< > $@
 
 %.txt: %.xml
-	$(xml2rfc) $< -o $@ --text
+	$(xml2rfc) --utf8 $< -o $@ --text
 
 %.html: %.xml
-	$(xml2rfc) $< -o $@ --html
+	$(xml2rfc) --utf8 $< -o $@ --html
 
 %.pdf: %.txt
 	$(enscript) --margins 76::76: -G -q -p - $^ | $(ps2pdf) - $@
