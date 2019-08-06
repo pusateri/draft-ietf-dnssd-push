@@ -1168,7 +1168,7 @@ Internet-Draft           DNS Push Notifications                July 2019
       CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.
 
       Add individual RR to a name
-      TTL≥0
+      TTL >= 0
       CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.
 
 

@@ -754,7 +754,7 @@
              CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.</t>
 
              <t>Add individual RR to a name<vspace />
-             TTL≥0<vspace />
+             TTL >= 0<vspace />
              CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.</t>
            </list>
          </t>
