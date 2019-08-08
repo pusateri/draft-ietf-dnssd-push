@@ -546,7 +546,7 @@
          <t>If neither TYPE nor CLASS are ANY (255) then this is a specific subscription to changes for the given NAME, TYPE and CLASS. If one or both of TYPE or CLASS are ANY (255) then this subscription matches any type and/or any class, as appropriate.</t>
 
 <?rfc needLines="14" ?>
-         <t>NOTE: A little-known quirk of DNS is that in DNS QUERY requests, QTYPE and QCLASS 255 mean "ANY" not "ALL". They indicate that the server should respond with ANY matching records of its choosing, not necessarily ALL matching records. This can lead to some surprising and unexpected results, where a query returns some valid answers but not all of them, and makes QTYPE=ANY queries less useful than people sometimes imagine.</t>
+         <t>NOTE: A little-known quirk of DNS is that in DNS QUERY requests, QTYPE and QCLASS 255 mean "ANY" not "ALL". They indicate that the server should respond with ANY matching records of its choosing, not necessarily ALL matching records. This can lead to some surprising and unexpected results, where a query returns some valid answers but not all of them, and makes QTYPE = 255 (ANY) queries less useful than people sometimes imagine.</t>
 
          <t>When used in conjunction with SUBSCRIBE, TYPE and CLASS 255 should be interpreted to mean "ALL", not "ANY". After accepting a subscription where one or both of TYPE or CLASS are 255, the server MUST send Push Notification Updates for ALL record changes that match the subscription, not just some of them.</t>
 <?rfc needLines="48" ?>
@@ -740,31 +740,31 @@
          <t>Summary of change notification types:
            <list style="bullets">
              <t>Delete all RRsets from a name, in all classes<vspace />
-             TTL=0xFFFFFFFE, RDLENGTH=0, CLASS=255 (ANY)</t>
+             TTL = 0xFFFFFFFE, RDLEN = 0, CLASS = 255 (ANY)</t>
 
              <t>Delete all RRsets from a name, in given class:<vspace />
-             TTL=0xFFFFFFFE, RDLENGTH=0, CLASS specifies class, TYPE=255 (ANY)</t>
+             TTL = 0xFFFFFFFE, RDLEN = 0, CLASS gives class, TYPE = 255 (ANY)</t>
 
              <t>Delete specified RRset from a name, in given class:<vspace />
-             TTL=0xFFFFFFFE, RDLENGTH=0<vspace />
+             TTL = 0xFFFFFFFE, RDLEN = 0<vspace />
              CLASS and TYPE specify the RRset being deleted</t>
 
              <t>Delete an individual RR from a name:<vspace />
-             TTL=0xFFFFFFFF<vspace />
-             CLASS, TYPE, RDLENGTH and RDATA specify the RR being deleted.</t>
+             TTL = 0xFFFFFFFF<vspace />
+             CLASS, TYPE, RDLEN and RDATA specify the RR being deleted.</t>
 
              <t>Add individual RR to a name<vspace />
-             TTL >= 0<vspace />
-             CLASS, TYPE, RDLENGTH, RDATA and TTL specify the RR being added.</t>
+             TTL &gt;= 0 and TTL &lt;= 0x7FFFFFFF<vspace />
+             CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added.</t>
            </list>
          </t>
 
          <t>Note that it is valid for the RDATA of an added or removed DNS Resource Record to be empty (zero length).
          For example, an <xref target="RFC3123">Address Prefix List Resource Record</xref> may have empty RDATA.
-         Therefore, a change notification with RDLEN=0 does not automatically indicate a remove notification.
-         If RDLEN=0 and TTL is the in the range 0 - 0x7FFFFFFF, this change notification signals the addition of a
+         Therefore, a change notification with RDLEN = 0 does not automatically indicate a remove notification.
+         If RDLEN = 0 and TTL is the in the range 0 - 0x7FFFFFFF, this change notification signals the addition of a
          record with the given name, type, class, and empty RDATA.
-         If RDLEN=0 and TTL = 0xFFFFFFFF, this change notification signals the removal specifically of that single
+         If RDLEN = 0 and TTL = 0xFFFFFFFF, this change notification signals the removal specifically of that single
          record with the given name, type, class, and empty RDATA.</t>
 
          <t>If the TTL is any value other than 0xFFFFFFFF, 0xFFFFFFFE, or a value in the range 0 - 0x7FFFFFFF,
@@ -849,7 +849,7 @@
          If the CLASS in the SUBSCRIBE request was not ANY (255) then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.
          If a matching active subscription on that session is not found, then that individual record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The DSO session is not closed. This is to allow for the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while inbound PUSH messages for that subscription from the server are still in flight.</t>
   
-         <t>In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE=ANY (255). It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</t>
+         <t>In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE = 255 (ANY). It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</t>
   
          <t>The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" PUSH message, not three separate "delete an individual RR from a name" PUSH messages. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" PUSH message, not two separate "delete an RRset from a name" PUSH messages.</t>
   
@@ -1096,6 +1096,7 @@
 
        <t>If the session is forcibly closed at the TCP level by sending a
        RST from either end of the connection, data may be lost.</t>
+<?rfc needLines="10" ?>
      </section>
 
      <section title="Client Fallback to Polling" anchor="polling">
