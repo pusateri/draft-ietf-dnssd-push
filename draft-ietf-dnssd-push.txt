@@ -1689,7 +1689,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    cancelled at once by the client closing the DSO session.  When a
    client terminates an individual subscription (via UNSUBSCRIBE) or all
    subscriptions on that DSO session (by ending the session) it is
-   signaling to the server that it is longer interested in receiving
+   signaling to the server that it is no longer interested in receiving
    those particular updates.  It is informing the server that the server
    may release any state information it has been keeping with regards to
    these particular subscriptions.
