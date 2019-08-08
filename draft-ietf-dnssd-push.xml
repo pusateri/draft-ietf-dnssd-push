@@ -209,7 +209,7 @@
 
      <t>The <xref target="LLQ">DNS Long-Lived Queries (LLQ) mechanism</xref> is an existing deployed solution to provide asynchronous change notifications, used by Apple's <xref target="RFC6281">Back to My Mac</xref> service
      introduced in Mac OS X 10.5 Leopard in 2007.
-     Back to My Mac was designed in an era when the data center operations staff asserted that it was impossible for a server to handle large numbers of mostly-idle TCP connections, so LLQ was defined as a UDP-based protocol, effectively replicating much of TCP's connection state management logic in user space, and creating its own poor imitations of existing TCP features like the three-way handshake, flow control, and reliability.</t>
+     Back to My Mac was designed in an era when the data center operations staff asserted that it was impossible for a server to handle large numbers of mostly-idle TCP connections, so LLQ was defined as a UDP-based protocol, effectively replicating much of TCP's connection state management logic in user space, and creating its own imitation of existing TCP features like the three-way handshake, flow control, and reliability.</t>
 
      <t>This document builds on experience gained with the LLQ protocol, with an improved design.
      Instead of using UDP, this specification uses
@@ -321,7 +321,7 @@
 
      <t>A typical DNS Push Notification client will immediately issue a DSO
      Keepalive operation to request a session timeout and/or keepalive interval
-     longer than the the 15-second default values, but this is not required.
+     longer than the 15-second default values, but this is not required.
      A DNS Push Notification client MAY issue other requests on the
      session first, and only issue a DSO Keepalive
      operation later if it determines that to be necessary.

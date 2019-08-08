@@ -201,7 +201,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    server to handle large numbers of mostly-idle TCP connections, so LLQ
    was defined as a UDP-based protocol, effectively replicating much of
    TCP's connection state management logic in user space, and creating
-   its own poor imitations of existing TCP features like the three-way
+   its own imitation of existing TCP features like the three-way
    handshake, flow control, and reliability.
 
    This document builds on experience gained with the LLQ protocol, with
@@ -412,13 +412,13 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    A typical DNS Push Notification client will immediately issue a DSO
    Keepalive operation to request a session timeout and/or keepalive
-   interval longer than the the 15-second default values, but this is
-   not required.  A DNS Push Notification client MAY issue other
-   requests on the session first, and only issue a DSO Keepalive
-   operation later if it determines that to be necessary.  Sending
-   either a DSO Keepalive operation or a Push Notification subscription
-   request over the TLS/TCP connection to the server signals the
-   client's support of DSO and serves to establish a DSO session.
+   interval longer than the 15-second default values, but this is not
+   required.  A DNS Push Notification client MAY issue other requests on
+   the session first, and only issue a DSO Keepalive operation later if
+   it determines that to be necessary.  Sending either a DSO Keepalive
+   operation or a Push Notification subscription request over the TLS/
+   TCP connection to the server signals the client's support of DSO and
+   serves to establish a DSO session.
 
    In accordance with the current set of active subscriptions, the
    server sends relevant asynchronous Push Notifications to the client.
@@ -1980,15 +1980,19 @@ Internet-Draft           DNS Push Notifications              August 2019
    This document also defines four new DNS Stateful Operation TLV types
    to be recorded in the IANA DSO Type Code Registry.
 
-   +-------------+------------+--------+-----------------+-------------+
-   | Name        |   Value    | Early  |      Status     | Definition  |
-   |             |            |  Data  |                 |             |
-   +-------------+------------+--------+-----------------+-------------+
-   | SUBSCRIBE   | TBA (0x40) |   OK   | Standards Track | Section 6.2 |
-   | PUSH        | TBA (0x41) |   NO   | Standards Track | Section 6.3 |
-   | UNSUBSCRIBE | TBA (0x42) |   NO   | Standards Track | Section 6.4 |
-   | RECONFIRM   | TBA (0x43) |   NO   | Standards Track | Section 6.5 |
-   +-------------+------------+--------+-----------------+-------------+
+   +-------------+------------+---------+-----------------+------------+
+   | Name        |   Value    |  Early  |      Status     | Definition |
+   |             |            |   Data  |                 |            |
+   +-------------+------------+---------+-----------------+------------+
+   | SUBSCRIBE   | TBA (0x40) |    OK   | Standards Track | Section 6. |
+   |             |            |         |                 | 2          |
+   | PUSH        | TBA (0x41) |    NO   | Standards Track | Section 6. |
+   |             |            |         |                 | 3          |
+   | UNSUBSCRIBE | TBA (0x42) |    NO   | Standards Track | Section 6. |
+   |             |            |         |                 | 4          |
+   | RECONFIRM   | TBA (0x43) |    NO   | Standards Track | Section 6. |
+   |             |            |         |                 | 5          |
+   +-------------+------------+---------+-----------------+------------+
 
                 Table 5: IANA DSO TLV Type Code Assignments
 
@@ -2006,10 +2010,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    Thaler, Brian Trammell, Bernie Volz, Eric Vyncke, Christopher Wood,
    Liang Xia, and Soraia Zlatkovic.  Ted Lemon provided clarifying text
    that was greatly appreciated.
-
-
-
-
 
 
 
