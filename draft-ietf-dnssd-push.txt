@@ -294,14 +294,24 @@ Internet-Draft           DNS Push Notifications                July 2019
    just in case it might be needed later.
 
    Generally, as described in the DNS Stateful Operations specification
-   [RFC8490], a client must not keep a session to a server open
+   [RFC8490], a client must not keep a DSO session to a server open
    indefinitely if it has no subscriptions (or other operations) active
-   on that session.  A client MAY close a session as soon as it becomes
-   idle, and then if needed in the future, open a new session when
-   required.  Alternatively, a client MAY speculatively keep an idle
-   session open for some time, subject to the constraint that it must
-   not keep a session open that has been idle for more than the
+   on that session.  A client MAY close a DSO session immediately it
+   becomes idle, and then if needed in the future, open a new session
+   when required.  Alternatively, a client MAY speculatively keep an
+   idle DSO session open for some time, subject to the constraint that
+   it must not keep a session open that has been idle for more than the
    session's idle timeout (15 seconds by default) [RFC8490].
+
+   Note that a DSO session which has an active DNS Push Notification
+   subscription is not considered idle, even if there is no traffic
+   flowing for an extended period of time.  In this case the DSO
+   inactivity timeout does not apply, because the session is not
+   inactive, but the keepalive interval does still apply, to ensure
+   generation of sufficient messages to maintain state in middleboxes
+   (such at NAT gateways or firewalls) and for the client and server to
+   periodically verify that they still have connectivity to each other.
+   This is described in Section 6.2 of the DSO specification [RFC8490].
 
 4.  State Considerations
 
@@ -317,16 +327,6 @@ Internet-Draft           DNS Push Notifications                July 2019
    for the zone and distribute subscriptions at the client's discretion.
    In this way, both clients and servers can react to resource
    constraints.
-
-
-
-
-
-
-
-
-
-
 
 
 

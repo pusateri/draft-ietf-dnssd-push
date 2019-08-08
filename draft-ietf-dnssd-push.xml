@@ -255,8 +255,17 @@
 
      <t>(b) A DNS Push Notification client SHOULD NOT routinely keep a DNS Push Notification subscription active 24 hours a day, 7 days a week, just to keep a list in memory up to date so that if the user does choose to bring up an on-screen display of that data, it can be displayed really fast. DNS Push Notifications are designed to be fast enough that there is no need to pre-load a "warm" list in memory just in case it might be needed later.</t>
 
-     <t>Generally, as described in the <xref target="RFC8490">DNS Stateful Operations specification</xref>, a client must not keep a session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a session as soon as it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle session open for some time, subject to the constraint that it must not keep a session open that has been idle for more than the session's idle timeout (15 seconds by default) <xref target="RFC8490"/>.</t>
-<?rfc needLines="20" ?>
+     <t>Generally, as described in the <xref target="RFC8490">DNS Stateful Operations specification</xref>, a client must not keep a DSO session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client MAY close a DSO session immediately it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client MAY speculatively keep an idle DSO session open for some time, subject to the constraint that it must not keep a session open that has been idle for more than the session's idle timeout (15 seconds by default) <xref target="RFC8490"/>.</t>
+
+     <t>Note that a DSO session which has an active DNS Push Notification subscription is not considered idle,
+     even if there is no traffic flowing for an extended period of time.
+     In this case the DSO inactivity timeout does not apply, because the session is not inactive,
+     but the keepalive interval does still apply, to ensure generation of
+     sufficient messages to maintain state in middleboxes (such at NAT gateways or firewalls)
+     and for the client and server to periodically verify that they still have connectivity to each other.
+     This is described in Section 6.2 of the <xref target="RFC8490">DSO specification</xref>.</t>
+
+<?rfc needLines="14" ?>
    </section>
 
    <section title="State Considerations">
