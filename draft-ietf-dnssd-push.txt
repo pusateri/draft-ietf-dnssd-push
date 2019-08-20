@@ -773,10 +773,10 @@ Internet-Draft           DNS Push Notifications              August 2019
    NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS
    of an existing active subscription on that DSO session.  For the
    purpose of this matching, the established DNS case-insensitivity for
-   US-ASCII letters applies (e.g., "example.com" and "Example.com" are
-   the same).  If a server receives such a duplicate SUBSCRIBE message,
-   this is a fatal error and the server MUST forcibly abort the
-   connection immediately.
+   US-ASCII letters [RFC0020] applies (e.g., "example.com" and
+   "Example.com" are the same).  If a server receives such a duplicate
+   SUBSCRIBE message, this is a fatal error and the server MUST forcibly
+   abort the connection immediately.
 
 
 
@@ -2022,6 +2022,10 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 10.1.  Normative References
 
+   [RFC0020]  Cerf, V., "ASCII format for network interchange", STD 80,
+              RFC 20, DOI 10.17487/RFC0020, October 1969,
+              <https://www.rfc-editor.org/info/rfc20>.
+
    [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768,
               DOI 10.17487/RFC0768, August 1980,
               <https://www.rfc-editor.org/info/rfc768>.
@@ -2062,10 +2066,6 @@ Internet-Draft           DNS Push Notifications              August 2019
               DOI 10.17487/RFC2782, February 2000,
               <https://www.rfc-editor.org/info/rfc2782>.
 
-   [RFC6066]  Eastlake 3rd, D., "Transport Layer Security (TLS)
-              Extensions: Extension Definitions", RFC 6066,
-              DOI 10.17487/RFC6066, January 2011,
-              <https://www.rfc-editor.org/info/rfc6066>.
 
 
 
@@ -2073,6 +2073,11 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 37]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [RFC6066]  Eastlake 3rd, D., "Transport Layer Security (TLS)
+              Extensions: Extension Definitions", RFC 6066,
+              DOI 10.17487/RFC6066, January 2011,
+              <https://www.rfc-editor.org/info/rfc6066>.
 
    [RFC6335]  Cotton, M., Eggert, L., Touch, J., Westerlund, M., and S.
               Cheshire, "Internet Assigned Numbers Authority (IANA)
@@ -2118,17 +2123,16 @@ Internet-Draft           DNS Push Notifications              August 2019
               RFC 8490, DOI 10.17487/RFC8490, March 2019,
               <https://www.rfc-editor.org/info/rfc8490>.
 
-   [ST]       "Service Name and Transport Protocol Port Number
-              Registry", <http://www.iana.org/assignments/
-              service-names-port-numbers/>.
-
-
 
 
 Pusateri & Cheshire     Expires February 8, 2020               [Page 38]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [ST]       "Service Name and Transport Protocol Port Number
+              Registry", <http://www.iana.org/assignments/
+              service-names-port-numbers/>.
 
 10.2.  Informative References
 
@@ -2174,10 +2178,6 @@ Internet-Draft           DNS Push Notifications              August 2019
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
-   [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
-              "Understanding Apple's Back to My Mac (BTMM) Service",
-              RFC 6281, DOI 10.17487/RFC6281, June 2011,
-              <https://www.rfc-editor.org/info/rfc6281>.
 
 
 
@@ -2185,6 +2185,11 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
+              "Understanding Apple's Back to My Mac (BTMM) Service",
+              RFC 6281, DOI 10.17487/RFC6281, June 2011,
+              <https://www.rfc-editor.org/info/rfc6281>.
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
@@ -2230,17 +2235,16 @@ Internet-Draft           DNS Push Notifications              August 2019
               Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
               January 2019, <https://www.rfc-editor.org/info/rfc8499>.
 
-   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
-              Internet Protocol Journal, Cisco Systems, Volume 9,
-              Number 4, December 2006.
-
-
 
 
 Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
+              Internet Protocol Journal, Cisco Systems, Volume 9,
+              Number 4, December 2006.
 
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
@@ -2264,10 +2268,6 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
-
-
-
-
 
 
 

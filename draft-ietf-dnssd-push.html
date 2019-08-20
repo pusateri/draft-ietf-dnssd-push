@@ -653,7 +653,7 @@
 <p class="figure">Figure 1: SUBSCRIBE Request</p>
 <p id="rfc.section.6.2.1.p.6">The DSO-DATA for a SUBSCRIBE request MUST contain exactly one NAME, TYPE, and CLASS.  Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE DSO request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.2.1.p.7">If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the DSO session between the client and the server is closed.</p>
-<p id="rfc.section.6.2.1.p.8">SUBSCRIBE requests on a given session MUST be unique.  A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session.  For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same).  If a server receives such a duplicate SUBSCRIBE message, this is a fatal error and the server MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.2.1.p.8">SUBSCRIBE requests on a given session MUST be unique.  A client MUST NOT send a SUBSCRIBE message that duplicates the NAME, TYPE and CLASS of an existing active subscription on that DSO session.  For the purpose of this matching, the established DNS case-insensitivity for US-ASCII letters <a href="#RFC0020" class="xref">[RFC0020]</a> applies (e.g., "example.com" and "Example.com" are the same).  If a server receives such a duplicate SUBSCRIBE message, this is a fatal error and the server MUST forcibly abort the connection immediately.</p>
 <p id="rfc.section.6.2.1.p.9">DNS wildcarding is not supported. That is, a wildcard ("*") in a SUBSCRIBE message matches only a literal wildcard character ("*") in the zone, and nothing else.</p>
 <p id="rfc.section.6.2.1.p.10">Aliasing is not supported. That is, a CNAME in a SUBSCRIBE message matches only a literal CNAME record in the zone, and no other records with the same owner name.</p>
 <p id="rfc.section.6.2.1.p.11">A client may SUBSCRIBE to records that are unknown to the server at the time of the request (providing that the name falls within one of the zone(s) the server is responsible for) and this is not an error. The server MUST NOT return NXDOMAIN in this case. The server MUST accept these requests and send Push Notifications if and when matching records are found in the future.</p>
@@ -1202,6 +1202,11 @@
 <h1 id="rfc.references.1">
 <a href="#rfc.references.1">10.1.</a> Normative References</h1>
 <table><tbody>
+<tr>
+<td class="reference"><b id="RFC0020">[RFC0020]</b></td>
+<td class="top">
+<a>Cerf, V.</a>, "<a href="https://tools.ietf.org/html/rfc20">ASCII format for network interchange</a>", STD 80, RFC 20, DOI 10.17487/RFC0020, October 1969.</td>
+</tr>
 <tr>
 <td class="reference"><b id="RFC0768">[RFC0768]</b></td>
 <td class="top">

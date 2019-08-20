@@ -6,6 +6,7 @@
     There has to be one entity for each item to be referenced.
     An alternate method (rfc include) is described in the references. -->
 
+<!ENTITY RFC0020 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0020.xml">
 <!ENTITY RFC0768 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0768.xml">
 <!ENTITY RFC0793 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0793.xml">
 <!ENTITY RFC1034 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.1034.xml">
@@ -543,7 +544,7 @@
          A client MUST NOT send a SUBSCRIBE message that duplicates the
          NAME, TYPE and CLASS of an existing active subscription on that DSO session.
          For the purpose of this matching, the established DNS case-insensitivity
-         for US-ASCII letters applies (e.g., "example.com" and "Example.com" are the same).
+         for US-ASCII letters <xref target="RFC0020" /> applies (e.g., "example.com" and "Example.com" are the same).
          If a server receives such a duplicate SUBSCRIBE message,
          this is a fatal error and the server MUST forcibly abort the connection immediately.</t>
 
@@ -1322,6 +1323,7 @@
     filing system or remote ones accessed by http (http://domain/dir/... ).-->
 
    <references title="Normative References">
+     &RFC0020;
      &RFC0768;
      &RFC0793;
      &RFC1034;
