@@ -296,9 +296,9 @@ Internet-Draft           DNS Push Notifications              August 2019
    Generally, as described in the DNS Stateful Operations specification
    [RFC8490], a client must not keep a DSO session to a server open
    indefinitely if it has no subscriptions (or other operations) active
-   on that session.  A client MAY close a DSO session immediately it
+   on that session.  A client may close a DSO session immediately it
    becomes idle, and then if needed in the future, open a new session
-   when required.  Alternatively, a client MAY speculatively keep an
+   when required.  Alternatively, a client may speculatively keep an
    idle DSO session open for some time, subject to the constraint that
    it must not keep a session open that has been idle for more than the
    session's idle timeout (15 seconds by default) [RFC8490].
@@ -710,8 +710,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields MUST be zero,
-   and the corresponding four sections MUST be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields must be zero,
+   and the corresponding four sections must be empty (i.e., absent).
 
    The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
 
