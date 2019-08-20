@@ -19,7 +19,6 @@
 <!ENTITY RFC2782 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2782.xml">
 <!ENTITY RFC4287 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4287.xml">
 <!ENTITY RFC4953 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4953.xml">
-<!ENTITY RFC5077 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5077.xml">
 <!ENTITY RFC6066 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6066.xml">
 <!ENTITY RFC6281 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6281.xml">
 <!ENTITY RFC6762 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6762.xml">
@@ -1221,7 +1220,8 @@
      </section>
 
      <section title="TLS Session Resumption" anchor="resumption">
-       <t>TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <xref target="RFC8446"/> or operate in stateless mode by sending a Session Ticket <xref target="RFC5077"/> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
+       <t>TLS Session Resumption <xref target="RFC8446"/> is permissible on DNS
+       Push Notification servers.  However, closing the TLS connection terminates the DSO session. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
 <?rfc needLines="30" ?>
      </section>
    </section>
@@ -1369,7 +1369,6 @@
      &RFC3123;
      &RFC4287;
      &RFC4953;
-     &RFC5077;
      &RFC6281;
      &RFC6762;
      &RFC6763;

@@ -1126,7 +1126,7 @@
 <h1 id="rfc.section.7.4">
 <a href="#rfc.section.7.4">7.4.</a> <a href="#resumption" id="resumption">TLS Session Resumption</a>
 </h1>
-<p id="rfc.section.7.4.p.1">TLS Session Resumption is permissible on DNS Push Notification servers. The server may keep TLS state with Session IDs <a href="#RFC8446" class="xref">[RFC8446]</a> or operate in stateless mode by sending a Session Ticket <a href="#RFC5077" class="xref">[RFC5077]</a> to the client for it to store. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</p>
+<p id="rfc.section.7.4.p.1">TLS Session Resumption <a href="#RFC8446" class="xref">[RFC8446]</a> is permissible on DNS Push Notification servers.  However, closing the TLS connection terminates the DSO session. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</p>
 <h1 id="rfc.section.8">
 <a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a>
 </h1>
@@ -1352,11 +1352,6 @@
 <td class="reference"><b id="RFC4953">[RFC4953]</b></td>
 <td class="top">
 <a>Touch, J.</a>, "<a href="https://tools.ietf.org/html/rfc4953">Defending TCP Against Spoofing Attacks</a>", RFC 4953, DOI 10.17487/RFC4953, July 2007.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC5077">[RFC5077]</b></td>
-<td class="top">
-<a>Salowey, J.</a>, <a>Zhou, H.</a>, <a>Eronen, P.</a> and <a>H. Tschofenig</a>, "<a href="https://tools.ietf.org/html/rfc5077">Transport Layer Security (TLS) Session Resumption without Server-Side State</a>", RFC 5077, DOI 10.17487/RFC5077, January 2008.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC6281">[RFC6281]</b></td>

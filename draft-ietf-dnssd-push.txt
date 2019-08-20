@@ -1919,15 +1919,15 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 7.4.  TLS Session Resumption
 
-   TLS Session Resumption is permissible on DNS Push Notification
-   servers.  The server may keep TLS state with Session IDs [RFC8446] or
-   operate in stateless mode by sending a Session Ticket [RFC5077] to
-   the client for it to store.  However, closing the TLS connection
-   terminates the DSO session.  When the TLS session is resumed, the DNS
-   Push Notification server will not have any subscription state and
-   will proceed as with any other new DSO session.  Use of TLS Session
+   TLS Session Resumption [RFC8446] is permissible on DNS Push
+   Notification servers.  However, closing the TLS connection terminates
+   the DSO session.  However, closing the TLS connection terminates the
+   DSO session.  When the TLS session is resumed, the DNS Push
+   Notification server will not have any subscription state and will
+   proceed as with any other new DSO session.  Use of TLS Session
    Resumption may allow a TLS connection to be set up more quickly, but
    the client will still have to recreate any desired subscriptions.
+
 
 
 
@@ -2174,10 +2174,10 @@ Internet-Draft           DNS Push Notifications              August 2019
               RFC 4953, DOI 10.17487/RFC4953, July 2007,
               <https://www.rfc-editor.org/info/rfc4953>.
 
-   [RFC5077]  Salowey, J., Zhou, H., Eronen, P., and H. Tschofenig,
-              "Transport Layer Security (TLS) Session Resumption without
-              Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
-              January 2008, <https://www.rfc-editor.org/info/rfc5077>.
+   [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
+              "Understanding Apple's Back to My Mac (BTMM) Service",
+              RFC 6281, DOI 10.17487/RFC6281, June 2011,
+              <https://www.rfc-editor.org/info/rfc6281>.
 
 
 
@@ -2185,11 +2185,6 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
-
-   [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
-              "Understanding Apple's Back to My Mac (BTMM) Service",
-              RFC 6281, DOI 10.17487/RFC6281, June 2011,
-              <https://www.rfc-editor.org/info/rfc6281>.
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
@@ -2235,16 +2230,17 @@ Internet-Draft           DNS Push Notifications              August 2019
               Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
               January 2019, <https://www.rfc-editor.org/info/rfc8499>.
 
+   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
+              Internet Protocol Journal, Cisco Systems, Volume 9,
+              Number 4, December 2006.
+
+
 
 
 Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
-
-   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
-              Internet Protocol Journal, Cisco Systems, Volume 9,
-              Number 4, December 2006.
 
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
@@ -2268,6 +2264,10 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
+
+
+
+
 
 
 
