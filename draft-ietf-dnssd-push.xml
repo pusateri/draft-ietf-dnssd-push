@@ -1336,7 +1336,9 @@
      &RFC6895;
      &RFC7673;
      &RFC7766;
+     &RFC7858;
      &RFC8174;
+     &RFC8310;
      &RFC8446;
      &RFC8490;
 
@@ -1376,7 +1378,6 @@
      &RFC6887;
      &RFC7413;
      &RFC7719;
-     &RFC7858;
      &RFC8010;
      &RFC8011;
      &RFC8499;
@@ -1405,8 +1406,6 @@
 <format type='TXT'
         target='http://www.ietf.org/internet-drafts/draft-sekar-dns-llq-03.txt' />
 </reference>
-
-     &RFC8310;
 
 <reference anchor='DisProx'>
 <front>

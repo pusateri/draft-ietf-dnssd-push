@@ -95,7 +95,7 @@ Table of Contents
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  38
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  39
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
 
 
@@ -2095,9 +2095,19 @@ Internet-Draft           DNS Push Notifications              August 2019
               Requirements", RFC 7766, DOI 10.17487/RFC7766, March 2016,
               <https://www.rfc-editor.org/info/rfc7766>.
 
+   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
+              and P. Hoffman, "Specification for DNS over Transport
+              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
+              2016, <https://www.rfc-editor.org/info/rfc7858>.
+
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8310]  Dickinson, S., Gillmor, D., and T. Reddy, "Usage Profiles
+              for DNS over TLS and DNS over DTLS", RFC 8310,
+              DOI 10.17487/RFC8310, March 2018,
+              <https://www.rfc-editor.org/info/rfc8310>.
 
    [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
               Version 1.3", RFC 8446, DOI 10.17487/RFC8446, August 2018,
@@ -2112,16 +2122,6 @@ Internet-Draft           DNS Push Notifications              August 2019
               Registry", <http://www.iana.org/assignments/
               service-names-port-numbers/>.
 
-10.2.  Informative References
-
-   [BCP195]   Sheffer, Y., Holz, R., and P. Saint-Andre,
-              "Recommendations for Secure Use of Transport Layer
-              Security (TLS) and Datagram Transport Layer Security
-              (DTLS)", BCP 195, RFC 7525, May 2015,
-              <http://www.rfc-editor.org/info/bcp195>.
-
-
-
 
 
 
@@ -2129,6 +2129,14 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 38]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+10.2.  Informative References
+
+   [BCP195]   Sheffer, Y., Holz, R., and P. Saint-Andre,
+              "Recommendations for Secure Use of Transport Layer
+              Security (TLS) and Datagram Transport Layer Security
+              (DTLS)", BCP 195, RFC 7525, May 2015,
+              <http://www.rfc-editor.org/info/bcp195>.
 
    [DisProx]  Cheshire, S., "Discovery Proxy for Multicast DNS-Based
               Service Discovery", draft-ietf-dnssd-hybrid-10 (work in
@@ -2171,20 +2179,17 @@ Internet-Draft           DNS Push Notifications              August 2019
               Server-Side State", RFC 5077, DOI 10.17487/RFC5077,
               January 2008, <https://www.rfc-editor.org/info/rfc5077>.
 
-   [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
-              "Understanding Apple's Back to My Mac (BTMM) Service",
-              RFC 6281, DOI 10.17487/RFC6281, June 2011,
-              <https://www.rfc-editor.org/info/rfc6281>.
-
-
-
-
 
 
 Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [RFC6281]  Cheshire, S., Zhu, Z., Wakikawa, R., and L. Zhang,
+              "Understanding Apple's Back to My Mac (BTMM) Service",
+              RFC 6281, DOI 10.17487/RFC6281, June 2011,
+              <https://www.rfc-editor.org/info/rfc6281>.
 
    [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
               DOI 10.17487/RFC6762, February 2013,
@@ -2216,11 +2221,6 @@ Internet-Draft           DNS Push Notifications              August 2019
               Terminology", RFC 7719, DOI 10.17487/RFC7719, December
               2015, <https://www.rfc-editor.org/info/rfc7719>.
 
-   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
-              and P. Hoffman, "Specification for DNS over Transport
-              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
-              2016, <https://www.rfc-editor.org/info/rfc7858>.
-
    [RFC8010]  Sweet, M. and I. McDonald, "Internet Printing
               Protocol/1.1: Encoding and Transport", STD 92, RFC 8010,
               DOI 10.17487/RFC8010, January 2017,
@@ -2231,9 +2231,9 @@ Internet-Draft           DNS Push Notifications              August 2019
               DOI 10.17487/RFC8011, January 2017,
               <https://www.rfc-editor.org/info/rfc8011>.
 
-
-
-
+   [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
+              Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
+              January 2019, <https://www.rfc-editor.org/info/rfc8499>.
 
 
 
@@ -2241,15 +2241,6 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
-
-   [RFC8310]  Dickinson, S., Gillmor, D., and T. Reddy, "Usage Profiles
-              for DNS over TLS and DNS over DTLS", RFC 8310,
-              DOI 10.17487/RFC8310, March 2018,
-              <https://www.rfc-editor.org/info/rfc8310>.
-
-   [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
-              Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
-              January 2019, <https://www.rfc-editor.org/info/rfc8499>.
 
    [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
               Internet Protocol Journal, Cisco Systems, Volume 9,
@@ -2277,6 +2268,15 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
+
+
+
+
+
+
+
+
+
 
 
 
