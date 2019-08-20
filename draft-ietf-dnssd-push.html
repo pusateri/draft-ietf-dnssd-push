@@ -895,7 +895,7 @@
 <h1 id="rfc.section.6.5">
 <a href="#rfc.section.6.5">6.5.</a> <a href="#reconfirm" id="reconfirm">DNS Push Notification RECONFIRM</a>
 </h1>
-<p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</p>
+<p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine. For more information on the dns_sd.h API, see <a href="#dns_sd_h" class="xref">[dns_sd_h]</a>.</p>
 <p id="rfc.section.6.5.p.2">For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</p>
 <p id="rfc.section.6.5.p.3">Frequent use of RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting and remedying such network problems.</p>
 <p id="rfc.section.6.5.p.4">If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
@@ -1299,6 +1299,10 @@
 <td class="reference"><b id="DisProx">[DisProx]</b></td>
 <td class="top">
 <a>Cheshire, S.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-dnssd-hybrid-10">Discovery Proxy for Multicast DNS-Based Service Discovery</a>", Internet-Draft draft-ietf-dnssd-hybrid-10, March 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="dns_sd_h">[dns_sd_h]</b></td>
+<td class="top">"<a href="https://opensource.apple.com/source/mDNSResponder/mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html">dns_sd.h API</a>"</td>
 </tr>
 <tr>
 <td class="reference"><b id="I-D.ietf-tcpm-rack">[I-D.ietf-tcpm-rack]</b></td>

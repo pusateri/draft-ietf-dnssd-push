@@ -956,7 +956,7 @@
      </section>
 
      <section title="DNS Push Notification RECONFIRM" anchor="reconfirm">
-       <t>Sometimes, particularly when used with a <xref target="DisProx">Discovery Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</t>
+       <t>Sometimes, particularly when used with a <xref target="DisProx">Discovery Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine. For more information on the dns_sd.h API, see <xref target="dns_sd_h"/>.</t>
        
        <t>For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</t>
 
@@ -1443,6 +1443,14 @@
      <reference anchor='obs' target="https://en.wikipedia.org/wiki/Observer_pattern">
        <front>
          <title>Observer Pattern</title>
+          <author/>
+          <date/>
+       </front>
+     </reference>
+
+     <reference anchor='dns_sd_h' target="https://opensource.apple.com/source/mDNSResponder/mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html">
+       <front>
+         <title>dns_sd.h API</title>
           <author/>
           <date/>
        </front>

@@ -1472,7 +1472,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    Multicast DNS implementation being used.  For example, a Discovery
    Proxy built on Apple's dns_sd.h API responds to a DNS Push
    Notification RECONFIRM message by calling the underlying API's
-   DNSServiceReconfirmRecord() routine.
+   DNSServiceReconfirmRecord() routine.  For more information on the
+   dns_sd.h API, see [dns_sd_h].
 
    For other types of DNS server, the RECONFIRM operation is currently
    undefined, and SHOULD result in a NOERROR response, but otherwise
@@ -1497,7 +1498,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    RECONFIRM message is sent with the QR bit set indicating that it is a
    response, this is a fatal error and the receiver MUST forcibly abort
    the connection immediately.
-
 
 
 
@@ -2118,10 +2118,10 @@ Internet-Draft           DNS Push Notifications              August 2019
               Service Discovery", draft-ietf-dnssd-hybrid-10 (work in
               progress), March 2019.
 
-   [I-D.ietf-tcpm-rack]
-              Cheng, Y., Cardwell, N., Dukkipati, N., and P. Jha, "RACK:
-              a time-based fast loss detection algorithm for TCP",
-              draft-ietf-tcpm-rack-05 (work in progress), April 2019.
+   [dns_sd_h]
+              "dns_sd.h API",
+              <https://opensource.apple.com/source/mDNSResponder/
+              mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html>.
 
 
 
@@ -2129,6 +2129,11 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 38]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [I-D.ietf-tcpm-rack]
+              Cheng, Y., Cardwell, N., Dukkipati, N., and P. Jha, "RACK:
+              a time-based fast loss detection algorithm for TCP",
+              draft-ietf-tcpm-rack-05 (work in progress), April 2019.
 
    [LLQ]      Cheshire, S. and M. Krochmal, "DNS Long-Lived Queries",
               draft-sekar-dns-llq-03 (work in progress), March 2019.
@@ -2170,6 +2175,17 @@ Internet-Draft           DNS Push Notifications              August 2019
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
               <https://www.rfc-editor.org/info/rfc6763>.
 
+
+
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
+
    [RFC6824]  Ford, A., Raiciu, C., Handley, M., and O. Bonaventure,
               "TCP Extensions for Multipath Operation with Multiple
               Addresses", RFC 6824, DOI 10.17487/RFC6824, January 2013,
@@ -2178,13 +2194,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    [RFC6886]  Cheshire, S. and M. Krochmal, "NAT Port Mapping Protocol
               (NAT-PMP)", RFC 6886, DOI 10.17487/RFC6886, April 2013,
               <https://www.rfc-editor.org/info/rfc6886>.
-
-
-
-Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
-
-Internet-Draft           DNS Push Notifications              August 2019
-
 
    [RFC6887]  Wing, D., Ed., Cheshire, S., Boucadair, M., Penno, R., and
               P. Selkirk, "Port Control Protocol (PCP)", RFC 6887,
@@ -2225,15 +2234,6 @@ Internet-Draft           DNS Push Notifications              August 2019
               DOI 10.17487/RFC8310, March 2018,
               <https://www.rfc-editor.org/info/rfc8310>.
 
-   [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
-              Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
-              January 2019, <https://www.rfc-editor.org/info/rfc8499>.
-
-   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
-              Internet Protocol Journal, Cisco Systems, Volume 9,
-              Number 4, December 2006.
-
-
 
 
 
@@ -2241,6 +2241,14 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
+              Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
+              January 2019, <https://www.rfc-editor.org/info/rfc8499>.
+
+   [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
+              Internet Protocol Journal, Cisco Systems, Volume 9,
+              Number 4, December 2006.
 
    [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
               Subscribe", XSF XEP 0060, July 2010.
@@ -2264,14 +2272,6 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
-
-
-
-
-
-
-
-
 
 
 
