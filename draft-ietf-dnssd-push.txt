@@ -1280,7 +1280,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    client MUST validate that the records being added or deleted
    correspond with at least one currently active subscription on that
    session.  Specifically, the record name MUST match the name given in
-   a SUBSCRIBE request, subject to the usual established DNS case-
+   the SUBSCRIBE request, subject to the usual established DNS case-
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
 
 

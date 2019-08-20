@@ -856,7 +856,7 @@
 :             Repeated As Necessary             :   /
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
-         <t>When processing the records received in a PUSH Message, the receiving client MUST validate that the records being added or deleted correspond with at least one currently active subscription on that session. Specifically, the record name MUST match the name given in a SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.
+         <t>When processing the records received in a PUSH Message, the receiving client MUST validate that the records being added or deleted correspond with at least one currently active subscription on that session. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.
          If the TYPE in the SUBSCRIBE request was not ANY (255) then the TYPE of the record must match the TYPE given in the SUBSCRIBE request.
          If the CLASS in the SUBSCRIBE request was not ANY (255) then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.
          If a matching active subscription on that session is not found, then that individual record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The DSO session is not closed. This is to allow for the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while inbound PUSH messages for that subscription from the server are still in flight.</t>
