@@ -474,7 +474,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    of VPN tunnels and split-view DNS can create some additional
    complexity in the client software here; the techniques to handle VPN
    tunnels and split-view DNS for DNS Push Notifications are the same as
-   those already used to handle this for normal DNS queries.
+   those already used to handle this for normal DNS queries.  (See
+   "Split DNS" in Section 6 of [RFC8499]).
 
    If the recursive resolver does not support DNS over TLS, or supports
    DNS over TLS but is not listening on TCP port 853, or supports DNS
@@ -496,8 +497,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    via the usual mechanisms for VPN software) the client may handle
    these failures by contacting the zone's DNS Push server directly.
 
-   In any of the cases described above where the client fails to
-   establish a DNS Push Notification subscription via its configured
+
 
 
 
@@ -506,6 +506,8 @@ Pusateri & Cheshire     Expires February 8, 2020                [Page 9]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
+   In any of the cases described above where the client fails to
+   establish a DNS Push Notification subscription via its configured
    recursive resolver, the client should proceed to discover the
    appropriate server for direct communication.  The client MUST also
    determine which TCP port on the server is listening for connections,
@@ -552,8 +554,6 @@ Internet-Draft           DNS Push Notifications              August 2019
        requested name in the Authority Section.  If the SOA record is
        received in the Authority Section, then the client has succeeded
        in discovering the information it needs.
-       (This language is not placing any new requirements on DNS
-       recursive resolvers.  This text merely describes the existing
 
 
 
@@ -562,6 +562,8 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 10]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
+       (This language is not placing any new requirements on DNS
+       recursive resolvers.  This text merely describes the existing
        operation of the DNS protocol regarding negative responses
        [RFC2308].)
 
@@ -608,8 +610,6 @@ Internet-Draft           DNS Push Notifications              August 2019
        accept a subscription request, or is not reachable within a
        reasonable time, as determined by the client, then a subsequent
        server is to be contacted.
-
-
 
 
 
@@ -2225,13 +2225,13 @@ Internet-Draft           DNS Push Notifications              August 2019
               DOI 10.17487/RFC8310, March 2018,
               <https://www.rfc-editor.org/info/rfc8310>.
 
+   [RFC8499]  Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
+              Terminology", BCP 219, RFC 8499, DOI 10.17487/RFC8499,
+              January 2019, <https://www.rfc-editor.org/info/rfc8499>.
+
    [SYN]      Eddy, W., "Defenses Against TCP SYN Flooding Attacks", The
               Internet Protocol Journal, Cisco Systems, Volume 9,
               Number 4, December 2006.
-
-   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
-              Subscribe", XSF XEP 0060, July 2010.
-
 
 
 
@@ -2241,6 +2241,9 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+   [XEP0060]  Millard, P., Saint-Andre, P., and R. Meijer, "Publish-
+              Subscribe", XSF XEP 0060, July 2010.
 
 Authors' Addresses
 
@@ -2261,9 +2264,6 @@ Authors' Addresses
 
    Phone: +1 (408) 996-1010
    Email: cheshire@apple.com
-
-
-
 
 
 
