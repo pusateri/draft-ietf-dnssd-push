@@ -29,7 +29,6 @@
 <!ENTITY RFC6887 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6887.xml">
 <!ENTITY RFC6895 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6895.xml">
 <!ENTITY RFC7413 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7413.xml">
-<!ENTITY RFC7525 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7525.xml">
 <!ENTITY RFC7673 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7673.xml">
 <!ENTITY RFC7719 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7719.xml">
 <!ENTITY RFC7766 SYSTEM  "https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7766.xml">
@@ -1190,7 +1189,7 @@
            <t hangText="Anti-replay protection:">TLS provides for the detection of and prevention against messages sent previously over a TLS connection (such as DNS Push Notifications). Prior messages cannot be re-sent at a later time as a form of a man-in-the-middle attack.</t>
          </list>
        </t>
-       <t>Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <xref target="RFC7525">TLS Recommendations</xref> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</t>
+       <t>Deployment recommendations on the appropriate key lengths and cypher suites are beyond the scope of this document. Please refer to <xref target="BCP195">TLS Recommendations</xref> for the best current practices. Keep in mind that best practices only exist for a snapshot in time and recommendations will continue to change. Updated versions or errata may exist for these recommendations.</t>
      </section>
 
      <section title="TLS Name Authentication" anchor="tls_name_auth">
@@ -1356,6 +1355,14 @@
 <?rfc needLines="9" ?>
 
    <references title="Informative References">
+     <reference anchor="BCP195" target="http://www.rfc-editor.org/info/bcp195"><front>
+           <title>Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)</title>
+           <author initials="Y." surname="Sheffer" fullname="Yaron Sheffer"/>
+           <author initials="R." surname="Holz" fullname="Ralph Holz"/>
+           <author initials="P." surname="Saint-Andre" fullname="Peter Saint-Andre"/>
+           <date year="2015" month="May"/>
+         </front><seriesInfo name="BCP" value="195"/><seriesInfo name="RFC" value="7525"/></reference>
+
      &RFC2308;
      &RFC3123;
      &RFC4287;
@@ -1368,7 +1375,6 @@
      &RFC6886;
      &RFC6887;
      &RFC7413;
-     &RFC7525;
      &RFC7719;
      &RFC7858;
      &RFC8010;
