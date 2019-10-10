@@ -205,7 +205,12 @@
      <t>As the domain name system continues to adapt to new uses and changes in deployment, polling has the potential to burden DNS servers at many levels throughout the network. Other network protocols have successfully deployed a publish/subscribe model following the <xref target="obs">Observer design pattern</xref>.
      <xref target="XEP0060">XMPP Publish-Subscribe</xref> and <xref target="RFC4287">Atom</xref> are examples. While DNS servers are generally highly tuned and capable of a high rate of query/response traffic, adding a publish/subscribe model for tracking changes to DNS records can deliver more timely notification of changes with reduced CPU usage and lower network traffic.</t>
 
-     <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local IP multicast group address, and record changes are sent to that multicast group address for all group members to receive. Therefore, Multicast DNS already has asynchronous change notification capability. However, when <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS (possibly facilitated via a <xref target="DisProx">Discovery Proxy</xref>) it would be beneficial to have an equivalent capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
+     <t><xref target="RFC6762">Multicast DNS</xref> implementations always listen on a well known link-local
+     IP multicast group address, and changes are sent to that multicast group address for all group members to receive.
+     Therefore, Multicast DNS already has asynchronous change notification capability.
+     When <xref target="RFC6763">DNS Service Discovery</xref> is used across a wide area network using Unicast DNS
+     (possibly facilitated via a <xref target="DisProx">Discovery Proxy</xref>) it would be beneficial to have an equivalent
+     capability for Unicast DNS, to allow clients to learn about DNS record changes in a timely manner without polling.</t>
 
      <t>The <xref target="LLQ">DNS Long-Lived Queries (LLQ) mechanism</xref> is an existing deployed solution to provide asynchronous change notifications, used by Apple's <xref target="RFC6281">Back to My Mac</xref> service
      introduced in Mac OS X 10.5 Leopard in 2007.
@@ -245,7 +250,7 @@
    that zone (e.g., the <spanx style="verb">_dns&nbhy;push&nbhy;tls._tcp.&lt;zone&gt;</spanx> SRV
    record) both for normal DNS queries and for DNS Push Notification subscriptions.
    For names for which the server is acting as a recursive
-   resolver, e.g., when the server is the local recursive resolver, for any query
+   resolver (e.g., when the server is the local recursive resolver) for any query
    for which it supports DNS Push Notification subscriptions, it MUST also support
    standard queries.</t>
 
@@ -257,7 +262,7 @@
 
      <t>Generally, as described in the <xref target="RFC8490">DNS Stateful Operations specification</xref>, a client must not keep a DSO session to a server open indefinitely if it has no subscriptions (or other operations) active on that session. A client may close a DSO session immediately it becomes idle, and then if needed in the future, open a new session when required. Alternatively, a client may speculatively keep an idle DSO session open for some time, subject to the constraint that it must not keep a session open that has been idle for more than the session's idle timeout (15 seconds by default) <xref target="RFC8490"/>.</t>
 
-     <t>Note that a DSO session which has an active DNS Push Notification subscription is not considered idle,
+     <t>Note that a DSO session that has an active DNS Push Notification subscription is not considered idle,
      even if there is no traffic flowing for an extended period of time.
      In this case the DSO inactivity timeout does not apply, because the session is not inactive,
      but the keepalive interval does still apply, to ensure generation of
@@ -291,15 +296,20 @@
      <xref target="RFC8490">DNS Stateful Operations</xref>
      running over TLS over TCP <xref target="RFC7858"/>.</t>
 
-     <t>Connection setup over TCP ensures return reachability and alleviates concerns of state overload at the server which is a potential problem with connectionless protocols using spoofed source addresses. All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
+     <t>Connection setup over TCP ensures return reachability
+     and alleviates concerns of state overload at the server,
+     which is a potential problem with connectionless protocols,
+     which can be more vulnerable to being exploited by attackers using spoofed source addresses.
+     All subscribers are guaranteed to be reachable by the server by virtue of the TCP three-way handshake.
      Flooding attacks are possible with any protocol, and a benefit of TCP is that there are already established industry best practices to guard against SYN flooding and similar attacks <xref target="SYN"/> <xref target="RFC4953"/>.</t>
 
      <t>Use of TCP also allows DNS Push Notifications to take advantage of current and future developments in TCP, such as
      <xref target="RFC6824">Multipath TCP (MPTCP)</xref>,
      <xref target="RFC7413">TCP Fast Open (TFO)</xref>,
-     <xref target="I-D.ietf-tcpm-rack">RACK: a time-based fast loss detection algorithm for TCP</xref>, and so on.</t>
+     <xref target="I-D.ietf-tcpm-rack">the TCP RACK fast loss detection algorithm</xref>,
+     and so on.</t>
 
-     <t>Transport Layer Security <xref target="RFC8446">(TLS)</xref> is well understood, and used by many application-layer protocols running over TCP. TLS is designed to prevent eavesdropping, tampering, and message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation MAY also be employed to increase the trust relationship between client and server.</t>
+     <t>Transport Layer Security <xref target="RFC8446">(TLS)</xref> is well understood, and used by many application-layer protocols running over TCP. TLS is designed to prevent eavesdropping, tampering, and message forgery. TLS is REQUIRED for every connection between a client subscriber and server in this protocol specification. Additional security measures such as client authentication during TLS negotiation may also be employed to increase the trust relationship between client and server.</t>
 
 <?rfc needLines="25" ?>
    </section>

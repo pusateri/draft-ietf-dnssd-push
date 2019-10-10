@@ -184,12 +184,12 @@ Internet-Draft           DNS Push Notifications              August 2019
    and lower network traffic.
 
    Multicast DNS [RFC6762] implementations always listen on a well known
-   link-local IP multicast group address, and record changes are sent to
-   that multicast group address for all group members to receive.
-   Therefore, Multicast DNS already has asynchronous change notification
-   capability.  However, when DNS Service Discovery [RFC6763] is used
-   across a wide area network using Unicast DNS (possibly facilitated
-   via a Discovery Proxy [DisProx]) it would be beneficial to have an
+   link-local IP multicast group address, and changes are sent to that
+   multicast group address for all group members to receive.  Therefore,
+   Multicast DNS already has asynchronous change notification
+   capability.  When DNS Service Discovery [RFC6763] is used across a
+   wide area network using Unicast DNS (possibly facilitated via a
+   Discovery Proxy [DisProx]) it would be beneficial to have an
    equivalent capability for Unicast DNS, to allow clients to learn
    about DNS record changes in a timely manner without polling.
 
@@ -256,8 +256,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    MUST respond authoritatively for queries for names falling within
    that zone (e.g., the "_dns-push-tls._tcp.<zone>" SRV record) both for
    normal DNS queries and for DNS Push Notification subscriptions.  For
-   names for which the server is acting as a recursive resolver, e.g.,
-   when the server is the local recursive resolver, for any query for
+   names for which the server is acting as a recursive resolver (e.g.,
+   when the server is the local recursive resolver) for any query for
    which it supports DNS Push Notification subscriptions, it MUST also
    support standard queries.
 
@@ -303,7 +303,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    it must not keep a session open that has been idle for more than the
    session's idle timeout (15 seconds by default) [RFC8490].
 
-   Note that a DSO session which has an active DNS Push Notification
+   Note that a DSO session that has an active DNS Push Notification
    subscription is not considered idle, even if there is no traffic
    flowing for an extended period of time.  In this case the DSO
    inactivity timeout does not apply, because the session is not
@@ -352,8 +352,9 @@ Internet-Draft           DNS Push Notifications              August 2019
    Stateful Operations [RFC8490] running over TLS over TCP [RFC7858].
 
    Connection setup over TCP ensures return reachability and alleviates
-   concerns of state overload at the server which is a potential problem
-   with connectionless protocols using spoofed source addresses.  All
+   concerns of state overload at the server, which is a potential
+   problem with connectionless protocols, which can be more vulnerable
+   to being exploited by attackers using spoofed source addresses.  All
    subscribers are guaranteed to be reachable by the server by virtue of
    the TCP three-way handshake.  Flooding attacks are possible with any
    protocol, and a benefit of TCP is that there are already established
@@ -362,18 +363,17 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    Use of TCP also allows DNS Push Notifications to take advantage of
    current and future developments in TCP, such as Multipath TCP (MPTCP)
-   [RFC6824], TCP Fast Open (TFO) [RFC7413], RACK: a time-based fast
-   loss detection algorithm for TCP [I-D.ietf-tcpm-rack], and so on.
+   [RFC6824], TCP Fast Open (TFO) [RFC7413], the TCP RACK fast loss
+   detection algorithm [I-D.ietf-tcpm-rack], and so on.
 
    Transport Layer Security (TLS) [RFC8446] is well understood, and used
    by many application-layer protocols running over TCP.  TLS is
    designed to prevent eavesdropping, tampering, and message forgery.
    TLS is REQUIRED for every connection between a client subscriber and
    server in this protocol specification.  Additional security measures
-   such as client authentication during TLS negotiation MAY also be
+   such as client authentication during TLS negotiation may also be
    employed to increase the trust relationship between client and
    server.
-
 
 
 
