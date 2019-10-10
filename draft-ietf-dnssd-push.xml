@@ -1243,11 +1243,11 @@
 
      <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>
      <texttable title="IANA DSO TLV Type Code Assignments" anchor="iana_tlv_table">
-       <ttcol align="left">Name</ttcol>
-       <ttcol align="center">Value</ttcol>
-       <ttcol width="5%" align="center">Early Data</ttcol>
-       <ttcol align="center">Status</ttcol>
-       <ttcol width="5%" align="left">Definition</ttcol>
+       <ttcol align="left"              >Name</ttcol>
+       <ttcol align="center" width="18%">Value</ttcol>
+       <ttcol align="center"            >Early Data</ttcol>
+       <ttcol align="center" width="28%">Status</ttcol>
+       <ttcol align="left"   width="20%">Definition</ttcol>
        <c>SUBSCRIBE</c>
        <c>TBA (0x40)</c>
        <c>OK</c>

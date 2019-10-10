@@ -1980,19 +1980,15 @@ Internet-Draft           DNS Push Notifications              August 2019
    This document also defines four new DNS Stateful Operation TLV types
    to be recorded in the IANA DSO Type Code Registry.
 
-   +-------------+------------+---------+-----------------+------------+
-   | Name        |   Value    |  Early  |      Status     | Definition |
-   |             |            |   Data  |                 |            |
-   +-------------+------------+---------+-----------------+------------+
-   | SUBSCRIBE   | TBA (0x40) |    OK   | Standards Track | Section 6. |
-   |             |            |         |                 | 2          |
-   | PUSH        | TBA (0x41) |    NO   | Standards Track | Section 6. |
-   |             |            |         |                 | 3          |
-   | UNSUBSCRIBE | TBA (0x42) |    NO   | Standards Track | Section 6. |
-   |             |            |         |                 | 4          |
-   | RECONFIRM   | TBA (0x43) |    NO   | Standards Track | Section 6. |
-   |             |            |         |                 | 5          |
-   +-------------+------------+---------+-----------------+------------+
+   +-------------+------------+--------+-----------------+-------------+
+   | Name        |   Value    | Early  |      Status     | Definition  |
+   |             |            |  Data  |                 |             |
+   +-------------+------------+--------+-----------------+-------------+
+   | SUBSCRIBE   | TBA (0x40) |   OK   | Standards Track | Section 6.2 |
+   | PUSH        | TBA (0x41) |   NO   | Standards Track | Section 6.3 |
+   | UNSUBSCRIBE | TBA (0x42) |   NO   | Standards Track | Section 6.4 |
+   | RECONFIRM   | TBA (0x43) |   NO   | Standards Track | Section 6.5 |
+   +-------------+------------+--------+-----------------+-------------+
 
                 Table 5: IANA DSO TLV Type Code Assignments
 
@@ -2010,6 +2006,10 @@ Internet-Draft           DNS Push Notifications              August 2019
    Thaler, Brian Trammell, Bernie Volz, Eric Vyncke, Christopher Wood,
    Liang Xia, and Soraia Zlatkovic.  Ted Lemon provided clarifying text
    that was greatly appreciated.
+
+
+
+
 
 
 
@@ -2131,8 +2131,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
    [ST]       "Service Name and Transport Protocol Port Number
-              Registry", <http://www.iana.org/assignments/
-              service-names-port-numbers/>.
+              Registry", <http://www.iana.org/assignments/service-names-
+              port-numbers/>.
 
 10.2.  Informative References
 
