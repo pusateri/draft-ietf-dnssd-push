@@ -369,11 +369,11 @@
 
         <t>In many contexts, the recursive resolver will be able to handle
         Push Notifications for all names that the client may need to follow.
-        Use of VPN tunnels and split-view DNS can create some additional
-        complexity in the client software here;
-        the techniques to handle VPN tunnels and split-view DNS for DNS Push
+        Use of VPN tunnels and Private DNS <xref target="RFC8499"/>
+        can create some additional complexity in the client software here;
+        the techniques to handle VPN tunnels and Private DNS for DNS Push
         Notifications are the same as those already used to handle this for
-        normal DNS queries. (See "Split DNS" in Section 6 of <xref target="RFC8499"/>).</t>
+        normal DNS queries.</t>
 
         <t>If the recursive resolver
         does not support DNS over TLS, or
@@ -965,7 +965,10 @@
      </section>
 
      <section title="DNS Push Notification RECONFIRM" anchor="reconfirm">
-       <t>Sometimes, particularly when used with a <xref target="DisProx">Discovery Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine. For more information on the dns_sd.h API, see <xref target="dns_sd_h"/>.</t>
+       <t>Sometimes, particularly when used with a <xref target="DisProx">Discovery Proxy</xref>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used.
+       For example, a Discovery Proxy built on Apple's dns_sd.h API <xref target="SD-API"/>
+       responds to a DNS Push Notification RECONFIRM message by calling
+       the underlying API's DNSServiceReconfirmRecord() routine.</t>
        
        <t>For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</t>
 
@@ -1239,7 +1242,8 @@
 
    <section title="IANA Considerations" anchor="IANA">
 
-     <t>This document defines a new service name to be published in the IANA Registry Service Types <xref target="RFC6335"/><xref target="ST"/> that is only applicable for the TCP protocol.</t>
+     <t>This document defines a new service name, only applicable for the TCP protocol,
+     to be recorded in the IANA Service Type Registry <xref target="RFC6335"/><xref target="SRVTYPE"/>.</t>
      <texttable title="IANA Service Type Assignments" anchor="iana_service_table">
        <ttcol width="25%" align="left">Name</ttcol>
        <ttcol align="center">Port</ttcol>
@@ -1251,7 +1255,8 @@
        <c><xref target="discovery"/></c>
      </texttable>
 
-     <t>This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</t>
+     <t>This document defines four new DNS Stateful Operation TLV types
+     to be recorded in the IANA DSO Type Code Registry <xref target="RFC8490"/><xref target="DSOTYPE"/>.</t>
      <texttable title="IANA DSO TLV Type Code Assignments" anchor="iana_tlv_table">
        <ttcol align="left"              >Name</ttcol>
        <ttcol align="center" width="18%">Value</ttcol>
@@ -1354,10 +1359,19 @@
      &RFC8446;
      &RFC8490;
 
-     <reference anchor="ST"
+     <reference anchor="SRVTYPE"
      target="http://www.iana.org/assignments/service-names-port-numbers/">
        <front>
          <title>Service Name and Transport Protocol Port Number Registry</title>
+         <author/>
+         <date/>
+       </front>
+     </reference>
+
+     <reference anchor="DSOTYPE"
+     target="https://www.iana.org/assignments/dns-parameters/">
+       <front>
+         <title>DSO Type Code Registry</title>
          <author/>
          <date/>
        </front>
@@ -1464,7 +1478,7 @@
        </front>
      </reference>
 
-     <reference anchor='dns_sd_h' target="https://opensource.apple.com/source/mDNSResponder/mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html">
+     <reference anchor='SD-API' target="https://opensource.apple.com/source/mDNSResponder/mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html">
        <front>
          <title>dns_sd.h API</title>
           <author/>

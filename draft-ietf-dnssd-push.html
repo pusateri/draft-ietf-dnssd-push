@@ -586,7 +586,7 @@
 </h1>
 <p id="rfc.section.6.1.p.1">The first step in establishing a DNS Push Notification subscription is to discover an appropriate DNS server that supports DNS Push Notifications for the desired zone.</p>
 <p id="rfc.section.6.1.p.2">The client begins by opening a DSO Session to its normal configured DNS recursive resolver and requesting a Push Notification subscription.  This connection is made to TCP port 853, the default port for <a href="#RFC7858" class="xref">DNS-over-TLS</a>.  If the request for a Push Notification subscription is successful, and the recursive resolver doesn't already have an active subscription for that name, type, and class, then the recursive resolver will make a corresponding Push Notification subscription on the client's behalf.  Results received are relayed to the client.  This is closely analogous to how a client sends a normal DNS query to its configured DNS recursive resolver which, if it doesn't already have appropriate answer(s) in its cache, issues an upstream query to satisfy the request.</p>
-<p id="rfc.section.6.1.p.3">In many contexts, the recursive resolver will be able to handle Push Notifications for all names that the client may need to follow.  Use of VPN tunnels and split-view DNS can create some additional complexity in the client software here; the techniques to handle VPN tunnels and split-view DNS for DNS Push Notifications are the same as those already used to handle this for normal DNS queries. (See "Split DNS" in Section 6 of <a href="#RFC8499" class="xref">[RFC8499]</a>).</p>
+<p id="rfc.section.6.1.p.3">In many contexts, the recursive resolver will be able to handle Push Notifications for all names that the client may need to follow.  Use of VPN tunnels and Private DNS <a href="#RFC8499" class="xref">[RFC8499]</a> can create some additional complexity in the client software here; the techniques to handle VPN tunnels and Private DNS for DNS Push Notifications are the same as those already used to handle this for normal DNS queries.</p>
 <p id="rfc.section.6.1.p.4">If the recursive resolver does not support DNS over TLS, or supports DNS over TLS but is not listening on TCP port 853, or supports DNS over TLS on TCP port 853 but does not support DSO on that port, then the DSO Session session establishment will fail <a href="#RFC8490" class="xref">[RFC8490]</a>.</p>
 <p id="rfc.section.6.1.p.5">If the recursive resolver does support DSO but not Push Notification subscriptions, then it will return the DSO error code, DSOTYPENI (11).</p>
 <p id="rfc.section.6.1.p.6">In some cases, the recursive resolver may support DSO and Push Notification subscriptions, but may not be able to subscribe for Push Notifications for a particular name.  In this case, the recursive resolver should return SERVFAIL to the client. This includes being unable to establish a connection to the zone's DNS Push Notification server or establishing a connection but receiving a non success response code.  In some cases, where the client has a pre-established trust relationship with the owner of the zone (that is not handled via the usual mechanisms for VPN software) the client may handle these failures by contacting the zone's DNS Push server directly.</p>
@@ -895,7 +895,7 @@
 <h1 id="rfc.section.6.5">
 <a href="#rfc.section.6.5">6.5.</a> <a href="#reconfirm" id="reconfirm">DNS Push Notification RECONFIRM</a>
 </h1>
-<p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used. For example, a Discovery Proxy built on Apple's dns_sd.h API responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine. For more information on the dns_sd.h API, see <a href="#dns_sd_h" class="xref">[dns_sd_h]</a>.</p>
+<p id="rfc.section.6.5.p.1">Sometimes, particularly when used with a <a href="#DisProx" class="xref">Discovery Proxy</a>, a DNS Zone may contain stale data. When a client encounters data that it believes may be stale (e.g., an SRV record referencing a target host+port that is not responding to connection requests) the client can send a RECONFIRM message to ask the server to re-verify that the data is still valid. For a Discovery Proxy, this causes it to issue new Multicast DNS queries to ascertain whether the target device is still present. How the Discovery Proxy causes these new Multicast DNS queries to be issued depends on the details of the underlying Multicast DNS implementation being used.  For example, a Discovery Proxy built on Apple's dns_sd.h API <a href="#SD-API" class="xref">[SD-API]</a> responds to a DNS Push Notification RECONFIRM message by calling the underlying API's DNSServiceReconfirmRecord() routine.</p>
 <p id="rfc.section.6.5.p.2">For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</p>
 <p id="rfc.section.6.5.p.3">Frequent use of RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting and remedying such network problems.</p>
 <p id="rfc.section.6.5.p.4">If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
@@ -1130,7 +1130,7 @@
 <h1 id="rfc.section.8">
 <a href="#rfc.section.8">8.</a> <a href="#IANA" id="IANA">IANA Considerations</a>
 </h1>
-<p id="rfc.section.8.p.1">This document defines a new service name to be published in the IANA Registry Service Types <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#ST" class="xref">[ST]</a> that is only applicable for the TCP protocol.</p>
+<p id="rfc.section.8.p.1">This document defines a new service name, only applicable for the TCP protocol, to be recorded in the IANA Service Type Registry <a href="#RFC6335" class="xref">[RFC6335]</a><a href="#SRVTYPE" class="xref">[SRVTYPE]</a>.</p>
 <div id="rfc.table.4"></div>
 <div id="iana_service_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
@@ -1148,7 +1148,7 @@
 <td class="left"><a href="#discovery" class="xref">Section 6.1</a></td>
 </tr></tbody>
 </table>
-<p id="rfc.section.8.p.2">This document also defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry.</p>
+<p id="rfc.section.8.p.2">This document defines four new DNS Stateful Operation TLV types to be recorded in the IANA DSO Type Code Registry <a href="#RFC8490" class="xref">[RFC8490]</a><a href="#DSOTYPE" class="xref">[DSOTYPE]</a>.</p>
 <div id="rfc.table.5"></div>
 <div id="iana_tlv_table"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
@@ -1202,6 +1202,10 @@
 <h1 id="rfc.references.1">
 <a href="#rfc.references.1">10.1.</a> Normative References</h1>
 <table><tbody>
+<tr>
+<td class="reference"><b id="DSOTYPE">[DSOTYPE]</b></td>
+<td class="top">"<a href="https://www.iana.org/assignments/dns-parameters/">DSO Type Code Registry</a>"</td>
+</tr>
 <tr>
 <td class="reference"><b id="RFC0020">[RFC0020]</b></td>
 <td class="top">
@@ -1303,7 +1307,7 @@
 <a>Bellis, R.</a>, <a>Cheshire, S.</a>, <a>Dickinson, J.</a>, <a>Dickinson, S.</a>, <a>Lemon, T.</a> and <a>T. Pusateri</a>, "<a href="https://tools.ietf.org/html/rfc8490">DNS Stateful Operations</a>", RFC 8490, DOI 10.17487/RFC8490, March 2019.</td>
 </tr>
 <tr>
-<td class="reference"><b id="ST">[ST]</b></td>
+<td class="reference"><b id="SRVTYPE">[SRVTYPE]</b></td>
 <td class="top">"<a href="http://www.iana.org/assignments/service-names-port-numbers/">Service Name and Transport Protocol Port Number Registry</a>"</td>
 </tr>
 </tbody></table>
@@ -1319,10 +1323,6 @@
 <td class="reference"><b id="DisProx">[DisProx]</b></td>
 <td class="top">
 <a>Cheshire, S.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-dnssd-hybrid-10">Discovery Proxy for Multicast DNS-Based Service Discovery</a>", Internet-Draft draft-ietf-dnssd-hybrid-10, March 2019.</td>
-</tr>
-<tr>
-<td class="reference"><b id="dns_sd_h">[dns_sd_h]</b></td>
-<td class="top">"<a href="https://opensource.apple.com/source/mDNSResponder/mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html">dns_sd.h API</a>"</td>
 </tr>
 <tr>
 <td class="reference"><b id="I-D.ietf-tcpm-rack">[I-D.ietf-tcpm-rack]</b></td>
@@ -1412,6 +1412,10 @@
 <td class="reference"><b id="RFC8499">[RFC8499]</b></td>
 <td class="top">
 <a>Hoffman, P.</a>, <a>Sullivan, A.</a> and <a>K. Fujiwara</a>, "<a href="https://tools.ietf.org/html/rfc8499">DNS Terminology</a>", BCP 219, RFC 8499, DOI 10.17487/RFC8499, January 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="SD-API">[SD-API]</b></td>
+<td class="top">"<a href="https://opensource.apple.com/source/mDNSResponder/mDNSResponder-878.70.2/mDNSShared/dns_sd.h.auto.html">dns_sd.h API</a>"</td>
 </tr>
 <tr>
 <td class="reference"><b id="SYN">[SYN]</b></td>
