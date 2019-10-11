@@ -382,7 +382,7 @@
         then the DSO Session session establishment will fail <xref target="RFC8490"/>.</t>
 
         <t>If the recursive resolver does support DSO but not Push Notification
-        subscriptions, then it will return the DSO error code, DSOTYPENI (11).</t>
+        subscriptions, then it will return the DSO error code DSOTYPENI (11).</t>
 
         <t>In some cases, the recursive resolver may support DSO and Push
         Notification subscriptions, but may not be able
@@ -455,7 +455,7 @@
             and processing continues at step 2 above,
             repeating the iterative search until either an SOA is received,
             or the query name consists of a single label, i.e., a Top Level Domain (TLD).
-            In the case of a single-label (TLD), this is a network configuration error,
+            In the case of a single-label name (TLD), this is a network configuration error,
             which should not happen, and the client gives up.
             The client may retry the operation at a later time, of the client's choosing,
             such after a change in network attachment.</t>
@@ -477,7 +477,18 @@
           </list>
         </t>
 
-        <t>Each time a client makes a new DNS Push Notification subscription session, it SHOULD repeat the discovery process in order to determine the preferred DNS server for subscriptions at that time. However, the client device MUST respect the DNS TTL values on records it receives, and store them in its local cache with this lifetime. This means that, as long as the DNS TTL values on the authoritative records are set to reasonable values, repeated application of this discovery process can be completed nearly instantaneously by the client, using only locally-stored cached data.</t>
+        <t>Each time a client makes a new DNS Push Notification subscription,
+        it SHOULD repeat the discovery process in order to determine
+        the preferred DNS server for that subscription at that time.
+        If a client already has a DSO session with that DNS server
+        the client SHOULD reuse that existing DSO session for the new subscription,
+        otherwise, a new DSO session is established.
+        The client MUST respect the DNS TTL values on records it receives while performing
+        the discovery process and store them in its local cache with this lifetime
+        (as it will generally be do anyway for all DNS queries it performs).
+        This means that, as long as the DNS TTL values on the authoritative records are set
+        to reasonable values, repeated application of the discovery process can be completed
+        nearly instantaneously by the client, using only locally-stored cached data.</t>
 
 <?rfc needLines="48" ?>
      </section>
@@ -631,12 +642,12 @@
          <t>If the server sends a nonzero RCODE in the SUBSCRIBE response, that means:
            <?rfc subcompact="yes" ?>
            <list style="letters">
-             <t>the client is (at least partially) misconfigured,</t>
+             <t>the client is (at least partially) misconfigured, or</t>
              <t>the server resources are exhausted, or</t>
              <t>there is some other unknown failure on the server.</t>
            </list>
            <?rfc subcompact="no" ?>
-         In any case, the client shouldn't retry the subscription to this server right away. If multiple SRV records were returned as described in <xref target="discovery"/>, <xref target="SRV"/>, a subsequent server can be tried immediately.</t>
+         In any case, the client shouldn't retry the subscription to this server right away. If multiple SRV records were returned as described in <xref target="discovery"/>, <xref target="SRV"/>, a subsequent server MAY be tried immediately.</t>
          <t>If the client has other successful subscriptions to this server, these subscriptions remain even though additional subscriptions may be refused. Neither the client nor the server are required to close the connection, although, either end may choose to do so.</t>
          <t>If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <xref target="RFC8490"/> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.
            <list style="bullets">
@@ -732,11 +743,15 @@
          <t>The TTL field holds an unsigned 32-bit integer <xref target="RFC2181"/>.
          If the TTL is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
          then a new DNS Resource Record with the given name, type, class and RDATA is added.
+         Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY)
+         this is a fatal error, and the client MUST forcibly abort the connection immediately.
          A TTL of 0 means that this record should be retained for as long as the subscription is active,
          and should be discarded immediately the moment the subscription is cancelled.</t>
 
          <t>If the TTL has the value 0xFFFFFFFF, then the
-         DNS Resource Record with the given name, type, class and RDATA is removed.</t>
+         DNS Resource Record with the given name, type, class and RDATA is removed.
+         Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY)
+         this is a fatal error, and the client MUST forcibly abort the connection immediately.</t>
 
          <t>If the TTL has the value 0xFFFFFFFE, then this is a 'collective' remove notification.
          For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.
@@ -1234,8 +1249,13 @@
      </section>
 
      <section title="TLS Session Resumption" anchor="resumption">
-       <t>TLS Session Resumption <xref target="RFC8446"/> is permissible on DNS
-       Push Notification servers.  However, closing the TLS connection terminates the DSO session. However, closing the TLS connection terminates the DSO session.  When the TLS session is resumed, the DNS Push Notification server will not have any subscription state and will proceed as with any other new DSO session. Use of TLS Session Resumption may allow a TLS connection to be set up more quickly, but the client will still have to recreate any desired subscriptions.</t>
+       <t>TLS Session Resumption <xref target="RFC8446"/>
+       is permissible on DNS Push Notification servers.
+       However, closing the TLS connection terminates the DSO session.
+       When the TLS session is resumed, the DNS Push Notification server will not
+       have any subscription state and will proceed as with any other new DSO session.
+       Use of TLS Session Resumption may allow a TLS connection to be set up more quickly,
+       but the client will still have to recreate any desired subscriptions.</t>
 <?rfc needLines="30" ?>
      </section>
    </section>

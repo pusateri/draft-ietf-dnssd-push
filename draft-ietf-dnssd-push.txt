@@ -79,24 +79,24 @@ Table of Contents
        6.2.2.  SUBSCRIBE Response  . . . . . . . . . . . . . . . . .  16
      6.3.  DNS Push Notification Updates . . . . . . . . . . . . . .  20
        6.3.1.  PUSH Message  . . . . . . . . . . . . . . . . . . . .  20
-     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  25
-       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  25
-     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  27
-       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  28
-     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  30
-     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  31
-     6.8.  Client Fallback to Polling  . . . . . . . . . . . . . . .  32
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  33
-     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  34
-     7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  34
-     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  35
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  36
-   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  36
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  37
-     10.1.  Normative References . . . . . . . . . . . . . . . . . .  37
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  39
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
+     6.4.  DNS Push Notification UNSUBSCRIBE . . . . . . . . . . . .  26
+       6.4.1.  UNSUBSCRIBE Message . . . . . . . . . . . . . . . . .  26
+     6.5.  DNS Push Notification RECONFIRM . . . . . . . . . . . . .  28
+       6.5.1.  RECONFIRM Message . . . . . . . . . . . . . . . . . .  29
+     6.6.  DNS Stateful Operations TLV Context Summary . . . . . . .  31
+     6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  32
+     6.8.  Client Fallback to Polling  . . . . . . . . . . . . . . .  33
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  34
+     7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  35
+     7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  35
+     7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  36
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  37
+   9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  37
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  38
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  38
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  40
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  42
 
 
 
@@ -482,8 +482,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    the DSO Session session establishment will fail [RFC8490].
 
    If the recursive resolver does support DSO but not Push Notification
-   subscriptions, then it will return the DSO error code, DSOTYPENI
-   (11).
+   subscriptions, then it will return the DSO error code DSOTYPENI (11).
 
    In some cases, the recursive resolver may support DSO and Push
    Notification subscriptions, but may not be able to subscribe for Push
@@ -498,6 +497,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    In any of the cases described above where the client fails to
    establish a DNS Push Notification subscription via its configured
+   recursive resolver, the client should proceed to discover the
 
 
 
@@ -506,7 +506,6 @@ Pusateri & Cheshire     Expires February 8, 2020                [Page 9]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-   recursive resolver, the client should proceed to discover the
    appropriate server for direct communication.  The client MUST also
    determine which TCP port on the server is listening for connections,
    which need not be (and often is not) the typical TCP port 53 used for
@@ -557,6 +556,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
+
 Pusateri & Cheshire     Expires February 8, 2020               [Page 10]
 
 Internet-Draft           DNS Push Notifications              August 2019
@@ -572,8 +572,8 @@ Internet-Draft           DNS Push Notifications              August 2019
        for that new name, and processing continues at step 2 above,
        repeating the iterative search until either an SOA is received,
        or the query name consists of a single label, i.e., a Top Level
-       Domain (TLD).  In the case of a single-label (TLD), this is a
-       network configuration error, which should not happen, and the
+       Domain (TLD).  In the case of a single-label name (TLD), this is
+       a network configuration error, which should not happen, and the
        client gives up.  The client may retry the operation at a later
        time, of the client's choosing, such after a change in network
        attachment.
@@ -618,19 +618,19 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 11]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-   Each time a client makes a new DNS Push Notification subscription
-   session, it SHOULD repeat the discovery process in order to determine
-   the preferred DNS server for subscriptions at that time.  However,
-   the client device MUST respect the DNS TTL values on records it
-   receives, and store them in its local cache with this lifetime.  This
+   Each time a client makes a new DNS Push Notification subscription, it
+   SHOULD repeat the discovery process in order to determine the
+   preferred DNS server for that subscription at that time.  If a client
+   already has a DSO session with that DNS server the client SHOULD
+   reuse that existing DSO session for the new subscription, otherwise,
+   a new DSO session is established.  The client MUST respect the DNS
+   TTL values on records it receives while performing the discovery
+   process and store them in its local cache with this lifetime (as it
+   will generally be do anyway for all DNS queries it performs).  This
    means that, as long as the DNS TTL values on the authoritative
-   records are set to reasonable values, repeated application of this
+   records are set to reasonable values, repeated application of the
    discovery process can be completed nearly instantaneously by the
    client, using only locally-stored cached data.
-
-
-
-
 
 
 
@@ -930,13 +930,13 @@ Internet-Draft           DNS Push Notifications              August 2019
    If the server sends a nonzero RCODE in the SUBSCRIBE response, that
    means:
 
-   a.  the client is (at least partially) misconfigured,
+   a.  the client is (at least partially) misconfigured, or
    b.  the server resources are exhausted, or
    c.  there is some other unknown failure on the server.
 
    In any case, the client shouldn't retry the subscription to this
    server right away.  If multiple SRV records were returned as
-   described in Section 6.1, Paragraph 7, a subsequent server can be
+   described in Section 6.1, Paragraph 7, a subsequent server MAY be
    tried immediately.
 
    If the client has other successful subscriptions to this server,
@@ -1122,12 +1122,18 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 20]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-   RDATA is added.  A TTL of 0 means that this record should be retained
-   for as long as the subscription is active, and should be discarded
-   immediately the moment the subscription is cancelled.
+   RDATA is added.  Type and class MUST NOT be 255 (ANY).  If either
+   type or class are 255 (ANY) this is a fatal error, and the client
+   MUST forcibly abort the connection immediately.  A TTL of 0 means
+   that this record should be retained for as long as the subscription
+   is active, and should be discarded immediately the moment the
+   subscription is cancelled.
 
    If the TTL has the value 0xFFFFFFFF, then the DNS Resource Record
-   with the given name, type, class and RDATA is removed.
+   with the given name, type, class and RDATA is removed.  Type and
+   class MUST NOT be 255 (ANY).  If either type or class are 255 (ANY)
+   this is a fatal error, and the client MUST forcibly abort the
+   connection immediately.
 
    If the TTL has the value 0xFFFFFFFE, then this is a 'collective'
    remove notification.  For collective remove notifications RDLEN MUST
@@ -1164,12 +1170,6 @@ Internet-Draft           DNS Push Notifications              August 2019
       CLASS and TYPE specify the RRset being deleted
 
       Delete an individual RR from a name:
-      TTL = 0xFFFFFFFF
-      CLASS, TYPE, RDLEN and RDATA specify the RR being deleted.
-
-      Add individual RR to a name
-      TTL >= 0 and TTL <= 0x7FFFFFFF
-      CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added.
 
 
 
@@ -1177,6 +1177,13 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 21]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
+
+      TTL = 0xFFFFFFFF
+      CLASS, TYPE, RDLEN and RDATA specify the RR being deleted.
+
+      Add individual RR to a name
+      TTL >= 0 and TTL <= 0x7FFFFFFF
+      CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added.
 
    Note that it is valid for the RDATA of an added or removed DNS
    Resource Record to be empty (zero length).  For example, an Address
@@ -1219,13 +1226,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    of 16,382 bytes, counting from the start of the DSO 12-byte header.
    Including the two-byte length prefix that is used to frame DNS over a
    byte stream like TLS, this makes a total of 16,384 bytes.  Servers
-   MUST NOT generate PUSH messages larger than this.  Where the
-   immediately available change notifications are sufficient to exceed a
-   DNS message length of 16,382 bytes, the change notifications MUST be
-   communicated in separate PUSH messages of up to 16,382 bytes each.
-   DNS name compression becomes less effective for messages larger than
-   16,384 bytes, so little efficiency benefit is gained by sending
-   messages larger than this.
 
 
 
@@ -1234,9 +1234,61 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 22]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
+   MUST NOT generate PUSH messages larger than this.  Where the
+   immediately available change notifications are sufficient to exceed a
+   DNS message length of 16,382 bytes, the change notifications MUST be
+   communicated in separate PUSH messages of up to 16,382 bytes each.
+   DNS name compression becomes less effective for messages larger than
+   16,384 bytes, so little efficiency benefit is gained by sending
+   messages larger than this.
+
    If a client receives a PUSH message with a DNS message length larger
    than 16,382 bytes, this is a fatal error, and the client MUST
    forcibly abort the connection immediately.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 23]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
 
                                      1  1  1  1  1  1
        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -1282,18 +1334,18 @@ Internet-Draft           DNS Push Notifications              August 2019
    session.  Specifically, the record name MUST match the name given in
    the SUBSCRIBE request, subject to the usual established DNS case-
    insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
-
-
-
-Pusateri & Cheshire     Expires February 8, 2020               [Page 23]
-
-Internet-Draft           DNS Push Notifications              August 2019
-
-
    request was not ANY (255) then the TYPE of the record must match the
    TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
    request was not ANY (255) then the CLASS of the record must match the
    CLASS given in the SUBSCRIBE request.  If a matching active
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 24]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
+
    subscription on that session is not found, then that individual
    record addition/deletion is silently ignored.  Processing of other
    additions and deletions in this message is not affected.  The DSO
@@ -1341,7 +1393,11 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 24]
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 25]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1397,7 +1453,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 25]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 26]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1453,7 +1509,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 26]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 27]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1509,7 +1565,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 27]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 28]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1565,7 +1621,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 28]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 29]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1621,7 +1677,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 29]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 30]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1677,7 +1733,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 30]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 31]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1733,7 +1789,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 31]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 32]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1789,7 +1845,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 32]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 33]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1845,7 +1901,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 33]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 34]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1901,7 +1957,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 34]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 35]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -1921,8 +1977,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    TLS Session Resumption [RFC8446] is permissible on DNS Push
    Notification servers.  However, closing the TLS connection terminates
-   the DSO session.  However, closing the TLS connection terminates the
-   DSO session.  When the TLS session is resumed, the DNS Push
+   the DSO session.  When the TLS session is resumed, the DNS Push
    Notification server will not have any subscription state and will
    proceed as with any other new DSO session.  Use of TLS Session
    Resumption may allow a TLS connection to be set up more quickly, but
@@ -1957,7 +2012,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 35]
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 36]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -2013,7 +2069,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 36]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 37]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -2069,7 +2125,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 37]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 38]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -2125,7 +2181,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 38]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -2181,7 +2237,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 39]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -2237,7 +2293,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 40]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 41]
 
 Internet-Draft           DNS Push Notifications              August 2019
 
@@ -2293,4 +2349,4 @@ Authors' Addresses
 
 
 
-Pusateri & Cheshire     Expires February 8, 2020               [Page 41]
+Pusateri & Cheshire     Expires February 8, 2020               [Page 42]
