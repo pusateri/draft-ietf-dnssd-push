@@ -694,6 +694,12 @@ Internet-Draft           DNS Push Notifications              August 2019
    over a DSO session initiated by a client, this is a fatal error and
    the client MUST forcibly abort the connection immediately.
 
+   Each SUBSCRIBE request generates exactly one SUBSCRIBE response from
+   the server.  The entity that initiates a SUBSCRIBE response is by
+   definition the server.  A client MUST NOT send a SUBSCRIBE response.
+   If a client does send a SUBSCRIBE response, this is a fatal error and
+   the server MUST forcibly abort the connection immediately.
+
 6.2.1.  SUBSCRIBE Request
 
    A SUBSCRIBE request begins with the standard DSO 12-byte header
@@ -710,16 +716,10 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields must be zero,
-   and the corresponding four sections must be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields MUST be zero,
+   and the corresponding four sections MUST be empty (i.e., absent).
 
    The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
-
-   The DSO-LENGTH is the length of the DSO-DATA that follows, which
-   specifies the name, type, and class of the record(s) being sought.
-
-
-
 
 
 
@@ -730,33 +730,34 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 13]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-                                     1  1  1  1  1  1
-       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     |                  MESSAGE ID                   |   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |QR| OPCODE(6) |         Z          |   RCODE   |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             QDCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
-     |             ANCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             NSCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             ARCOUNT (MUST BE ZERO)            |   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-     |    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |   DSO-LENGTH (number of octets in DSO-DATA)   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     |                                               |   \
-     \                     NAME                      \    |
-     \                                               \    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
-     |                     TYPE                      |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     CLASS                     |   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+   The DSO-LENGTH is the length of the DSO-DATA that follows, which
+   specifies the name, type, and class of the record(s) being sought.
+
+                                      1  1  1  1  1  1
+        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      |                  MESSAGE ID                   |   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |QR| OPCODE(6) |         Z          |   RCODE   |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             QDCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+      |             ANCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             NSCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             ARCOUNT (MUST BE ZERO)            |   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+      |    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |   DSO-LENGTH (number of octets in DSO-DATA)   |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      \                     NAME                      \   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |                     TYPE                      |     > DSO-DATA
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |                     CLASS                     |   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                         Figure 1: SUBSCRIBE Request
 
@@ -777,7 +778,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    "Example.com" are the same).  If a server receives such a duplicate
    SUBSCRIBE message, this is a fatal error and the server MUST forcibly
    abort the connection immediately.
-
 
 
 
@@ -844,9 +844,6 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 6.2.2.  SUBSCRIBE Response
 
-   Each SUBSCRIBE request generates exactly one SUBSCRIBE response from
-   the server.
-
    A SUBSCRIBE response begins with the standard DSO 12-byte header
    [RFC8490].  The QR bit in the header is set indicating it is a
    response.  The header MAY be followed by one or more optional TLVs,
@@ -856,15 +853,15 @@ Internet-Draft           DNS Push Notifications              August 2019
    field of the SUBSCRIBE request.  This is how the client knows which
    request is being responded to.
 
+   The other header fields MUST be set as described in the DSO spec-
+   ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
+   for DNS Stateful Operations (6).  The four count fields MUST be zero,
+   and the corresponding four sections MUST be empty (i.e., absent).
+
    A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a
    client receives a SUBSCRIBE response message containing a SUBSCRIBE
    TLV then the response message is processed but the SUBSCRIBE TLV MUST
    be silently ignored.
-
-   A client MUST NOT send a SUBSCRIBE response.  If a client does send a
-   SUBSCRIBE message, with the QR bit set indicating that it is a
-   response, this is a fatal error and the server MUST forcibly abort
-   the connection immediately.
 
                                       1  1  1  1  1  1
         0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -883,7 +880,10 @@ Internet-Draft           DNS Push Notifications              August 2019
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
 
-                   Figure 2: SUBSCRIBE Response Message
+                       Figure 2: SUBSCRIBE Response
+
+
+
 
 
 
@@ -1076,6 +1076,11 @@ Internet-Draft           DNS Push Notifications              August 2019
    the answer set are then communicated to the client in subsequent PUSH
    messages.
 
+   A client MUST NOT send a PUSH message.  If a client does send a PUSH
+   message, or a PUSH message is sent with the QR bit set indicating
+   that it is a response, this is a fatal error and the receiver MUST
+   forcibly abort the connection immediately.
+
 6.3.1.  PUSH Message
 
    A PUSH unidirectional message begins with the standard DSO 12-byte
@@ -1090,11 +1095,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
    for DNS Stateful Operations (6).  The four count fields MUST be zero,
    and the corresponding four sections MUST be empty (i.e., absent).
-
-   A client MUST NOT send a PUSH message.  If a client does send a PUSH
-   message, or a PUSH message is sent with the QR bit set indicating
-   that it is a response, this is a fatal error and the receiver MUST
-   forcibly abort the connection immediately.
 
    The DSO-TYPE is PUSH (tentatively 0x41).
 
@@ -1290,41 +1290,41 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 23]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-                                     1  1  1  1  1  1
-       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     |           MESSAGE ID (MUST BE ZERO)           |   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |QR| OPCODE(6) |         Z          |   RCODE   |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             QDCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
-     |             ANCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             NSCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             ARCOUNT (MUST BE ZERO)            |   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-     |      DSO-TYPE = PUSH (tentatively 0x41)       |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |   DSO-LENGTH (number of octets in DSO-DATA)   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     \                     NAME                      \   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     TYPE                      |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     CLASS                     |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                      TTL                      |    |
-     |     (32-bit unsigned big-endian integer)      |     > DSO-DATA
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |  RDLEN (16-bit unsigned big-endian integer)   |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     \           RDATA (sized as necessary)          \    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     :     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
-     :             Repeated As Necessary             :   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+                                      1  1  1  1  1  1
+        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      |           MESSAGE ID (MUST BE ZERO)           |   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |QR| OPCODE(6) |         Z          |   RCODE   |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             QDCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+      |             ANCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             NSCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             ARCOUNT (MUST BE ZERO)            |   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+      |      DSO-TYPE = PUSH (tentatively 0x41)       |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |   DSO-LENGTH (number of octets in DSO-DATA)   |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      \                     NAME                      \   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |                     TYPE                      |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |                     CLASS                     |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |                      TTL                      |    |
+      |     (32-bit unsigned big-endian integer)      |     > DSO-DATA
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |  RDLEN (16-bit unsigned big-endian integer)   |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      \           RDATA (sized as necessary)          \    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      :     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
+      :             Repeated As Necessary             :   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                           Figure 3: PUSH Message
 
@@ -1333,11 +1333,11 @@ Internet-Draft           DNS Push Notifications              August 2019
    correspond with at least one currently active subscription on that
    session.  Specifically, the record name MUST match the name given in
    the SUBSCRIBE request, subject to the usual established DNS case-
-   insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE
-   request was not ANY (255) then the TYPE of the record must match the
-   TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE
-   request was not ANY (255) then the CLASS of the record must match the
-   CLASS given in the SUBSCRIBE request.  If a matching active
+   insensitivity for US-ASCII letters.  For individual additions and
+   removals, if the TYPE in the SUBSCRIBE request was not ANY (255) then
+   the TYPE of the record must match the TYPE given in the SUBSCRIBE
+   request, and if the CLASS in the SUBSCRIBE request was not ANY (255)
+   then the CLASS of the record must match the CLASS given in the
 
 
 
@@ -1346,13 +1346,15 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 24]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-   subscription on that session is not found, then that individual
-   record addition/deletion is silently ignored.  Processing of other
-   additions and deletions in this message is not affected.  The DSO
-   session is not closed.  This is to allow for the unavoidable race
-   condition where a client sends an outbound UNSUBSCRIBE while inbound
-   PUSH messages for that subscription from the server are still in
-   flight.
+   SUBSCRIBE request.  For collective removals, at least one of the
+   records being removed must match an active subscription.  If a
+   matching active subscription on that session is not found, then that
+   particular record addition/deletion is silently ignored.  Processing
+   of other additions and deletions in this message is not affected.
+   The DSO session is not closed.  This is to allow for the unavoidable
+   race condition where a client sends an outbound UNSUBSCRIBE while
+   inbound PUSH messages for that subscription from the server are still
+   in flight.
 
    In the case where a single change affects more than one active
    subscription, only one PUSH message is sent.  For example, a PUSH
@@ -1395,8 +1397,6 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
 
-
-
 Pusateri & Cheshire     Expires February 8, 2020               [Page 25]
 
 Internet-Draft           DNS Push Notifications              August 2019
@@ -1406,16 +1406,15 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    To cancel an individual subscription without closing the entire DSO
    session, the client sends an UNSUBSCRIBE message over the established
-   DSO session to the server.  The UNSUBSCRIBE message is encoded as a
-   DSO unidirectional message [RFC8490].  This specification defines a
-   primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE
-   Messages (tentatively DSO Type Code 0x42).
+   DSO session to the server.
 
-   A server MUST NOT send an UNSUBSCRIBE message.  If a server does send
-   an UNSUBSCRIBE message over a DSO session initiated by a client, or
-   an UNSUBSCRIBE message is sent with the QR bit set indicating that it
-   is a response, this is a fatal error and the receiver MUST forcibly
-   abort the connection immediately.
+   The entity that initiates an UNSUBSCRIBE message is by definition the
+   client.  A server MUST NOT send an UNSUBSCRIBE message over an
+   existing session from a client.  If a server does send an UNSUBSCRIBE
+   message over a DSO session initiated by a client, or an UNSUBSCRIBE
+   message is sent with the QR bit set indicating that it is a response,
+   this is a fatal error and the receiver MUST forcibly abort the
+   connection immediately.
 
 6.4.1.  UNSUBSCRIBE Message
 
@@ -1437,9 +1436,9 @@ Internet-Draft           DNS Push Notifications              August 2019
    The DSO-LENGTH field contains the value 2, the length of the 2-octet
    MESSAGE ID contained in the DSO-DATA.
 
-   The DSO-DATA contains the value given in the MESSAGE ID field of an
-   active SUBSCRIBE request.  This is how the server knows which
-   SUBSCRIBE request is being cancelled.  After receipt of the
+   The DSO-DATA contains the value previously given in the MESSAGE ID
+   field of an active SUBSCRIBE request.  This is how the server knows
+   which SUBSCRIBE request is being cancelled.  After receipt of the
    UNSUBSCRIBE message, the SUBSCRIBE request is no longer active.
 
    It is allowable for the client to issue an UNSUBSCRIBE message for a
@@ -1449,7 +1448,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    the server.  The client is NOT required to wait for the SUBSCRIBE
    response before issuing the UNSUBSCRIBE message.
 
-
+   Consequently, it is possible for a server to receive an UNSUBSCRIBE
+   message that does not match any currently active subscription.  This
 
 
 
@@ -1458,8 +1458,6 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 26]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-   Consequently, it is possible for a server to receive an UNSUBSCRIBE
-   message that does not match any currently active subscription.  This
    can occur when a client sends a SUBSCRIBE request, which subsequently
    fails and returns an error code, but the client sent an UNSUBSCRIBE
    message before it became aware that the SUBSCRIBE request had failed.
@@ -1489,6 +1487,8 @@ Internet-Draft           DNS Push Notifications              August 2019
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                        Figure 4: UNSUBSCRIBE Message
+
+
 
 
 
@@ -1548,13 +1548,13 @@ Internet-Draft           DNS Push Notifications              August 2019
    effect of informing all other interested clients that the device in
    question is now gone.
 
-   A server MUST NOT send a RECONFIRM message.  If a server does send a
-   RECONFIRM message over a DSO session initiated by a client, or a
-   RECONFIRM message is sent with the QR bit set indicating that it is a
-   response, this is a fatal error and the receiver MUST forcibly abort
-   the connection immediately.
-
-
+   The entity that initiates a RECONFIRM message is by definition the
+   client.  A server MUST NOT send a RECONFIRM message over an existing
+   session from a client.  If a server does send a RECONFIRM message
+   over a DSO session initiated by a client, or a RECONFIRM message is
+   sent with the QR bit set indicating that it is a response, this is a
+   fatal error and the receiver MUST forcibly abort the connection
+   immediately.
 
 
 
@@ -1626,33 +1626,33 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 29]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-                                     1  1  1  1  1  1
-       0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     |                  MESSAGE ID                   |   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |QR| OPCODE(6) |         Z          |   RCODE   |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             QDCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
-     |             ANCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             NSCOUNT (MUST BE ZERO)            |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |             ARCOUNT (MUST BE ZERO)            |   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-     |    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-     |   DSO-LENGTH (number of octets in DSO-DATA)   |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-     \                     NAME                      \   \
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     |                     TYPE                      |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
-     |                     CLASS                     |    |
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-     \                     RDATA                     \   /
-     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+                                      1  1  1  1  1  1
+        0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      |           MESSAGE ID (MUST BE ZERO)           |   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |QR| OPCODE(6) |         Z          |   RCODE   |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             QDCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > HEADER
+      |             ANCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             NSCOUNT (MUST BE ZERO)            |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |             ARCOUNT (MUST BE ZERO)            |   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+      |    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |   DSO-LENGTH (number of octets in DSO-DATA)   |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+      \                     NAME                      \   \
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      |                     TYPE                      |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     > DSO-DATA
+      |                     CLASS                     |    |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+      \                     RDATA                     \   /
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                         Figure 5: RECONFIRM Message
 
@@ -1684,9 +1684,9 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 6.6.  DNS Stateful Operations TLV Context Summary
 
-   This document defines four new DSO TLVs.  As suggested in Section 8.2
-   of the DNS Stateful Operations specification [RFC8490], the valid
-   contexts of these new TLV types are summarized below.
+   This document defines four new DSO TLVs.  As recommended in
+   Section 8.2 of the DNS Stateful Operations specification [RFC8490],
+   the valid contexts of these new TLV types are summarized below.
 
    The client TLV contexts are:
 
@@ -1884,7 +1884,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    client is really talking to the server associated with the desired
    host name, but since the desired host name is learned via a DNS SRV
    query, if the SRV query is subverted then the client may have a
-   secure connection to a rogue server.  DNSSEC can provided added
+   secure connection to a rogue server.  DNSSEC can provide added
    confidence that the SRV query has not been subverted.
 
 7.1.  Security Services
@@ -1911,8 +1911,9 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    Anti-replay protection:  TLS provides for the detection of and
       prevention against messages sent previously over a TLS connection
-      (such as DNS Push Notifications).  Prior messages cannot be re-
-      sent at a later time as a form of a man-in-the-middle attack.
+      (such as DNS Push Notifications).  If prior messages are re-sent
+      at a later time as a form of a man-in-the-middle attack then the
+      receiver will detect this and reject the replayed messages.
 
    Deployment recommendations on the appropriate key lengths and cypher
    suites are beyond the scope of this document.  Please refer to TLS
@@ -1952,8 +1953,7 @@ Internet-Draft           DNS Push Notifications              August 2019
    of DNS Push Notification subscriptions is required, the client should
    not use TLS Early Data.
 
-   With TLS early data there are no guarantees of non-replay between
-   connections.  If packets are duplicated and delayed in the network,
+
 
 
 
@@ -1962,6 +1962,8 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 35]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
+   With TLS early data there are no guarantees of non-replay between
+   connections.  If packets are duplicated and delayed in the network,
    the later arrivals could be mistaken for new subscription requests.
    Generally this is not a major concern, since the amount of state
    generated on the server for these spurious subscriptions is small and
@@ -1970,8 +1972,9 @@ Internet-Draft           DNS Push Notifications              August 2019
    that are activated when the server detects an excessive number of
    spurious subscription requests.
 
-   For further guidance please see Section 2.3, Section 8, and
-   Appendix E.5 of the TLS 1.3 specification [RFC8446].
+   For further guidance please see discussion of zero round-trip data
+   (Section 2.3, Section 8, and Appendix E.5) in the TLS 1.3
+   specification, [RFC8446].
 
 7.4.  TLS Session Resumption
 
@@ -1982,9 +1985,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    proceed as with any other new DSO session.  Use of TLS Session
    Resumption may allow a TLS connection to be set up more quickly, but
    the client will still have to recreate any desired subscriptions.
-
-
-
 
 
 

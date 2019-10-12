@@ -613,43 +613,42 @@
 <p id="rfc.section.6.2.p.1">After connecting, and requesting a longer idle timeout and/or keepalive interval if necessary, a DNS Push Notification client<br> then indicates its desire to receive DNS Push Notifications for<br> a given domain name by sending a SUBSCRIBE request to the server.<br> A SUBSCRIBE request is encoded in a DSO message <a href="#RFC8490" class="xref">[RFC8490]</a>.<br> This specification defines a primary DSO TLV for DNS Push Notification SUBSCRIBE Requests (tentatively DSO Type Code 0x40).</p>
 <p id="rfc.section.6.2.p.2">DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted in TLS early data, provided that the precautions described in <a href="#early_data" class="xref">Section 7.3</a> are followed.</p>
 <p id="rfc.section.6.2.p.3">The entity that initiates a SUBSCRIBE request is by definition the client.  A server MUST NOT send a SUBSCRIBE request over an existing session from a client.  If a server does send a SUBSCRIBE request over a DSO session initiated by a client, this is a fatal error and the client MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.2.p.4">Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.  The entity that initiates a SUBSCRIBE response is by definition the server.  A client MUST NOT send a SUBSCRIBE response.  If a client does send a SUBSCRIBE response, this is a fatal error and the server MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.2.1">
 <a href="#rfc.section.6.2.1">6.2.1.</a> SUBSCRIBE Request</h1>
 <p id="rfc.section.6.2.1.p.1">A SUBSCRIBE request begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE request message is illustrated in <a href="#subscribe_req" class="xref">Figure 1</a>.</p>
 <p id="rfc.section.6.2.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</p>
-<p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</p>
+<p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.2.1.p.4">The DSO-TYPE is SUBSCRIBE (tentatively 0x40).</p>
 <p id="rfc.section.6.2.1.p.5">The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
 <div id="rfc.figure.1"></div>
 <div id="subscribe_req"></div>
 <pre>
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| OPCODE(6) |         Z          |   RCODE   |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             QDCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
-|             ANCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             NSCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             ARCOUNT (MUST BE ZERO)            |   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   DSO-LENGTH (number of octets in DSO-DATA)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                                               |   \
-\                     NAME                      \    |
-\                                               \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; DSO-DATA
-|                     TYPE                      |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     CLASS                     |   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
+                                   1  1  1  1  1  1
+     0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   |                  MESSAGE ID                   |   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |QR| OPCODE(6) |         Z          |   RCODE   |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             QDCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
+   |             ANCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             NSCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             ARCOUNT (MUST BE ZERO)            |   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+   |    DSO-TYPE = SUBSCRIBE (tentatively 0x40)    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+   |   DSO-LENGTH (number of octets in DSO-DATA)   |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   \                     NAME                      \   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |                     TYPE                      |     &gt; DSO-DATA
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |                     CLASS                     |   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
 <p class="figure">Figure 1: SUBSCRIBE Request</p>
 <p id="rfc.section.6.2.1.p.6">The DSO-DATA for a SUBSCRIBE request MUST contain exactly one NAME, TYPE, and CLASS.  Since SUBSCRIBE requests are sent over TCP, multiple SUBSCRIBE DSO request messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
 <p id="rfc.section.6.2.1.p.7">If accepted, the subscription will stay in effect until the client cancels the subscription using UNSUBSCRIBE or until the DSO session between the client and the server is closed.</p>
@@ -663,33 +662,32 @@
 <h1 id="rfc.section.6.2.2">
 <a href="#rfc.section.6.2.2">6.2.2.</a> <a href="#subresp" id="subresp">SUBSCRIBE Response</a>
 </h1>
-<p id="rfc.section.6.2.2.p.1">Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.</p>
-<p id="rfc.section.6.2.2.p.2">A SUBSCRIBE response begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>.  The QR bit in the header is set indicating it is a response.  The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.</p>
-<p id="rfc.section.6.2.2.p.3">The MESSAGE ID field MUST echo the value given in the MESSAGE ID field of the SUBSCRIBE request.  This is how the client knows which request is being responded to.</p>
+<p id="rfc.section.6.2.2.p.1">A SUBSCRIBE response begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>.  The QR bit in the header is set indicating it is a response.  The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.</p>
+<p id="rfc.section.6.2.2.p.2">The MESSAGE ID field MUST echo the value given in the MESSAGE ID field of the SUBSCRIBE request.  This is how the client knows which request is being responded to.</p>
+<p id="rfc.section.6.2.2.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.2.2.p.4">A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV then the response message is processed but the SUBSCRIBE TLV MUST be silently ignored.</p>
-<p id="rfc.section.6.2.2.p.5">A client MUST NOT send a SUBSCRIBE response.  If a client does send a SUBSCRIBE message, with the QR bit set indicating that it is a response, this is a fatal error and the server MUST forcibly abort the connection immediately.</p>
 <div id="rfc.figure.2"></div>
 <div id="subscribe_resp"></div>
 <pre>
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| OPCODE(6) |         Z          |   RCODE   |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             QDCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
-|             ANCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             NSCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             ARCOUNT (MUST BE ZERO)            |   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+                                   1  1  1  1  1  1
+     0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   |                  MESSAGE ID                   |   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |QR| OPCODE(6) |         Z          |   RCODE   |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             QDCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
+   |             ANCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             NSCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             ARCOUNT (MUST BE ZERO)            |   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
 </pre>
-<p class="figure">Figure 2: SUBSCRIBE Response Message</p>
-<p id="rfc.section.6.2.2.p.6">In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</p>
+<p class="figure">Figure 2: SUBSCRIBE Response</p>
+<p id="rfc.section.6.2.2.p.5">In the SUBSCRIBE response the RCODE indicates whether or not the subscription was accepted. Supported RCODEs are as follows:</p>
 <div id="rfc.table.1"></div>
 <div id="subscribe_rcodes"></div>
 <table cellpadding="3" cellspacing="0" class="tt full center">
@@ -737,8 +735,8 @@
 </tr>
 </tbody>
 </table>
-<p id="rfc.section.6.2.2.p.7">This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a SUBSCRIBE Request. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any other RCODE value.</p>
-<p id="rfc.section.6.2.2.p.8">If the server sends a nonzero RCODE in the SUBSCRIBE response, that means: <a href="#discovery" class="xref">Section 6.1</a>, <a href="#SRV" class="xref">Paragraph 7</a>, a subsequent server MAY be tried immediately.</p>
+<p id="rfc.section.6.2.2.p.6">This document specifies only these RCODE values for SUBSCRIBE Responses. Servers sending SUBSCRIBE Responses SHOULD use one of these values. Note that NXDOMAIN is not a valid RCODE in response to a SUBSCRIBE Request. However, future circumstances may create situations where other RCODE values are appropriate in SUBSCRIBE Responses, so clients MUST be prepared to accept SUBSCRIBE Responses with any other RCODE value.</p>
+<p id="rfc.section.6.2.2.p.7">If the server sends a nonzero RCODE in the SUBSCRIBE response, that means: <a href="#discovery" class="xref">Section 6.1</a>, <a href="#SRV" class="xref">Paragraph 7</a>, a subsequent server MAY be tried immediately.</p>
 
 <ol style="list-style-type: lower-alpha">
 <li>the client is (at least partially) misconfigured, or</li>
@@ -747,8 +745,8 @@
 </ol>
 
 <p> </p>
-<p id="rfc.section.6.2.2.p.9">If the client has other successful subscriptions to this server, these subscriptions remain even though additional subscriptions may be refused. Neither the client nor the server are required to close the connection, although, either end may choose to do so.</p>
-<p id="rfc.section.6.2.2.p.10">If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <a href="#RFC8490" class="xref">[RFC8490]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.  </p>
+<p id="rfc.section.6.2.2.p.8">If the client has other successful subscriptions to this server, these subscriptions remain even though additional subscriptions may be refused. Neither the client nor the server are required to close the connection, although, either end may choose to do so.</p>
+<p id="rfc.section.6.2.2.p.9">If the server sends a nonzero RCODE then it SHOULD append a Retry Delay TLV <a href="#RFC8490" class="xref">[RFC8490]</a> to the response specifying a delay before the client attempts this operation again. Recommended values for the delay for different RCODE values are given below. These recommended values apply both to the default values a server should place in the Retry Delay TLV, and the default values a client should assume if the server provides no Retry Delay TLV.  </p>
 
 <ul class="empty">
 <li>For RCODE = 1 (FORMERR) the delay may be any value selected by the implementer. A value of five minutes is RECOMMENDED, to reduce the risk of high load from defective clients.</li>
@@ -763,30 +761,30 @@
 </ul>
 
 <p> </p>
-<p id="rfc.section.6.2.2.p.11">For RCODE = 9 (NOTAUTH), the time delay applies to requests for other names falling within the same zone. Requests for names falling within other zones are not subject to the delay. For all other RCODEs the time delay applies to all subsequent requests to this server.</p>
-<p id="rfc.section.6.2.2.p.12">After sending an error response the server MAY allow the session to remain open, or MAY send a DNS Push Notification Retry Delay Operation TLV instructing the client to close the session, as described in the <a href="#RFC8490" class="xref">DSO specification</a>.  Clients MUST correctly handle both cases.</p>
+<p id="rfc.section.6.2.2.p.10">For RCODE = 9 (NOTAUTH), the time delay applies to requests for other names falling within the same zone. Requests for names falling within other zones are not subject to the delay. For all other RCODEs the time delay applies to all subsequent requests to this server.</p>
+<p id="rfc.section.6.2.2.p.11">After sending an error response the server MAY allow the session to remain open, or MAY send a DNS Push Notification Retry Delay Operation TLV instructing the client to close the session, as described in the <a href="#RFC8490" class="xref">DSO specification</a>.  Clients MUST correctly handle both cases.</p>
 <h1 id="rfc.section.6.3">
 <a href="#rfc.section.6.3">6.3.</a> <a href="#push" id="push">DNS Push Notification Updates</a>
 </h1>
 <p id="rfc.section.6.3.p.1">Once a subscription has been successfully established, the server generates PUSH messages to send to the client as appropriate. In the case that the answer set was already non-empty at the moment the subscription was established, an initial PUSH message will be sent immediately following the SUBSCRIBE Response. Subsequent changes to the answer set are then communicated to the client in subsequent PUSH messages.</p>
+<p id="rfc.section.6.3.p.2">A client MUST NOT send a PUSH message.  If a client does send a PUSH message, or a PUSH message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.3.1">
 <a href="#rfc.section.6.3.1">6.3.1.</a> PUSH Message</h1>
 <p id="rfc.section.6.3.1.p.1">A PUSH unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the PUSH primary TLV.  A PUSH message is illustrated in <a href="#push_msg" class="xref">Figure 3</a>.</p>
 <p id="rfc.section.6.3.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no client response to a PUSH message.</p>
 <p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
-<p id="rfc.section.6.3.1.p.4">A client MUST NOT send a PUSH message.  If a client does send a PUSH message, or a PUSH message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
-<p id="rfc.section.6.3.1.p.5">The DSO-TYPE is PUSH (tentatively 0x41).</p>
-<p id="rfc.section.6.3.1.p.6">The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the changes being communicated.</p>
-<p id="rfc.section.6.3.1.p.7">The DSO-DATA contains one or more change notifications.  A PUSH Message MUST contain at least one change notification.  If a PUSH Message is received that contains no change notifications, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
-<p id="rfc.section.6.3.1.p.8">The change notification records are formatted similarly to how DNS Resource Records are conventionally expressed in DNS messages, as illustrated in <a href="#push_msg" class="xref">Figure 3</a>, and are interpreted as described below.</p>
-<p id="rfc.section.6.3.1.p.9">The TTL field holds an unsigned 32-bit integer <a href="#RFC2181" class="xref">[RFC2181]</a>.  If the TTL is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF), then a new DNS Resource Record with the given name, type, class and RDATA is added.  Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY) this is a fatal error, and the client MUST forcibly abort the connection immediately.  A TTL of 0 means that this record should be retained for as long as the subscription is active, and should be discarded immediately the moment the subscription is cancelled.</p>
-<p id="rfc.section.6.3.1.p.10">If the TTL has the value 0xFFFFFFFF, then the DNS Resource Record with the given name, type, class and RDATA is removed.  Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY) this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
-<p id="rfc.section.6.3.1.p.11">If the TTL has the value 0xFFFFFFFE, then this is a 'collective' remove notification.  For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.  If a change notification is received where TTL = 0xFFFFFFFE and RDLEN is not zero, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
-<p id="rfc.section.6.3.1.p.12">There are three types of collective remove notification:</p>
-<p id="rfc.section.6.3.1.p.13">For collective remove notifications, if CLASS is not 255 (ANY) and TYPE is not 255 (ANY) then for the given name this deletes all records of the specified type in the specified class.</p>
-<p id="rfc.section.6.3.1.p.14">For collective remove notifications, if CLASS is not 255 (ANY) and TYPE is 255 (ANY) then for the given name this deletes all records of all types in the specified class.</p>
-<p id="rfc.section.6.3.1.p.15">For collective remove notifications, if CLASS is 255 (ANY), then for the given name this deletes all records of all types in all classes.  In this case TYPE MUST be set to zero on transmission, and MUST be silently ignored on reception.</p>
-<p id="rfc.section.6.3.1.p.16">Summary of change notification types: </p>
+<p id="rfc.section.6.3.1.p.4">The DSO-TYPE is PUSH (tentatively 0x41).</p>
+<p id="rfc.section.6.3.1.p.5">The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the changes being communicated.</p>
+<p id="rfc.section.6.3.1.p.6">The DSO-DATA contains one or more change notifications.  A PUSH Message MUST contain at least one change notification.  If a PUSH Message is received that contains no change notifications, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.3.1.p.7">The change notification records are formatted similarly to how DNS Resource Records are conventionally expressed in DNS messages, as illustrated in <a href="#push_msg" class="xref">Figure 3</a>, and are interpreted as described below.</p>
+<p id="rfc.section.6.3.1.p.8">The TTL field holds an unsigned 32-bit integer <a href="#RFC2181" class="xref">[RFC2181]</a>.  If the TTL is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF), then a new DNS Resource Record with the given name, type, class and RDATA is added.  Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY) this is a fatal error, and the client MUST forcibly abort the connection immediately.  A TTL of 0 means that this record should be retained for as long as the subscription is active, and should be discarded immediately the moment the subscription is cancelled.</p>
+<p id="rfc.section.6.3.1.p.9">If the TTL has the value 0xFFFFFFFF, then the DNS Resource Record with the given name, type, class and RDATA is removed.  Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY) this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.3.1.p.10">If the TTL has the value 0xFFFFFFFE, then this is a 'collective' remove notification.  For collective remove notifications RDLEN MUST be zero and consequently the RDATA MUST be empty.  If a change notification is received where TTL = 0xFFFFFFFE and RDLEN is not zero, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.3.1.p.11">There are three types of collective remove notification:</p>
+<p id="rfc.section.6.3.1.p.12">For collective remove notifications, if CLASS is not 255 (ANY) and TYPE is not 255 (ANY) then for the given name this deletes all records of the specified type in the specified class.</p>
+<p id="rfc.section.6.3.1.p.13">For collective remove notifications, if CLASS is not 255 (ANY) and TYPE is 255 (ANY) then for the given name this deletes all records of all types in the specified class.</p>
+<p id="rfc.section.6.3.1.p.14">For collective remove notifications, if CLASS is 255 (ANY), then for the given name this deletes all records of all types in all classes.  In this case TYPE MUST be set to zero on transmission, and MUST be silently ignored on reception.</p>
+<p id="rfc.section.6.3.1.p.15">Summary of change notification types: </p>
 
 <ul class="empty">
 <li>Delete all RRsets from a name, in all classes<br> TTL = 0xFFFFFFFE, RDLEN = 0, CLASS = 255 (ANY)</li>
@@ -797,66 +795,66 @@
 </ul>
 
 <p> </p>
-<p id="rfc.section.6.3.1.p.17">Note that it is valid for the RDATA of an added or removed DNS Resource Record to be empty (zero length).  For example, an <a href="#RFC3123" class="xref">Address Prefix List Resource Record</a> may have empty RDATA.  Therefore, a change notification with RDLEN = 0 does not automatically indicate a remove notification.  If RDLEN = 0 and TTL is the in the range 0 - 0x7FFFFFFF, this change notification signals the addition of a record with the given name, type, class, and empty RDATA.  If RDLEN = 0 and TTL = 0xFFFFFFFF, this change notification signals the removal specifically of that single record with the given name, type, class, and empty RDATA.</p>
-<p id="rfc.section.6.3.1.p.18">If the TTL is any value other than 0xFFFFFFFF, 0xFFFFFFFE, or a value in the range 0 - 0x7FFFFFFF, then the receiver SHOULD silently ignore this particular change notification record.  The connection is not terminated and other valid change notification records within this PUSH message are processed as usual.</p>
-<p id="rfc.section.6.3.1.p.19">For efficiency, when generating a PUSH message, a server SHOULD include as many change notifications as it has immediately available to send, rather than sending each change notification as a separate DSO message.  Once it has exhausted the list of change notifications immediately available to send, a server SHOULD then send the PUSH message immediately, rather than waiting to see if additional change notifications become available.</p>
-<p id="rfc.section.6.3.1.p.20">For efficiency, when generating a PUSH message, a server SHOULD use standard DNS name compression, with offsets relative to the beginning of the DNS message <a href="#RFC1035" class="xref">[RFC1035]</a>.  When multiple change notifications in a single PUSH message have the same owner name, this name compression can yield significant savings.  Name compression should be performed as specified in Section 18.14 of the <a href="#RFC6762" class="xref">Multicast DNS specification</a>, namely, owner names should always be compressed, and names appearing within RDATA should be compressed for only the RR types listed below: </p>
+<p id="rfc.section.6.3.1.p.16">Note that it is valid for the RDATA of an added or removed DNS Resource Record to be empty (zero length).  For example, an <a href="#RFC3123" class="xref">Address Prefix List Resource Record</a> may have empty RDATA.  Therefore, a change notification with RDLEN = 0 does not automatically indicate a remove notification.  If RDLEN = 0 and TTL is the in the range 0 - 0x7FFFFFFF, this change notification signals the addition of a record with the given name, type, class, and empty RDATA.  If RDLEN = 0 and TTL = 0xFFFFFFFF, this change notification signals the removal specifically of that single record with the given name, type, class, and empty RDATA.</p>
+<p id="rfc.section.6.3.1.p.17">If the TTL is any value other than 0xFFFFFFFF, 0xFFFFFFFE, or a value in the range 0 - 0x7FFFFFFF, then the receiver SHOULD silently ignore this particular change notification record.  The connection is not terminated and other valid change notification records within this PUSH message are processed as usual.</p>
+<p id="rfc.section.6.3.1.p.18">For efficiency, when generating a PUSH message, a server SHOULD include as many change notifications as it has immediately available to send, rather than sending each change notification as a separate DSO message.  Once it has exhausted the list of change notifications immediately available to send, a server SHOULD then send the PUSH message immediately, rather than waiting to see if additional change notifications become available.</p>
+<p id="rfc.section.6.3.1.p.19">For efficiency, when generating a PUSH message, a server SHOULD use standard DNS name compression, with offsets relative to the beginning of the DNS message <a href="#RFC1035" class="xref">[RFC1035]</a>.  When multiple change notifications in a single PUSH message have the same owner name, this name compression can yield significant savings.  Name compression should be performed as specified in Section 18.14 of the <a href="#RFC6762" class="xref">Multicast DNS specification</a>, namely, owner names should always be compressed, and names appearing within RDATA should be compressed for only the RR types listed below: </p>
 
 <dl>
 <dt></dt>
 <dd style="margin-left: 8">NS, CNAME, PTR, DNAME, SOA, MX, AFSDB, RT, KX, RP, PX, SRV, NSEC</dd>
 </dl>
-<p id="rfc.section.6.3.1.p.21">Servers may generate PUSH messages up to a maximum DNS message length of 16,382 bytes, counting from the start of the DSO 12-byte header.  Including the two-byte length prefix that is used to frame DNS over a byte stream like TLS, this makes a total of 16,384 bytes.  Servers MUST NOT generate PUSH messages larger than this.  Where the immediately available change notifications are sufficient to exceed a DNS message length of 16,382 bytes, the change notifications MUST be communicated in separate PUSH messages of up to 16,382 bytes each.  DNS name compression becomes less effective for messages larger than 16,384 bytes, so little efficiency benefit is gained by sending messages larger than this.</p>
-<p id="rfc.section.6.3.1.p.22">If a client receives a PUSH message with a DNS message length larger than 16,382 bytes, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.3.1.p.20">Servers may generate PUSH messages up to a maximum DNS message length of 16,382 bytes, counting from the start of the DSO 12-byte header.  Including the two-byte length prefix that is used to frame DNS over a byte stream like TLS, this makes a total of 16,384 bytes.  Servers MUST NOT generate PUSH messages larger than this.  Where the immediately available change notifications are sufficient to exceed a DNS message length of 16,382 bytes, the change notifications MUST be communicated in separate PUSH messages of up to 16,382 bytes each.  DNS name compression becomes less effective for messages larger than 16,384 bytes, so little efficiency benefit is gained by sending messages larger than this.</p>
+<p id="rfc.section.6.3.1.p.21">If a client receives a PUSH message with a DNS message length larger than 16,382 bytes, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
 <div id="rfc.figure.3"></div>
 <div id="push_msg"></div>
 <pre>
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|           MESSAGE ID (MUST BE ZERO)           |   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| OPCODE(6) |         Z          |   RCODE   |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             QDCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
-|             ANCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             NSCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             ARCOUNT (MUST BE ZERO)            |   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|      DSO-TYPE = PUSH (tentatively 0x41)       |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   DSO-LENGTH (number of octets in DSO-DATA)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-\                     NAME                      \   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     TYPE                      |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     CLASS                     |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                      TTL                      |    |
-|     (32-bit unsigned big-endian integer)      |     &gt; DSO-DATA
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|  RDLEN (16-bit unsigned big-endian integer)   |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-\           RDATA (sized as necessary)          \    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-:     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
-:             Repeated As Necessary             :   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
+                                   1  1  1  1  1  1
+     0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   |           MESSAGE ID (MUST BE ZERO)           |   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |QR| OPCODE(6) |         Z          |   RCODE   |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             QDCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
+   |             ANCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             NSCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             ARCOUNT (MUST BE ZERO)            |   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+   |      DSO-TYPE = PUSH (tentatively 0x41)       |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+   |   DSO-LENGTH (number of octets in DSO-DATA)   |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   \                     NAME                      \   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |                     TYPE                      |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |                     CLASS                     |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |                      TTL                      |    |
+   |     (32-bit unsigned big-endian integer)      |     &gt; DSO-DATA
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |  RDLEN (16-bit unsigned big-endian integer)   |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   \           RDATA (sized as necessary)          \    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   :     NAME, TYPE, CLASS, TTL, RDLEN, RDATA      :    |
+   :             Repeated As Necessary             :   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
 <p class="figure">Figure 3: PUSH Message</p>
-<p id="rfc.section.6.3.1.p.23">When processing the records received in a PUSH Message, the receiving client MUST validate that the records being added or deleted correspond with at least one currently active subscription on that session. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.  If the TYPE in the SUBSCRIBE request was not ANY (255) then the TYPE of the record must match the TYPE given in the SUBSCRIBE request.  If the CLASS in the SUBSCRIBE request was not ANY (255) then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.  If a matching active subscription on that session is not found, then that individual record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The DSO session is not closed. This is to allow for the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while inbound PUSH messages for that subscription from the server are still in flight.</p>
-<p id="rfc.section.6.3.1.p.24">In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE = 255 (ANY). It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</p>
-<p id="rfc.section.6.3.1.p.25">The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" PUSH message, not three separate "delete an individual RR from a name" PUSH messages. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" PUSH message, not two separate "delete an RRset from a name" PUSH messages.</p>
-<p id="rfc.section.6.3.1.p.26">A server SHOULD combine multiple change notifications in a single PUSH message when possible, even if those change notifications apply to different subscriptions. Conceptually, a PUSH message is a session-level mechanism, not a subscription-level mechanism.</p>
-<p id="rfc.section.6.3.1.p.27">The TTL of an added record is stored by the client.  While the subscription is active, the TTL is not decremented, because a change to the TTL would produce a new update.  For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact.  Consequently, a client does not have to poll to verify that the record is still there.  Once a subscription is cancelled (individually, or as a result of the DSO session being closed) record aging for records covered by the subscription resumes and records are removed from the local cache when their  TTL reaches zero.</p>
+<p id="rfc.section.6.3.1.p.22">When processing the records received in a PUSH Message, the receiving client MUST validate that the records being added or deleted correspond with at least one currently active subscription on that session. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.  For individual additions and removals, if the TYPE in the SUBSCRIBE request was not ANY (255) then the TYPE of the record must match the TYPE given in the SUBSCRIBE request, and if the CLASS in the SUBSCRIBE request was not ANY (255) then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.  For collective removals, at least one of the records being removed must match an active subscription.  If a matching active subscription on that session is not found, then that particular record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The DSO session is not closed. This is to allow for the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while inbound PUSH messages for that subscription from the server are still in flight.</p>
+<p id="rfc.section.6.3.1.p.23">In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE = 255 (ANY). It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</p>
+<p id="rfc.section.6.3.1.p.24">The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" PUSH message, not three separate "delete an individual RR from a name" PUSH messages. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" PUSH message, not two separate "delete an RRset from a name" PUSH messages.</p>
+<p id="rfc.section.6.3.1.p.25">A server SHOULD combine multiple change notifications in a single PUSH message when possible, even if those change notifications apply to different subscriptions. Conceptually, a PUSH message is a session-level mechanism, not a subscription-level mechanism.</p>
+<p id="rfc.section.6.3.1.p.26">The TTL of an added record is stored by the client.  While the subscription is active, the TTL is not decremented, because a change to the TTL would produce a new update.  For as long as a relevant subscription remains active, the client SHOULD assume that when a record goes away the server will notify it of that fact.  Consequently, a client does not have to poll to verify that the record is still there.  Once a subscription is cancelled (individually, or as a result of the DSO session being closed) record aging for records covered by the subscription resumes and records are removed from the local cache when their  TTL reaches zero.</p>
 <h1 id="rfc.section.6.4">
 <a href="#rfc.section.6.4">6.4.</a> <a href="#unsubscribe" id="unsubscribe">DNS Push Notification UNSUBSCRIBE</a>
 </h1>
-<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server. The UNSUBSCRIBE message is encoded as a DSO unidirectional message <a href="#RFC8490" class="xref">[RFC8490]</a>. This specification defines a primary unidirectional DSO TLV for DNS Push Notification UNSUBSCRIBE Messages (tentatively DSO Type Code 0x42).</p>
-<p id="rfc.section.6.4.p.2">A server MUST NOT send an UNSUBSCRIBE message.  If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, or an UNSUBSCRIBE message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.4.p.1">To cancel an individual subscription without closing the entire DSO session, the client sends an UNSUBSCRIBE message over the established DSO session to the server.</p>
+<p id="rfc.section.6.4.p.2">The entity that initiates an UNSUBSCRIBE message is by definition the client.  A server MUST NOT send an UNSUBSCRIBE message over an existing session from a client.  If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, or an UNSUBSCRIBE message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.4.1">
 <a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Message</h1>
 <p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the UNSUBSCRIBE primary TLV.  An UNSUBSCRIBE message is illustrated in <a href="#unsubscribe_req" class="xref">Figure 4</a>.</p>
@@ -864,33 +862,33 @@
 <p id="rfc.section.6.4.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
 <p id="rfc.section.6.4.1.p.4">The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).</p>
 <p id="rfc.section.6.4.1.p.5">The DSO-LENGTH field contains the value 2, the length of the 2-octet MESSAGE ID contained in the DSO-DATA.</p>
-<p id="rfc.section.6.4.1.p.6">The DSO-DATA contains the value given in the MESSAGE ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE message, the SUBSCRIBE request is no longer active.</p>
+<p id="rfc.section.6.4.1.p.6">The DSO-DATA contains the value previously given in the MESSAGE ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE message, the SUBSCRIBE request is no longer active.</p>
 <p id="rfc.section.6.4.1.p.7">It is allowable for the client to issue an UNSUBSCRIBE message for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE message.</p>
 <p id="rfc.section.6.4.1.p.8">Consequently, it is possible for a server to receive an UNSUBSCRIBE message that does not match any currently active subscription.  This can occur when a client sends a SUBSCRIBE request, which subsequently fails and returns an error code, but the client sent an UNSUBSCRIBE message before it became aware that the SUBSCRIBE request had failed.  Because of this, servers MUST silently ignore UNSUBSCRIBE messages that do not match any currently active subscription.</p>
 <div id="rfc.figure.4"></div>
 <div id="unsubscribe_req"></div>
 <pre>
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|           MESSAGE ID (MUST BE ZERO)           |   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| OPCODE(6) |         Z          |   RCODE   |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             QDCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
-|             ANCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             NSCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             ARCOUNT (MUST BE ZERO)            |   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|                DSO-LENGTH (2)                 |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|              SUBSCRIBE MESSAGE ID             |   &gt; DSO-DATA
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
+                                   1  1  1  1  1  1
+     0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   |           MESSAGE ID (MUST BE ZERO)           |   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |QR| OPCODE(6) |         Z          |   RCODE   |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             QDCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
+   |             ANCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             NSCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             ARCOUNT (MUST BE ZERO)            |   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+   |   DSO-TYPE = UNSUBSCRIBE (tentatively 0x42)   |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+   |                DSO-LENGTH (2)                 |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   |              SUBSCRIBE MESSAGE ID             |   &gt; DSO-DATA
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
 <p class="figure">Figure 4: UNSUBSCRIBE Message</p>
 <h1 id="rfc.section.6.5">
 <a href="#rfc.section.6.5">6.5.</a> <a href="#reconfirm" id="reconfirm">DNS Push Notification RECONFIRM</a>
@@ -899,7 +897,7 @@
 <p id="rfc.section.6.5.p.2">For other types of DNS server, the RECONFIRM operation is currently undefined, and SHOULD result in a NOERROR response, but otherwise need not cause any action to occur.</p>
 <p id="rfc.section.6.5.p.3">Frequent use of RECONFIRM operations may be a sign of network unreliability, or some kind of misconfiguration, so RECONFIRM operations MAY be logged or otherwise communicated to a human administrator to assist in detecting and remedying such network problems.</p>
 <p id="rfc.section.6.5.p.4">If, after receiving a valid RECONFIRM message, the server determines that the disputed records are in fact no longer valid, then subsequent DNS PUSH Messages will be generated to inform interested clients. Thus, one client discovering that a previously-advertised device (like a network printer) is no longer present has the side effect of informing all other interested clients that the device in question is now gone.</p>
-<p id="rfc.section.6.5.p.5">A server MUST NOT send a RECONFIRM message.  If a server does send a RECONFIRM message over a DSO session initiated by a client, or a RECONFIRM message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
+<p id="rfc.section.6.5.p.5">The entity that initiates a RECONFIRM message is by definition the client.  A server MUST NOT send a RECONFIRM message over an existing session from a client.  If a server does send a RECONFIRM message over a DSO session initiated by a client, or a RECONFIRM message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.5.1">
 <a href="#rfc.section.6.5.1">6.5.1.</a> RECONFIRM Message</h1>
 <p id="rfc.section.6.5.1.p.1">A RECONFIRM unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM primary TLV.<br> A RECONFIRM message is illustrated in <a href="#reconfirm_req" class="xref">Figure 5</a>.</p>
@@ -915,37 +913,37 @@
 <div id="rfc.figure.5"></div>
 <div id="reconfirm_req"></div>
 <pre>
-                                1  1  1  1  1  1
-  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-|                  MESSAGE ID                   |   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|QR| OPCODE(6) |         Z          |   RCODE   |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             QDCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
-|             ANCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             NSCOUNT (MUST BE ZERO)            |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|             ARCOUNT (MUST BE ZERO)            |   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
-|    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-|   DSO-LENGTH (number of octets in DSO-DATA)   |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
-\                     NAME                      \   \
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-|                     TYPE                      |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; DSO-DATA
-|                     CLASS                     |    |
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
-\                     RDATA                     \   /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
+                                   1  1  1  1  1  1
+     0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   |           MESSAGE ID (MUST BE ZERO)           |   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |QR| OPCODE(6) |         Z          |   RCODE   |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             QDCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; HEADER
+   |             ANCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             NSCOUNT (MUST BE ZERO)            |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |             ARCOUNT (MUST BE ZERO)            |   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
+   |    DSO-TYPE = RECONFIRM (tentatively 0x43)    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+   |   DSO-LENGTH (number of octets in DSO-DATA)   |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
+   \                     NAME                      \   \
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   |                     TYPE                      |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+     &gt; DSO-DATA
+   |                     CLASS                     |    |
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+    |
+   \                     RDATA                     \   /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /</pre>
 <p class="figure">Figure 5: RECONFIRM Message</p>
 <h1 id="rfc.section.6.6">
 <a href="#rfc.section.6.6">6.6.</a> DNS Stateful Operations TLV Context Summary</h1>
-<p id="rfc.section.6.6.p.1">This document defines four new DSO TLVs. As suggested in Section 8.2 of the <a href="#RFC8490" class="xref">DNS Stateful Operations specification</a>, the valid contexts of these new TLV types are summarized below.</p>
+<p id="rfc.section.6.6.p.1">This document defines four new DSO TLVs. As recommended in Section 8.2 of the <a href="#RFC8490" class="xref">DNS Stateful Operations specification</a>, the valid contexts of these new TLV types are summarized below.</p>
 <p id="rfc.section.6.6.p.2">The client TLV contexts are: </p>
 
 <dl>
@@ -1093,7 +1091,7 @@
 <p id="rfc.section.7.p.1">The Strict Privacy Usage Profile for DNS over TLS is REQUIRED for DNS Push Notifications <a href="#RFC8310" class="xref">[RFC8310]</a>. Cleartext connections for DNS Push Notifications are not permissible. Since this is a new protocol, transition mechanisms from the Opportunistic Privacy profile are unnecessary.</p>
 <p id="rfc.section.7.p.2">Also, see Section 9 of the DNS over (D)TLS Usage Profiles document <a href="#RFC8310" class="xref">[RFC8310]</a> for additional recommendations for various versions of TLS usage.</p>
 <p id="rfc.section.7.p.3">As a consequence of requiring TLS, client certificate authentication and verification may also be enforced by the server for stronger client-server security or end-to-end security. However, recommendations for security in particular deployment scenarios are outside the scope of this document.</p>
-<p id="rfc.section.7.p.4">DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers. TLS alone does not provide complete security. TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server. DNSSEC can provided added confidence that the SRV query has not been subverted.</p>
+<p id="rfc.section.7.p.4">DNSSEC is RECOMMENDED for the authentication of DNS Push Notification servers.  TLS alone does not provide complete security.  TLS certificate verification can provide reasonable assurance that the client is really talking to the server associated with the desired host name, but since the desired host name is learned via a DNS SRV query, if the SRV query is subverted then the client may have a secure connection to a rogue server.  DNSSEC can provide added confidence that the SRV query has not been subverted.</p>
 <h1 id="rfc.section.7.1">
 <a href="#rfc.section.7.1">7.1.</a> Security Services</h1>
 <p id="rfc.section.7.1.p.1">It is the goal of using TLS to provide the following security services: </p>
@@ -1106,7 +1104,7 @@
 <dt>Authentication:</dt>
 <dd style="margin-left: 8">An end-point of the TLS communication is authenticated as the intended entity to communicate with.</dd>
 <dt>Anti-replay protection:</dt>
-<dd style="margin-left: 8">TLS provides for the detection of and prevention against messages sent previously over a TLS connection (such as DNS Push Notifications). Prior messages cannot be re-sent at a later time as a form of a man-in-the-middle attack.</dd>
+<dd style="margin-left: 8">TLS provides for the detection of and prevention against messages sent previously over a TLS connection (such as DNS Push Notifications).  If prior messages are re-sent at a later time as a form of a man-in-the-middle attack then the receiver will detect this and reject the replayed messages.</dd>
 </dl>
 
 <p> </p>
@@ -1122,7 +1120,7 @@
 <p id="rfc.section.7.3.p.2">However, there are some factors to consider before using TLS early data.</p>
 <p id="rfc.section.7.3.p.3">TLS Early Data is not forward secret.  In cases where forward secrecy of DNS Push Notification subscriptions is required, the client should not use TLS Early Data.</p>
 <p id="rfc.section.7.3.p.4">With TLS early data there are no guarantees of non-replay between connections.  If packets are duplicated and delayed in the network, the later arrivals could be mistaken for new subscription requests.  Generally this is not a major concern, since the amount of state generated on the server for these spurious subscriptions is small and short-lived, since the TCP connection will not complete the three-way handshake.  Servers MAY choose to implement rate-limiting measures that are activated when the server detects an excessive number of spurious subscription requests.</p>
-<p id="rfc.section.7.3.p.5">For further guidance please see Section 2.3, Section 8, and Appendix E.5 of the TLS 1.3 specification <a href="#RFC8446" class="xref">[RFC8446]</a>.</p>
+<p id="rfc.section.7.3.p.5">For further guidance please see discussion of zero round-trip data (Section 2.3, Section 8, and Appendix E.5) in the TLS 1.3 specification, <a href="#RFC8446" class="xref">[RFC8446]</a>.</p>
 <h1 id="rfc.section.7.4">
 <a href="#rfc.section.7.4">7.4.</a> <a href="#resumption" id="resumption">TLS Session Resumption</a>
 </h1>
