@@ -704,7 +704,7 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    A SUBSCRIBE request begins with the standard DSO 12-byte header
    [RFC8490], followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE
-   request message is illustrated in Figure 1.
+   request is illustrated in Figure 1.
 
    The MESSAGE ID field MUST be set to a unique value, that the client
    is not using for any other active operation on this DSO session.  For
@@ -716,8 +716,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields MUST be zero,
-   and the corresponding four sections MUST be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields must be zero,
+   and the corresponding four sections must be empty (i.e., absent).
 
    The DSO-TYPE is SUBSCRIBE (tentatively 0x40).
 
@@ -847,7 +847,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    A SUBSCRIBE response begins with the standard DSO 12-byte header
    [RFC8490].  The QR bit in the header is set indicating it is a
    response.  The header MAY be followed by one or more optional TLVs,
-   such as a Retry Delay TLV.
+   such as a Retry Delay TLV.  A SUBSCRIBE response is illustrated in
+   Figure 2.
 
    The MESSAGE ID field MUST echo the value given in the MESSAGE ID
    field of the SUBSCRIBE request.  This is how the client knows which
@@ -855,8 +856,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields MUST be zero,
-   and the corresponding four sections MUST be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields must be zero,
+   and the corresponding four sections must be empty (i.e., absent).
 
    A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a
    client receives a SUBSCRIBE response message containing a SUBSCRIBE
@@ -881,7 +882,6 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
                        Figure 2: SUBSCRIBE Response
-
 
 
 
@@ -1093,8 +1093,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields MUST be zero,
-   and the corresponding four sections MUST be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields must be zero,
+   and the corresponding four sections must be empty (i.e., absent).
 
    The DSO-TYPE is PUSH (tentatively 0x41).
 
@@ -1428,8 +1428,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields MUST be zero,
-   and the corresponding four sections MUST be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields must be zero,
+   and the corresponding four sections must be empty (i.e., absent).
 
    The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).
 
@@ -1582,8 +1582,8 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    The other header fields MUST be set as described in the DSO spec-
    ification [RFC8490].  The DNS OPCODE field contains the OPCODE value
-   for DNS Stateful Operations (6).  The four count fields MUST be zero,
-   and the corresponding four sections MUST be empty (i.e., absent).
+   for DNS Stateful Operations (6).  The four count fields must be zero,
+   and the corresponding four sections must be empty (i.e., absent).
 
    The DSO-TYPE is RECONFIRM (tentatively 0x43).
 

@@ -616,9 +616,9 @@
 <p id="rfc.section.6.2.p.4">Each SUBSCRIBE request generates exactly one SUBSCRIBE response from the server.  The entity that initiates a SUBSCRIBE response is by definition the server.  A client MUST NOT send a SUBSCRIBE response.  If a client does send a SUBSCRIBE response, this is a fatal error and the server MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.2.1">
 <a href="#rfc.section.6.2.1">6.2.1.</a> SUBSCRIBE Request</h1>
-<p id="rfc.section.6.2.1.p.1">A SUBSCRIBE request begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE request message is illustrated in <a href="#subscribe_req" class="xref">Figure 1</a>.</p>
+<p id="rfc.section.6.2.1.p.1">A SUBSCRIBE request begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the SUBSCRIBE primary TLV.  A SUBSCRIBE request is illustrated in <a href="#subscribe_req" class="xref">Figure 1</a>.</p>
 <p id="rfc.section.6.2.1.p.2">The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</p>
-<p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.2.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</p>
 <p id="rfc.section.6.2.1.p.4">The DSO-TYPE is SUBSCRIBE (tentatively 0x40).</p>
 <p id="rfc.section.6.2.1.p.5">The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the name, type, and class of the record(s) being sought.</p>
 <div id="rfc.figure.1"></div>
@@ -662,9 +662,9 @@
 <h1 id="rfc.section.6.2.2">
 <a href="#rfc.section.6.2.2">6.2.2.</a> <a href="#subresp" id="subresp">SUBSCRIBE Response</a>
 </h1>
-<p id="rfc.section.6.2.2.p.1">A SUBSCRIBE response begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>.  The QR bit in the header is set indicating it is a response.  The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.</p>
+<p id="rfc.section.6.2.2.p.1">A SUBSCRIBE response begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>.  The QR bit in the header is set indicating it is a response.  The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.  A SUBSCRIBE response is illustrated in <a href="#subscribe_resp" class="xref">Figure 2</a>.</p>
 <p id="rfc.section.6.2.2.p.2">The MESSAGE ID field MUST echo the value given in the MESSAGE ID field of the SUBSCRIBE request.  This is how the client knows which request is being responded to.</p>
-<p id="rfc.section.6.2.2.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.2.2.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</p>
 <p id="rfc.section.6.2.2.p.4">A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.  If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV then the response message is processed but the SUBSCRIBE TLV MUST be silently ignored.</p>
 <div id="rfc.figure.2"></div>
 <div id="subscribe_resp"></div>
@@ -772,7 +772,7 @@
 <a href="#rfc.section.6.3.1">6.3.1.</a> PUSH Message</h1>
 <p id="rfc.section.6.3.1.p.1">A PUSH unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the PUSH primary TLV.  A PUSH message is illustrated in <a href="#push_msg" class="xref">Figure 3</a>.</p>
 <p id="rfc.section.6.3.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no client response to a PUSH message.</p>
-<p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.3.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</p>
 <p id="rfc.section.6.3.1.p.4">The DSO-TYPE is PUSH (tentatively 0x41).</p>
 <p id="rfc.section.6.3.1.p.5">The DSO-LENGTH is the length of the DSO-DATA that follows, which specifies the changes being communicated.</p>
 <p id="rfc.section.6.3.1.p.6">The DSO-DATA contains one or more change notifications.  A PUSH Message MUST contain at least one change notification.  If a PUSH Message is received that contains no change notifications, this is a fatal error, and the client MUST forcibly abort the connection immediately.</p>
@@ -857,16 +857,16 @@
 <p id="rfc.section.6.4.p.2">The entity that initiates an UNSUBSCRIBE message is by definition the client.  A server MUST NOT send an UNSUBSCRIBE message over an existing session from a client.  If a server does send an UNSUBSCRIBE message over a DSO session initiated by a client, or an UNSUBSCRIBE message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.4.1">
 <a href="#rfc.section.6.4.1">6.4.1.</a> UNSUBSCRIBE Message</h1>
-<p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the UNSUBSCRIBE primary TLV.  An UNSUBSCRIBE message is illustrated in <a href="#unsubscribe_req" class="xref">Figure 4</a>.</p>
+<p id="rfc.section.6.4.1.p.1">An UNSUBSCRIBE unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the UNSUBSCRIBE primary TLV.  An UNSUBSCRIBE message is illustrated in <a href="#unsubscribe_msg" class="xref">Figure 4</a>.</p>
 <p id="rfc.section.6.4.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no server response to an UNSUBSCRIBE message.</p>
-<p id="rfc.section.6.4.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.4.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</p>
 <p id="rfc.section.6.4.1.p.4">The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).</p>
 <p id="rfc.section.6.4.1.p.5">The DSO-LENGTH field contains the value 2, the length of the 2-octet MESSAGE ID contained in the DSO-DATA.</p>
 <p id="rfc.section.6.4.1.p.6">The DSO-DATA contains the value previously given in the MESSAGE ID field of an active SUBSCRIBE request.  This is how the server knows which SUBSCRIBE request is being cancelled.  After receipt of the UNSUBSCRIBE message, the SUBSCRIBE request is no longer active.</p>
 <p id="rfc.section.6.4.1.p.7">It is allowable for the client to issue an UNSUBSCRIBE message for a previous SUBSCRIBE request for which the client has not yet received a SUBSCRIBE response.  This is to allow for the case where a client starts and stops a subscription in less than the round-trip time to the server.  The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE message.</p>
 <p id="rfc.section.6.4.1.p.8">Consequently, it is possible for a server to receive an UNSUBSCRIBE message that does not match any currently active subscription.  This can occur when a client sends a SUBSCRIBE request, which subsequently fails and returns an error code, but the client sent an UNSUBSCRIBE message before it became aware that the SUBSCRIBE request had failed.  Because of this, servers MUST silently ignore UNSUBSCRIBE messages that do not match any currently active subscription.</p>
 <div id="rfc.figure.4"></div>
-<div id="unsubscribe_req"></div>
+<div id="unsubscribe_msg"></div>
 <pre>
                                    1  1  1  1  1  1
      0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
@@ -900,9 +900,9 @@
 <p id="rfc.section.6.5.p.5">The entity that initiates a RECONFIRM message is by definition the client.  A server MUST NOT send a RECONFIRM message over an existing session from a client.  If a server does send a RECONFIRM message over a DSO session initiated by a client, or a RECONFIRM message is sent with the QR bit set indicating that it is a response, this is a fatal error and the receiver MUST forcibly abort the connection immediately.</p>
 <h1 id="rfc.section.6.5.1">
 <a href="#rfc.section.6.5.1">6.5.1.</a> RECONFIRM Message</h1>
-<p id="rfc.section.6.5.1.p.1">A RECONFIRM unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM primary TLV.<br> A RECONFIRM message is illustrated in <a href="#reconfirm_req" class="xref">Figure 5</a>.</p>
+<p id="rfc.section.6.5.1.p.1">A RECONFIRM unidirectional message begins with the standard <a href="#RFC8490" class="xref">DSO 12-byte header</a>, followed by the RECONFIRM primary TLV.<br> A RECONFIRM message is illustrated in <a href="#reconfirm_msg" class="xref">Figure 5</a>.</p>
 <p id="rfc.section.6.5.1.p.2">In accordance with the definition of DSO unidirectional messages, the MESSAGE ID field MUST be zero.  There is no server response to a RECONFIRM message.</p>
-<p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</p>
+<p id="rfc.section.6.5.1.p.3">The other header fields MUST be set as described in the <a href="#RFC8490" class="xref">DSO spec-ification</a>.  The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).  The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</p>
 <p id="rfc.section.6.5.1.p.4">The DSO-TYPE is RECONFIRM (tentatively 0x43).</p>
 <p id="rfc.section.6.5.1.p.5">The DSO-LENGTH is the length of the data that follows, which specifies the name, type, class, and content of the record being disputed.</p>
 <p id="rfc.section.6.5.1.p.6">The DSO-DATA for a RECONFIRM message MUST contain exactly one record.  The DSO-DATA for a RECONFIRM message has no count field to specify more than one record.  Since RECONFIRM messages are sent over TCP, multiple RECONFIRM messages can be concatenated in a single TCP stream and packed efficiently into TCP segments.</p>
@@ -911,7 +911,7 @@
 <p id="rfc.section.6.5.1.p.9">Aliasing is not supported. That is, a CNAME in a RECONFIRM message matches only a literal CNAME record in the zone, and no other records with the same owner name.</p>
 <p id="rfc.section.6.5.1.p.10">Note that there is no RDLEN field, since the length of the RDATA can be inferred from DSO-LENGTH, so an additional RDLEN field would be redundant.</p>
 <div id="rfc.figure.5"></div>
-<div id="reconfirm_req"></div>
+<div id="reconfirm_msg"></div>
 <pre>
                                    1  1  1  1  1  1
      0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5

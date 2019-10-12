@@ -516,16 +516,17 @@
        this is a fatal error and the server MUST forcibly abort the connection immediately.</t>
 
        <section title="SUBSCRIBE Request">
+
          <t>A SUBSCRIBE request begins with the standard
          <xref target="RFC8490">DSO 12-byte header</xref>, followed by the SUBSCRIBE primary TLV.
-         A SUBSCRIBE request message is illustrated in <xref target="subscribe_req"/>.</t>
+         A SUBSCRIBE request is illustrated in <xref target="subscribe_req"/>.</t>
 
          <t>The MESSAGE ID field MUST be set to a unique value, that the client is not using for any other active operation on this DSO session. For the purposes here, a MESSAGE ID is in use on this session if the client has used it in a request for which it has not yet received a response, or if the client has used it for a subscription which it has not yet cancelled using UNSUBSCRIBE. In the SUBSCRIBE response the server MUST echo back the MESSAGE ID value unchanged.</t>
 
          <t>The other header fields MUST be set as described in the
          <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
-         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is SUBSCRIBE (tentatively 0x40).</t>
 
@@ -593,7 +594,8 @@
          <t>A SUBSCRIBE response begins with the standard
          <xref target="RFC8490">DSO 12-byte header</xref>.
          The QR bit in the header is set indicating it is a response.
-         The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.</t>
+         The header MAY be followed by one or more optional TLVs, such as a Retry Delay TLV.
+         A SUBSCRIBE response is illustrated in <xref target="subscribe_resp"/>.</t>
 
          <t>The MESSAGE ID field MUST echo the value given in the MESSAGE ID field of the SUBSCRIBE request.
          This is how the client knows which request is being responded to.</t>
@@ -601,7 +603,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
-         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</t>
 
          <t>A SUBSCRIBE response message MUST NOT include a SUBSCRIBE TLV.
          If a client receives a SUBSCRIBE response message containing a SUBSCRIBE TLV
@@ -726,7 +728,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
-         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is PUSH (tentatively 0x41).</t>
 
@@ -925,7 +927,7 @@
 
          <t>An UNSUBSCRIBE unidirectional message begins with the standard
          <xref target="RFC8490">DSO 12-byte header</xref>, followed by the UNSUBSCRIBE primary TLV.
-         An UNSUBSCRIBE message is illustrated in <xref target="unsubscribe_req"/>.</t>         
+         An UNSUBSCRIBE message is illustrated in <xref target="unsubscribe_msg"/>.</t>
 
          <t>In accordance with the definition of DSO unidirectional messages,
          the MESSAGE ID field MUST be zero.
@@ -934,7 +936,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
-         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is UNSUBSCRIBE (tentatively 0x42).</t>
 
@@ -959,7 +961,7 @@
          Because of this, servers MUST silently ignore
          UNSUBSCRIBE messages that do not match any currently active subscription.</t>
 
-         <figure align="left" anchor="unsubscribe_req" title="UNSUBSCRIBE Message"><artwork align="left"><![CDATA[
+         <figure align="left" anchor="unsubscribe_msg" title="UNSUBSCRIBE Message"><artwork align="left"><![CDATA[
                                    1  1  1  1  1  1
      0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
@@ -1009,7 +1011,7 @@
 
          <t>A RECONFIRM unidirectional message begins with the standard
          <xref target="RFC8490">DSO 12-byte header</xref>, followed by the RECONFIRM primary TLV.<vspace />
-         A RECONFIRM message is illustrated in <xref target="reconfirm_req"/>.</t>
+         A RECONFIRM message is illustrated in <xref target="reconfirm_msg"/>.</t>
 
          <t>In accordance with the definition of DSO unidirectional messages,
          the MESSAGE ID field MUST be zero.
@@ -1018,7 +1020,7 @@
          <t>The other header fields MUST be set as described in the
          <xref target="RFC8490">DSO spec-ification</xref>.
          The DNS OPCODE field contains the OPCODE value for DNS Stateful Operations (6).
-         The four count fields MUST be zero, and the corresponding four sections MUST be empty (i.e., absent).</t>
+         The four count fields must be zero, and the corresponding four sections must be empty (i.e., absent).</t>
 
          <t>The DSO-TYPE is RECONFIRM (tentatively 0x43).</t>
 
@@ -1038,7 +1040,7 @@
 
          <t>Note that there is no RDLEN field, since the length of the RDATA can be inferred from DSO-LENGTH, so an additional RDLEN field would be redundant.</t>
 
-         <figure align="left" anchor="reconfirm_req" title="RECONFIRM Message"><artwork align="left"><![CDATA[
+         <figure align="left" anchor="reconfirm_msg" title="RECONFIRM Message"><artwork align="left"><![CDATA[
                                    1  1  1  1  1  1
      0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  \
