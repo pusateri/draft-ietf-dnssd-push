@@ -1112,8 +1112,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    illustrated in Figure 3, and are interpreted as described below.
 
    The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
-   is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
-   then a new DNS Resource Record with the given name, type, class and
+   is in the range 0 to 2,147,483,647 seconds (0 to 2^31 - 1, or
+   0x7FFFFFFF), then a new DNS Resource Record with the given name,
 
 
 
@@ -1122,12 +1122,12 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 20]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
-   RDATA is added.  Type and class MUST NOT be 255 (ANY).  If either
-   type or class are 255 (ANY) this is a fatal error, and the client
-   MUST forcibly abort the connection immediately.  A TTL of 0 means
-   that this record should be retained for as long as the subscription
-   is active, and should be discarded immediately the moment the
-   subscription is cancelled.
+   type, class and RDATA is added.  Type and class MUST NOT be 255
+   (ANY).  If either type or class are 255 (ANY) this is a fatal error,
+   and the client MUST forcibly abort the connection immediately.  A TTL
+   of 0 means that this record should be retained for as long as the
+   subscription is active, and should be discarded immediately the
+   moment the subscription is cancelled.
 
    If the TTL has the value 0xFFFFFFFF, then the DNS Resource Record
    with the given name, type, class and RDATA is removed.  Type and
@@ -1145,31 +1145,31 @@ Internet-Draft           DNS Push Notifications              August 2019
    There are three types of collective remove notification:
 
    For collective remove notifications, if CLASS is not 255 (ANY) and
-   TYPE is not 255 (ANY) then for the given name this deletes all
+   TYPE is not 255 (ANY) then for the given name this removes all
    records of the specified type in the specified class.
 
    For collective remove notifications, if CLASS is not 255 (ANY) and
-   TYPE is 255 (ANY) then for the given name this deletes all records of
+   TYPE is 255 (ANY) then for the given name this removes all records of
    all types in the specified class.
 
    For collective remove notifications, if CLASS is 255 (ANY), then for
-   the given name this deletes all records of all types in all classes.
+   the given name this removes all records of all types in all classes.
    In this case TYPE MUST be set to zero on transmission, and MUST be
    silently ignored on reception.
 
    Summary of change notification types:
 
-      Delete all RRsets from a name, in all classes
+      Remove all RRsets from a name, in all classes
       TTL = 0xFFFFFFFE, RDLEN = 0, CLASS = 255 (ANY)
 
-      Delete all RRsets from a name, in given class:
+      Remove all RRsets from a name, in given class:
       TTL = 0xFFFFFFFE, RDLEN = 0, CLASS gives class, TYPE = 255 (ANY)
 
-      Delete specified RRset from a name, in given class:
+      Remove specified RRset from a name, in given class:
       TTL = 0xFFFFFFFE, RDLEN = 0
-      CLASS and TYPE specify the RRset being deleted
+      CLASS and TYPE specify the RRset being removed
 
-      Delete an individual RR from a name:
+      Remove an individual RR from a name:
 
 
 
@@ -1179,11 +1179,11 @@ Internet-Draft           DNS Push Notifications              August 2019
 
 
       TTL = 0xFFFFFFFF
-      CLASS, TYPE, RDLEN and RDATA specify the RR being deleted.
+      CLASS, TYPE, RDLEN and RDATA specify the RR being removed
 
       Add individual RR to a name
       TTL >= 0 and TTL <= 0x7FFFFFFF
-      CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added.
+      CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added
 
    Note that it is valid for the RDATA of an added or removed DNS
    Resource Record to be empty (zero length).  For example, an Address
@@ -1329,7 +1329,7 @@ Internet-Draft           DNS Push Notifications              August 2019
                           Figure 3: PUSH Message
 
    When processing the records received in a PUSH Message, the receiving
-   client MUST validate that the records being added or deleted
+   client MUST validate that the records being added or removed
    correspond with at least one currently active subscription on that
    session.  Specifically, the record name MUST match the name given in
    the SUBSCRIBE request, subject to the usual established DNS case-
@@ -1349,12 +1349,12 @@ Internet-Draft           DNS Push Notifications              August 2019
    SUBSCRIBE request.  For collective removals, at least one of the
    records being removed must match an active subscription.  If a
    matching active subscription on that session is not found, then that
-   particular record addition/deletion is silently ignored.  Processing
-   of other additions and deletions in this message is not affected.
-   The DSO session is not closed.  This is to allow for the unavoidable
-   race condition where a client sends an outbound UNSUBSCRIBE while
-   inbound PUSH messages for that subscription from the server are still
-   in flight.
+   particular addition/removal record is silently ignored.  Processing
+   of other additions and removal records in this message is not
+   affected.  The DSO session is not closed.  This is to allow for the
+   unavoidable race condition where a client sends an outbound
+   UNSUBSCRIBE while inbound PUSH messages for that subscription from
+   the server are still in flight.
 
    In the case where a single change affects more than one active
    subscription, only one PUSH message is sent.  For example, a PUSH
@@ -1364,14 +1364,14 @@ Internet-Draft           DNS Push Notifications              August 2019
    the new record matches two active subscriptions.
 
    The server SHOULD encode change notifications in the most efficient
-   manner possible.  For example, when three AAAA records are deleted
+   manner possible.  For example, when three AAAA records are removed
    from a given name, and no other AAAA records exist for that name, the
-   server SHOULD send a "delete an RRset from a name" PUSH message, not
-   three separate "delete an individual RR from a name" PUSH messages.
-   Similarly, when both an SRV and a TXT record are deleted from a given
+   server SHOULD send a "remove an RRset from a name" PUSH message, not
+   three separate "remove an individual RR from a name" PUSH messages.
+   Similarly, when both an SRV and a TXT record are removed from a given
    name, and no other records of any kind exist for that name, the
-   server SHOULD send a "delete all RRsets from a name" PUSH message,
-   not two separate "delete an RRset from a name" PUSH messages.
+   server SHOULD send a "remove all RRsets from a name" PUSH message,
+   not two separate "remove an RRset from a name" PUSH messages.
 
    A server SHOULD combine multiple change notifications in a single
    PUSH message when possible, even if those change notifications apply

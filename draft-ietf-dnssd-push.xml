@@ -746,7 +746,7 @@
          and are interpreted as described below.</t>
 
          <t>The TTL field holds an unsigned 32-bit integer <xref target="RFC2181"/>.
-         If the TTL is in the range 0 to 2,147,483,647 seconds (2^31 - 1, or 0x7FFFFFFF),
+         If the TTL is in the range 0 to 2,147,483,647 seconds (0 to 2^31 - 1, or 0x7FFFFFFF),
          then a new DNS Resource Record with the given name, type, class and RDATA is added.
          Type and class MUST NOT be 255 (ANY). If either type or class are 255 (ANY)
          this is a fatal error, and the client MUST forcibly abort the connection immediately.
@@ -767,36 +767,36 @@
 
          <t>For collective remove notifications,
          if CLASS is not 255 (ANY) and TYPE is not 255 (ANY)
-         then for the given name this deletes all records of the specified type in the specified class.</t>
+         then for the given name this removes all records of the specified type in the specified class.</t>
 
          <t>For collective remove notifications,
          if CLASS is not 255 (ANY) and TYPE is 255 (ANY)
-         then for the given name this deletes all records of all types in the specified class.</t>
+         then for the given name this removes all records of all types in the specified class.</t>
 
          <t>For collective remove notifications,
          if CLASS is 255 (ANY),
-         then for the given name this deletes all records of all types in all classes.
+         then for the given name this removes all records of all types in all classes.
          In this case TYPE MUST be set to zero on transmission, and MUST be silently ignored on reception.</t>
 
          <t>Summary of change notification types:
            <list style="bullets">
-             <t>Delete all RRsets from a name, in all classes<vspace />
+             <t>Remove all RRsets from a name, in all classes<vspace />
              TTL = 0xFFFFFFFE, RDLEN = 0, CLASS = 255 (ANY)</t>
 
-             <t>Delete all RRsets from a name, in given class:<vspace />
+             <t>Remove all RRsets from a name, in given class:<vspace />
              TTL = 0xFFFFFFFE, RDLEN = 0, CLASS gives class, TYPE = 255 (ANY)</t>
 
-             <t>Delete specified RRset from a name, in given class:<vspace />
+             <t>Remove specified RRset from a name, in given class:<vspace />
              TTL = 0xFFFFFFFE, RDLEN = 0<vspace />
-             CLASS and TYPE specify the RRset being deleted</t>
+             CLASS and TYPE specify the RRset being removed</t>
 
-             <t>Delete an individual RR from a name:<vspace />
+             <t>Remove an individual RR from a name:<vspace />
              TTL = 0xFFFFFFFF<vspace />
-             CLASS, TYPE, RDLEN and RDATA specify the RR being deleted.</t>
+             CLASS, TYPE, RDLEN and RDATA specify the RR being removed</t>
 
              <t>Add individual RR to a name<vspace />
              TTL &gt;= 0 and TTL &lt;= 0x7FFFFFFF<vspace />
-             CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added.</t>
+             CLASS, TYPE, RDLEN, RDATA and TTL specify the RR being added</t>
            </list>
          </t>
 
@@ -885,18 +885,31 @@
    :             Repeated As Necessary             :   /
    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /]]></artwork></figure>
 
-         <t>When processing the records received in a PUSH Message, the receiving client MUST validate that the records being added or deleted correspond with at least one currently active subscription on that session. Specifically, the record name MUST match the name given in the SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.
+         <t>When processing the records received in a PUSH Message, the receiving client MUST validate
+         that the records being added or removed correspond with at least one currently active
+         subscription on that session. Specifically, the record name MUST match the name given in the
+         SUBSCRIBE request, subject to the usual established DNS case-insensitivity for US-ASCII letters.
          For individual additions and removals,
          if the TYPE in the SUBSCRIBE request was not ANY (255)
          then the TYPE of the record must match the TYPE given in the SUBSCRIBE request, and
          if the CLASS in the SUBSCRIBE request was not ANY (255)
          then the CLASS of the record must match the CLASS given in the SUBSCRIBE request.
          For collective removals, at least one of the records being removed must match an active subscription.
-         If a matching active subscription on that session is not found, then that particular record addition/deletion is silently ignored. Processing of other additions and deletions in this message is not affected. The DSO session is not closed. This is to allow for the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while inbound PUSH messages for that subscription from the server are still in flight.</t>
+         If a matching active subscription on that session is not found, then that particular
+         addition/removal record is silently ignored. Processing of other additions and removal records
+         in this message is not affected. The DSO session is not closed. This is to allow for
+         the unavoidable race condition where a client sends an outbound UNSUBSCRIBE while
+         inbound PUSH messages for that subscription from the server are still in flight.</t>
   
          <t>In the case where a single change affects more than one active subscription, only one PUSH message is sent. For example, a PUSH message adding a given record may match both a SUBSCRIBE request with the same TYPE and a different SUBSCRIBE request with TYPE = 255 (ANY). It is not the case that two PUSH messages are sent because the new record matches two active subscriptions.</t>
   
-         <t>The server SHOULD encode change notifications in the most efficient manner possible. For example, when three AAAA records are deleted from a given name, and no other AAAA records exist for that name, the server SHOULD send a "delete an RRset from a name" PUSH message, not three separate "delete an individual RR from a name" PUSH messages. Similarly, when both an SRV and a TXT record are deleted from a given name, and no other records of any kind exist for that name, the server SHOULD send a "delete all RRsets from a name" PUSH message, not two separate "delete an RRset from a name" PUSH messages.</t>
+         <t>The server SHOULD encode change notifications in the most efficient manner possible.
+         For example, when three AAAA records are removed from a given name, and no other AAAA
+         records exist for that name, the server SHOULD send a "remove an RRset from a name"
+         PUSH message, not three separate "remove an individual RR from a name" PUSH messages.
+         Similarly, when both an SRV and a TXT record are removed from a given name, and no other
+         records of any kind exist for that name, the server SHOULD send a "remove all RRsets
+         from a name" PUSH message, not two separate "remove an RRset from a name" PUSH messages.</t>
   
          <t>A server SHOULD combine multiple change notifications in a single PUSH message when possible, even if those change notifications apply to different subscriptions. Conceptually, a PUSH message is a session-level mechanism, not a subscription-level mechanism.</t>
   
