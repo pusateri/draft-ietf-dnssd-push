@@ -87,9 +87,9 @@ Table of Contents
      6.7.  Client-Initiated Termination  . . . . . . . . . . . . . .  32
      6.8.  Client Fallback to Polling  . . . . . . . . . . . . . . .  33
    7.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
-     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  34
+     7.1.  Security Services . . . . . . . . . . . . . . . . . . . .  35
      7.2.  TLS Name Authentication . . . . . . . . . . . . . . . . .  35
-     7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  35
+     7.3.  TLS Early Data  . . . . . . . . . . . . . . . . . . . . .  36
      7.4.  TLS Session Resumption  . . . . . . . . . . . . . . . . .  36
    8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  37
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  37
@@ -1111,9 +1111,9 @@ Internet-Draft           DNS Push Notifications              August 2019
    Resource Records are conventionally expressed in DNS messages, as
    illustrated in Figure 3, and are interpreted as described below.
 
-   The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
-   is in the range 0 to 2,147,483,647 seconds (0 to 2^31 - 1, or
-   0x7FFFFFFF), then a new DNS Resource Record with the given name,
+
+
+
 
 
 
@@ -1122,6 +1122,9 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 20]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
+   The TTL field holds an unsigned 32-bit integer [RFC2181].  If the TTL
+   is in the range 0 to 2,147,483,647 seconds (0 to 2^31 - 1, or
+   0x7FFFFFFF), then a new DNS Resource Record with the given name,
    type, class and RDATA is added.  Type and class MUST NOT be 255
    (ANY).  If either type or class are 255 (ANY) this is a fatal error,
    and the client MUST forcibly abort the connection immediately.  A TTL
@@ -1157,6 +1160,24 @@ Internet-Draft           DNS Push Notifications              August 2019
    In this case TYPE MUST be set to zero on transmission, and MUST be
    silently ignored on reception.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 21]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
+
    Summary of change notification types:
 
       Remove all RRsets from a name, in all classes
@@ -1170,14 +1191,6 @@ Internet-Draft           DNS Push Notifications              August 2019
       CLASS and TYPE specify the RRset being removed
 
       Remove an individual RR from a name:
-
-
-
-Pusateri & Cheshire     Expires February 8, 2020               [Page 21]
-
-Internet-Draft           DNS Push Notifications              August 2019
-
-
       TTL = 0xFFFFFFFF
       CLASS, TYPE, RDLEN and RDATA specify the RR being removed
 
@@ -1210,6 +1223,17 @@ Internet-Draft           DNS Push Notifications              August 2019
    message immediately, rather than waiting to see if additional change
    notifications become available.
 
+
+
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 22]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
+
    For efficiency, when generating a PUSH message, a server SHOULD use
    standard DNS name compression, with offsets relative to the beginning
    of the DNS message [RFC1035].  When multiple change notifications in
@@ -1226,14 +1250,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    of 16,382 bytes, counting from the start of the DSO 12-byte header.
    Including the two-byte length prefix that is used to frame DNS over a
    byte stream like TLS, this makes a total of 16,384 bytes.  Servers
-
-
-
-Pusateri & Cheshire     Expires February 8, 2020               [Page 22]
-
-Internet-Draft           DNS Push Notifications              August 2019
-
-
    MUST NOT generate PUSH messages larger than this.  Where the
    immediately available change notifications are sufficient to exceed a
    DNS message length of 16,382 bytes, the change notifications MUST be
@@ -1245,22 +1261,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    If a client receives a PUSH message with a DNS message length larger
    than 16,382 bytes, this is a fatal error, and the client MUST
    forcibly abort the connection immediately.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1448,8 +1448,8 @@ Internet-Draft           DNS Push Notifications              August 2019
    the server.  The client is NOT required to wait for the SUBSCRIBE
    response before issuing the UNSUBSCRIBE message.
 
-   Consequently, it is possible for a server to receive an UNSUBSCRIBE
-   message that does not match any currently active subscription.  This
+
+
 
 
 
@@ -1458,6 +1458,8 @@ Pusateri & Cheshire     Expires February 8, 2020               [Page 26]
 Internet-Draft           DNS Push Notifications              August 2019
 
 
+   Consequently, it is possible for a server to receive an UNSUBSCRIBE
+   message that does not match any currently active subscription.  This
    can occur when a client sends a SUBSCRIBE request, which subsequently
    fails and returns an error code, but the client sent an UNSUBSCRIBE
    message before it became aware that the SUBSCRIBE request had failed.
@@ -1487,8 +1489,6 @@ Internet-Draft           DNS Push Notifications              August 2019
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+  /
 
                        Figure 4: UNSUBSCRIBE Message
-
-
 
 
 
@@ -1887,6 +1887,25 @@ Internet-Draft           DNS Push Notifications              August 2019
    secure connection to a rogue server.  DNSSEC can provide added
    confidence that the SRV query has not been subverted.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 34]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
+
 7.1.  Security Services
 
    It is the goal of using TLS to provide the following security
@@ -1898,13 +1917,6 @@ Internet-Draft           DNS Push Notifications              August 2019
 
    Data integrity protection:  Any changes made to the communication in
       transit are detectable by the receiver.
-
-
-
-Pusateri & Cheshire     Expires February 8, 2020               [Page 34]
-
-Internet-Draft           DNS Push Notifications              August 2019
-
 
    Authentication:  An end-point of the TLS communication is
       authenticated as the intended entity to communicate with.
@@ -1940,6 +1952,16 @@ Internet-Draft           DNS Push Notifications              August 2019
    See Usage Profiles for DNS over TLS and DNS over DTLS [RFC8310] for
    more information on authenticating domain names.
 
+
+
+
+
+
+Pusateri & Cheshire     Expires February 8, 2020               [Page 35]
+
+Internet-Draft           DNS Push Notifications              August 2019
+
+
 7.3.  TLS Early Data
 
    DSO messages with the SUBSCRIBE TLV as the Primary TLV are permitted
@@ -1952,15 +1974,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    TLS Early Data is not forward secret.  In cases where forward secrecy
    of DNS Push Notification subscriptions is required, the client should
    not use TLS Early Data.
-
-
-
-
-
-Pusateri & Cheshire     Expires February 8, 2020               [Page 35]
-
-Internet-Draft           DNS Push Notifications              August 2019
-
 
    With TLS early data there are no guarantees of non-replay between
    connections.  If packets are duplicated and delayed in the network,
@@ -1985,19 +1998,6 @@ Internet-Draft           DNS Push Notifications              August 2019
    proceed as with any other new DSO session.  Use of TLS Session
    Resumption may allow a TLS connection to be set up more quickly, but
    the client will still have to recreate any desired subscriptions.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

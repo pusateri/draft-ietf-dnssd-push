@@ -745,6 +745,7 @@
          as illustrated in <xref target="push_msg"/>,
          and are interpreted as described below.</t>
 
+<?rfc needLines="6" ?>
          <t>The TTL field holds an unsigned 32-bit integer <xref target="RFC2181"/>.
          If the TTL is in the range 0 to 2,147,483,647 seconds (0 to 2^31 - 1, or 0x7FFFFFFF),
          then a new DNS Resource Record with the given name, type, class and RDATA is added.
@@ -778,6 +779,7 @@
          then for the given name this removes all records of all types in all classes.
          In this case TYPE MUST be set to zero on transmission, and MUST be silently ignored on reception.</t>
 
+<?rfc needLines="19" ?>
          <t>Summary of change notification types:
            <list style="bullets">
              <t>Remove all RRsets from a name, in all classes<vspace />
@@ -820,6 +822,7 @@
          a server SHOULD then send the PUSH message immediately,
          rather than waiting to see if additional change notifications become available.</t>
 
+<?rfc needLines="6" ?>
          <t>For efficiency, when generating a PUSH message, a server SHOULD
          use standard DNS name compression,
          with offsets relative to the beginning of the DNS message <xref target="RFC1035"/>.
@@ -965,6 +968,7 @@
          round-trip time to the server.
          The client is NOT required to wait for the SUBSCRIBE response before issuing the UNSUBSCRIBE message.</t>
 
+<?rfc needLines="6" ?>
          <t>Consequently, it is possible for a server to receive an UNSUBSCRIBE message
          that does not match any currently active subscription.
          This can occur when a client sends a SUBSCRIBE request,
@@ -1236,6 +1240,7 @@
      if the SRV query is subverted then the client may have a secure connection to a rogue server.
      DNSSEC can provide added confidence that the SRV query has not been subverted.</t>
 
+<?rfc needLines="14" ?>
      <section title="Security Services">
        <t>It is the goal of using TLS to provide the following security services:
          <list style="hanging">
